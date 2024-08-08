@@ -50,10 +50,10 @@ $conn_string = "DRIVER={IBM ODBC DB2 DRIVER}; HOSTNAME=$hostname; PORT=$port; PR
 // $conn1 = db2_pconnect($conn_string,'', '');
 $conn1 = db2_connect($conn_string, '', '');
 
-$con_invoice        = mysqli_connect("10.0.0.10", "dit", "4dm1n", "invoice");
+// $con_invoice        = mysqli_connect("10.0.0.10", "dit", "4dm1n", "invoice");
 // $con_nowprd         = mysqli_connect("10.0.0.10", "dit", "4dm1n", "nowprd");
 // $con_db_dyeing      = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_dying");
-$con_db_finishing   = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_finishing");
+// $con_db_finishing   = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_finishing");
 // $con_db_lab         = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_laborat");
 $con_dbnow_mkt      = mysqli_connect("10.0.0.10", "dit", "4dm1n", "dbnow_mkt");
 // $con_db_qc          = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_qc");
@@ -62,8 +62,10 @@ $con_dbnow_mkt      = mysqli_connect("10.0.0.10", "dit", "4dm1n", "dbnow_mkt");
 $hostSVR19 = "10.0.0.221";
 $usernameSVR19 = "sa";
 $passwordSVR19 = "Ind@taichen2024";
+$invoice = "invoice";
 $nowprd = "nowprd";
 $dying = "db_dying";
+$finishing = "db_finishing";
 $qc = "db_qc";
 $lab = "db_laborat";
 $hrd = "hrd";
@@ -73,12 +75,16 @@ $db_dying = array("Database" => $dying, "UID" => $usernameSVR19, "PWD" => $passw
 $dbLab = array("Database" => $lab, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 $db_qc = array("Database" => $qc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 $db_hrd = array("Database" => $hrd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$db_invoice = array("Database" => $invoice, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$db_finishing = array("Database" => $finishing, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 
 $con_nowprd = sqlsrv_connect($hostSVR19, $nowprdd);
 $con_db_dyeing = sqlsrv_connect($hostSVR19, $db_dying);
 $con_db_qc = sqlsrv_connect($hostSVR19, $db_qc);
 $con_db_lab = sqlsrv_connect($hostSVR19, $dbLab);
 $con_hrd = sqlsrv_connect($hostSVR19, $db_hrd);
+$con_invoice = sqlsrv_connect($hostSVR19, $db_invoice);
+$con_finishing = sqlsrv_connect($hostSVR19, $db_finishing);
 
 if ($conn1) {
     // echo "koneksi berhasil";
@@ -105,4 +111,12 @@ if ($con_db_lab) {
 if ($con_hrd) {
 } else {
     exit("SQLSVR19 Connection failed to con_hrd");
+}
+if ($con_invoice) {
+} else {
+    exit("SQLSVR19 Connection failed to con_invoice");
+}
+if ($con_finishing) {
+} else {
+    exit("SQLSVR19 Connection failed to con_finishing");
 }

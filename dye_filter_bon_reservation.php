@@ -190,9 +190,9 @@
                                                             while ($row_reservation = db2_fetch_assoc($stmt)) {
                                                                 //Looping untuk cari Suffix dan Rcode Header
                                                                 $header         =   $row_reservation['HEADERLINELINK'];
-                                                                $charit         =   strlen($row_reservation['PRODRESERVATIONLINKGROUPCODE']);
-                                                                $RFD1           =   substr($header, 0, -$charit);
-                                                                $SUF_RFD1       =   substr($header, 0, -$charit);
+                                                                $charit         =   strlen($row_reservation['PRODRESERVATIONLINKGROUPCODE'] ?? '');
+                                                                $RFD1           =   $charit > 0 ? substr($header, 0, -$charit) : '';
+                                                                $SUF_RFD1       =   $charit > 0 ? substr($header, 0, -$charit) : '';
                                                                 //Looping untuk RFD dan RFF
                                                                 $RFD            =   $row_reservation['RFD'];
                                                                 $SUF_RFD        =   $row_reservation['SUFFIXCODE_RFD'];
