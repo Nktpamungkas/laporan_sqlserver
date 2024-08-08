@@ -9,6 +9,7 @@ $tgl2 = @$_POST['tgl2'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
+<!-- Macro Plan BRS -->
 
 <head>
     <title>PRD - laporan Macro Mesin</title>
@@ -93,8 +94,7 @@ $tgl2 = @$_POST['tgl2'];
                                                 </div>
                                                 <div class="card-block">
                                                     <div class="dt-responsive table-responsive">
-                                                        <table id="basic-btn"
-                                                            class="table compact table-bordered nowrap">
+                                                        <table id="basic-btn" class="table compact table-bordered nowrap">
                                                             <thead>
                                                                 <tr>
                                                                     <!-- <th>No</th> -->
@@ -700,8 +700,8 @@ $tgl2 = @$_POST['tgl2'];
                                                                         ";
                                                                         $db_sumhang = db2_exec($conn1, $query6, array('cursor' => DB2_SCROLLABLE));
                                                                         while ($row_sumhang = db2_fetch_assoc($db_sumhang)) {
-                                                                                
-                                                                                
+
+
                                                                             if ($current_buyer != $row_sumbuy['CUSTOMER']) {
                                                                                 echo "<tr bgcolor = '#fbff0a'>";
                                                                                 echo "<td></td>";
@@ -761,7 +761,7 @@ $tgl2 = @$_POST['tgl2'];
                                                                                 echo "</tr>";
                                                                                 $current_buyer = $row_sumbuy['CUSTOMER'];
                                                                             }
-                                                                                
+
                                                                             if ($current_operation != $row_sumop['OPERATION']) {
                                                                                 // Tampilkan operasi dan data transaksi
                                                                                 echo "<tr bgcolor= '#0ae2ff'>";
@@ -920,8 +920,8 @@ $tgl2 = @$_POST['tgl2'];
     <script src="files\bower_components\datatables.net-responsive\js\dataTables.responsive.min.js"></script>
     <script src="files\bower_components\datatables.net-responsive-bs4\js\responsive.bootstrap4.min.js"></script>
     <script type="text/javascript" src="files\bower_components\i18next\js\i18next.min.js"></script>
-    <script type="text/javascript"
-        src="files\bower_components\i18next-xhr-backend\js\i18nextXHRBackend.min.js"></script>
+    <script type="text/javascript" src="files\bower_components\i18next-xhr-backend\js\i18nextXHRBackend.min.js">
+    </script>
     <script type="text/javascript"
         src="files\bower_components\i18next-browser-languagedetector\js\i18nextBrowserLanguageDetector.min.js"></script>
     <script type="text/javascript" src="files\bower_components\jquery-i18next\js\jquery-i18next.min.js"></script>
