@@ -2,8 +2,8 @@
     ini_set("error_reporting", 1);
     session_start();
     require_once "koneksi.php";
-    mysqli_query($con_nowprd, "DELETE FROM itxview_terimaorder WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM itxview_terimaorder WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_terimaorder WHERE CREATEDATETIME BETWEEN GETDATE() - 3  AND GETDATE() - 1 ");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_terimaorder WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -150,8 +150,7 @@
                                                                                         ."'".date('Y-m-d H:i:s')."')";
                                                             }
                                                             $value_itxviewmemo        = implode(',', $r_itxviewmemo);
-                                                            $insert_itxviewmemo       = mysqli_query($con_nowprd, "INSERT INTO itxview_terimaorder(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,`DELAY`,NO_KK,DEMAND,ORDERLINE,PROGRESSSTATUS,CREATIONDATETIME_SALESORDER,IPADDRESS,CREATEDATETIME) VALUES $value_itxviewmemo");
-
+                                                            $insert_itxviewmemo       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_terimaorder(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,DELAY,NO_KK,DEMAND,ORDERLINE,PROGRESSSTATUS,CREATIONDATETIME_SALESORDER,IPADDRESS,CREATEDATETIME) VALUES $value_itxviewmemo");
                                                             // --------------------------------------------------------------------------------------------------------------- //
                                                             $no_order_2 = $_POST['no_order'];
                                                             $tgl1_2     = $_POST['tgl1'];
@@ -163,19 +162,19 @@
                                                                 $where_order2    = "";
                                                             }
                                                             if($tgl1_2 & $tgl2_2){
-                                                                $where_date2     = "SUBSTR(CREATIONDATETIME_SALESORDER, 1,10) BETWEEN '$tgl1_2' AND '$tgl2_2'";
+                                                                $where_date2     = "CAST(CREATIONDATETIME_SALESORDER AS DATE) BETWEEN '$tgl1_2' AND '$tgl2_2'";
                                                             }else{
                                                                 $where_date2     = "";
                                                             }
-                                                            $sqlDB2 = "SELECT DISTINCT * FROM itxview_terimaorder WHERE $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
-                                                            $stmt   = mysqli_query($con_nowprd,$sqlDB2);
-                                                            while ($rowdb2 = mysqli_fetch_array($stmt)) {
+                                                            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_terimaorder WHERE $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
+                                                            $stmt   = sqlsrv_query($con_nowprd,$sqlDB2);
+                                                            while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
                                                         ?>
                                                         <tr>
-                                                            <td><?= substr($rowdb2['CREATIONDATETIME_SALESORDER'], 0, 19); ?></td> <!-- CREATE BO -->
+                                                            <td><?= date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'd-m-Y'); ?></td> <!-- CREATE BO -->
                                                             <td></td><!-- TERIMA ORDER -->
                                                             <td></td><!-- BAGI LOT -->
-                                                            <td><?= substr($rowdb2['ORDERDATE'], 0, 19); ?></td><!-- BUKA KK -->
+                                                            <td><?= date_format($rowdb2['ORDERDATE'], 'd-m-Y'); ?></td><!-- BUKA KK -->
                                                             <td></td><!-- HITUNG WAKTU (TERIMA ORDER s/d BUKA KK) -->
                                                             <?php
                                                                 $q_posisikk_tunggu_greige = "SELECT
@@ -243,7 +242,7 @@
                                                             <td>
                                                                 <?php
                                                                     if($KK_OKE){
-                                                                        $CREATE_PO  = new DateTime(substr($rowdb2['CREATIONDATETIME_SALESORDER'], 0, 19));
+                                                                        $CREATE_PO  = new DateTime(date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'd-m-Y'));
                                                                         $KKOKE      = new DateTime($KK_OKE);
                                                                         $d          = $KKOKE->diff($CREATE_PO)->days + 1;
                                                                         if($d >= 1){
@@ -272,7 +271,7 @@
                                                             <td>
                                                                 <?php
                                                                     if($KK_OKE){
-                                                                        $CREATE_PO      = new DateTime(substr($rowdb2['CREATIONDATETIME_SALESORDER'], 0, 19));
+                                                                        $CREATE_PO      = new DateTime(date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'd-m-Y'));
                                                                         $TGLKIRIM_SJ    = new DateTime($d_tglsuratjalan['TGL_SURATJALAN']);
                                                                         $d2          = $TGLKIRIM_SJ->diff($CREATE_PO)->days + 1;
                                                                         if($d2 >= 1){
@@ -311,7 +310,7 @@
                                                             </td> <!-- GRAMASI -->
                                                             <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                                                             <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                                                            <td><?= $rowdb2['DELIVERY']; ?></td> <!-- DELIVERY -->
+                                                            <td><?= date_format($rowdb2['DELIVERY'], 'd-m-Y'); ?></td> <!-- DELIVERY -->
                                                             <td>
                                                                 <?php 
                                                                     $q_tglbagikain = db2_exec($conn1, "SELECT * FROM ITXVIEW_TGLBAGIKAIN WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");

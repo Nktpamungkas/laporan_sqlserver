@@ -5,13 +5,15 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>PRD - CARI GEROBAK</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="#">
-    <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
+    <meta name="keywords"
+        content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
@@ -22,11 +24,14 @@
     <link rel="stylesheet" type="text/css" href="files\assets\css\style.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\pcoded-horizontal.min.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
 </head>
 <?php require_once 'header.php'; ?>
+
 <body>
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
@@ -52,40 +57,46 @@
                                                 </div> -->
                                                 <div class="col-sm-6 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Production Demand:</h4>
-                                                    <input type="text" name="demand" class="form-control" value="<?php if(isset($_POST['submit'])){ echo $_POST['demand']; } ?>">
+                                                    <input type="text" name="demand" class="form-control"
+                                                        value="<?php if(isset($_POST['submit'])){ echo $_POST['demand']; } ?>">
                                                 </div>
                                                 <div class="col-sm-6 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Departemen:</h4>
                                                     <select name="dept" class="form-control">
                                                         <option value="">Pilih Dept</option>
-                                                        <option value="ALL" <?php if($_POST['dept'] == 'All'){ echo "SELECTED"; } ?>>Semua Dept</option>
+                                                        <option value="ALL"
+                                                            <?php if($_POST['dept'] == 'All'){ echo "SELECTED"; } ?>>
+                                                            Semua Dept</option>
                                                         <?php
                                                             $q_operation = db2_exec($conn1, "SELECT TRIM(OPERATIONGROUPCODE) AS OPERATIONGROUPCODE FROM operation WHERE NOT OPERATIONGROUPCODE IS NULL GROUP BY OPERATIONGROUPCODE ORDER BY OPERATIONGROUPCODE ASC");
                                                         ?>
                                                         <?php while($row_operation = db2_fetch_assoc($q_operation)) : ?>
-                                                            <option value="<?= $row_operation['OPERATIONGROUPCODE'] ?>" <?php if($row_operation['OPERATIONGROUPCODE'] == $_POST['dept']) { echo "SELECTED";} ?>>
-                                                                <?= $row_operation['OPERATIONGROUPCODE'] ?>
-                                                            </option>
+                                                        <option value="<?= $row_operation['OPERATIONGROUPCODE'] ?>"
+                                                            <?php if($row_operation['OPERATIONGROUPCODE'] == $_POST['dept']) { echo "SELECTED";} ?>>
+                                                            <?= $row_operation['OPERATIONGROUPCODE'] ?>
+                                                        </option>
                                                         <?php endwhile; ?>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-6 col-xl-6 m-b-30">
                                                     <h4 class="sub-title">&nbsp;</h4>
-                                                    <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
+                                                    <button type="submit" name="submit" class="btn btn-primary"><i
+                                                            class="icofont icofont-search-alt-1"></i> Cari data</button>
                                                 </div>
                                             </div>
                                         </form>
-                                    </div> 
+                                    </div>
                                 </div>
                                 <?php if (isset($_POST['submit']) OR isset($_GET['demand']) OR isset($_GET['prod_order'])) : ?>
-                                    <div class="card">
-                                        <div class="card-block">
-                                            <div class="table-responsive dt-responsive">
-                                                <!-- <table border="1" style='font-family:"Microsoft Sans Serif"' width="100%"> -->
-                                                <table id="basic-btn" class="table compact table-striped table-bordered nowrap" width="100%">
-                                                    <thead>
-                                                        <tr>
-                                                            <?php
+                                <div class="card">
+                                    <div class="card-block">
+                                        <div class="table-responsive dt-responsive">
+                                            <!-- <table border="1" style='font-family:"Microsoft Sans Serif"' width="100%"> -->
+                                            <table id="basic-btn"
+                                                class="table compact table-striped table-bordered nowrap" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <?php
                                                                 $dept   = $_POST['dept'];
 
                                                                 if($dept == 'DYE'){
@@ -97,38 +108,40 @@
                                                                     $th         = '';
                                                                 }
                                                             ?>
-                                                            <th style="text-align: center; background: #B97E6F; color: #FCFCFC;" colspan="<?= $colspan; ?>">POSISI GEROBAK SEKARANG</th>
-                                                            <th style="text-align: center; background: #83D46E; color: Black;" colspan="15">POSISI GEROBAK SEBELUMNYA</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th style="text-align: center;" rowspan="2">STEP NB</th>
-                                                            <th style="text-align: center;" rowspan="2">NO HANGER</th>
-                                                            <th style="text-align: center;" rowspan="2">NO WARNA</th>
-                                                            <th style="text-align: center;" rowspan="2">WARNA</th>
-                                                            <th style="text-align: center;" rowspan="2">PROD. ORDER</th>
-                                                            <th style="text-align: center;" rowspan="2">PROD. DEMAND</th>
-                                                            <th style="text-align: center;" rowspan="2">OPERATION</th>
-                                                            <th style="text-align: center;" rowspan="2">DEPARTEMEN</th>
-                                                            <th style="text-align: center;" rowspan="2">STATUS</th>
-                                                            <?= $th; ?>
-                                                        </tr>
-                                                        <tr>
-                                                            <th style="text-align: center;">PROD. ORDER ORIGINAL</th>
-                                                            <th style="text-align: center;">PROD. DEMAND ORIGINAL</th>
-                                                            <th style="text-align: center;">OPERATION</th>
-                                                            <th style="text-align: center;">DEPARTEMEN</th>
-                                                            <th style="text-align: center;">STATUS</th>
-                                                            <th style="text-align: center;">MULAI</th>
-                                                            <th style="text-align: center;">SELESAI</th>
-                                                            <th style="text-align: center;">OPERATOR IN</th>
-                                                            <th style="text-align: center;">OPERATOR OUT</th>
-                                                            <th style="text-align: center;">GEROBAK</th>
-                                                            <th style="text-align: center;">QTY</th>
-                                                            <th style="text-align: center;">JML GEROBAK</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody> 
-                                                        <?php
+                                                        <th style="text-align: center; background: #B97E6F; color: #FCFCFC;"
+                                                            colspan="<?= $colspan; ?>">POSISI GEROBAK SEKARANG</th>
+                                                        <th style="text-align: center; background: #83D46E; color: Black;"
+                                                            colspan="15">POSISI GEROBAK SEBELUMNYA</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="text-align: center;" rowspan="2">STEP NB</th>
+                                                        <th style="text-align: center;" rowspan="2">NO HANGER</th>
+                                                        <th style="text-align: center;" rowspan="2">NO WARNA</th>
+                                                        <th style="text-align: center;" rowspan="2">WARNA</th>
+                                                        <th style="text-align: center;" rowspan="2">PROD. ORDER</th>
+                                                        <th style="text-align: center;" rowspan="2">PROD. DEMAND</th>
+                                                        <th style="text-align: center;" rowspan="2">OPERATION</th>
+                                                        <th style="text-align: center;" rowspan="2">DEPARTEMEN</th>
+                                                        <th style="text-align: center;" rowspan="2">STATUS</th>
+                                                        <?= $th; ?>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="text-align: center;">PROD. ORDER ORIGINAL</th>
+                                                        <th style="text-align: center;">PROD. DEMAND ORIGINAL</th>
+                                                        <th style="text-align: center;">OPERATION</th>
+                                                        <th style="text-align: center;">DEPARTEMEN</th>
+                                                        <th style="text-align: center;">STATUS</th>
+                                                        <th style="text-align: center;">MULAI</th>
+                                                        <th style="text-align: center;">SELESAI</th>
+                                                        <th style="text-align: center;">OPERATOR IN</th>
+                                                        <th style="text-align: center;">OPERATOR OUT</th>
+                                                        <th style="text-align: center;">GEROBAK</th>
+                                                        <th style="text-align: center;">QTY</th>
+                                                        <th style="text-align: center;">JML GEROBAK</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
                                                             if($_POST['demand']){
                                                                 $where_demand    = "AND p.PRODUCTIONDEMANDCODE = '$_POST[demand]'";
                                                             }else{
@@ -240,8 +253,8 @@
                                                             $totalGerobak_RMP = 0;
                                                             $totalGerobak_TAS = 0;
                                                         ?>
-                                                        <?php while($row_iptip = db2_fetch_assoc($q_iptip)) : ?>
-                                                            <?php
+                                                    <?php while($row_iptip = db2_fetch_assoc($q_iptip)) : ?>
+                                                    <?php
                                                                 if($dept == 'DYE'){
                                                                     $gerobak    = "CASE
                                                                                         WHEN TRIM(p.OPERATIONCODE) = 'DYE2' THEN 'Poly'
@@ -409,18 +422,20 @@
                                                                     $totalGerobak_QC += $row_count_gerobak['JML_GEROBAK'];
                                                                 }
                                                             ?>
-                                                            <?php if(!empty($row_posisikk['GEROBAK'])) :?>
-                                                                <tr>
-                                                                    <td><?= $row_iptip['STEPNUMBER'] ?></td>
-                                                                    <td><?= $row_iptip['HANGER'] ?> - <?= $row_iptip['SUBCODE06'] ?></td>
-                                                                    <td><?= $row_iptip['NO_WARNA']; ?></td>
-                                                                    <td><?= $row_iptip['WARNA']; ?></td>
-                                                                    <td><?= $row_iptip['PRODUCTIONORDERCODE'] ?></td>
-                                                                    <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_iptip['PRODUCTIONORDERCODE']; ?>"><?= $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
-                                                                    <td align="center"><?= $row_iptip['OPERATIONCODE'] ?></td>
-                                                                    <td align="center"><?= $row_iptip['OPERATIONGROUPCODE'] ?></td>
-                                                                    <td
-                                                                        <?php 
+                                                    <?php if(!empty($row_posisikk['GEROBAK'])) :?>
+                                                    <tr>
+                                                        <td><?= $row_iptip['STEPNUMBER'] ?></td>
+                                                        <td><?= $row_iptip['HANGER'] ?> - <?= $row_iptip['SUBCODE06'] ?>
+                                                        </td>
+                                                        <td><?= $row_iptip['NO_WARNA']; ?></td>
+                                                        <td><?= $row_iptip['WARNA']; ?></td>
+                                                        <td><?= $row_iptip['PRODUCTIONORDERCODE'] ?></td>
+                                                        <td><a target="_BLANK"
+                                                                href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_iptip['PRODUCTIONORDERCODE']; ?>"><?= $row_iptip['PRODUCTIONDEMANDCODE'] ?></a>
+                                                        </td>
+                                                        <td align="center"><?= $row_iptip['OPERATIONCODE'] ?></td>
+                                                        <td align="center"><?= $row_iptip['OPERATIONGROUPCODE'] ?></td>
+                                                        <td <?php 
                                                                             if($row_iptip['STATUS_OPERATION'] == 'Closed'){ 
                                                                                 echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
                                                                                 
@@ -430,56 +445,91 @@
                                                                                 echo 'style="background-color:#CECECE;"'; 
                                                                             } 
                                                                         ?>>
-                                                                        <center><?= $row_iptip['STATUS_OPERATION']; ?></center>
-                                                                    </td>
-                                                                    <?php if($dept == 'DYE') : ?>
-                                                                        <?php
-                                                                            $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
+                                                            <center><?= $row_iptip['STATUS_OPERATION']; ?></center>
+                                                        </td>
+                                                        <?php if($dept == 'DYE') : ?>
+                                                        <?php
+                                                                            // $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
+                                                                            //                                                         nokk,
+                                                                            //                                                         id,
+                                                                            //                                                         GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
+                                                                            //                                                         if(COUNT(lot)>1,'Gabung Kartu','') as ket_kartu,
+                                                                            //                                                         no_mesin,
+                                                                            //                                                         nodemand,
+                                                                            //                                                         no_urut,
+                                                                            //                                                         buyer,
+                                                                            //                                                         langganan,
+                                                                            //                                                         GROUP_CONCAT(DISTINCT no_order SEPARATOR '-' ) AS no_order,
+                                                                            //                                                         no_resep,
+                                                                            //                                                         nokk,
+                                                                            //                                                         jenis_kain,
+                                                                            //                                                         warna,
+                                                                            //                                                         no_warna,
+                                                                            //                                                         sum(rol) as rol,
+                                                                            //                                                         sum(bruto) as bruto,
+                                                                            //                                                         proses,
+                                                                            //                                                         ket_status,
+                                                                            //                                                         tgl_delivery,
+                                                                            //                                                         ket_kain,
+                                                                            //                                                         mc_from,
+                                                                            //                                                         GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
+                                                                            //                                                     FROM
+                                                                            //                                                         tbl_schedule 
+                                                                            //                                                     WHERE
+                                                                            //                                                         (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_iptip[PRODUCTIONORDERCODE]'
+                                                                            //                                                     GROUP BY
+                                                                            //                                                         no_mesin,
+                                                                            //                                                         no_urut 
+                                                                            //                                                     ORDER BY
+                                                                            //                                                         id ASC");
+                                                                            // $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
+                                                                            $q_schedule_dye     = sqlsrv_query($con_db_dyeing, "SELECT
                                                                                                                                     nokk,
                                                                                                                                     id,
-                                                                                                                                    GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
-                                                                                                                                    if(COUNT(lot)>1,'Gabung Kartu','') as ket_kartu,
+                                                                                                                                    STRING_AGG(lot, '/') AS lot,
+                                                                                                                                    CASE WHEN COUNT(lot) > 1 THEN 'Gabung Kartu' ELSE '' END AS ket_kartu,
                                                                                                                                     no_mesin,
                                                                                                                                     nodemand,
                                                                                                                                     no_urut,
                                                                                                                                     buyer,
                                                                                                                                     langganan,
-                                                                                                                                    GROUP_CONCAT(DISTINCT no_order SEPARATOR '-' ) AS no_order,
+                                                                                                                                    STRING_AGG(DISTINCT no_order, '-') AS no_order,
                                                                                                                                     no_resep,
-                                                                                                                                    nokk,
                                                                                                                                     jenis_kain,
                                                                                                                                     warna,
                                                                                                                                     no_warna,
-                                                                                                                                    sum(rol) as rol,
-                                                                                                                                    sum(bruto) as bruto,
+                                                                                                                                    SUM(rol) AS rol,
+                                                                                                                                    SUM(bruto) AS bruto,
                                                                                                                                     proses,
                                                                                                                                     ket_status,
                                                                                                                                     tgl_delivery,
                                                                                                                                     ket_kain,
                                                                                                                                     mc_from,
-                                                                                                                                    GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
+                                                                                                                                    STRING_AGG(DISTINCT personil, ',') AS personil
                                                                                                                                 FROM
-                                                                                                                                    tbl_schedule 
+                                                                                                                                    db_dying.db_dying.tbl_schedule
                                                                                                                                 WHERE
-                                                                                                                                    (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_iptip[PRODUCTIONORDERCODE]'
+                                                                                                                                    [status] IN ('sedang jalan', 'antri mesin') 
+                                                                                                                                    AND nokk = '$row_iptip[PRODUCTIONORDERCODE]'
                                                                                                                                 GROUP BY
-                                                                                                                                    no_mesin,
-                                                                                                                                    no_urut 
+                                                                                                                                    nokk, id, no_mesin, nodemand, no_urut, buyer, langganan, no_resep, jenis_kain, warna, no_warna, proses, ket_status, tgl_delivery, ket_kain, mc_from
                                                                                                                                 ORDER BY
-                                                                                                                                    id ASC");
-                                                                            $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
+                                                                                                                                    id ASC;");
+                                                                            $row_schedule_dye   = sqlsrv_fetch_array($q_schedule_dye,SQLSRV_FETCH_ASSOC);
+                                                                            // if (!$row_schedule_dye){
+                                                                            //     var_dump(sqlsrv_errors());
+                                                                            // }
                                                                             $ket    = $row_schedule_dye['ket_status'].'- '.$row_schedule_dye['ket_kain'].' '.$row_schedule_dye['proses'].' MC '.$row_schedule_dye['mc_from'];
                                                                         ?>
-                                                                        <td align="center"><?= $ket; ?></td>
-                                                                        <td align="center"><?= $row_schedule_dye['no_urut']; ?></td>
-                                                                    <?php endif; ?>
+                                                        <td align="center"><?= $ket; ?></td>
+                                                        <td align="center"><?= $row_schedule_dye['no_urut']; ?></td>
+                                                        <?php endif; ?>
 
-                                                                    <td align="center"></td>
-                                                                    <td align="center"></td>
-                                                                    <td align="center"><?= $row_posisikk['OPERATIONCODE'] ?></td>
-                                                                    <td align="center"><?= $row_posisikk['DEPT'] ?></td>
-                                                                    <td
-                                                                        <?php 
+                                                        <td align="center"></td>
+                                                        <td align="center"></td>
+                                                        <td align="center"><?= $row_posisikk['OPERATIONCODE'] ?></td>
+                                                        <td align="center"><?= $row_posisikk['DEPT'] ?></td>
+                                                        <td <?php 
                                                                             if($row_posisikk['STATUS_OPERATION'] == 'Closed'){ 
                                                                                 echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
                                                                                 
@@ -489,15 +539,15 @@
                                                                                 echo 'style="background-color:#CECECE;"'; 
                                                                             } 
                                                                         ?>>
-                                                                        <center><?= $row_posisikk['STATUS_OPERATION']; ?></center>
-                                                                    </td>
-                                                                    <td><?= $row_posisikk['MULAI'] ?></td>
-                                                                    <td><?= $row_posisikk['SELESAI'] ?></td>
-                                                                    <td><?= $row_posisikk['OP1'] ?></td>
-                                                                    <td><?= $row_posisikk['OP2'] ?></td>
-                                                                    <td><?= $row_posisikk['GEROBAK'] ?></td>
-                                                                    <td>
-                                                                        <?php
+                                                            <center><?= $row_posisikk['STATUS_OPERATION']; ?></center>
+                                                        </td>
+                                                        <td><?= $row_posisikk['MULAI'] ?></td>
+                                                        <td><?= $row_posisikk['SELESAI'] ?></td>
+                                                        <td><?= $row_posisikk['OP1'] ?></td>
+                                                        <td><?= $row_posisikk['OP2'] ?></td>
+                                                        <td><?= $row_posisikk['GEROBAK'] ?></td>
+                                                        <td>
+                                                            <?php
                                                                             $sql_qtyorder   = db2_exec($conn1, "SELECT DISTINCT
                                                                                                                         GROUPSTEPNUMBER,
                                                                                                                         INITIALUSERPRIMARYQUANTITY AS QTY_ORDER,
@@ -511,28 +561,39 @@
                                                                                                                         GROUPSTEPNUMBER ASC LIMIT 1");
                                                                             $dt_qtyorder    = db2_fetch_assoc($sql_qtyorder);
                                                                         ?>
-                                                                        <?= $dt_qtyorder['QTY_ORDER']; ?>
-                                                                    </td>
-                                                                    <td><?= $row_count_gerobak['JML_GEROBAK'] ?></td>
-                                                                </tr>
-                                                            <?php else : ?>
-                                                                <?php 
+                                                            <?= $dt_qtyorder['QTY_ORDER']; ?>
+                                                        </td>
+                                                        <td><?= $row_count_gerobak['JML_GEROBAK'] ?></td>
+                                                    </tr>
+                                                    <?php else : ?>
+                                                    <?php 
                                                                     // FIELDNYA = tempat, kain_gerobak
-                                                                    $q_ncp      = mysqli_query($con_db_qc, "SELECT * FROM `tbl_ncp_qcf_now` WHERE nokk = '$row_iptip[PRODUCTIONORDERCODE]' AND nodemand = '$row_iptip[PRODUCTIONDEMANDCODE]'");
-                                                                    $row_ncp    = mysqli_fetch_assoc($q_ncp);
+                                                                    $q_ncp      = sqlsrv_query($con_db_qc, "SELECT 
+                                                                                                                * 
+                                                                                                                FROM 
+                                                                                                                db_qc.db_qc.tbl_ncp_qcf_now
+                                                                                                                WHERE nokk = '$row_iptip[PRODUCTIONORDERCODE]' 
+                                                                                                                AND nodemand = '$row_iptip[PRODUCTIONDEMANDCODE]'
+                                                                                                                ");
+                                                                    $row_ncp    = sqlsrv_fetch_array($q_ncp, SQLSRV_FETCH_ASSOC);
+                                                                    // if(!$row_ncp){
+                                                                    //     var_dump(sqlsrv_errors());
+                                                                    // }
                                                                 ?>
-                                                                <?php if($row_ncp) : ?>
-                                                                    <tr>
-                                                                        <td><?= $row_iptip['STEPNUMBER'] ?></td>
-                                                                        <td><?= $row_iptip['HANGER'] ?> - <?= $row_iptip['SUBCODE06'] ?></td>
-                                                                        <td><?= $row_iptip['NO_WARNA']; ?></td>
-                                                                        <td><?= $row_iptip['WARNA']; ?></td>
-                                                                        <td><?= $row_iptip['PRODUCTIONORDERCODE'] ?></td>
-                                                                        <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_iptip['PRODUCTIONORDERCODE']; ?>"><?= $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
-                                                                        <td align="center"><?= $row_iptip['OPERATIONCODE'] ?></td>
-                                                                        <td align="center"><?= $row_iptip['OPERATIONGROUPCODE'] ?></td>
-                                                                        <td
-                                                                            <?php 
+                                                    <?php if($row_ncp) : ?>
+                                                    <tr>
+                                                        <td><?= $row_iptip['STEPNUMBER'] ?></td>
+                                                        <td><?= $row_iptip['HANGER'] ?> - <?= $row_iptip['SUBCODE06'] ?>
+                                                        </td>
+                                                        <td><?= $row_iptip['NO_WARNA']; ?></td>
+                                                        <td><?= $row_iptip['WARNA']; ?></td>
+                                                        <td><?= $row_iptip['PRODUCTIONORDERCODE'] ?></td>
+                                                        <td><a target="_BLANK"
+                                                                href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_iptip['PRODUCTIONORDERCODE']; ?>"><?= $row_iptip['PRODUCTIONDEMANDCODE'] ?></a>
+                                                        </td>
+                                                        <td align="center"><?= $row_iptip['OPERATIONCODE'] ?></td>
+                                                        <td align="center"><?= $row_iptip['OPERATIONGROUPCODE'] ?></td>
+                                                        <td <?php 
                                                                                 if($row_iptip['STATUS_OPERATION'] == 'Closed'){ 
                                                                                     echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
                                                                                     
@@ -542,65 +603,100 @@
                                                                                     echo 'style="background-color:#CECECE;"'; 
                                                                                 } 
                                                                             ?>>
-                                                                            <center><?= $row_iptip['STATUS_OPERATION']; ?></center>
-                                                                        </td>
-                                                                        <?php if($dept == 'DYE') : ?>
-                                                                            <?php
-                                                                                $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
-                                                                                                                                        nokk,
-                                                                                                                                        id,
-                                                                                                                                        GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
-                                                                                                                                        if(COUNT(lot)>1,'Gabung Kartu','') as ket_kartu,
-                                                                                                                                        no_mesin,
-                                                                                                                                        nodemand,
-                                                                                                                                        no_urut,
-                                                                                                                                        buyer,
-                                                                                                                                        langganan,
-                                                                                                                                        GROUP_CONCAT(DISTINCT no_order SEPARATOR '-' ) AS no_order,
-                                                                                                                                        no_resep,
-                                                                                                                                        nokk,
-                                                                                                                                        jenis_kain,
-                                                                                                                                        warna,
-                                                                                                                                        no_warna,
-                                                                                                                                        sum(rol) as rol,
-                                                                                                                                        sum(bruto) as bruto,
-                                                                                                                                        proses,
-                                                                                                                                        ket_status,
-                                                                                                                                        tgl_delivery,
-                                                                                                                                        ket_kain,
-                                                                                                                                        mc_from,
-                                                                                                                                        GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
-                                                                                                                                    FROM
-                                                                                                                                        tbl_schedule 
-                                                                                                                                    WHERE
-                                                                                                                                        (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_iptip[PRODUCTIONORDERCODE]'
-                                                                                                                                    GROUP BY
-                                                                                                                                        no_mesin,
-                                                                                                                                        no_urut 
-                                                                                                                                    ORDER BY
-                                                                                                                                        id ASC");
-                                                                                $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
+                                                            <center><?= $row_iptip['STATUS_OPERATION']; ?></center>
+                                                        </td>
+                                                        <?php if($dept == 'DYE') : ?>
+                                                        <?php
+                                                                                // $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
+                                                                                //                                                         nokk,
+                                                                                //                                                         id,
+                                                                                //                                                         GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
+                                                                                //                                                         if(COUNT(lot)>1,'Gabung Kartu','') as ket_kartu,
+                                                                                //                                                         no_mesin,
+                                                                                //                                                         nodemand,
+                                                                                //                                                         no_urut,
+                                                                                //                                                         buyer,
+                                                                                //                                                         langganan,
+                                                                                //                                                         GROUP_CONCAT(DISTINCT no_order SEPARATOR '-' ) AS no_order,
+                                                                                //                                                         no_resep,
+                                                                                //                                                         nokk,
+                                                                                //                                                         jenis_kain,
+                                                                                //                                                         warna,
+                                                                                //                                                         no_warna,
+                                                                                //                                                         sum(rol) as rol,
+                                                                                //                                                         sum(bruto) as bruto,
+                                                                                //                                                         proses,
+                                                                                //                                                         ket_status,
+                                                                                //                                                         tgl_delivery,
+                                                                                //                                                         ket_kain,
+                                                                                //                                                         mc_from,
+                                                                                //                                                         GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
+                                                                                //                                                     FROM
+                                                                                //                                                         tbl_schedule 
+                                                                                //                                                     WHERE
+                                                                                //                                                         (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_iptip[PRODUCTIONORDERCODE]'
+                                                                                //                                                     GROUP BY
+                                                                                //                                                         no_mesin,
+                                                                                //                                                         no_urut 
+                                                                                //                                                     ORDER BY
+                                                                                //                                                         id ASC");
+                                                                                // $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
+                                                                                $q_schedule_dye     = sqlsrv_query($con_db_dyeing, "SELECT
+                                                                                                                                    nokk,
+                                                                                                                                    id,
+                                                                                                                                    STRING_AGG(lot, '/') AS lot,
+                                                                                                                                    CASE WHEN COUNT(lot) > 1 THEN 'Gabung Kartu' ELSE '' END AS ket_kartu,
+                                                                                                                                    no_mesin,
+                                                                                                                                    nodemand,
+                                                                                                                                    no_urut,
+                                                                                                                                    buyer,
+                                                                                                                                    langganan,
+                                                                                                                                    STRING_AGG(DISTINCT no_order, '-') AS no_order,
+                                                                                                                                    no_resep,
+                                                                                                                                    jenis_kain,
+                                                                                                                                    warna,
+                                                                                                                                    no_warna,
+                                                                                                                                    SUM(rol) AS rol,
+                                                                                                                                    SUM(bruto) AS bruto,
+                                                                                                                                    proses,
+                                                                                                                                    ket_status,
+                                                                                                                                    tgl_delivery,
+                                                                                                                                    ket_kain,
+                                                                                                                                    mc_from,
+                                                                                                                                    STRING_AGG(DISTINCT personil, ',') AS personil
+                                                                                                                                FROM
+                                                                                                                                    db_dying.db_dying.tbl_schedule
+                                                                                                                                WHERE
+                                                                                                                                    [status] IN ('sedang jalan', 'antri mesin') 
+                                                                                                                                    AND nokk = '$row_iptip[PRODUCTIONORDERCODE]'
+                                                                                                                                GROUP BY
+                                                                                                                                    nokk, id, no_mesin, nodemand, no_urut, buyer, langganan, no_resep, jenis_kain, warna, no_warna, proses, ket_status, tgl_delivery, ket_kain, mc_from
+                                                                                                                                ORDER BY
+                                                                                                                                    id ASC;");
+                                                                                $row_schedule_dye   = sqlsrv_fetch_array($q_schedule_dye, SQLSRV_FETCH_ASSOC);
                                                                                 $ket    = $row_schedule_dye['ket_status'].'- '.$row_schedule_dye['ket_kain'].' '.$row_schedule_dye['proses'].' MC '.$row_schedule_dye['mc_from'];
                                                                             ?>
-                                                                            <td align="center"><?= $ket; ?></td>
-                                                                            <td align="center"><?= $row_schedule_dye['no_urut']; ?></td>
-                                                                        <?php endif; ?>
-                                                                        
-                                                                        <td align="center"><?= $row_ncp['nokk'] ?></td>
-                                                                        <td align="center"><?= $row_ncp['nodemand'] ?></td>
-                                                                        <td align="center"><?= $row_posisikk['OPERATIONCODE'] ?></td>
-                                                                        <td align="center"><?= $row_ncp['dept'] ?></td>
-                                                                        <td><center><?= $row_ncp['status']; ?></center></td>
-                                                                        <td><?= $row_ncp['tgl_buat'] ?></td>
-                                                                        <td>-</td>
-                                                                        <td><?= $row_ncp['peninjau_awal'] ?></td>
-                                                                        <td><?= $row_ncp['peninjau_akhir'] ?></td>
-                                                                        <td><?= $row_ncp['tempat'] ?></td>
-                                                                        <td><?= $row_ncp['berat'] ?></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                <?php else : ?>
-                                                                    <!-- QTY SALINAN
+                                                        <td align="center"><?= $ket; ?></td>
+                                                        <td align="center"><?= $row_schedule_dye['no_urut']; ?></td>
+                                                        <?php endif; ?>
+
+                                                        <td align="center"><?= $row_ncp['nokk'] ?></td>
+                                                        <td align="center"><?= $row_ncp['nodemand'] ?></td>
+                                                        <td align="center"><?= $row_posisikk['OPERATIONCODE'] ?></td>
+                                                        <td align="center"><?= $row_ncp['dept'] ?></td>
+                                                        <td>
+                                                            <center><?= $row_ncp['status']; ?></center>
+                                                        </td>
+                                                        <td><?= $row_ncp['tgl_buat']->format('') ?></td>
+                                                        <td>-</td>
+                                                        <td><?= $row_ncp['peninjau_awal'] ?></td>
+                                                        <td><?= $row_ncp['peninjau_akhir'] ?></td>
+                                                        <td><?= $row_ncp['tempat'] ?></td>
+                                                        <td><?= $row_ncp['berat'] ?></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <?php else : ?>
+                                                    <!-- QTY SALINAN
                                                                     <?php
                                                                         $q_carisalinan1  = db2_exec($conn1, "SELECT
                                                                                                                 PRODUCTIONORDERCODE,
@@ -776,40 +872,73 @@
                                                                             </td>
                                                                             <?php if($dept == 'DYE') : ?>
                                                                                 <?php
-                                                                                    $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
-                                                                                                                                            nokk,
-                                                                                                                                            id,
-                                                                                                                                            GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
-                                                                                                                                            if(COUNT(lot)>1,'Gabung Kartu','') as ket_kartu,
-                                                                                                                                            no_mesin,
-                                                                                                                                            nodemand,
-                                                                                                                                            no_urut,
-                                                                                                                                            buyer,
-                                                                                                                                            langganan,
-                                                                                                                                            GROUP_CONCAT(DISTINCT no_order SEPARATOR '-' ) AS no_order,
-                                                                                                                                            no_resep,
-                                                                                                                                            nokk,
-                                                                                                                                            jenis_kain,
-                                                                                                                                            warna,
-                                                                                                                                            no_warna,
-                                                                                                                                            sum(rol) as rol,
-                                                                                                                                            sum(bruto) as bruto,
-                                                                                                                                            proses,
-                                                                                                                                            ket_status,
-                                                                                                                                            tgl_delivery,
-                                                                                                                                            ket_kain,
-                                                                                                                                            mc_from,
-                                                                                                                                            GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
-                                                                                                                                        FROM
-                                                                                                                                            tbl_schedule 
-                                                                                                                                        WHERE
-                                                                                                                                            (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_posisikk_salinan[PRODUCTIONORDERCODE]'
-                                                                                                                                        GROUP BY
-                                                                                                                                            no_mesin,
-                                                                                                                                            no_urut 
-                                                                                                                                        ORDER BY
-                                                                                                                                            id ASC");
-                                                                                    $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
+                                                                                    // $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
+                                                                                    //                                                         nokk,
+                                                                                    //                                                         id,
+                                                                                    //                                                         GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
+                                                                                    //                                                         if(COUNT(lot)>1,'Gabung Kartu','') as ket_kartu,
+                                                                                    //                                                         no_mesin,
+                                                                                    //                                                         nodemand,
+                                                                                    //                                                         no_urut,
+                                                                                    //                                                         buyer,
+                                                                                    //                                                         langganan,
+                                                                                    //                                                         GROUP_CONCAT(DISTINCT no_order SEPARATOR '-' ) AS no_order,
+                                                                                    //                                                         no_resep,
+                                                                                    //                                                         nokk,
+                                                                                    //                                                         jenis_kain,
+                                                                                    //                                                         warna,
+                                                                                    //                                                         no_warna,
+                                                                                    //                                                         sum(rol) as rol,
+                                                                                    //                                                         sum(bruto) as bruto,
+                                                                                    //                                                         proses,
+                                                                                    //                                                         ket_status,
+                                                                                    //                                                         tgl_delivery,
+                                                                                    //                                                         ket_kain,
+                                                                                    //                                                         mc_from,
+                                                                                    //                                                         GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
+                                                                                    //                                                     FROM
+                                                                                    //                                                         tbl_schedule 
+                                                                                    //                                                     WHERE
+                                                                                    //                                                         (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_posisikk_salinan[PRODUCTIONORDERCODE]'
+                                                                                    //                                                     GROUP BY
+                                                                                    //                                                         no_mesin,
+                                                                                    //                                                         no_urut 
+                                                                                    //                                                     ORDER BY
+                                                                                    //                                                         id ASC");
+                                                                                    // $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
+                                                                                    $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT
+                                                                                                                                    nokk,
+                                                                                                                                    id,
+                                                                                                                                    STRING_AGG(lot, '/') AS lot,
+                                                                                                                                    CASE WHEN COUNT(lot) > 1 THEN 'Gabung Kartu' ELSE '' END AS ket_kartu,
+                                                                                                                                    no_mesin,
+                                                                                                                                    nodemand,
+                                                                                                                                    no_urut,
+                                                                                                                                    buyer,
+                                                                                                                                    langganan,
+                                                                                                                                    STRING_AGG(DISTINCT no_order, '-') AS no_order,
+                                                                                                                                    no_resep,
+                                                                                                                                    jenis_kain,
+                                                                                                                                    warna,
+                                                                                                                                    no_warna,
+                                                                                                                                    SUM(rol) AS rol,
+                                                                                                                                    SUM(bruto) AS bruto,
+                                                                                                                                    proses,
+                                                                                                                                    ket_status,
+                                                                                                                                    tgl_delivery,
+                                                                                                                                    ket_kain,
+                                                                                                                                    mc_from,
+                                                                                                                                    STRING_AGG(DISTINCT personil, ',') AS personil
+                                                                                                                                FROM
+                                                                                                                                    db_dying.db_dying.tbl_schedule
+                                                                                                                                WHERE
+                                                                                                                                    [status] IN ('sedang jalan', 'antri mesin') 
+                                                                                                                                    AND nokk = '$row_posisikk_salinan[PRODUCTIONORDERCODE]'
+                                                                                                                                GROUP BY
+                                                                                                                                    nokk, id, no_mesin, nodemand, no_urut, buyer, langganan, no_resep, jenis_kain, warna, no_warna, proses, ket_status, tgl_delivery, ket_kain, mc_from
+                                                                                                                                ORDER BY
+                                                                                                                                    id ASC;");
+                                                                                    $row_schedule_dye   = sqlsrv_fetch_array($q_schedule_dye, SQLSRV_FETCH_ASSOC);
                                                                                     $ket    = $row_schedule_dye['ket_status'].'- '.$row_schedule_dye['ket_kain'].' '.$row_schedule_dye['proses'].' MC '.$row_schedule_dye['mc_from'];
                                                                                 ?>
                                                                                 <td align="center"><?= $ket; ?></td>
@@ -859,46 +988,47 @@
                                                                         </tr>
                                                                     <?php endif; ?> 
                                                                     -->
-                                                                <?php endif; ?>
-                                                            <?php endif; ?>
-                                                        <?php endwhile; ?>
-                                                        <table class="table compact table-striped table-bordered nowrap" width="100%">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>QC</th>
-                                                                    <th>BRS</th>
-                                                                    <th>DYE</th>
-                                                                    <th>FIN</th>
-                                                                    <th>GKG</th>
-                                                                    <th>KNT</th>
-                                                                    <th>LAB</th>
-                                                                    <th>PPC</th>
-                                                                    <th>PRT</th>
-                                                                    <th>RMP</th>
-                                                                    <th>TAS</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td><?= $totalGerobak_QC; ?></td>
-                                                                    <td><?= $totalGerobak_BRS; ?></td>
-                                                                    <td><?= $totalGerobak_DYE; ?></td>
-                                                                    <td><?= $totalGerobak_FIN; ?></td>
-                                                                    <td><?= $totalGerobak_GKG; ?></td>
-                                                                    <td><?= $totalGerobak_KNT; ?></td>
-                                                                    <td><?= $totalGerobak_LAB; ?></td>
-                                                                    <td><?= $totalGerobak_PPC; ?></td>
-                                                                    <td><?= $totalGerobak_PRT; ?></td>
-                                                                    <td><?= $totalGerobak_RMP; ?></td>
-                                                                    <td><?= $totalGerobak_TAS; ?></td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                    <?php endif; ?>
+                                                    <?php endif; ?>
+                                                    <?php endwhile; ?>
+                                                    <table class="table compact table-striped table-bordered nowrap"
+                                                        width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>QC</th>
+                                                                <th>BRS</th>
+                                                                <th>DYE</th>
+                                                                <th>FIN</th>
+                                                                <th>GKG</th>
+                                                                <th>KNT</th>
+                                                                <th>LAB</th>
+                                                                <th>PPC</th>
+                                                                <th>PRT</th>
+                                                                <th>RMP</th>
+                                                                <th>TAS</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td><?= $totalGerobak_QC; ?></td>
+                                                                <td><?= $totalGerobak_BRS; ?></td>
+                                                                <td><?= $totalGerobak_DYE; ?></td>
+                                                                <td><?= $totalGerobak_FIN; ?></td>
+                                                                <td><?= $totalGerobak_GKG; ?></td>
+                                                                <td><?= $totalGerobak_KNT; ?></td>
+                                                                <td><?= $totalGerobak_LAB; ?></td>
+                                                                <td><?= $totalGerobak_PPC; ?></td>
+                                                                <td><?= $totalGerobak_PRT; ?></td>
+                                                                <td><?= $totalGerobak_RMP; ?></td>
+                                                                <td><?= $totalGerobak_TAS; ?></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
+                                </div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -930,8 +1060,10 @@
     <script src="files\bower_components\datatables.net-responsive\js\dataTables.responsive.min.js"></script>
     <script src="files\bower_components\datatables.net-responsive-bs4\js\responsive.bootstrap4.min.js"></script>
     <script type="text/javascript" src="files\bower_components\i18next\js\i18next.min.js"></script>
-    <script type="text/javascript" src="files\bower_components\i18next-xhr-backend\js\i18nextXHRBackend.min.js"></script>
-    <script type="text/javascript" src="files\bower_components\i18next-browser-languagedetector\js\i18nextBrowserLanguageDetector.min.js"></script>
+    <script type="text/javascript" src="files\bower_components\i18next-xhr-backend\js\i18nextXHRBackend.min.js">
+    </script>
+    <script type="text/javascript"
+        src="files\bower_components\i18next-browser-languagedetector\js\i18nextBrowserLanguageDetector.min.js"></script>
     <script type="text/javascript" src="files\bower_components\jquery-i18next\js\jquery-i18next.min.js"></script>
     <script src="files\assets\pages\data-table\extensions\buttons\js\extension-btns-custom.js"></script>
     <script src="files\assets\js\pcoded.min.js"></script>
@@ -939,4 +1071,5 @@
     <script src="files\assets\js\jquery.mCustomScrollbar.concat.min.js"></script>
     <script type="text/javascript" src="files\assets\js\script.js"></script>
 </body>
+
 </html>
