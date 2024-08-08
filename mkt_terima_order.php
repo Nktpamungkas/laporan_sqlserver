@@ -2,7 +2,7 @@
     ini_set("error_reporting", 1);
     session_start();
     require_once "koneksi.php";
-    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_terimaorder WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_terimaorder WHERE CREATEDATETIME BETWEEN GETDATE() - 3  AND GETDATE() - 1 ");
     sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_terimaorder WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 ?>
 <!DOCTYPE html>
