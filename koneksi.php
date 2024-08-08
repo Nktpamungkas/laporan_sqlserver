@@ -32,6 +32,14 @@ $conn_string = "DRIVER={IBM ODBC DB2 DRIVER}; HOSTNAME=$hostname; PORT=$port; PR
 // $conn1 = db2_pconnect($conn_string,'', '');
 $conn1 = db2_connect($conn_string,'', '');
 
+$hostSVR19 = "10.0.0.221";
+$usernameSVR19 = "sa";
+$passwordSVR19 = "Ind@taichen2024";
+$db_nameSVR19 = "nowprd";
+$connInfoSVR19 = array("Database" => $db_nameSVR19, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$con_srv     = sqlsrv_connect($hostSVR19, $connInfoSVR19);
+
+
 $con_invoice        = mysqli_connect("10.0.0.10","dit","4dm1n","invoice");
 $con_nowprd         = mysqli_connect("10.0.0.10","dit","4dm1n","nowprd");
 $con_db_dyeing      = mysqli_connect("10.0.0.10","dit","4dm1n","db_dying");
