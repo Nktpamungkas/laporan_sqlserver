@@ -653,7 +653,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                     $statusy = "Gagal";
                                                 }
 
-                                                $sql = "INSERT INTO upload_spectro (batch_name,whiteness,tint,yellowness,creationdate,ipaddress,statusheader,statuswhiteness,statustint,statusyellowness) VALUES ('$column1', '$column2', '$column3', '$column4', '$column5','$column6','$statusheader','$statusw','$statust','$statusy')";
+                                                $sql = "INSERT INTO nowprd.upload_spectro (batch_name,whiteness,tint,yellowness,creationdate,ipaddress,statusheader,statuswhiteness,statustint,statusyellowness) VALUES ('$column1', '$column2', '$column3', '$column4', '$column5','$column6','$statusheader','$statusw','$statust','$statusy')";
                                                 $con_nowprd->query($sql);
                                             }
                                         }
