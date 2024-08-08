@@ -1,9 +1,9 @@
 <?php
-    ini_set("error_reporting", 1);
-    session_start();
-    require_once "koneksi.php";
-    mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
+ini_set("error_reporting", 1);
+session_start();
+require_once "koneksi.php";
+sqlsrv_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
+sqlsrv_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +50,9 @@
                                                 <div class="col-sm-12 col-xl-2 m-b-0">
                                                     <h4 class="sub-title">Tanggal Awal</h4>
                                                     <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" value="<?php if (isset($_POST['cari'])){ echo $_POST['tgl']; } ?>">
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" value="<?php if (isset($_POST['cari'])) {
+                                                                                                                                                    echo $_POST['tgl'];
+                                                                                                                                                } ?>">
                                                     </div>
                                                     <button type="submit" name="cari" class="btn btn-primary btn-sm"><i class="icofont icofont-search-alt-1"></i> Search</button>
                                                     <input type="button" name="reset" value="Reset" onclick="window.location.href='spectro_upload.php'" class="btn btn-warning btn-sm">
@@ -58,7 +60,9 @@
                                                 <div class="col-sm-12 col-xl-2 m-b-0">
                                                     <h4 class="sub-title">Tanggal Akhir</h4>
                                                     <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl2" value="<?php if (isset($_POST['cari'])){ echo $_POST['tgl2']; } ?>">
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl2" value="<?php if (isset($_POST['cari'])) {
+                                                                                                                                                    echo $_POST['tgl2'];
+                                                                                                                                                } ?>">
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-0">
@@ -69,11 +73,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                         </form>
                                     </div>
                                 </div>
-                                <div class="card-header" style="background-color: #FFF7AE; padding: 5px; font-family: 'Courier New', monospace; font-size: 15px;" >
+                                <div class="card-header" style="background-color: #FFF7AE; padding: 5px; font-family: 'Courier New', monospace; font-size: 15px;">
                                     <center>Data yang tampil adalah data yang tercatat hari ini.</center>
                                     <center>Silahkan gunakan fitur pencarian untuk menemukan lebih banyak data pada tanggal yang Anda inginkan.</center>
                                     <center>Harap memeriksa ketersediaan data di PRODUCTION ORDER > QUALITY DATA yang akan di-import sebelum melanjutkan.</center>
@@ -98,16 +102,16 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                        if(isset($_POST['cari'])){
-                                                            $where_tgl  = "SUBSTR(creationdate, 1,10) BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'";
-                                                        }else{
-                                                            $where_tgl  = "SUBSTR(creationdate, 1,10) = CURRENT_DATE()";
-                                                        }
-                                                        // echo "SELECT * FROM upload_spectro WHERE $where_tgl ORDER BY id DESC";
-                                                        // $q_dataupload = mysqli_query($con_nowprd, "SELECT * FROM upload_spectro WHERE SUBSTR(creationdate, 1, 9) = SUBSTR(now(), 1,9) ORDER BY id DESC");
-                                                        $q_dataupload = mysqli_query($con_nowprd, "SELECT * FROM upload_spectro WHERE $where_tgl ORDER BY id DESC");
-                                                        $no = 1;
-                                                        while ($row_dataupload = mysqli_fetch_array($q_dataupload)) {
+                                                    if (isset($_POST['cari'])) {
+                                                        $where_tgl  = "CONVERT(date, creationdate) BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'";
+                                                    } else {
+                                                        $where_tgl  = "CONVERT(datetime, creationdate) = GETDATE()";
+                                                    }
+                                                    // echo "SELECT * FROM upload_spectro WHERE $where_tgl ORDER BY id DESC";
+                                                    // $q_dataupload = sqlsrv_query($con_nowprd, "SELECT * FROM upload_spectro WHERE SUBSTR(creationdate, 1, 9) = SUBSTR(now(), 1,9) ORDER BY id DESC");
+                                                    $q_dataupload = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.upload_spectro WHERE $where_tgl ORDER BY id DESC");
+                                                    $no = 1;
+                                                    while ($row_dataupload = sqlsrv_fetch_array($q_dataupload)) {
                                                     ?>
                                                         <tr>
                                                             <td><?= $no++; ?></td>
@@ -115,11 +119,11 @@
                                                             <td><?= $row_dataupload['whiteness']; ?></td>
                                                             <td><?= $row_dataupload['tint']; ?></td>
                                                             <td><?= $row_dataupload['yellowness']; ?></td>
-                                                            <td><?= $row_dataupload['creationdate']; ?></td>
+                                                            <td><?= ($row_dataupload['creationdate'] != null or $row_dataupload['creationdate'] != '') ? $row_dataupload['creationdate']->format('Y-m-d H:i:s') : ''; ?></td>
                                                             <td><?= $row_dataupload['statusheader']; ?></td>
                                                             <td><?= $row_dataupload['status']; ?></td>
                                                             <td>
-                                                                <?php if($row_dataupload['status'] != 'Deleted') : ?>
+                                                                <?php if ($row_dataupload['status'] != 'Deleted') : ?>
                                                                     <button type="button" class="btn btn-danger btn-outline-danger btn-mini" data-toggle="modal" data-target="#confirm-delete<?= $row_dataupload['batch_name']; ?>">
                                                                         Delete this data
                                                                     </button>
@@ -228,7 +232,7 @@
                                                 $stepnumber = substr($column1, -2);
                                             }
 
-                                            if(is_numeric($stepnumber)){
+                                            if (is_numeric($stepnumber)) {
                                                 $q_QUALITYDOCUMENTBEAN      = db2_exec($conn1, "SELECT
                                                                                                     q.PRODUCTIONORDERCODE,
                                                                                                     a.VALUEINT,
@@ -257,8 +261,8 @@
                                                                                                     AND a.VALUEINT = '$stepnumber'");
                                                 $row_QUALITYDOCUMENTBEAN    = db2_fetch_assoc($q_QUALITYDOCUMENTBEAN);
 
-                                                $q_IMPORTAUTOCOUNTER    = mysqli_query($con_nowprd, "SELECT * FROM importautocounter");
-                                                $row_IMPORTAUTOCOUNTER  = mysqli_fetch_assoc($q_IMPORTAUTOCOUNTER);
+                                                $q_IMPORTAUTOCOUNTER    = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.importautocounter");
+                                                $row_IMPORTAUTOCOUNTER  = sqlsrv_fetch_array($q_IMPORTAUTOCOUNTER);
 
                                                 $next_number_IMPORTAUTOCOUNTER_HEADER  = $row_IMPORTAUTOCOUNTER['nomor_urut'] + 1;
 
@@ -372,11 +376,11 @@
                                                 // WHITENESS
                                                 $qty_whiteness  = $column2;
                                                 $IMPCREATIONDATETIME = date('Y-m-d H:i:s');
-                                                $q_IMPORTAUTOCOUNTER_WHITENESS    = mysqli_query($con_nowprd, "SELECT * FROM no_urut_spectro");
-                                                $row_IMPORTAUTOCOUNTER_WHITENESS  = mysqli_fetch_assoc($q_IMPORTAUTOCOUNTER_WHITENESS);
+                                                $q_IMPORTAUTOCOUNTER_WHITENESS    = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.no_urut_spectro");
+                                                $row_IMPORTAUTOCOUNTER_WHITENESS  = sqlsrv_fetch_array($q_IMPORTAUTOCOUNTER_WHITENESS);
 
                                                 $next_number_IMPORTAUTOCOUNTER_WHITENESS  = $row_IMPORTAUTOCOUNTER_WHITENESS['nourut'] + 10;
-                                                
+
                                                 $q_QUALITYDOCUMENTBEAN_WHITENESS        = db2_exec($conn1, "INSERT INTO QUALITYDOCLINEBEAN(FATHERID,
                                                                                                                                     IMPORTAUTOCOUNTER,
                                                                                                                                     LINE,
@@ -451,13 +455,13 @@
                                                                                                                                     '$next_number_IMPORTAUTOCOUNTER_WHITENESS',
                                                                                                                                     '0',
                                                                                                                                     '0')");
-                                                $q_update_IMPORTAUTOCOUNTER_WHITENESS   = mysqli_query($con_nowprd, "UPDATE no_urut_spectro SET nourut = '$next_number_IMPORTAUTOCOUNTER_WHITENESS'");
+                                                $q_update_IMPORTAUTOCOUNTER_WHITENESS   = sqlsrv_query($con_nowprd, "UPDATE nowprd.no_urut_spectro SET nourut = '$next_number_IMPORTAUTOCOUNTER_WHITENESS'");
 
                                                 // TINT
                                                 $qty_tint  = $column3;
                                                 $IMPCREATIONDATETIME = date('Y-m-d H:i:s');
-                                                $q_IMPORTAUTOCOUNTER_TINT    = mysqli_query($con_nowprd, "SELECT * FROM no_urut_spectro");
-                                                $row_IMPORTAUTOCOUNTER_TINT  = mysqli_fetch_assoc($q_IMPORTAUTOCOUNTER_TINT);
+                                                $q_IMPORTAUTOCOUNTER_TINT    = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.no_urut_spectro");
+                                                $row_IMPORTAUTOCOUNTER_TINT  = sqlsrv_fetch_array($q_IMPORTAUTOCOUNTER_TINT);
 
                                                 $next_number_IMPORTAUTOCOUNTER_TINT  = $row_IMPORTAUTOCOUNTER_TINT['nourut'] + 10;
 
@@ -535,15 +539,15 @@
                                                                                                                                             '$next_number_IMPORTAUTOCOUNTER_TINT',
                                                                                                                                             '0',
                                                                                                                                             '0')");
-                                                $q_update_IMPORTAUTOCOUNTER_TINT    = mysqli_query($con_nowprd, "UPDATE no_urut_spectro SET nourut = '$next_number_IMPORTAUTOCOUNTER_TINT'");
+                                                $q_update_IMPORTAUTOCOUNTER_TINT    = sqlsrv_query($con_nowprd, "UPDATE nowprd.no_urut_spectro SET nourut = '$next_number_IMPORTAUTOCOUNTER_TINT'");
 
-                                                $q_update_IMPORTAUTOCOUNTER_HEADER      = mysqli_query($con_nowprd, "UPDATE importautocounter SET nomor_urut = '$next_number_IMPORTAUTOCOUNTER_HEADER'");
+                                                $q_update_IMPORTAUTOCOUNTER_HEADER      = sqlsrv_query($con_nowprd, "UPDATE nowprd.importautocounter SET nomor_urut = '$next_number_IMPORTAUTOCOUNTER_HEADER'");
 
                                                 // YELLOWNESS
                                                 $qty_yellowness  = $column4;
                                                 $IMPCREATIONDATETIME = date('Y-m-d H:i:s');
-                                                $q_IMPORTAUTOCOUNTER_YELLOWNESS    = mysqli_query($con_nowprd, "SELECT * FROM no_urut_spectro");
-                                                $row_IMPORTAUTOCOUNTER_YELLOWNESS  = mysqli_fetch_assoc($q_IMPORTAUTOCOUNTER_YELLOWNESS);
+                                                $q_IMPORTAUTOCOUNTER_YELLOWNESS    = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.no_urut_spectro");
+                                                $row_IMPORTAUTOCOUNTER_YELLOWNESS  = sqlsrv_fetch_array($q_IMPORTAUTOCOUNTER_YELLOWNESS);
 
                                                 $next_number_IMPORTAUTOCOUNTER_YELLOWNESS  = $row_IMPORTAUTOCOUNTER_YELLOWNESS['nourut'] + 10;
 
@@ -621,7 +625,7 @@
                                                                                                                                             '$next_number_IMPORTAUTOCOUNTER_YELLOWNESS',
                                                                                                                                             '0',
                                                                                                                                             '0')");
-                                                $q_update_IMPORTAUTOCOUNTER_YELLOWNESS  = mysqli_query($con_nowprd, "UPDATE no_urut_spectro SET nourut = '$next_number_IMPORTAUTOCOUNTER_YELLOWNESS'");
+                                                $q_update_IMPORTAUTOCOUNTER_YELLOWNESS  = sqlsrv_query($con_nowprd, "UPDATE nowprd.no_urut_spectro SET nourut = '$next_number_IMPORTAUTOCOUNTER_YELLOWNESS'");
 
                                                 // jika berhasil terkirim maka status nya berhasil, kalau gagal ya gagal lah 
                                                 if ($q_QUALITYDOCUMENTBEAN_HEADER) {
@@ -666,21 +670,21 @@
                                     ?>
                                 <?php elseif (isset($_POST['delete_data'])) : ?>
                                     <?php
-                                        $nokk       = sprintf("%08d", $_POST['batch_name']);
-                                        $strip      = substr($_POST['batch_name'], -3, 1);
+                                    $nokk       = sprintf("%08d", $_POST['batch_name']);
+                                    $strip      = substr($_POST['batch_name'], -3, 1);
 
-                                        if ($strip != "-") {
-                                            $stepnumber = substr($_POST['batch_name'], -3);
-                                        } else {
-                                            $stepnumber = substr($_POST['batch_name'], -2);
-                                        }
+                                    if ($strip != "-") {
+                                        $stepnumber = substr($_POST['batch_name'], -3);
+                                    } else {
+                                        $stepnumber = substr($_POST['batch_name'], -2);
+                                    }
 
-                                        $q_caridata     = mysqli_query($con_nowprd, "SELECT * FROM upload_spectro WHERE batch_name='$_POST[batch_name]'");
-                                        $row_data       = mysqli_fetch_assoc($q_caridata);
+                                    $q_caridata     = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.upload_spectro WHERE batch_name='$_POST[batch_name]'");
+                                    $row_data       = sqlsrv_fetch_array($q_caridata);
 
-                                        if($row_data['batch_name']){
-                                            // CARI HEADLINENYA DULU DI QUALITYDOCUMENT
-                                            $q_qualitydoc       = db2_exec($conn1, "SELECT
+                                    if ($row_data['batch_name']) {
+                                        // CARI HEADLINENYA DULU DI QUALITYDOCUMENT
+                                        $q_qualitydoc       = db2_exec($conn1, "SELECT
                                                                                         TRIM(q.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
                                                                                         q.HEADERLINE
                                                                                     FROM
@@ -689,10 +693,10 @@
                                                                                     WHERE
                                                                                         q.PRODUCTIONORDERCODE = '$nokk'
                                                                                         AND a.VALUEINT = '$stepnumber'");
-                                            $data_qualitydoc    = db2_fetch_assoc($q_qualitydoc);
+                                        $data_qualitydoc    = db2_fetch_assoc($q_qualitydoc);
 
-                                            if($data_qualitydoc['HEADERLINE']){
-                                                $q_line         = db2_exec($conn1, "DELETE
+                                        if ($data_qualitydoc['HEADERLINE']) {
+                                            $q_line         = db2_exec($conn1, "DELETE
                                                                                     FROM
                                                                                         QUALITYDOCLINE q
                                                                                     WHERE
@@ -700,36 +704,36 @@
                                                                                         AND QUALITYDOCUMENTHEADERLINE = '$data_qualitydoc[HEADERLINE]'
                                                                                         AND LINE IN ('11', '12', '13')
                                                                                         AND TRIM(CHARACTERISTICCODE) IN ('WHITENESS', 'TINT', 'YELLOWNESS')");
-                                                $delete_statusspectro   = mysqli_query($con_nowprd, "DELETE FROM upload_spectro
+                                            $delete_statusspectro   = sqlsrv_query($con_nowprd, "DELETE FROM nowprd.upload_spectro
                                                                                                     WHERE batch_name='$_POST[batch_name]'");
-                                                echo "<script type=\"text/javascript\">
+                                            echo "<script type=\"text/javascript\">
                                                             alert(\"Your data was successfully deleted.\");
                                                             window.location = \"spectro_upload.php\"
                                                         </script>";
-                                            }else{
-                                                if(!is_numeric($stepnumber)){
-                                                    $q_line                 = db2_exec($conn1, "DELETE
+                                        } else {
+                                            if (!is_numeric($stepnumber)) {
+                                                $q_line                 = db2_exec($conn1, "DELETE
                                                                                     FROM
                                                                                         QUALITYDOCLINE q
                                                                                     WHERE
                                                                                         QUALITYDOCPRODUCTIONORDERCODE = '$nokk'
                                                                                         AND LINE IN ('11', '12', '13')
                                                                                         AND TRIM(CHARACTERISTICCODE) IN ('WHITENESS', 'TINT', 'YELLOWNESS')");
-                                                    $delete_statusspectro   = mysqli_query($con_nowprd, "DELETE FROM upload_spectro
+                                                $delete_statusspectro   = sqlsrv_query($con_nowprd, "DELETE FROM nowprd.upload_spectro
                                                                                                         WHERE batch_name='$_POST[batch_name]'");
 
-                                                    echo "<script type=\"text/javascript\">
+                                                echo "<script type=\"text/javascript\">
                                                                 alert(\"Your data was successfully deleted, but not database ERP.\");
                                                                 window.location = \"spectro_upload.php\"
                                                             </script>";
-                                                }else{
-                                                    echo "<script type=\"text/javascript\">
+                                            } else {
+                                                echo "<script type=\"text/javascript\">
                                                             alert(\"Your data not successfully deleted.\");
                                                             window.location = \"spectro_upload.php\"
                                                         </script>";
-                                                }
                                             }
                                         }
+                                    }
                                     ?>
                                 <?php endif; ?>
                             </div>

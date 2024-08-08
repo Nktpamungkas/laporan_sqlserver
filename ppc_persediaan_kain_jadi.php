@@ -1,6 +1,6 @@
 <?php
-    header("content-type:application/vnd-ms-excel");
-    header("content-disposition:attachment;filename=Laporan Persediaan Kain Jadi.xls");
+header("content-type:application/vnd-ms-excel");
+header("content-disposition:attachment;filename=Laporan Persediaan Kain Jadi.xls");
 ?>
 <table id="harian-fin" class="table table-bordered table-striped">
     <thead>
@@ -27,15 +27,15 @@
         </tr>
     </thead>
     <tbody>
-        <?php 
-            ini_set("error_reporting", 1);
-            session_start();
-            require_once "koneksi.php"; 
+        <?php
+        ini_set("error_reporting", 1);
+        session_start();
+        require_once "koneksi.php";
         ?>
         <?php
-            $thn    = $_GET['thn'];
-            $lot    = $_GET['lot'];
-            $sqlDB2 = "SELECT
+        $thn    = $_GET['thn'];
+        $lot    = $_GET['lot'];
+        $sqlDB2 = "SELECT
                             VARCHAR_FORMAT(BALANCE.CREATIONDATETIME, 'dd MONTH yyyy') AS TGL_BALANCE,
                             trim(BALANCE.DECOSUBCODE02) || trim(BALANCE.DECOSUBCODE03) AS NO_ITEM,
                             trim(BUSINESSPARTNER.LEGALNAME1) AS LANGGANAN,
@@ -153,31 +153,31 @@
                             STOCKTRANSACTION.PROJECTCODE,
                             QUALITYREASON.LONGDESCRIPTION,
                             ITXVIEWCOLOR.WARNA";
-            $stmt   = db2_exec($conn1,$sqlDB2, array('cursor'=>DB2_SCROLLABLE));
-            $no     = 1;
-            while ($rowdb2 = db2_fetch_assoc($stmt)) {
+        $stmt   = db2_exec($conn1, $sqlDB2, array('cursor' => DB2_SCROLLABLE));
+        $no     = 1;
+        while ($rowdb2 = db2_fetch_assoc($stmt)) {
         ?>
-        <tr>
-            <td><?= $rowdb2['TGL_BALANCE']; ?></td> <!-- TGL -->
-            <td><?= $rowdb2['NO_ITEM']; ?></td> <!-- NO ITEM -->
-            <td><?= $rowdb2['LANGGANAN']; ?></td> <!-- LANGGANAN -->
-            <td><?= $rowdb2['BUYER']; ?></td> <!-- BUYER -->
-            <td><?= $rowdb2['PO']; ?></td> <!-- PO -->
-            <td><?= $rowdb2['NO_ORDER']; ?></td> <!-- ORDER -->
-            <td><?= $rowdb2['JENIS_KAIN']; ?></td> <!-- JENIS_KAIN -->
-            <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-            <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
-            <td><?= $rowdb2['DELIVERY']; ?></td> <!-- DELIVERY -->
-            <td><?= $rowdb2['LOT']; ?></td> <!-- LOT -->
-            <td><?= $rowdb2['SN']; ?></td> <!-- SN -->
-            <td><?= $rowdb2['KG']; ?></td> <!-- KG -->
-            <td><?= $rowdb2['GRADE']; ?></td> <!-- GRADE -->
-            <td><?= $rowdb2['LENGTH']; ?></td> <!-- LENGTH -->
-            <td><?= $rowdb2['SATUAN']; ?></td> <!-- SATUAN -->
-            <td><?= $rowdb2['ZONA']; ?></td> <!-- ZONA -->
-            <td><?= $rowdb2['LOKASI']; ?></td> <!-- LOKASI -->
-            <td><?= $rowdb2['STATUS_KAIN']; ?></td> <!-- STATUS -->
-        </tr>
-    <?php } ?>
+            <tr>
+                <td><?= $rowdb2['TGL_BALANCE']; ?></td> <!-- TGL -->
+                <td><?= $rowdb2['NO_ITEM']; ?></td> <!-- NO ITEM -->
+                <td><?= $rowdb2['LANGGANAN']; ?></td> <!-- LANGGANAN -->
+                <td><?= $rowdb2['BUYER']; ?></td> <!-- BUYER -->
+                <td><?= $rowdb2['PO']; ?></td> <!-- PO -->
+                <td><?= $rowdb2['NO_ORDER']; ?></td> <!-- ORDER -->
+                <td><?= $rowdb2['JENIS_KAIN']; ?></td> <!-- JENIS_KAIN -->
+                <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
+                <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
+                <td><?= $rowdb2['DELIVERY']; ?></td> <!-- DELIVERY -->
+                <td><?= $rowdb2['LOT']; ?></td> <!-- LOT -->
+                <td><?= $rowdb2['SN']; ?></td> <!-- SN -->
+                <td><?= $rowdb2['KG']; ?></td> <!-- KG -->
+                <td><?= $rowdb2['GRADE']; ?></td> <!-- GRADE -->
+                <td><?= $rowdb2['LENGTH']; ?></td> <!-- LENGTH -->
+                <td><?= $rowdb2['SATUAN']; ?></td> <!-- SATUAN -->
+                <td><?= $rowdb2['ZONA']; ?></td> <!-- ZONA -->
+                <td><?= $rowdb2['LOKASI']; ?></td> <!-- LOKASI -->
+                <td><?= $rowdb2['STATUS_KAIN']; ?></td> <!-- STATUS -->
+            </tr>
+        <?php } ?>
     </tbody>
 </table>

@@ -1,10 +1,11 @@
-<?php 
-    ini_set("error_reporting", 1);
-    session_start();
-    require_once "koneksi.php";
+<?php
+ini_set("error_reporting", 1);
+session_start();
+require_once "koneksi.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>LAB - laporan Pemakaian Obat Gd. Kimia</title>
     <meta charset="utf-8">
@@ -14,7 +15,7 @@
     <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
-     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> --> 
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> -->
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
@@ -31,6 +32,7 @@
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
 </head>
 <?php require_once 'header.php'; ?>
+
 <body>
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
@@ -49,7 +51,9 @@
                                                 <div class="col-sm-12 col-xl-2 m-b-0">
                                                     <h4 class="sub-title">Tanggal</h4>
                                                     <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl']; } ?>" required>
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" value="<?php if (isset($_POST['submit'])) {
+                                                                                                                                                    echo $_POST['tgl'];
+                                                                                                                                                } ?>" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2">
@@ -85,7 +89,7 @@
                                                             </thead>
                                                             <tbody>
                                                                 <?php
-                                                                    $db_stocktransaction   = db2_exec($conn1, "SELECT
+                                                                $db_stocktransaction   = db2_exec($conn1, "SELECT
                                                                                                                     CASE
                                                                                                                         WHEN s.PRODUCTIONORDERCODE IS NULL THEN s.ORDERCODE 
                                                                                                                         ELSE s.PRODUCTIONORDERCODE 
@@ -111,9 +115,9 @@
                                                                                                                     AND s.TRANSACTIONDATE = '$_POST[tgl]'
                                                                                                                 ORDER BY 
                                                                                                                     s.PRODUCTIONORDERCODE ASC");
-                                                                    $no = 1;
-                                                                    while ($row_stocktransaction = db2_fetch_assoc($db_stocktransaction)) {
-                                                                        $db_reservation     = db2_exec($conn1, "SELECT 
+                                                                $no = 1;
+                                                                while ($row_stocktransaction = db2_fetch_assoc($db_stocktransaction)) {
+                                                                    $db_reservation     = db2_exec($conn1, "SELECT 
                                                                                                                     TRIM(p.PRODUCTIONORDERCODE) || '-' || TRIM(p.GROUPSTEPNUMBER) AS NO_RESEP,
                                                                                                                     SUM(p.USERPRIMARYQUANTITY) AS USERPRIMARYQUANTITY,
                                                                                                                     CASE
@@ -133,19 +137,19 @@
                                                                                                                     p.PRODUCTIONORDERCODE,
                                                                                                                     p.GROUPSTEPNUMBER,
                                                                                                                     p2.CODE");
-                                                                        $row_reservation    = db2_fetch_assoc($db_reservation);
+                                                                    $row_reservation    = db2_fetch_assoc($db_reservation);
                                                                 ?>
-                                                                <tr>
-                                                                    <!-- <td><?= $no++; ?></td> -->
-                                                                    <td><?= $row_reservation['NO_RESEP']; ?></td>
-                                                                    <td><?= $row_stocktransaction['PRODUCTIONORDERCODE']; ?></td>
-                                                                    <td><?= $row_stocktransaction['KODE_OBAT']; ?></td>
-                                                                    <td><?= number_format($row_reservation['USERPRIMARYQUANTITY'], 2); ?></td>
-                                                                    <td><?= number_format($row_stocktransaction['AKTUAL_QTY'], 2); ?></td>
-                                                                    <td></td>
-                                                                    <td><?= $row_reservation['KETERANGAN']; ?></td>
-                                                                    <td><?= $row_stocktransaction['LONGDESCRIPTION']; ?></td>
-                                                                </tr>
+                                                                    <tr>
+                                                                        <!-- <td><?= $no++; ?></td> -->
+                                                                        <td><?= $row_reservation['NO_RESEP']; ?></td>
+                                                                        <td><?= $row_stocktransaction['PRODUCTIONORDERCODE']; ?></td>
+                                                                        <td><?= $row_stocktransaction['KODE_OBAT']; ?></td>
+                                                                        <td><?= number_format($row_reservation['USERPRIMARYQUANTITY'] ?? 0.00, 2); ?></td>
+                                                                        <td><?= number_format($row_stocktransaction['AKTUAL_QTY'] ?? 0.00, 2); ?></td>
+                                                                        <td></td>
+                                                                        <td><?= $row_reservation['KETERANGAN']; ?></td>
+                                                                        <td><?= $row_stocktransaction['LONGDESCRIPTION']; ?></td>
+                                                                    </tr>
                                                                 <?php } ?>
                                                             </tbody>
                                                         </table>
@@ -195,4 +199,5 @@
     <script type="text/javascript" src="files\assets\js\script.js"></script>
 
 </body>
+
 </html>
