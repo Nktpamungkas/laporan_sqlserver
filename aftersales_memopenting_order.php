@@ -2,8 +2,8 @@
     ini_set("error_reporting", 1);
     session_start();
     require_once "koneksi.php";
-    mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc_aftersales WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc_aftersales WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc_aftersales WHERE CREATEDATETIME BETWEEN GETDATE() - 3 AND GETDATE() - 1");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc_aftersales WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -181,7 +181,7 @@
                                                     </thead>
                                                     <tbody> 
                                                         <?php 
-                                                            ini_set("error_reporting", 0);
+                                                            ini_set("error_reporting", 1);
                                                             session_start();
                                                             require_once "koneksi.php";
                                                             $prod_order     = $_POST['prod_order'];
@@ -300,7 +300,7 @@
 
                                                                 }
                                                                 $value_itxviewmemo        = implode(',', $r_itxviewmemo);
-                                                                $insert_itxviewmemo       = mysqli_query($con_nowprd, "INSERT INTO itxview_memopentingppc_aftersales(OPERATIONCODE,ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,`DELAY`,NO_KK,DEMAND,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
+                                                                $insert_itxviewmemo       = sqlsrv_query($con_nowprd, "INSERT INTO itxview_memopentingppc_aftersales(OPERATIONCODE,ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,`DELAY`,NO_KK,DEMAND,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
                                                             }else{
                                                                 // ITXVIEW_MEMOPENTINGPPC
                                                                 // echo "SELECT * FROM ITXVIEW_MEMOPENTINGPPC WHERE $where_prodorder $where_proddemand $where_order $where_date $where_no_po $where_article $where_langganan $where_warna $where_datecreatesalesorder AND (SUBSTR(NO_ORDER, 1,3) = 'RFD' OR SUBSTR(NO_ORDER, 1,3) = 'RFE' OR SUBSTR(NO_ORDER, 1,3) = 'RPE' OR SUBSTR(NO_ORDER, 1,3) = 'REP')";
@@ -334,7 +334,7 @@
                                                                                             ."'".'MEMO AFTERSALES'."')";
                                                                 }
                                                                 $value_itxviewmemo        = implode(',', $r_itxviewmemo);
-                                                                $insert_itxviewmemo       = mysqli_query($con_nowprd, "INSERT INTO itxview_memopentingppc_aftersales(ORDERDATE,CREATIONDATETIME_SALESORDER,ORDPRNCUSTOMERSUPPLIERCODE,PELANGGAN,NO_ORDER,NO_PO,ARTICLE_GROUP,ARTICLE_CODE,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,`DELAY`,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
+                                                                $insert_itxviewmemo       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_memopentingppc_aftersales(ORDERDATE,CREATIONDATETIME_SALESORDER,ORDPRNCUSTOMERSUPPLIERCODE,PELANGGAN,NO_ORDER,NO_PO,ARTICLE_GROUP,ARTICLE_CODE,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,DELAY,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
                                                             }
                                                             
                                                             // --------------------------------------------------------------------------------------------------------------- //
@@ -431,13 +431,13 @@
                                                                 }
                                                             }
                                                             if($operation_2){
-                                                                $sqlDB2 = "SELECT DISTINCT * FROM itxview_memopentingppc_aftersales WHERE OPERATIONCODE = '$operation_2' AND ACCESS_TO = 'MEMO W OPR' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
+                                                                $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc_aftersales WHERE OPERATIONCODE = '$operation_2' AND ACCESS_TO = 'MEMO W OPR' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
                                                             }else{
-                                                                $sqlDB2 = "SELECT DISTINCT * FROM itxview_memopentingppc_aftersales WHERE $where_prodorder2 $where_proddemand2 $where_order2 $where_date2 $where_no_po2 $where_article2 $where_langganan2 $where_warna2 $where_datecreatesalesorder2 AND ACCESS_TO = 'MEMO AFTERSALES' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND (SUBSTR(NO_ORDER, 1,3) = 'RFD' OR SUBSTR(NO_ORDER, 1,3) = 'RFE' OR SUBSTR(NO_ORDER, 1,3) = 'RPE' OR SUBSTR(NO_ORDER, 1,3) = 'REP') ORDER BY CREATIONDATETIME_SALESORDER ASC";
+                                                                $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc_aftersales WHERE $where_prodorder2 $where_proddemand2 $where_order2 $where_date2 $where_no_po2 $where_article2 $where_langganan2 $where_warna2 $where_datecreatesalesorder2 AND ACCESS_TO = 'MEMO AFTERSALES' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND (SUBSTRING(NO_ORDER, 1,3) = 'RFD' OR SUBSTRING(NO_ORDER, 1,3) = 'RFE' OR SUBSTRING(NO_ORDER, 1,3) = 'RPE' OR SUBSTRING(NO_ORDER, 1,3) = 'REP') ORDER BY CREATIONDATETIME_SALESORDER ASC";
                                                             }
                                                             // echo $sqlDB2;
-                                                            $stmt   = mysqli_query($con_nowprd,$sqlDB2);
-                                                            while ($rowdb2 = mysqli_fetch_array($stmt)) {
+                                                            $stmt   = sqlsrv_query($con_nowprd,$sqlDB2);
+                                                            while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
                                                         ?>
                                                         <?php 
                                                             //Deteksi Production Demand Closed Atau Belum
@@ -683,7 +683,7 @@
                                                         ?>
                                                         <?php if($cek_operation == "MUNCUL" OR $cek_operation == NULL) : ?>
                                                         <tr>
-                                                            <td><?= $rowdb2['CREATIONDATETIME_SALESORDER']; ?></td> <!-- TGL BUKA ORDER -->
+                                                            <td><?= date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'd-m-Y'); ?></td> <!-- TGL BUKA ORDER -->
                                                             <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
                                                             <td><?= $rowdb2['NO_ORDER']; ?></td> <!-- NO. ORDER -->
                                                             <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->
@@ -712,7 +712,7 @@
                                                             </td> <!-- GRAMASI -->
                                                             <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                                                             <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                                                            <td><?= $rowdb2['DELIVERY']; ?></td> <!-- DELIVERY -->
+                                                            <td><?= date_format($rowdb2['DELIVERY'], 'd-m-Y'); ?></td> <!-- DELIVERY -->
                                                             <td>
                                                                 <?php 
                                                                     $q_tglbagikain = db2_exec($conn1, "SELECT * FROM ITXVIEW_TGLBAGIKAIN WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
@@ -842,7 +842,7 @@
                                         ini_set("error_reporting", 1);
                                         session_start();
                                         require_once "koneksi.php";
-                                        mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc_aftersales");
+                                        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc_aftersales");
                                         header("Location: aftersales_memopenting_order.php");
                                     ?>
                                 <?php endif; ?>
