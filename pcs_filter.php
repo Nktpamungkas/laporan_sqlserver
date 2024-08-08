@@ -196,7 +196,7 @@
                                                             <td align="center"><?= $rowdb2['PRICEUNITOFMEASURECODE']; ?></td> <!-- SATUAN -->
                                                             <td align="right"><?= number_format($rowdb2['USERPRIMARYQUANTITY'], 0,",","."); ?></td> <!-- QTY -->
                                                             <td align="right"> 
-                                                                <!-- TOTAL HARGA (SETELAH PAJAK) -->
+                                                                <!-- TOTAL HARGA ( SETELAH PAJAK ) -->
                                                                 <?php
                                                                     if($rowdb2['CURRENCYCODE'] == "USD") {
                                                                         echo number_format($rowdb2['NETVALUEINCLUDINGTAX'], 2,",",".");

@@ -129,7 +129,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         <table id="basic-btn" class="table compact table-striped table-bordered nowrap">
                                                             <thead>
                                                                 <tr>
-                                                                    <!-- <th>No</th> -->
                                                                     <th>No. Group Line</th>
                                                                     <th>Tanggal & Jam</th>
                                                                     <th>Kode Obat</th>
@@ -236,7 +235,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                         $row_reservation    = db2_fetch_assoc($db_reservation);
                                                                 ?>
                                                                 <tr>
-                                                                    <!-- <td><?= $no++; ?></td> -->
                                                                     <td><?php if($row_reservation['NO_RESEP']){ echo $row_reservation['NO_RESEP']; } else { echo $row_stocktransaction['PRODUCTIONORDERCODE']; } ?></td>
                                                                     <td><?= $row_stocktransaction['TGL']; ?></td>
                                                                     <td><?= $row_stocktransaction['KODE_OBAT']; ?></td>
