@@ -71,14 +71,14 @@
                                         ."'".date('Y-m-d H:i:s')."')";
             }
             $value_itxviewmemo        = implode(',', $r_itxviewmemo);
-            $insert_itxviewmemo       = mysqli_query($con_nowprd, "INSERT INTO itxview_terimaorder(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,`DELAY`,NO_KK,DEMAND,ORDERLINE,PROGRESSSTATUS,CREATIONDATETIME_SALESORDER,IPADDRESS,CREATEDATETIME) VALUES $value_itxviewmemo");
+            $insert_itxviewmemo       = sqlsrv_query($con_nowprd, "INSERT INTO itxview_terimaorder(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,DELAY,NO_KK,DEMAND,ORDERLINE,PROGRESSSTATUS,CREATIONDATETIME_SALESORDER,IPADDRESS,CREATEDATETIME) VALUES $value_itxviewmemo");
 
             // --------------------------------------------------------------------------------------------------------------- //
             $tgl1_2     = $_POST['tgl1'];
             $tgl2_2     = $_POST['tgl2'];
             $sqlDB2 = "SELECT DISTINCT * FROM itxview_terimaorder WHERE SUBSTR(CREATIONDATETIME_SALESORDER, 1,10) BETWEEN '$tgl1_2' AND '$tgl2_2' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
-            $stmt   = mysqli_query($con_nowprd,$sqlDB2);
-            while ($rowdb2 = mysqli_fetch_array($stmt)) {
+            $stmt   = sqlsrv_query($con_nowprd,$sqlDB2);
+            while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
         ?>
         <tr>
             <td><?= substr($rowdb2['CREATIONDATETIME_SALESORDER'], 0, 19); ?></td> <!-- CREATE BO -->

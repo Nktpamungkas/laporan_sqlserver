@@ -1,7 +1,7 @@
 <?php
-    header("content-type:application/vnd-ms-excel");
-    header("content-disposition:attachment;filename=After Sales - Memo Penting Sudah kirim.xls");
-    header('Cache-Control: max-age=0');
+    // header("content-type:application/vnd-ms-excel");
+    // header("content-disposition:attachment;filename=After Sales - Memo Penting Sudah kirim.xls");
+    // header('Cache-Control: max-age=0');
 ?>
 <style>
     .str {
@@ -116,12 +116,12 @@
                 }
             }
             if($operation_2){
-                $sqlDB2 = "SELECT DISTINCT * FROM itxview_memopentingppc_aftersales WHERE OPERATIONCODE = '$operation_2' AND ACCESS_TO = 'MEMO W OPR' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
+                $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc_aftersales WHERE OPERATIONCODE = '$operation_2' AND ACCESS_TO = 'MEMO W OPR' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
             }else{
-                $sqlDB2 = "SELECT DISTINCT * FROM itxview_memopentingppc_aftersales WHERE $where_prodorder2 $where_proddemand2 $where_order2 $where_date2 $where_no_po2 $where_article2 $where_langganan2 $where_warna2 $where_datecreatesalesorder2 AND ACCESS_TO = 'MEMO AFTERSALES' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY CREATIONDATETIME_SALESORDER ASC";
+                $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc_aftersales WHERE $where_prodorder2 $where_proddemand2 $where_order2 $where_date2 $where_no_po2 $where_article2 $where_langganan2 $where_warna2 $where_datecreatesalesorder2 AND ACCESS_TO = 'MEMO AFTERSALES' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY CREATIONDATETIME_SALESORDER ASC";
             }
-            $stmt   = mysqli_query($con_nowprd,$sqlDB2);
-            while ($rowdb2 = mysqli_fetch_array($stmt)) {
+            $stmt   = sqlsrv_query($con_nowprd,$sqlDB2);
+            while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
         ?>
         <?php 
             //Deteksi Production Demand Closed Atau Belum
@@ -393,7 +393,7 @@
         <?php if (!empty($row_suratjalan['PROVISIONALCODE'])) : ?>
             <?php if($cek_operation == "MUNCUL" OR $cek_operation == NULL) : ?>
                 <tr>
-                    <td><?= $rowdb2['CREATIONDATETIME_SALESORDER']; ?></td> <!-- TGL BUKA BON ORDER -->
+                    <td><?= date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'd-m-Y'); ?></td> <!-- TGL BUKA BON ORDER -->
                     <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
                     <td><?= $rowdb2['NO_ORDER']; ?></td> <!-- NO. ORDER -->
                     <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->
