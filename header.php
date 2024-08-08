@@ -115,7 +115,12 @@
                                             Laporan pemakaian obat
                                         </a>
                                     </li>
-                                </ul>
+                                    <li class=" ">
+                                        <a href="dye_Summary_pemakaian_obat.php" data-i18n="nav.animations.main">
+                                            Laporan bulanan pemakaian obat
+                                        </a>
+                                    </li>
+                                </ul>c:\xampp\htdocs\laporan\dye_Summary_pemakaian_obat.php
                             </li>
                             <li class="pcoded-hasmenu">
                                 <a href="javascript:void(0)">
