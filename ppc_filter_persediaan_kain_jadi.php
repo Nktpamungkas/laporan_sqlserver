@@ -1,12 +1,13 @@
 <?php
-    if (isset($_POST['cari_tahun'])) {
-        $thn = $_POST['thn'];
-        $lot = $_POST['lot'];
-        header("Location: ppc_persediaan_kain_jadi.php?thn=$thn&lot=$lot");
-    }
+if (isset($_POST['cari_tahun'])) {
+    $thn = $_POST['thn'];
+    $lot = $_POST['lot'];
+    header("Location: ppc_persediaan_kain_jadi.php?thn=$thn&lot=$lot");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>PPC - Persediaan Kain Jadi</title>
     <meta charset="utf-8">
@@ -16,7 +17,7 @@
     <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
-        <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> -->
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> -->
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
@@ -55,7 +56,7 @@
                                                     <?php $years = range(2022, strftime("2030", time())); ?>
                                                     <select name="thn" class="form-control form-control-primary" required>
                                                         <option disabled selected value="">Select Year</option>
-                                                        <?php foreach($years as $year) : ?>
+                                                        <?php foreach ($years as $year) : ?>
                                                             <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
                                                         <?php endforeach; ?>
                                                     </select>

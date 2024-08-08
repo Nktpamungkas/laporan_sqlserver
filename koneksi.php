@@ -7,6 +7,12 @@ $password = "Q?o*]vdjDb#w";
 $db_name = "TICKET";
 $connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
 $conn_sql     = sqlsrv_connect($host, $connInfo);
+$host = "10.0.4.8";
+$username = "sa";
+$password = "Q?o*]vdjDb#w";
+$db_name = "TICKET";
+$connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
+$conn_sql     = sqlsrv_connect($host, $connInfo);
 
 $host = "10.0.4.8";
 $username = "sa";
@@ -14,7 +20,19 @@ $password = "Q?o*]vdjDb#w";
 $db_name = "LA1000_Exchange";
 $connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
 $conn_sql2     = sqlsrv_connect($host, $connInfo);
+$host = "10.0.4.8";
+$username = "sa";
+$password = "Q?o*]vdjDb#w";
+$db_name = "LA1000_Exchange";
+$connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
+$conn_sql2     = sqlsrv_connect($host, $connInfo);
 
+$host = "S-CATS";
+$username = "progm";
+$password = "BW#bbfW";
+$db_name = "TAICHEN_CAMS_LIVE";
+$connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
+$conn_cams     = sqlsrv_connect($host, $connInfo);
 $host = "S-CATS";
 $username = "progm";
 $password = "BW#bbfW";
@@ -41,26 +59,26 @@ $con_dbnow_mkt      = mysqli_connect("10.0.0.10", "dit", "4dm1n", "dbnow_mkt");
 // $con_db_qc          = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_qc");
 // $con_hrd            = mysqli_connect("10.0.0.10", "dit", "4dm1n", "hrd");
 
-$hostSVR19          = "10.0.0.221";
-$usernameSVR19      = "sa";
-$passwordSVR19      = "Ind@taichen2024";
-$nowprd             = "nowprd";
-$dying              = "db_dying";
-$qc                 = "db_qc";
-$lab                = "db_laborat";
-$hrd                = "hrd";
+$hostSVR19 = "10.0.0.221";
+$usernameSVR19 = "sa";
+$passwordSVR19 = "Ind@taichen2024";
+$nowprd = "nowprd";
+$dying = "db_dying";
+$qc = "db_qc";
+$lab = "db_laborat";
+$hrd = "hrd";
 
-$nowprdd            = array("Database" => $nowprd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
-$db_dying           = array("Database" => $dying, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
-$dbLab              = array("Database" => $lab, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
-$db_qc              = array("Database" => $qc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
-$db_hrd             = array("Database" => $hrd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$nowprdd = array("Database" => $nowprd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$db_dying = array("Database" => $dying, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$dbLab = array("Database" => $lab, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$db_qc = array("Database" => $qc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$db_hrd = array("Database" => $hrd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 
-$con_nowprd         = sqlsrv_connect($hostSVR19, $nowprdd);
-$con_db_dyeing      = sqlsrv_connect($hostSVR19, $db_dying);
-$con_db_qc          = sqlsrv_connect($hostSVR19, $db_qc);
-$con_db_lab         = sqlsrv_connect($hostSVR19, $dbLab);
-$con_hrd            = sqlsrv_connect($hostSVR19, $db_hrd);
+$con_nowprd = sqlsrv_connect($hostSVR19, $nowprdd);
+$con_db_dyeing = sqlsrv_connect($hostSVR19, $db_dying);
+$con_db_qc = sqlsrv_connect($hostSVR19, $db_qc);
+$con_db_lab = sqlsrv_connect($hostSVR19, $dbLab);
+$con_hrd = sqlsrv_connect($hostSVR19, $db_hrd);
 
 if ($conn1) {
     // echo "koneksi berhasil";

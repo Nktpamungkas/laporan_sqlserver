@@ -1,10 +1,11 @@
 <?php
-    ini_set("error_reporting", 0);
-    session_start();
-    require_once "koneksi.php";
+ini_set("error_reporting", 0);
+session_start();
+require_once "koneksi.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>PRD - OUTSTANDING KK</title>
     <meta charset="utf-8">
@@ -27,6 +28,7 @@
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
 </head>
 <?php require_once 'header.php'; ?>
+
 <body>
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
@@ -44,25 +46,33 @@
                                             <div class="row">
                                                 <!-- <div class="col-sm-6 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Tanggal Awal:</h4>
-                                                    <input type="datetime-local" name="tgl1" class="form-control" value="<?php if(isset($_POST['submit'])){ echo $_POST['tgl1']; } ?>">
+                                                    <input type="datetime-local" name="tgl1" class="form-control" value="<?php if (isset($_POST['submit'])) {
+                                                                                                                                echo $_POST['tgl1'];
+                                                                                                                            } ?>">
                                                 </div>
                                                 <div class="col-sm-6 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Tanggal Akhir:</h4>
-                                                    <input type="datetime-local" name="tgl2" class="form-control" value="<?php if(isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>">
+                                                    <input type="datetime-local" name="tgl2" class="form-control" value="<?php if (isset($_POST['submit'])) {
+                                                                                                                                echo $_POST['tgl2'];
+                                                                                                                            } ?>">
                                                 </div> -->
                                                 <div class="col-sm-6 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Production Demand:</h4>
-                                                    <input type="text" name="demand" class="form-control" value="<?php if(isset($_POST['submit'])){ echo $_POST['demand']; } ?>">
+                                                    <input type="text" name="demand" class="form-control" value="<?php if (isset($_POST['submit'])) {
+                                                                                                                        echo $_POST['demand'];
+                                                                                                                    } ?>">
                                                 </div>
                                                 <div class="col-sm-6 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Departemen:</h4>
                                                     <select name="dept" class="form-control">
                                                         <option value="">Pilih Dept</option>
                                                         <?php
-                                                            $q_operation = db2_exec($conn1, "SELECT TRIM(OPERATIONGROUPCODE) AS OPERATIONGROUPCODE FROM operation WHERE NOT OPERATIONGROUPCODE IS NULL GROUP BY OPERATIONGROUPCODE ORDER BY OPERATIONGROUPCODE ASC");
+                                                        $q_operation = db2_exec($conn1, "SELECT TRIM(OPERATIONGROUPCODE) AS OPERATIONGROUPCODE FROM operation WHERE NOT OPERATIONGROUPCODE IS NULL GROUP BY OPERATIONGROUPCODE ORDER BY OPERATIONGROUPCODE ASC");
                                                         ?>
-                                                        <?php while($row_operation = db2_fetch_assoc($q_operation)) : ?>
-                                                            <option value="<?= $row_operation['OPERATIONGROUPCODE'] ?>" <?php if($row_operation['OPERATIONGROUPCODE'] == $_POST['dept']) { echo "SELECTED";} ?>>
+                                                        <?php while ($row_operation = db2_fetch_assoc($q_operation)) : ?>
+                                                            <option value="<?= $row_operation['OPERATIONGROUPCODE'] ?>" <?php if ($row_operation['OPERATIONGROUPCODE'] == $_POST['dept']) {
+                                                                                                                            echo "SELECTED";
+                                                                                                                        } ?>>
                                                                 <?= $row_operation['OPERATIONGROUPCODE'] ?>
                                                             </option>
                                                         <?php endwhile; ?>
@@ -74,9 +84,9 @@
                                                 </div>
                                             </div>
                                         </form>
-                                    </div> 
+                                    </div>
                                 </div>
-                                <?php if (isset($_POST['submit']) OR isset($_GET['demand']) OR isset($_GET['prod_order'])) : ?>
+                                <?php if (isset($_POST['submit']) or isset($_GET['demand']) or isset($_GET['prod_order'])) : ?>
                                     <div class="card">
                                         <div class="card-block">
                                             <div class="table-responsive dt-responsive">
@@ -85,7 +95,7 @@
                                                     <thead>
                                                         <tr>
                                                             <?php
-                                                                $dept   = $_POST['dept'];
+                                                            $dept   = $_POST['dept'];
                                                             ?>
                                                             <th style="text-align: center; background: #B97E6F; color: #FCFCFC;" colspan="9">POSISI GEROBAK SEKARANG</th>
                                                             <th style="text-align: center; background: #83D46E; color: Black;" colspan="9">POSISI GEROBAK SEBELUMNYA</th>
@@ -113,14 +123,14 @@
                                                             <th style="text-align: center;">QTY</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody> 
+                                                    <tbody>
                                                         <?php
-                                                            if($_POST['demand']){
-                                                                $where_demand    = "AND p.PRODUCTIONDEMANDCODE = '$_POST[demand]'";
-                                                            }else{
-                                                                $where_demand    = "";
-                                                            }
-                                                            $q_iptip    = db2_exec($conn1, "SELECT 
+                                                        if ($_POST['demand']) {
+                                                            $where_demand    = "AND p.PRODUCTIONDEMANDCODE = '$_POST[demand]'";
+                                                        } else {
+                                                            $where_demand    = "";
+                                                        }
+                                                        $q_iptip    = db2_exec($conn1, "SELECT 
                                                                                                 PRODUCTIONORDERCODE,
                                                                                                 REPLACE(LISTAGG( '`'|| PRODUCTIONDEMANDCODE || '`', ', '), '`', '''')  AS PRODUCTIONDEMANDCODE2,
                                                                                                 LISTAGG(PRODUCTIONDEMANDCODE, ', ')  AS PRODUCTIONDEMANDCODE,
@@ -181,9 +191,9 @@
                                                                                                 B,
                                                                                                 OPERATIONGROUPCODE");
                                                         ?>
-                                                        <?php while($row_iptip = db2_fetch_assoc($q_iptip)) : ?>
+                                                        <?php while ($row_iptip = db2_fetch_assoc($q_iptip)) : ?>
                                                             <?php
-                                                                $q_posisikk     = db2_exec($conn1, "SELECT
+                                                            $q_posisikk     = db2_exec($conn1, "SELECT
                                                                                                         p.STEPNUMBER AS STEPNUMBER,
                                                                                                         TRIM(p.OPERATIONCODE) AS OPERATIONCODE,
                                                                                                         TRIM(o.OPERATIONGROUPCODE) AS DEPT,
@@ -241,54 +251,50 @@
                                                                                                         p.STEPNUMBER
                                                                                                     DESC
                                                                                                     LIMIT 1");
-                                                                $row_posisikk = db2_fetch_assoc($q_posisikk);
+                                                            $row_posisikk = db2_fetch_assoc($q_posisikk);
                                                             ?>
-                                                            <?php if(!empty($row_posisikk)) :?>
-                                                            <tr>
-                                                                <td><?= $row_iptip['ORIGDLVSALORDLINESALORDERCODE'] ?></td>
-                                                                <td><?= $row_iptip['LANGGANAN'] ?></td>
-                                                                <td><?= $row_iptip['STEPNUMBER'] ?></td>
-                                                                <td><?= $row_iptip['HANGER'] ?> - <?= $row_iptip['SUBCODE06'] ?></td>
-                                                                <td><?= $row_iptip['PRODUCTIONORDERCODE'] ?></td>
-                                                                <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_iptip['PRODUCTIONORDERCODE']; ?>"><?= $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
-                                                                <td align="center"><?= $row_iptip['OPERATIONCODE'] ?></td>
-                                                                <td align="center"><?= $row_iptip['OPERATIONGROUPCODE'] ?></td>
-                                                                <td
-                                                                    <?php 
-                                                                        if($row_iptip['STATUS_OPERATION'] == 'Closed'){ 
-                                                                            echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
-                                                                            
-                                                                        }elseif($row_iptip['STATUS_OPERATION'] == 'Progress'){ 
-                                                                            echo 'style="background-color:#41CC11;"'; 
-                                                                        }else{ 
-                                                                            echo 'style="background-color:#CECECE;"'; 
-                                                                        } 
-                                                                    ?>>
-                                                                    <center><?= $row_iptip['STATUS_OPERATION']; ?></center>
-                                                                </td>
+                                                            <?php if (!empty($row_posisikk)) : ?>
+                                                                <tr>
+                                                                    <td><?= $row_iptip['ORIGDLVSALORDLINESALORDERCODE'] ?></td>
+                                                                    <td><?= $row_iptip['LANGGANAN'] ?></td>
+                                                                    <td><?= $row_iptip['STEPNUMBER'] ?></td>
+                                                                    <td><?= $row_iptip['HANGER'] ?> - <?= $row_iptip['SUBCODE06'] ?></td>
+                                                                    <td><?= $row_iptip['PRODUCTIONORDERCODE'] ?></td>
+                                                                    <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_iptip['PRODUCTIONORDERCODE']; ?>"><?= $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
+                                                                    <td align="center"><?= $row_iptip['OPERATIONCODE'] ?></td>
+                                                                    <td align="center"><?= $row_iptip['OPERATIONGROUPCODE'] ?></td>
+                                                                    <td <?php
+                                                                        if ($row_iptip['STATUS_OPERATION'] == 'Closed') {
+                                                                            echo 'style="background-color:#DC526E; color:#F7F7F7;"';
+                                                                        } elseif ($row_iptip['STATUS_OPERATION'] == 'Progress') {
+                                                                            echo 'style="background-color:#41CC11;"';
+                                                                        } else {
+                                                                            echo 'style="background-color:#CECECE;"';
+                                                                        }
+                                                                        ?>>
+                                                                        <center><?= $row_iptip['STATUS_OPERATION']; ?></center>
+                                                                    </td>
 
-                                                                <td align="center"><?= $row_posisikk['OPERATIONCODE'] ?></td>
-                                                                <td align="center"><?= $row_posisikk['DEPT'] ?></td>
-                                                                <td
-                                                                    <?php 
-                                                                        if($row_posisikk['STATUS_OPERATION'] == 'Closed'){ 
-                                                                            echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
-                                                                            
-                                                                        }elseif($row_posisikk['STATUS_OPERATION'] == 'Progress'){ 
-                                                                            echo 'style="background-color:#41CC11;"'; 
-                                                                        }else{ 
-                                                                            echo 'style="background-color:#CECECE;"'; 
-                                                                        } 
-                                                                    ?>>
-                                                                    <center><?= $row_posisikk['STATUS_OPERATION']; ?></center>
-                                                                </td>
-                                                                <td><?= $row_posisikk['MULAI'] ?></td>
-                                                                <td><?= $row_posisikk['SELESAI'] ?></td>
-                                                                <td><?= $row_posisikk['OP1'] ?></td>
-                                                                <td><?= $row_posisikk['OP2'] ?></td>
-                                                                <td><?= $row_posisikk['GEROBAK'] ?></td>
-                                                                <td>
-                                                                    <?php
+                                                                    <td align="center"><?= $row_posisikk['OPERATIONCODE'] ?></td>
+                                                                    <td align="center"><?= $row_posisikk['DEPT'] ?></td>
+                                                                    <td <?php
+                                                                        if ($row_posisikk['STATUS_OPERATION'] == 'Closed') {
+                                                                            echo 'style="background-color:#DC526E; color:#F7F7F7;"';
+                                                                        } elseif ($row_posisikk['STATUS_OPERATION'] == 'Progress') {
+                                                                            echo 'style="background-color:#41CC11;"';
+                                                                        } else {
+                                                                            echo 'style="background-color:#CECECE;"';
+                                                                        }
+                                                                        ?>>
+                                                                        <center><?= $row_posisikk['STATUS_OPERATION']; ?></center>
+                                                                    </td>
+                                                                    <td><?= $row_posisikk['MULAI'] ?></td>
+                                                                    <td><?= $row_posisikk['SELESAI'] ?></td>
+                                                                    <td><?= $row_posisikk['OP1'] ?></td>
+                                                                    <td><?= $row_posisikk['OP2'] ?></td>
+                                                                    <td><?= $row_posisikk['GEROBAK'] ?></td>
+                                                                    <td>
+                                                                        <?php
                                                                         $sql_qtyorder   = db2_exec($conn1, "SELECT DISTINCT
                                                                                                                     GROUPSTEPNUMBER,
                                                                                                                     INITIALUSERPRIMARYQUANTITY AS QTY_ORDER,
@@ -301,10 +307,10 @@
                                                                                                                 ORDER BY
                                                                                                                     GROUPSTEPNUMBER ASC LIMIT 1");
                                                                         $dt_qtyorder    = db2_fetch_assoc($sql_qtyorder);
-                                                                    ?>
-                                                                    <?= $dt_qtyorder['QTY_ORDER']; ?>
-                                                                </td>
-                                                            </tr>
+                                                                        ?>
+                                                                        <?= $dt_qtyorder['QTY_ORDER']; ?>
+                                                                    </td>
+                                                                </tr>
                                                             <?php endif; ?>
                                                         <?php endwhile; ?>
                                                     </tbody>
@@ -352,4 +358,5 @@
     <script src="files\assets\js\jquery.mCustomScrollbar.concat.min.js"></script>
     <script type="text/javascript" src="files\assets\js\script.js"></script>
 </body>
+
 </html>
