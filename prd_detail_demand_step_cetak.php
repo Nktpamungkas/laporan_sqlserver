@@ -47,11 +47,15 @@
                                         <div>
                                             <center><h6><b>DETAIL DEMAND STEP</b></h6></center>
                                             <center>
-                                            <table width="100%" border="0" style="font-family: Microsoft Sans Serif; font-size: 10px;">
-                                                <?php
-                                                    require_once "koneksi.php";
+                                            <?php
+                                                require_once "koneksi.php";
                                                     $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$_GET[demand]'");
                                                     $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
+                                                
+                                                if($d_ITXVIEWKK != null) {
+                                            ?>
+                                            <table width="100%" border="0" style="font-family: Microsoft Sans Serif; font-size: 10px;">
+                                                <?php
 
                                                     $sql_pelanggan_buyer 	= db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$d_ITXVIEWKK[ORDPRNCUSTOMERSUPPLIERCODE]' 
                                                                                                                                     AND CODE = '$d_ITXVIEWKK[PROJECTCODE]'");
@@ -162,7 +166,7 @@
                                                         require_once "koneksi.php"; 
                                                         $sqlDB2 = "SELECT DISTINCT
                                                                         p.WORKCENTERCODE,
-                                                                        p.OPERATIONCODE,
+                                                                        TRIM(p.OPERATIONCODE) AS OPERATIONCODE,
                                                                         o.LONGDESCRIPTION,
                                                                         iptip.MULAI,
                                                                         iptop.SELESAI,
@@ -176,7 +180,7 @@
                                                                     LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                     WHERE
                                                                         p.PRODUCTIONORDERCODE  = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
-                                                                    ORDER BY p.STEPNUMBER ASC";
+                                                                    ORDER BY p.GROUPSTEPNUMBER ASC";
                                                         $stmt = db2_exec($conn1,$sqlDB2);
                                                         while ($rowdb2 = db2_fetch_assoc($stmt)) {
                                                     ?>
@@ -186,11 +190,11 @@
                                                         <td style="vertical-align: text-top;"><?= $rowdb2['LONGDESCRIPTION']; ?></td>
                                                         <td style="vertical-align: text-top; text-align: center;">
                                                             <?php 
-                                                                $cek_cache  = mysqli_query($con_nowprd, "SELECT * FROM posisikk_cache_in 
+                                                                $cek_cache  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.posisikk_cache_in 
                                                                                                                 WHERE productionorder= '$rowdb2[PRODUCTIONORDERCODE]' 
                                                                                                                 AND productiondemand = '$rowdb2[PRODUCTIONDEMANDCODE]' 
                                                                                                                 AND stepnumber = '$rowdb2[STEPNUMBER]'");
-                                                                $d_cache    = mysqli_fetch_assoc($cek_cache);
+                                                                $d_cache    = sqlsrv_fetch_array($cek_cache, SQLSRV_FETCH_ASSOC);
                                                                 $cache_MULAI    = $d_cache['tanggal_in'];
                                                             ?>
                                                             <?php if($rowdb2['MULAI']) : ?>
@@ -201,11 +205,11 @@
                                                         </td>
                                                         <td style="vertical-align: text-top; text-align: center;">
                                                             <?php 
-                                                                $cek_cache  = mysqli_query($con_nowprd, "SELECT * FROM posisikk_cache_out 
+                                                                $cek_cache  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.posisikk_cache_out 
                                                                                                                 WHERE productionorder= '$rowdb2[PRODUCTIONORDERCODE]' 
                                                                                                                 AND productiondemand = '$rowdb2[PRODUCTIONDEMANDCODE]' 
                                                                                                                 AND stepnumber = '$rowdb2[STEPNUMBER]'");
-                                                                $d_cache    = mysqli_fetch_assoc($cek_cache);
+                                                                $d_cache    = sqlsrv_fetch_array($cek_cache, SQLSRV_FETCH_ASSOC);
                                                                 $cache_SELESAI    = $d_cache['tanggal_out'];
                                                             ?>
                                                             <?php if($rowdb2['SELESAI']) : ?>
@@ -215,7 +219,7 @@
                                                             <?php endif; ?>
                                                         </td>
                                                         <?php
-                                                            $q_QA_DATA  = mysqli_query($con_nowprd, "SELECT * FROM ITXVIEW_DETAIL_QA_DATA 
+                                                            $q_QA_DATA  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.ITXVIEW_DETAIL_QA_DATA 
                                                                                                         WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
                                                                                                         AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                         AND WORKCENTERCODE = '$rowdb2[WORKCENTERCODE]' 
@@ -224,7 +228,7 @@
                                                                                                         ORDER BY LINE ASC");
                                                         ?>
                                                         <td style="text-align: left;">
-                                                        <?php while ($d_QA_DATA = mysqli_fetch_array($q_QA_DATA)) : ?>
+                                                        <?php while ($d_QA_DATA = sqlsrv_fetch_array($q_QA_DATA, SQLSRV_FETCH_ASSOC)) : ?>
                                                             <?= $d_QA_DATA['LINE'].' : '.$d_QA_DATA['LONGDESCRIPTION'].' = '.$d_QA_DATA['VALUEQUANTITY'].'<br>'; ?> 
                                                         <?php endwhile; ?>
                                                         </td>
@@ -232,6 +236,7 @@
                                                     <?php } ?>
                                                 </tbody>
                                             </table>
+                                            <?php } ?>
                                         </div>
                                     </div>
                                 </div>
