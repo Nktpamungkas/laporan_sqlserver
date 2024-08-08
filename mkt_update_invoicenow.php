@@ -46,16 +46,16 @@
                                                 FROM 
                                                     ITXVIEW_INVOICE_NOINVOICE
                                                 $where");
-        while ($row_invoicenow = db2_fetch_assoc($q_cekinvoice_now)) {
+        while ($row_invoicenow = db2_fetch_array($q_cekinvoice_now, SQLSRV_FETCH_ASSOC)) {
             // echo $row_invoicenow['INVOICE'].'<br>';
-            $cek_invoice    = mysqli_query($con_invoice, "SELECT count(*) AS jumlah FROM new_invoice_normal_now WHERE invoice_normal = '$row_invoicenow[INVOICE]'");
-            $row_invoice    = mysqli_fetch_assoc($cek_invoice);
+            $cek_invoice    = sqlsrv_query($con_invoice, "SELECT count(*) AS jumlah FROM invoice.new_invoice_normal_now WHERE invoice_normal = '$row_invoicenow[INVOICE]'");
+            $row_invoice    = sqlsrv_fetch_array($cek_invoice, SQLSRV_FETCH_ASSOC);
             if($row_invoice['jumlah'] >= 1){
-                $exec_updateinvoice    = mysqli_query($con_invoice, "UPDATE new_invoice_normal_now
-                                                                        SET `date` = '$row_invoicenow[TGL_INV]',
+                $exec_updateinvoice    = sqlsrv_query($con_invoice, "UPDATE invoice.new_invoice_normal_now
+                                                                        SET [date] = '$row_invoicenow[TGL_INV]',
                                                                             due = '$row_invoicenow[DUE]',
                                                                             terms = '$row_invoicenow[PAYMENT_TERMS]',
-                                                                            `order` = '$row_invoicenow[NO_ORDER]',
+                                                                            order = '$row_invoicenow[NO_ORDER]',
                                                                             kodebep = '$row_invoicenow[KODE_BEP]',
                                                                             namabep = '$row_invoicenow[NAMA_BEP]',
                                                                             kodecus = '$row_invoicenow[KODE_CUS]',
@@ -79,12 +79,12 @@
                                                                             AND statuspayment = ''");
                 
             }else{
-                $exec_insertinvoice     = mysqli_query($con_invoice, "INSERT INTO new_invoice_normal_now(invoice_normal,
-                                                                                                            `date`,
+                $exec_insertinvoice     = sqlsrv_query($con_invoice, "INSERT INTO invoice.new_invoice_normal_now(invoice_normal,
+                                                                                                            [date],
                                                                                                             due,
                                                                                                             terms,
                                                                                                             template,
-                                                                                                            `order`,
+                                                                                                            order,
                                                                                                             kodebep,
                                                                                                             namabep,
                                                                                                             kodecus,

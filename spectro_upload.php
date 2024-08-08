@@ -2,8 +2,9 @@
 ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
-sqlsrv_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-sqlsrv_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc
+WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -652,7 +653,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = 
                                                     $statusy = "Gagal";
                                                 }
 
-                                                $sql = "INSERT INTO upload_spectro (batch_name,whiteness,tint,yellowness,creationdate,ipaddress,statusheader,statuswhiteness,statustint,statusyellowness) VALUES ('$column1', '$column2', '$column3', '$column4', '$column5','$column6','$statusheader','$statusw','$statust','$statusy')";
+                                                $sql = "INSERT INTO nowprd.upload_spectro (batch_name,whiteness,tint,yellowness,creationdate,ipaddress,statusheader,statuswhiteness,statustint,statusyellowness) VALUES ('$column1', '$column2', '$column3', '$column4', '$column5','$column6','$statusheader','$statusw','$statust','$statusy')";
                                                 $con_nowprd->query($sql);
                                             }
                                         }

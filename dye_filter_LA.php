@@ -64,7 +64,7 @@
                                     <?php if($_SERVER['REMOTE_ADDR'] == '10.0.5.127') : ?> <!-- IP MBA ANTIE LABORAT -->
                                     <?php else : ?>
                                     <?php
-                                        // itxviewresep
+                                        // itxviewresep db2
                                         $prod_order     = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
                                         $itxviewresep              = db2_exec($conn1, "SELECT * FROM ITXVIEWRESEP WHERE PRODUCTIONORDERCODE = '$prod_order'");
                                         while ($row_itxviewresep   = db2_fetch_assoc($itxviewresep)) {

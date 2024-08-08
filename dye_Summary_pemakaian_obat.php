@@ -3,19 +3,6 @@
     session_start();
     require_once "koneksi.php";
 ?>
-<?php
-// Mulai session
-session_start();
-
-// Set nilai-nilai $_POST ke dalam session saat formulir disubmit
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $_SESSION['tgl'] = $_POST['tgl'];
-    $_SESSION['time'] = $_POST['time'];
-    $_SESSION['tgl2'] = $_POST['tgl2'];
-    $_SESSION['time2'] = $_POST['time2'];
-    $_SESSION['warehouse'] = $_POST['warehouse'];
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
+     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> --> 
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
@@ -39,7 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\extensions\buttons\css\buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">    
+    <!-- <script type="text/javascript" src="files\bower_components\jquery\js\jquery-3.6.0.min.js"></script> 
+    <script type="text/javascript" src="files\bower_components\jquery\js\jquery-3.6.0.js"></script>  -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <?php require_once 'header.php'; ?>
 <body>
@@ -110,7 +101,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 <h4 class="sub-title">&nbsp;</h4>
                                                     <button type="submit" name="submit" class="btn btn-primary btn-sm"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
                                                         <?php if (isset($_POST['submit'])) { ?>
-                                                            <a href="print_laporan pemakaian_obat2.php" class="btn btn-info btn-sm"><i class="icofont icofont-print"></i>Download Test</a>
+                                                            <!-- <a href="print_laporan pemakaian_obat2.php" class="btn btn-info btn-sm"><i class="icofont icofont-print"></i>Download Test</a> -->
+                                                            <!-- <button id = "downloadBtn" class="btn btn-success">Export Table Data To Excel File</button> -->
                                                         <?php } ?>
                                                 </div>
                                             </div>
@@ -122,13 +114,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <div class="col-12">
                                             <div class="card">
                                                 <div class="card-header table-card-header">
-                                                    <h5>LAPORAN HARIAN PEMAKAIAN OBAT GUDANG KIMIA</h5>
+                                                    <h5>LAPORAN BULANAN PEMAKAIAN OBAT GUDANG KIMIA</h5>
                                                 </div>
                                                 <div class="card-block">
                                                     <div class="dt-responsive table-responsive">
-                                                        <table id="basic-btn" class="table compact table-striped table-bordered nowrap">
+                                                        <table id="summary-table" name = "summary-table" class="table compact table-striped table-bordered nowrap">
+                                                            <thead>                                                           
+                                                            </thead>
+                                                            <tbody></tbody>
+                                                        </table>                                                    
+                                                    </div>
+                                                </div>
+                                                <div class="card-block" hidden>
+                                                    <div class="dt-responsive table-responsive">
+                                                        <table id="basic-btn" class="table compact table-striped table-bordered nowrap" >
                                                             <thead>
                                                                 <tr>
+                                                                    <!-- <th>No</th> -->
                                                                     <th>No. Group Line</th>
                                                                     <th>Tanggal & Jam</th>
                                                                     <th>Kode Obat</th>
@@ -154,6 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                                                                     TIMESTAMP(s.TRANSACTIONDATE, s.TRANSACTIONTIME) AS TGL_WAKTU,
                                                                                                                     CASE
                                                                                                                         WHEN s.PRODUCTIONORDERCODE IS NULL THEN COALESCE(s.ORDERCODE, s.LOTCODE)
+                                                                                                                        WHEN s.PRODUCTIONORDERCODE IS NULL AND s.LOGICALWAREHOUSECODE = 'M101' THEN COALESCE(s.LOTCODE,s.ORDERCODE)
                                                                                                                         ELSE s.PRODUCTIONORDERCODE
                                                                                                                     END AS PRODUCTIONORDERCODE,
                                                                                                                     s.ORDERLINE,
@@ -235,6 +238,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                         $row_reservation    = db2_fetch_assoc($db_reservation);
                                                                 ?>
                                                                 <tr>
+                                                                    <!-- <td><?= $no++; ?></td> -->
                                                                     <td><?php if($row_reservation['NO_RESEP']){ echo $row_reservation['NO_RESEP']; } else { echo $row_stocktransaction['PRODUCTIONORDERCODE']; } ?></td>
                                                                     <td><?= $row_stocktransaction['TGL']; ?></td>
                                                                     <td><?= $row_stocktransaction['KODE_OBAT']; ?></td>
@@ -272,6 +276,119 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            var summaryData = {};
+
+            // Loop melalui setiap baris dalam tabel
+            $('#basic-btn tbody tr').each(function() {
+                // Ambil data dari kolom yang diperlukan
+                var kodeObat = $(this).find('td:nth-child(3)').text().trim();
+                var qtyAktualStr = $(this).find('td:nth-child(5)').text().trim().replace(',', '');
+                var qtyAktual = parseFloat(qtyAktualStr);
+                var keterangan = $(this).find('td:nth-child(7)').text().trim();
+                var namaObat = $(this).find('td:nth-child(8)').text().trim();
+                var satuan = $(this).find('td:nth-child(6)').text().trim();
+                var destinationWarehouseCode = $(this).find('td:nth-child(9)').text().trim();
+                var SafetyStokStr = $(this).find('td:nth-child(10)').text().trim();
+                var BukaPostr = $(this).find('td:nth-child(11)').text().trim().replace(',', '');
+                var BukaPo = parseFloat(BukaPostr);
+                var StockAwalstr = $(this).find('td:nth-child(12)').text().trim().replace(',', '');
+                var TStockAwal = parseFloat(StockAwalstr);
+                if (satuan.toLowerCase() === 'kg') {
+                    qtyAktual *= 1000;
+                }
+                var StockAwal = TStockAwal *= 1000;
+                qtyAktual = parseFloat(qtyAktual.toFixed(2));
+                var SafetyStok = parseFloat(SafetyStokStr);
+                SafetyStok = parseFloat(SafetyStok.toFixed(2));
+
+                if (!summaryData[kodeObat]) {
+                    summaryData[kodeObat] = {
+                        'Kode Obat': kodeObat,
+                        'Nama Obat': namaObat,
+                        'Stok Aman': 0,
+                        'Buka PO': 0,
+                        'Stock Awal': 0,
+                        'Masuk': 0,
+                        'Normal': 0,
+                        'Tambah Obat': 0,
+                        'Perbaikan': 0,
+                        'finishing': 0,
+                        'printing': 0,
+                        'dyeing': 0,
+                        'Total Pemakaian': 0,
+                        'Sisa Stok': 0,
+                        'Selisih': 0,
+                        'Sisa PO': 0,
+                        'Stok Catatan GK': '-',
+                        'Status': '-'
+                    };
+                }
+
+                if (keterangan.includes('Tambah Obat')) {
+                    summaryData[kodeObat]['Tambah Obat'] += qtyAktual;
+                    summaryData[kodeObat]['Tambah Obat'] = parseFloat(summaryData[kodeObat]['Tambah Obat'].toFixed(2));
+                } else if (keterangan.includes('Perbaikan')) {
+                    summaryData[kodeObat]['Perbaikan'] += qtyAktual;
+                    summaryData[kodeObat]['Perbaikan'] = parseFloat(summaryData[kodeObat]['Perbaikan'].toFixed(2));
+                } else if (keterangan.includes('finishing')) {
+                    summaryData[kodeObat]['finishing'] += qtyAktual;
+                    summaryData[kodeObat]['finishing'] = parseFloat(summaryData[kodeObat]['finishing'].toFixed(2));
+                } else if (keterangan.includes('printing') && destinationWarehouseCode === 'M516') {
+                    summaryData[kodeObat]['printing'] += qtyAktual;
+                    summaryData[kodeObat]['printing'] = parseFloat(summaryData[kodeObat]['printing'].toFixed(2));
+                } else if (keterangan.includes('dyeing') && destinationWarehouseCode === 'P101') {
+                    summaryData[kodeObat]['dyeing'] += qtyAktual;
+                    summaryData[kodeObat]['dyeing'] = parseFloat(summaryData[kodeObat]['dyeing'].toFixed(2));
+                } else {
+                    summaryData[kodeObat]['Normal'] += qtyAktual;
+                    summaryData[kodeObat]['Normal'] = parseFloat(summaryData[kodeObat]['Normal'].toFixed(2));
+                }
+            });
+
+            for (var key in summaryData) {
+                var totalPemakaian = summaryData[key]['Tambah Obat'] + summaryData[key]['Perbaikan'] + summaryData[key]['Normal'] + summaryData[key]['finishing'] + summaryData[key]['printing'] + summaryData[key]['dyeing'];
+                totalPemakaian = parseFloat(totalPemakaian.toFixed(2));
+
+                summaryData[key]['Total Pemakaian'] = totalPemakaian;
+            }
+
+            var summaryArray = Object.values(summaryData);
+
+            var tableHTML = '<table id="summary-table" class="table compact table-striped table-bordered nowrap"><thead><tr><th rowspan="2" style="text-align: center;">KODE OBAT ERP NOW</th><th rowspan="2" style="text-align: center;">NAMA DAN JENIS BAHAN KIMIA/DYESTUFF</th><th rowspan="2" style="text-align: center;">STOCK AWAL  (Gr)</th><th rowspan="2" style="text-align: center;">MASUK  (Gr)</th><th colspan="6" style="text-align: center;">PEMAKAIAN</th><th rowspan="2" style="text-align: center;">TOTAL PEMAKAIAN (Gr)</th><th rowspan="2" style="text-align: center;">SISA STOK (Gr)</th><th rowspan="2" style="text-align: center;">STOK AMAN</th><th rowspan="2" style="text-align: center;">STATUS</th><th rowspan="2" style="text-align: center;">BUKA PO</th><th rowspan="2" style="text-align: center;">SISA PO</th><th rowspan="2" style="text-align: center;">STOK CATATAN GK</th><th rowspan="2" style="text-align: center;">SELISIH</th></tr><tr><th style="text-align: center;">Normal</th><th style="text-align: center;">Tambah Obat</th><th style="text-align: center;">Perbaikan (Gr)</th><th style="text-align: center;">Finishing</th><th style="text-align: center;">Printing</th><th style="text-align: center;">Yarn Dye</th></tr></thead><tbody>';
+
+            summaryArray.forEach(function(entry) {
+                tableHTML += '<tr><td>' + entry['Kode Obat'] + '</td><td>' + entry['Nama Obat'] + '</td><td>' + entry['Stock Awal'] + '</td><td>' + entry['Masuk'] + '</td><td>' + entry['Normal'] + '</td><td>' + entry['Tambah Obat'] + '</td><td>' + entry['Perbaikan'] + '</td><td>' + entry['finishing'] + '</td><td>' + entry['printing'] + '</td><td>' + entry['dyeing'] + '</td><td>' + entry['Total Pemakaian'] + '</td><td>' + entry['Sisa Stok'] + '</td><td>' + entry['Stok Aman'] + '</td><td>' + entry['Status'] + '</td><td>' + entry['Buka PO'] + '</td><td>' + entry['Sisa PO'] + '</td><td>' + entry['Stok Catatan GK'] + '</td><td>' + entry['Selisih'] + '</td></tr>';
+            });
+
+            tableHTML += '</tbody></table>';
+
+            $('#summary-table').html(tableHTML);
+
+            // Inisialisasi DataTable setelah tabel baru dihasilkan
+            $('#summary-table').DataTable();
+
+            var downloadButton = $('<button class="btn btn-primary btn-sm"><i class="icofont-download">Download Summary Data</i></button>');
+            downloadButton.on('click', function() {
+                var csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "KODE OBAT ERP NOW,NAMA DAN JENIS BAHAN KIMIA/DYESTUFF,Stock Awal (Gr),Masuk (Gr),Normal,Tambah Obat,Perbaikan (Gr),Finishing,Printing,Yarn Dye,Total Pemakaian (Gr),Sisa Stok (Gr),STOK AMAN,STATUS,BUKA PO,SISA PO,STOK CATATAN GK,SELISIH\n";
+
+                summaryArray.forEach(function(entry) {
+                    csvContent += entry['Kode Obat'] + "," + entry['Nama Obat'] + "," + entry['Stock Awal'] + "," + entry['Masuk'] + "," + entry['Normal'] + "," + entry['Tambah Obat'] + "," + entry['Perbaikan'] + "," + entry['finishing'] + ","+ entry['printing'] + ","+ entry['dyeing'] + ","+ entry['Total Pemakaian'] + "," + entry['Sisa Stok'] +"," + entry['Stok Aman'] +"," + entry['Status'] + "," + entry['Buka PO'] +"\n";
+                });
+
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "DYE-Laporan Pemakaian Obat.csv");
+                document.body.appendChild(link);
+                link.click();
+            });
+
+            $('#summary-table').before(downloadButton);
+        });
+    </script>
     <script type="text/javascript" src="files\bower_components\jquery\js\jquery.min.js"></script>
     <script type="text/javascript" src="files\bower_components\jquery-ui\js\jquery-ui.min.js"></script>
     <script type="text/javascript" src="files\bower_components\popper.js\js\popper.min.js"></script>
@@ -303,5 +420,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="files\assets\js\menu\menu-hori-fixed.js"></script>
     <script src="files\assets\js\jquery.mCustomScrollbar.concat.min.js"></script>
     <script type="text/javascript" src="files\assets\js\script.js"></script>
+    <!-- <script>
+$(document).ready(function() {
+    // Inisialisasi DataTables
+    $('#tbl_sum').DataTable();
+});
+</script> -->
+<script>
+let table = new DataTable('#tbl_sum') ;
+</script>
 </body>
 </html>

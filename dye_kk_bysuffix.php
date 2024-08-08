@@ -118,7 +118,7 @@
                                                                                                         ORDER BY p.GROUPSTEPNUMBER ASC LIMIT 1");
                                                                 $d_StatusTerakhir = db2_fetch_assoc($q_StatusTerakhir);
                                                             ?>
-                                                            <td><?= $d_StatusTerakhir['LONGDESCRIPTION']; ?></td> <!--  STATUS TERAKHIR -->
+                                                            <td><?= $d_StatusTerakhir['LONGDESCRIPTION']; ?></td> <!--  STATUS TERAKHIR  -->
                                                             <td><?= $row_prod['QTY_BAGIKAIN']; ?></td>
                                                             <td><?= $row_prod['SUBCODE01']; ?></td>
                                                             <td><?= $row_prod['SUFFIXCODE']; ?></td>
