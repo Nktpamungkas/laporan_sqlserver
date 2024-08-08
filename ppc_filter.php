@@ -2,8 +2,8 @@
 ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
-mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE());");
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -331,7 +331,7 @@ mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = 
                                                                 . "'" . 'MEMO' . "')";
                                                         }
                                                         $value_itxviewmemo        = implode(',', $r_itxviewmemo);
-                                                        $insert_itxviewmemo       = mysqli_query($con_nowprd, "INSERT INTO itxview_memopentingppc(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,ARTICLE_GROUP,ARTICLE_CODE,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,`DELAY`,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
+                                                        $insert_itxviewmemo       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_memopentingppc(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,ARTICLE_GROUP,ARTICLE_CODE,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,DELAY,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
 
                                                         // --------------------------------------------------------------------------------------------------------------- //
                                                         $prod_order_2     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
@@ -373,9 +373,9 @@ mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = 
                                                         } else {
                                                             $where_article2          = "";
                                                         }
-                                                        $sqlDB2 = "SELECT DISTINCT * FROM itxview_memopentingppc WHERE $where_prodorder2 $where_proddemand2 $where_order2 $where_date2 $where_no_po2 $where_article2 AND ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
-                                                        $stmt   = mysqli_query($con_nowprd, $sqlDB2);
-                                                        while ($rowdb2 = mysqli_fetch_array($stmt)) {
+                                                        $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE $where_prodorder2 $where_proddemand2 $where_order2 $where_date2 $where_no_po2 $where_article2 AND ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
+                                                        $stmt   = sqlsrv_query($con_nowprd, $sqlDB2);
+                                                        while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
                                                         ?>
                                                             <?php
                                                             //Deteksi Production Demand Closed Atau Belum
@@ -847,13 +847,13 @@ mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = 
                                                                     <?php
                                                                     // if($status_operation == 'Progress'){ // KALAU PROGRESS STATUSNYA PROGRESS
                                                                     if ($kode_dept == 'DYE') {
-                                                                        $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT * FROM `tbl_schedule` WHERE nokk = '$rowdb2[NO_KK]' AND NOT `status` = 'selesai'");
-                                                                        $data_schedule_dye  = mysqli_fetch_assoc($q_schedule_dye);
+                                                                        $q_schedule_dye     = sqlsrv_query($con_db_dyeing, "SELECT * FROM db_dying.tbl_schedule WHERE nokk = '$rowdb2[NO_KK]' AND NOT [status] = 'selesai'");
+                                                                        $data_schedule_dye  = sqlsrv_fetch_array($q_schedule_dye, SQLSRV_FETCH_ASSOC);
                                                                         $nomesin            = $data_schedule_dye['no_mesin'];
                                                                         $nourut             = $data_schedule_dye['no_urut'];
                                                                     } elseif ($kode_dept == 'FIN') {
-                                                                        $schedule_fin       = mysqli_query($con_db_finishing, "SELECT * FROM `tbl_schedule_new` WHERE nokk = '$rowdb2[NO_KK]' AND nodemand = '$rowdb2[DEMAND]' ORDER BY id DESC LIMIT 1");
-                                                                        $data_schedule_fin  = mysqli_fetch_assoc($schedule_fin);
+                                                                        $schedule_fin       = sqlsrv_query($con_db_finishing, "SELECT TOP 1 * FROM db_finishing.tbl_schedule_new WHERE nokk = '$rowdb2[NO_KK]' AND nodemand = '$rowdb2[DEMAND]' ORDER BY id DESC");
+                                                                        $data_schedule_fin  = sqlsrv_fetch_array($schedule_fin, SQLSRV_FETCH_ASSOC);
                                                                         $nomesin            = $data_schedule_fin['no_mesin'] . '-' . substr(TRIM($data_schedule_fin['no_mesin']), -5, 2) . substr(TRIM($data_schedule_fin['no_mesin']), -2);
                                                                         $nourut             = $data_schedule_fin['nourut'];
                                                                     } else {
@@ -891,8 +891,8 @@ mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = 
                                                                     ?>
                                                                 </td> <!-- TOTAL HARI BAGI KAIN -->
                                                                 <td><?= $rowdb2['LOT']; ?></td> <!-- LOT -->
-                                                                <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
-                                                                <td>`<?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
+                                                                <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>"><?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
+                                                                <td><?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
                                                                 <td><?= $d_orig_pd_code['ORIGINALPDCODE']; ?></td> <!-- ORIGINAL PD CODE -->
                                                                 <td>
                                                                     <!-- <a href="http://online.indotaichen.com/laporan/ppc_catatan_po_greige.php?" target="_blank">Detail</a> -->
@@ -935,7 +935,7 @@ mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc WHERE IPADDRESS = 
                                     ini_set("error_reporting", 1);
                                     session_start();
                                     require_once "koneksi.php";
-                                    mysqli_query($con_nowprd, "DELETE FROM itxview_memopentingppc");
+                                    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc");
                                     header("Location: ppc_filter.php");
                                     ?>
                                 <?php elseif (isset($_POST['submit_excel'])) : ?>
