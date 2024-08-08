@@ -75,7 +75,7 @@ $db_dying = array("Database" => $dying, "UID" => $usernameSVR19, "PWD" => $passw
 $dbLab = array("Database" => $lab, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 $db_qc = array("Database" => $qc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 $db_hrd = array("Database" => $hrd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
-$db_invoice = array("Database" => $invoice, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+// $db_invoice = array("Database" => $invoice, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 $db_finishing = array("Database" => $finishing, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 
 $con_nowprd = sqlsrv_connect($hostSVR19, $nowprdd);
@@ -83,7 +83,7 @@ $con_db_dyeing = sqlsrv_connect($hostSVR19, $db_dying);
 $con_db_qc = sqlsrv_connect($hostSVR19, $db_qc);
 $con_db_lab = sqlsrv_connect($hostSVR19, $dbLab);
 $con_hrd = sqlsrv_connect($hostSVR19, $db_hrd);
-$con_invoice = sqlsrv_connect($hostSVR19, $db_invoice);
+// $con_invoice = sqlsrv_connect($hostSVR19, $db_invoice);
 $con_finishing = sqlsrv_connect($hostSVR19, $db_finishing);
 
 if ($conn1) {
@@ -112,10 +112,10 @@ if ($con_hrd) {
 } else {
     exit("SQLSVR19 Connection failed to con_hrd");
 }
-if ($con_invoice) {
-} else {
-    exit("SQLSVR19 Connection failed to con_invoice");
-}
+// if ($con_invoice) {
+// } else {
+//     exit("SQLSVR19 Connection failed to con_invoice");
+// }
 if ($con_finishing) {
 } else {
     exit("SQLSVR19 Connection failed to con_finishing");
