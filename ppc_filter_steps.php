@@ -1,46 +1,49 @@
-<?php 
-    ini_set("error_reporting", 0);
-    session_start();
-    require_once "koneksi.php";
-    mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3 WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3 WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
-    mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1 WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1 WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
-    if($_GET['demand']){
-        $demand     = $_GET['demand'];
-    }else{
-        $demand     = $_POST['demand'];
-    }
+<?php
+ini_set("error_reporting", 0);
+session_start();
+require_once "koneksi.php";
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3
+WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3 WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 
-    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
-    $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
-    
-    if($_GET['prod_order']){
-        $prod_order     = $_GET['prod_order'];
-    }elseif($_POST['prod_order']) {
-        $prod_order     = $_POST['prod_order'];
-    }else{
-        $prod_order     = $d_ITXVIEWKK['PRODUCTIONORDERCODE'];
-    }
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_cnp1
+WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_cnp1 WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
+if ($_GET['demand']) {
+    $demand     = $_GET['demand'];
+} else {
+    $demand     = $_POST['demand'];
+}
 
-    if(isset($_POST['simpanin_catch'])){
-        $productionorder    = $_POST['productionorder'];
-        $productiondemand   = $_POST['productiondemand'];
-        $stepnumber         = $_POST['stepnumber'];
-        $tanggal_proses_in  = $_POST['tanggal_proses_in'];
-        $operation          = $_POST['operation'];
-        $longdescription    = $_POST['longdescription'];
-        $status             = $_POST['status'];
-        $ipaddress          = $_POST['ipaddress'];
-        $createdatetime     = $_POST['createdatetime'];
+$q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+$d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
 
-        $simpan_cache_in    = mysqli_query($con_nowprd, "INSERT INTO posisikk_cache_in(productionorder,
+if ($_GET['prod_order']) {
+    $prod_order     = $_GET['prod_order'];
+} elseif ($_POST['prod_order']) {
+    $prod_order     = $_POST['prod_order'];
+} else {
+    $prod_order     = $d_ITXVIEWKK['PRODUCTIONORDERCODE'];
+}
+
+if (isset($_POST['simpanin_catch'])) {
+    $productionorder    = $_POST['productionorder'];
+    $productiondemand   = $_POST['productiondemand'];
+    $stepnumber         = $_POST['stepnumber'];
+    $tanggal_proses_in  = $_POST['tanggal_proses_in'];
+    $operation          = $_POST['operation'];
+    $longdescription    = $_POST['longdescription'];
+    $status             = $_POST['status'];
+    $ipaddress          = $_POST['ipaddress'];
+    $createdatetime     = $_POST['createdatetime'];
+
+    $simpan_cache_in    = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.posisikk_cache_in(productionorder,
                                                             productiondemand,
                                                             stepnumber,
                                                             tanggal_in,
                                                             operation,
                                                             longdescription,
-                                                            `status`,
+                                                            status,
                                                             ipaddress,
                                                             createdatetime)
                                         VALUES('$productionorder',
@@ -52,30 +55,30 @@
                                                 '$status',
                                                 '$ipaddress',
                                                 '$createdatetime')");
-        if($simpan_cache_in){
-            header('Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand='.TRIM($productiondemand).'&prod_order='.TRIM($productionorder).'');
-            exit;
-        }else{
-            echo("Error description: " . mysqli_error($simpan_cache_in));
-        }
-    }elseif (isset($_POST['simpanout_catch'])) {
-        $productionorder    = $_POST['productionorder'];
-        $productiondemand   = $_POST['productiondemand'];
-        $stepnumber         = $_POST['stepnumber'];
-        $tanggal_proses_out = $_POST['tanggal_proses_out'];
-        $operation          = $_POST['operation'];
-        $longdescription    = $_POST['longdescription'];
-        $status             = $_POST['status'];
-        $ipaddress          = $_POST['ipaddress'];
-        $createdatetime     = $_POST['createdatetime'];
+    if ($simpan_cache_in) {
+        header('Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . TRIM($productiondemand) . '&prod_order=' . TRIM($productionorder) . '');
+        exit;
+    } else {
+        echo ("Error description: " . sqlsrv_errors($simpan_cache_in));
+    }
+} elseif (isset($_POST['simpanout_catch'])) {
+    $productionorder    = $_POST['productionorder'];
+    $productiondemand   = $_POST['productiondemand'];
+    $stepnumber         = $_POST['stepnumber'];
+    $tanggal_proses_out = $_POST['tanggal_proses_out'];
+    $operation          = $_POST['operation'];
+    $longdescription    = $_POST['longdescription'];
+    $status             = $_POST['status'];
+    $ipaddress          = $_POST['ipaddress'];
+    $createdatetime     = $_POST['createdatetime'];
 
-        $simpan_cache_out   = mysqli_query($con_nowprd, "INSERT INTO posisikk_cache_out(productionorder,
+    $simpan_cache_out   = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.posisikk_cache_out(productionorder,
                                                             productiondemand,
                                                             stepnumber,
                                                             tanggal_out,
                                                             operation,
                                                             longdescription,
-                                                            `status`,
+                                                            status,
                                                             ipaddress,
                                                             createdatetime)
                                         VALUES('$productionorder',
@@ -87,20 +90,20 @@
                                                 '$status',
                                                 '$ipaddress',
                                                 '$createdatetime')");
-        if($simpan_cache_out){
-            header('Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand='.TRIM($productiondemand).'&prod_order='.TRIM($productionorder).'');
-            exit;
-        }else{
-            echo("Error description: " . mysqli_error($simpan_cache_out));
-        }
-    }elseif (isset($_POST['simpan_keterangan'])) {
-        $productionorder    = $_POST['productionorder'];
-        $productiondemand   = $_POST['productiondemand'];
-        $keterangan         = $_POST['keterangan'];
-        $ipaddress          = $_POST['ipaddress'];
-        $createdatetime     = $_POST['createdatetime'];
+    if ($simpan_cache_out) {
+        header('Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . TRIM($productiondemand) . '&prod_order=' . TRIM($productionorder) . '');
+        exit;
+    } else {
+        echo ("Error description: " . sqlsrv_errors($simpan_cache_out));
+    }
+} elseif (isset($_POST['simpan_keterangan'])) {
+    $productionorder    = $_POST['productionorder'];
+    $productiondemand   = $_POST['productiondemand'];
+    $keterangan         = $_POST['keterangan'];
+    $ipaddress          = $_POST['ipaddress'];
+    $createdatetime     = $_POST['createdatetime'];
 
-        $simpan_keterangan  = mysqli_query($con_nowprd, "INSERT INTO posisikk_keterangan(productionorder,
+    $simpan_keterangan  = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.posisikk_keterangan(productionorder,
                                                                                 productiondemand,
                                                                                 keterangan,
                                                                                 ipaddress,
@@ -110,23 +113,23 @@
                                                                     '$keterangan',
                                                                     '$ipaddress',
                                                                     '$createdatetime')");
-        if($simpan_keterangan){
-            header('Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand='.TRIM($productiondemand).'&prod_order='.TRIM($productionorder).'');
-            exit;
-        }else{
-            echo("Error description: " . mysqli_error($simpan_keterangan));
-        }
-    }elseif ($_GET['simpan_note'] == 'simpan_note'){
-        $productionorder    = $_GET['PRODUCTIONORDERCODE'];
-        $productiondemand   = $_GET['PRODUCTIONDEMANDCODE'];
-        $stepnumber         = $_GET['STEPNUMBER'];
-        $operationcode      = $_GET['OPERATIONCODE'];
-        $keterangan         = str_replace ("'","\'", $_GET['KETERANGAN']);
-        $no_gerobak         = str_replace ("'","\'", $_GET['NO_GEROBAK']);
-        $ipaddress          = $_GET['IPADDRESS'];
-        $createdatetime     = $_GET['CREATEDATETIME'];
+    if ($simpan_keterangan) {
+        header('Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . TRIM($productiondemand) . '&prod_order=' . TRIM($productionorder) . '');
+        exit;
+    } else {
+        echo ("Error description: " . sqlsrv_errors($simpan_keterangan));
+    }
+} elseif ($_GET['simpan_note'] == 'simpan_note') {
+    $productionorder    = $_GET['PRODUCTIONORDERCODE'];
+    $productiondemand   = $_GET['PRODUCTIONDEMANDCODE'];
+    $stepnumber         = $_GET['STEPNUMBER'];
+    $operationcode      = $_GET['OPERATIONCODE'];
+    $keterangan         = str_replace("'", "\'", $_GET['KETERANGAN']);
+    $no_gerobak         = str_replace("'", "\'", $_GET['NO_GEROBAK']);
+    $ipaddress          = $_GET['IPADDRESS'];
+    $createdatetime     = $_GET['CREATEDATETIME'];
 
-        $simpan_keterangan  = mysqli_query($con_nowprd, "INSERT INTO keterangan_leader(PRODUCTIONORDERCODE,
+    $simpan_keterangan  = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.keterangan_leader(PRODUCTIONORDERCODE,
                                                                                         PRODUCTIONDEMANDCODE,
                                                                                         STEPNUMBER,
                                                                                         OPERATIONCODE,
@@ -142,12 +145,12 @@
                                                                     '$no_gerobak',
                                                                     '$ipaddress',
                                                                     '$createdatetime')");
-        if($simpan_keterangan){
-            header("Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=$productiondemand&prod_order=$productionorder");
-            exit;
-        }else{
-            echo("Error description: ".$mysqli -> error);
-            echo "INSERT INTO keterangan_leader(PRODUCTIONORDERCODE,
+    if ($simpan_keterangan) {
+        header("Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=$productiondemand&prod_order=$productionorder");
+        exit;
+    } else {
+        echo ("Error description: " . $sqlsrv->error);
+        echo "INSERT INTO keterangan_leader(PRODUCTIONORDERCODE,
                                                             PRODUCTIONDEMANDCODE,
                                                             STEPNUMBER,
                                                             OPERATIONCODE,
@@ -163,39 +166,40 @@
                                                 '$no_gerobak',
                                                 '$ipaddress',
                                                 '$createdatetime')";
-            exit();
-        }
-    }elseif ($_GET['edit_note'] == 'edit_note'){
-        $productionorder    = $_GET['PRODUCTIONORDERCODE'];
-        $productiondemand   = $_GET['PRODUCTIONDEMANDCODE'];
-        $stepnumber         = $_GET['STEPNUMBER'];
-        $keterangan         = str_replace ("'","\'", $_GET['KETERANGAN']);
-        $no_gerobak         = str_replace ("'","\'", $_GET['NO_GEROBAK']);
-        $ipaddress          = $_GET['IPADDRESS'];
-        $createdatetime     = $_GET['CREATEDATETIME'];
+        exit();
+    }
+} elseif ($_GET['edit_note'] == 'edit_note') {
+    $productionorder    = $_GET['PRODUCTIONORDERCODE'];
+    $productiondemand   = $_GET['PRODUCTIONDEMANDCODE'];
+    $stepnumber         = $_GET['STEPNUMBER'];
+    $keterangan         = str_replace("'", "\'", $_GET['KETERANGAN']);
+    $no_gerobak         = str_replace("'", "\'", $_GET['NO_GEROBAK']);
+    $ipaddress          = $_GET['IPADDRESS'];
+    $createdatetime     = $_GET['CREATEDATETIME'];
 
-        $ubah_keterangan  = mysqli_query($con_nowprd, "UPDATE keterangan_leader SET KETERANGAN = '$keterangan', NO_GEROBAK = '$no_gerobak'
+    $ubah_keterangan  = sqlsrv_query($con_nowprd, "UPDATE nowprd.keterangan_leader SET KETERANGAN = '$keterangan', NO_GEROBAK = '$no_gerobak'
                                                             WHERE PRODUCTIONORDERCODE = '$productionorder'
                                                             AND PRODUCTIONDEMANDCODE = '$productiondemand'
                                                             AND STEPNUMBER = '$stepnumber'");
-        
-        if($ubah_keterangan){
-            header("Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=$productiondemand&prod_order=$productionorder");
-            exit;
-        }else{
-            echo("Error description: ".$mysqli -> error);
-            echo "UPDATE keterangan_leader SET KETERANGAN = '$keterangan', NO_GEROBAK = '$no_gerobak'
+
+    if ($ubah_keterangan) {
+        header("Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=$productiondemand&prod_order=$productionorder");
+        exit;
+    } else {
+        echo ("Error description: " . $sqlsrv->error);
+        echo "UPDATE keterangan_leader SET KETERANGAN = '$keterangan', NO_GEROBAK = '$no_gerobak'
                                         WHERE PRODUCTIONORDERCODE = '$productionorder'
                                         AND PRODUCTIONDEMANDCODE = '$productiondemand'
                                         AND STEPNUMBER = '$stepnumber'";
-            exit();
-        }
+        exit();
     }
+}
 
-    
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>PPC - Posisi KK</title>
     <meta charset="utf-8">
@@ -218,6 +222,7 @@
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
 </head>
 <?php require_once 'header.php'; ?>
+
 <body>
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
@@ -235,37 +240,45 @@
                                             <div class="row">
                                                 <div class="col-sm-6 col-xl-6 m-b-30">
                                                     <h4 class="sub-title">Production Order:</h4>
-                                                    <input type="text" name="prod_order" class="form-control" value="<?php if(isset($_POST['submit'])){ echo $_POST['prod_order']; }elseif(isset($_GET['prod_order'])){ echo $_GET['prod_order']; } ?>">
+                                                    <input type="text" name="prod_order" class="form-control" value="<?php if (isset($_POST['submit'])) {
+                                                                                                                            echo $_POST['prod_order'];
+                                                                                                                        } elseif (isset($_GET['prod_order'])) {
+                                                                                                                            echo $_GET['prod_order'];
+                                                                                                                        } ?>">
                                                 </div>
                                                 <div class="col-sm-6 col-xl-6 m-b-30">
                                                     <h4 class="sub-title">Production Demand:</h4>
-                                                    <input type="text" name="demand" class="form-control" placeholder="Wajib di isi" required value="<?php if(isset($_POST['submit'])){ echo $_POST['demand']; }elseif(isset($_GET['demand'])){ echo $_GET['demand']; } ?>">
+                                                    <input type="text" name="demand" class="form-control" placeholder="Wajib di isi" required value="<?php if (isset($_POST['submit'])) {
+                                                                                                                                                            echo $_POST['demand'];
+                                                                                                                                                        } elseif (isset($_GET['demand'])) {
+                                                                                                                                                            echo $_GET['demand'];
+                                                                                                                                                        } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
                                                 </div>
                                             </div>
                                         </form>
-                                    </div> 
+                                    </div>
                                 </div>
-                                <?php if (isset($_POST['submit']) OR isset($_GET['demand']) OR isset($_GET['prod_order'])) : ?>
+                                <?php if (isset($_POST['submit']) or isset($_GET['demand']) or isset($_GET['prod_order'])) : ?>
                                     <div class="card">
                                         <div class="card-header">
                                             <?php
-                                                ini_set("error_reporting", 0);
-                                                session_start();
-                                                require_once "koneksi.php";
+                                            ini_set("error_reporting", 0);
+                                            session_start();
+                                            require_once "koneksi.php";
 
-                                                if($_GET['demand']){
-                                                    $demand     = $_GET['demand'];
-                                                }else{
-                                                    $demand     = $_POST['demand'];
-                                                }
-                                                
-                                                $q_demand   = db2_exec($conn1, "SELECT * FROM PRODUCTIONDEMAND WHERE CODE = '$demand'");
-                                                $d_demand   = db2_fetch_assoc($q_demand);
+                                            if ($_GET['demand']) {
+                                                $demand     = $_GET['demand'];
+                                            } else {
+                                                $demand     = $_POST['demand'];
+                                            }
 
-                                                $sql_warna		= db2_exec($conn1, "SELECT DISTINCT TRIM(WARNA) AS WARNA FROM ITXVIEWCOLOR 
+                                            $q_demand   = db2_exec($conn1, "SELECT * FROM PRODUCTIONDEMAND WHERE CODE = '$demand'");
+                                            $d_demand   = db2_fetch_assoc($q_demand);
+
+                                            $sql_warna        = db2_exec($conn1, "SELECT DISTINCT TRIM(WARNA) AS WARNA FROM ITXVIEWCOLOR 
                                                                                         WHERE ITEMTYPECODE = '$d_demand[ITEMTYPEAFICODE]' 
                                                                                         AND SUBCODE01 = '$d_demand[SUBCODE01]' 
                                                                                         AND SUBCODE02 = '$d_demand[SUBCODE02]'
@@ -277,13 +290,13 @@
                                                                                         AND SUBCODE08 = '$d_demand[SUBCODE08]'
                                                                                         AND SUBCODE09 = '$d_demand[SUBCODE09]' 
                                                                                         AND SUBCODE10 = '$d_demand[SUBCODE10]'");
-                                                $dt_warna		= db2_fetch_assoc($sql_warna);
+                                            $dt_warna        = db2_fetch_assoc($sql_warna);
                                             ?>
                                             <table border="0" style='font-family:"Microsoft Sans Serif"'>
                                                 <tr>
                                                     <td>Kode Product/Kode Warna </td>
                                                     <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
-                                                    <td><?= TRIM($d_demand['SUBCODE02']).TRIM($d_demand['SUBCODE03']).'-'.TRIM($d_demand['SUBCODE05']); ?></td>
+                                                    <td><?= TRIM($d_demand['SUBCODE02']) . TRIM($d_demand['SUBCODE03']) . '-' . TRIM($d_demand['SUBCODE05']); ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Warna</td>
@@ -305,8 +318,8 @@
                                                     <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
                                                     <td><?= $d_demand['DESCRIPTION']; ?></td>
                                                 </tr>
-                                                <?php 
-                                                    $sql_lebargramasi	= db2_exec($conn1, "SELECT i.LEBAR,
+                                                <?php
+                                                $sql_lebargramasi    = db2_exec($conn1, "SELECT i.LEBAR,
                                                                                             CASE
                                                                                                 WHEN i2.GRAMASI_KFF IS NULL THEN i2.GRAMASI_FKF
                                                                                                 ELSE i2.GRAMASI_KFF
@@ -317,7 +330,7 @@
                                                                                             AND i2.ORDERLINE = '$d_ITXVIEWKK[ORIGDLVSALORDERLINEORDERLINE]'
                                                                                             WHERE 
                                                                                             i.SALESORDERCODE = '$d_ITXVIEWKK[PROJECTCODE]' AND i.ORDERLINE = '$d_ITXVIEWKK[ORIGDLVSALORDERLINEORDERLINE]'");
-                                                    $dt_lg				= db2_fetch_assoc($sql_lebargramasi);
+                                                $dt_lg                = db2_fetch_assoc($sql_lebargramasi);
                                                 ?>
                                                 <tr>
                                                     <td>Lebar x Gramasi</td>
@@ -327,15 +340,15 @@
                                                 <tr rowspan='5'>
                                                     <td>KETERANGAN</td>
                                                     <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
-                                                    <td> 
+                                                    <td>
                                                         <?php
-                                                            $cek_keterangan     = mysqli_query($con_nowprd, "SELECT * FROM posisikk_keterangan 
+                                                        $cek_keterangan     = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.posisikk_keterangan 
                                                                                                                 WHERE 
                                                                                                                     productionorder = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
                                                                                                                     AND productiondemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'");
-                                                            $data_keterangan    = mysqli_fetch_assoc($cek_keterangan);
+                                                        $data_keterangan    = sqlsrv_fetch_array($cek_keterangan);
                                                         ?>
-                                                        <?php if($data_keterangan['keterangan']) :  ?>
+                                                        <?php if ($data_keterangan['keterangan']) :  ?>
                                                             <span style="background-color: #A5CEA8; color: black;"><?= $data_keterangan['keterangan']; ?></span>
                                                         <?php else : ?>
                                                             <form action="" method="POST">
@@ -372,49 +385,49 @@
                                                             <th width="100px" style="text-align: center;">NO MESIN</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody> 
-                                                        <?php 
-                                                            ini_set("error_reporting", 1);
-                                                            session_start();
-                                                            require_once "koneksi.php";
+                                                    <tbody>
+                                                        <?php
+                                                        ini_set("error_reporting", 1);
+                                                        session_start();
+                                                        require_once "koneksi.php";
 
-                                                            // itxview_posisikk_tgl_in_prodorder_ins3
-                                                            $posisikk_ins3 = db2_exec($conn1, "SELECT * FROM ITXVIEW_POSISIKK_TGL_IN_PRODORDER_INS3 WHERE PRODUCTIONORDERCODE = '$prod_order'");
-                                                            while ($row_posisikk_ins3   = db2_fetch_assoc($posisikk_ins3)) {
-                                                                $r_posisikk_ins3[]      = "('".TRIM(addslashes($row_posisikk_ins3['PRODUCTIONORDERCODE']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_ins3['OPERATIONCODE']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_ins3['PROPROGRESSPROGRESSNUMBER']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_ins3['DEMANDSTEPSTEPNUMBER']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_ins3['PROGRESSTEMPLATECODE']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_ins3['MULAI']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_ins3['OP']))."',"
-                                                                                        ."'".$_SERVER['REMOTE_ADDR']."',"
-                                                                                        ."'".date('Y-m-d H:i:s')."')";
-                                                            }
-                                                            if($r_posisikk_ins3){
-                                                                $value_posisikk_ins3        = implode(',', $r_posisikk_ins3);
-                                                                $insert_posisikk_ins3       = mysqli_query($con_nowprd, "INSERT INTO itxview_posisikk_tgl_in_prodorder_ins3(PRODUCTIONORDERCODE,OPERATIONCODE,PROPROGRESSPROGRESSNUMBER,DEMANDSTEPSTEPNUMBER,PROGRESSTEMPLATECODE,MULAI,OP,IPADDRESS,CREATEDATETIME) VALUES $value_posisikk_ins3");
-                                                            }
-                                                            
-                                                            // itxview_posisikk_tgl_in_prodorder_cnp1
-                                                            $posisikk_cnp1 = db2_exec($conn1, "SELECT * FROM ITXVIEW_POSISIKK_TGL_IN_PRODORDER_CNP1 WHERE PRODUCTIONORDERCODE = '$prod_order'");
-                                                            while ($row_posisikk_cnp1   = db2_fetch_assoc($posisikk_cnp1)) {
-                                                                $r_posisikk_cnp1[]      = "('".TRIM(addslashes($row_posisikk_cnp1['PRODUCTIONORDERCODE']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_cnp1['OPERATIONCODE']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_cnp1['PROPROGRESSPROGRESSNUMBER']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_cnp1['DEMANDSTEPSTEPNUMBER']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_cnp1['PROGRESSTEMPLATECODE']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_cnp1['MULAI']))."',"
-                                                                                        ."'".TRIM(addslashes($row_posisikk_cnp1['OP']))."',"
-                                                                                        ."'".$_SERVER['REMOTE_ADDR']."',"
-                                                                                        ."'".date('Y-m-d H:i:s')."')";
-                                                            }
-                                                            if($r_posisikk_cnp1){
-                                                                $value_posisikk_cnp1        = implode(',', $r_posisikk_cnp1);
-                                                                $insert_posisikk_cnp1       = mysqli_query($con_nowprd, "INSERT INTO itxview_posisikk_tgl_in_prodorder_cnp1(PRODUCTIONORDERCODE,OPERATIONCODE,PROPROGRESSPROGRESSNUMBER,DEMANDSTEPSTEPNUMBER,PROGRESSTEMPLATECODE,MULAI,OP,IPADDRESS,CREATEDATETIME) VALUES $value_posisikk_cnp1");
-                                                            }
-                                                            
-                                                            $sqlDB2 = "SELECT
+                                                        // itxview_posisikk_tgl_in_prodorder_ins3
+                                                        $posisikk_ins3 = db2_exec($conn1, "SELECT * FROM ITXVIEW_POSISIKK_TGL_IN_PRODORDER_INS3 WHERE PRODUCTIONORDERCODE = '$prod_order'");
+                                                        while ($row_posisikk_ins3   = db2_fetch_assoc($posisikk_ins3)) {
+                                                            $r_posisikk_ins3[]      = "('" . TRIM(addslashes($row_posisikk_ins3['PRODUCTIONORDERCODE'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['OPERATIONCODE'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['PROPROGRESSPROGRESSNUMBER'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['DEMANDSTEPSTEPNUMBER'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['PROGRESSTEMPLATECODE'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['MULAI'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['OP'])) . "',"
+                                                                . "'" . $_SERVER['REMOTE_ADDR'] . "',"
+                                                                . "'" . date('Y-m-d H:i:s') . "')";
+                                                        }
+                                                        if ($r_posisikk_ins3) {
+                                                            $value_posisikk_ins3        = implode(',', $r_posisikk_ins3);
+                                                            $insert_posisikk_ins3       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_posisikk_tgl_in_prodorder_ins3(PRODUCTIONORDERCODE,OPERATIONCODE,PROPROGRESSPROGRESSNUMBER,DEMANDSTEPSTEPNUMBER,PROGRESSTEMPLATECODE,MULAI,OP,IPADDRESS,CREATEDATETIME) VALUES $value_posisikk_ins3");
+                                                        }
+
+                                                        // itxview_posisikk_tgl_in_prodorder_cnp1
+                                                        $posisikk_cnp1 = db2_exec($conn1, "SELECT * FROM ITXVIEW_POSISIKK_TGL_IN_PRODORDER_CNP1 WHERE PRODUCTIONORDERCODE = '$prod_order'");
+                                                        while ($row_posisikk_cnp1   = db2_fetch_assoc($posisikk_cnp1)) {
+                                                            $r_posisikk_cnp1[]      = "('" . TRIM(addslashes($row_posisikk_cnp1['PRODUCTIONORDERCODE'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['OPERATIONCODE'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['PROPROGRESSPROGRESSNUMBER'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['DEMANDSTEPSTEPNUMBER'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['PROGRESSTEMPLATECODE'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['MULAI'])) . "',"
+                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['OP'])) . "',"
+                                                                . "'" . $_SERVER['REMOTE_ADDR'] . "',"
+                                                                . "'" . date('Y-m-d H:i:s') . "')";
+                                                        }
+                                                        if ($r_posisikk_cnp1) {
+                                                            $value_posisikk_cnp1        = implode(',', $r_posisikk_cnp1);
+                                                            $insert_posisikk_cnp1       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_posisikk_tgl_in_prodorder_cnp1(PRODUCTIONORDERCODE,OPERATIONCODE,PROPROGRESSPROGRESSNUMBER,DEMANDSTEPSTEPNUMBER,PROGRESSTEMPLATECODE,MULAI,OP,IPADDRESS,CREATEDATETIME) VALUES $value_posisikk_cnp1");
+                                                        }
+
+                                                        $sqlDB2 = "SELECT
                                                                             p.PRODUCTIONORDERCODE,
                                                                             p.STEPNUMBER AS STEPNUMBER,
                                                                             CASE
@@ -494,20 +507,20 @@
                                                                             a.VALUEBOOLEAN,
                                                                             idqd.WORKCENTERCODE 
                                                                         ORDER BY p.STEPNUMBER ASC";
-                                                            $stmt = db2_exec($conn1, $sqlDB2);
-                                                            while ($rowdb2 = db2_fetch_assoc($stmt)) {
+                                                        $stmt = db2_exec($conn1, $sqlDB2);
+                                                        while ($rowdb2 = db2_fetch_assoc($stmt)) {
                                                         ?>
                                                             <tr>
                                                                 <td align="center"><?= $rowdb2['STEPNUMBER']; ?></td>
                                                                 <td align="center">
                                                                     <?php
-                                                                        $q_ket_leader   = mysqli_query($con_nowprd, "SELECT * FROM keterangan_leader 
+                                                                    $q_ket_leader   = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.keterangan_leader 
                                                                                                                             WHERE PRODUCTIONORDERCODE = '$rowdb2[PRODUCTIONORDERCODE]' 
                                                                                                                                 AND PRODUCTIONDEMANDCODE = '$rowdb2[PRODUCTIONDEMANDCODE]' 
                                                                                                                                 AND STEPNUMBER = '$rowdb2[STEPNUMBER]'");
-                                                                        $d_ket_leader   = mysqli_fetch_assoc($q_ket_leader);
+                                                                    $d_ket_leader   = sqlsrv_fetch_array($q_ket_leader);
                                                                     ?>
-                                                                    <?php if($d_ket_leader['KETERANGAN'] OR $d_ket_leader['NO_GEROBAK']) : ?>
+                                                                    <?php if ($d_ket_leader['KETERANGAN'] or $d_ket_leader['NO_GEROBAK']) : ?>
                                                                         <abbr title="<?= $d_ket_leader['KETERANGAN']; ?>" data-toggle="modal" data-target="#view-note<?= $rowdb2['STEPNUMBER']; ?>">View Note</abbr>
                                                                     <?php else : ?>
                                                                         <button type="button" style="color: #4778FF;" data-toggle="modal" data-target="#confirm-note<?= $rowdb2['STEPNUMBER']; ?>">
@@ -516,50 +529,50 @@
                                                                     <?php endif; ?>
                                                                 </td>
                                                                 <td align="center">
-                                                                    <?php if($rowdb2['OPERATIONCODE'] == 'INS3') : ?>
+                                                                    <?php if ($rowdb2['OPERATIONCODE'] == 'INS3') : ?>
                                                                         <?php
-                                                                            $q_mulai_ins3   = mysqli_query($con_nowprd, "SELECT
+                                                                        $q_mulai_ins3   = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                                                                                 * 
                                                                                                                             FROM
-                                                                                                                                `itxview_posisikk_tgl_in_prodorder_ins3` 
+                                                                                                                                nowprd.itxview_posisikk_tgl_in_prodorder_ins3 
                                                                                                                             WHERE
                                                                                                                                 productionordercode = '$prod_order'
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
                                                                                                                             ORDER BY
-                                                                                                                                MULAI ASC LIMIT 1");
-                                                                            $d_mulai_ins3   = mysqli_fetch_assoc($q_mulai_ins3);
-                                                                            echo $d_mulai_ins3['MULAI'];
+                                                                                                                                MULAI ASC");
+                                                                        $d_mulai_ins3   = sqlsrv_fetch_array($q_mulai_ins3);
+                                                                        echo $d_mulai_ins3['MULAI'];
                                                                         ?>
-                                                                    <?php elseif($rowdb2['OPERATIONCODE'] == 'CNP1') : ?>
+                                                                    <?php elseif ($rowdb2['OPERATIONCODE'] == 'CNP1') : ?>
                                                                         <?php
-                                                                            $q_mulai_cnp1   = mysqli_query($con_nowprd, "SELECT
+                                                                        $q_mulai_cnp1   = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                                                                                 * 
                                                                                                                             FROM
-                                                                                                                                `itxview_posisikk_tgl_in_prodorder_cnp1` 
+                                                                                                                                nowprd.itxview_posisikk_tgl_in_prodorder_cnp1 
                                                                                                                             WHERE
                                                                                                                                 productionordercode = '$prod_order'
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
                                                                                                                             ORDER BY
-                                                                                                                                MULAI ASC LIMIT 1");
-                                                                            $d_mulai_cnp1   = mysqli_fetch_assoc($q_mulai_cnp1);
-                                                                            echo $d_mulai_cnp1['MULAI'];
+                                                                                                                                MULAI ASC");
+                                                                        $d_mulai_cnp1   = sqlsrv_fetch_array($q_mulai_cnp1);
+                                                                        echo $d_mulai_cnp1['MULAI'];
                                                                         ?>
                                                                     <?php else : ?>
-                                                                        <?php if($rowdb2['MULAI']) : ?>
+                                                                        <?php if ($rowdb2['MULAI']) : ?>
                                                                             <?= $rowdb2['MULAI']; ?>
                                                                         <?php else : ?>
-                                                                            <?php 
-                                                                                $cek_cache  = mysqli_query($con_nowprd, "SELECT * FROM posisikk_cache_in 
+                                                                            <?php
+                                                                            $cek_cache  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.posisikk_cache_in 
                                                                                                                                 WHERE productionorder= '$rowdb2[PRODUCTIONORDERCODE]' 
                                                                                                                                 AND productiondemand = '$rowdb2[PRODUCTIONDEMANDCODE]' 
                                                                                                                                 AND stepnumber = '$rowdb2[STEPNUMBER]'");
-                                                                                $d_cache    = mysqli_fetch_assoc($cek_cache);
-                                                                                $cache_MULAI    = $d_cache['tanggal_in'];
+                                                                            $d_cache    = sqlsrv_fetch_array($cek_cache);
+                                                                            $cache_MULAI    = $d_cache['tanggal_in'];
                                                                             ?>
-                                                                            <?php if($cache_MULAI) : ?>
+                                                                            <?php if ($cache_MULAI) : ?>
                                                                                 <span style="background-color: #A5CEA8;"><?= $cache_MULAI; ?></span>
                                                                             <?php else : ?>
-                                                                                <?php if($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
+                                                                                <?php if ($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
                                                                                     <form action="" method="POST">
                                                                                         <input type="hidden" name="productionorder" value="<?= $rowdb2['PRODUCTIONORDERCODE']; ?>">
                                                                                         <input type="hidden" name="productiondemand" value="<?= $rowdb2['PRODUCTIONDEMANDCODE']; ?>">
@@ -579,76 +592,76 @@
                                                                     <?php endif; ?>
                                                                 </td>
                                                                 <td align="center">
-                                                                    <?php if($rowdb2['OPERATIONCODE'] == 'INS3') : ?>
+                                                                    <?php if ($rowdb2['OPERATIONCODE'] == 'INS3') : ?>
                                                                         <?php
-                                                                            // periksa jika hanya 1 data, maka 1 data tersebut untuk jam mulai saja
-                                                                            $q_cek_ins3     = mysqli_query($con_nowprd, "SELECT
+                                                                        // periksa jika hanya 1 data, maka 1 data tersebut untuk jam mulai saja
+                                                                        $q_cek_ins3     = sqlsrv_query($con_nowprd, "SELECT
                                                                                                                                 count(*) AS jml
                                                                                                                             FROM
-                                                                                                                                `itxview_posisikk_tgl_in_prodorder_ins3` 
+                                                                                                                                nowprd.itxview_posisikk_tgl_in_prodorder_ins3
                                                                                                                             WHERE
                                                                                                                                 productionordercode = '$prod_order' 
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
-                                                                            $row_cek_ins3   = mysqli_fetch_assoc($q_cek_ins3);
-                                                                            if($row_cek_ins3['jml'] == '1'){
-                                                                                echo '';
-                                                                            }else{
-                                                                                $q_mulai_ins3   = mysqli_query($con_nowprd, "SELECT
+                                                                        $row_cek_ins3   = sqlsrv_fetch_array($q_cek_ins3);
+                                                                        if ($row_cek_ins3['jml'] == '1') {
+                                                                            echo '';
+                                                                        } else {
+                                                                            $q_mulai_ins3   = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                                                                                     * 
                                                                                                                                 FROM
-                                                                                                                                    `itxview_posisikk_tgl_in_prodorder_ins3` 
+                                                                                                                                    nowprd.itxview_posisikk_tgl_in_prodorder_ins3
                                                                                                                                 WHERE
                                                                                                                                     productionordercode = '$prod_order' 
                                                                                                                                     AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
                                                                                                                                 ORDER BY
-                                                                                                                                    MULAI DESC LIMIT 1");
-                                                                                $d_selesai_ins3   = mysqli_fetch_assoc($q_mulai_ins3);
-                                                                                echo $d_selesai_ins3['MULAI'];
-                                                                            }
+                                                                                                                                    MULAI DESC");
+                                                                            $d_selesai_ins3   = sqlsrv_fetch_array($q_mulai_ins3);
+                                                                            echo $d_selesai_ins3['MULAI'];
+                                                                        }
                                                                         ?>
-                                                                    <?php elseif($rowdb2['OPERATIONCODE'] == 'CNP1') : ?>
+                                                                    <?php elseif ($rowdb2['OPERATIONCODE'] == 'CNP1') : ?>
                                                                         <?php
-                                                                            // periksa jika hanya 1 data, maka 1 data tersebut untuk jam mulai saja
-                                                                            $q_cek_cnp1     = mysqli_query($con_nowprd, "SELECT
+                                                                        // periksa jika hanya 1 data, maka 1 data tersebut untuk jam mulai saja
+                                                                        $q_cek_cnp1     = sqlsrv_query($con_nowprd, "SELECT
                                                                                                                                 count(*) AS jml
                                                                                                                             FROM
-                                                                                                                                `itxview_posisikk_tgl_in_prodorder_cnp1` 
+                                                                                                                                nowprd.itxview_posisikk_tgl_in_prodorder_cnp1 
                                                                                                                             WHERE
                                                                                                                                 productionordercode = '$prod_order' 
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
-                                                                            $row_cek_cnp1   = mysqli_fetch_assoc($q_cek_cnp1);
-                                                                            if($row_cek_cnp1['jml'] == '1'){
-                                                                                echo '';
-                                                                            }else{
-                                                                                $q_mulai_cnp1   = mysqli_query($con_nowprd, "SELECT
+                                                                        $row_cek_cnp1   = sqlsrv_fetch_array($q_cek_cnp1);
+                                                                        if ($row_cek_cnp1['jml'] == '1') {
+                                                                            echo '';
+                                                                        } else {
+                                                                            $q_mulai_cnp1   = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                                                                                     * 
                                                                                                                                 FROM
-                                                                                                                                    `itxview_posisikk_tgl_in_prodorder_cnp1` 
+                                                                                                                                    nowprd.itxview_posisikk_tgl_in_prodorder_cnp1
                                                                                                                                 WHERE
                                                                                                                                     productionordercode = '$prod_order'
                                                                                                                                     AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
                                                                                                                                 ORDER BY
-                                                                                                                                    MULAI DESC LIMIT 1");
-                                                                                $d_selesai_cnp1   = mysqli_fetch_assoc($q_mulai_cnp1);
-                                                                                echo $d_selesai_cnp1['MULAI'];
-                                                                            }
+                                                                                                                                    MULAI DESC");
+                                                                            $d_selesai_cnp1   = sqlsrv_fetch_array($q_mulai_cnp1);
+                                                                            echo $d_selesai_cnp1['MULAI'];
+                                                                        }
                                                                         ?>
                                                                     <?php else : ?>
-                                                                        <?php if($rowdb2['SELESAI']) : ?>
+                                                                        <?php if ($rowdb2['SELESAI']) : ?>
                                                                             <?= $rowdb2['SELESAI']; ?>
                                                                         <?php else : ?>
-                                                                            <?php 
-                                                                                $cek_cache  = mysqli_query($con_nowprd, "SELECT * FROM posisikk_cache_out 
+                                                                            <?php
+                                                                            $cek_cache  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.posisikk_cache_out 
                                                                                                                                 WHERE productionorder= '$rowdb2[PRODUCTIONORDERCODE]' 
                                                                                                                                 AND productiondemand = '$rowdb2[PRODUCTIONDEMANDCODE]' 
                                                                                                                                 AND stepnumber = '$rowdb2[STEPNUMBER]'");
-                                                                                $d_cache    = mysqli_fetch_assoc($cek_cache);
-                                                                                $cache_SELESAI    = $d_cache['tanggal_out'];
+                                                                            $d_cache    = sqlsrv_fetch_array($cek_cache);
+                                                                            $cache_SELESAI    = $d_cache['tanggal_out'];
                                                                             ?>
-                                                                            <?php if($cache_SELESAI) : ?>
+                                                                            <?php if ($cache_SELESAI) : ?>
                                                                                 <span style="background-color: #A5CEA8;"><?= $cache_SELESAI; ?></span>
                                                                             <?php else : ?>
-                                                                                <?php if($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
+                                                                                <?php if ($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
                                                                                     <form action="" method="POST">
                                                                                         <input type="hidden" name="productionorder" value="<?= $rowdb2['PRODUCTIONORDERCODE']; ?>">
                                                                                         <input type="hidden" name="productiondemand" value="<?= $rowdb2['PRODUCTIONDEMANDCODE']; ?>">
@@ -670,34 +683,32 @@
                                                                 <td align="center"><?= $rowdb2['OPERATIONCODE']; ?></td>
                                                                 <td align="center"><?= $rowdb2['DEPT']; ?></td>
                                                                 <td><?= $rowdb2['LONGDESCRIPTION']; ?></td>
-                                                                <td 
-                                                                    <?php 
-                                                                        if($rowdb2['STATUS_OPERATION'] == 'Closed'){ 
-                                                                            echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
-                                                                            
-                                                                        }elseif($rowdb2['STATUS_OPERATION'] == 'Progress'){ 
-                                                                            echo 'style="background-color:#41CC11;"'; 
-                                                                        }else{ 
-                                                                            echo 'style="background-color:#CECECE;"'; 
-                                                                        } 
+                                                                <td <?php
+                                                                    if ($rowdb2['STATUS_OPERATION'] == 'Closed') {
+                                                                        echo 'style="background-color:#DC526E; color:#F7F7F7;"';
+                                                                    } elseif ($rowdb2['STATUS_OPERATION'] == 'Progress') {
+                                                                        echo 'style="background-color:#41CC11;"';
+                                                                    } else {
+                                                                        echo 'style="background-color:#CECECE;"';
+                                                                    }
                                                                     ?>>
                                                                     <center><?= $rowdb2['STATUS_OPERATION']; ?></center>
                                                                 </td>
                                                                 <td><?= $rowdb2['PRODUCTIONORDERCODE']; ?></td>
                                                                 <td><?= $rowdb2['PRODUCTIONDEMANDCODE']; ?></td>
                                                                 <td>
-                                                                    <?php if($rowdb2['OPERATIONCODE'] == 'INS3') : ?>
+                                                                    <?php if ($rowdb2['OPERATIONCODE'] == 'INS3') : ?>
                                                                         <?= $d_mulai_ins3['OP']; ?>
-                                                                    <?php elseif($rowdb2['OPERATIONCODE'] == 'CNP1') : ?>
+                                                                    <?php elseif ($rowdb2['OPERATIONCODE'] == 'CNP1') : ?>
                                                                         <?= $d_mulai_cnp1['OP']; ?>
                                                                     <?php else : ?>
                                                                         <?= $rowdb2['OP1']; ?>
                                                                     <?php endif; ?>
                                                                 </td>
                                                                 <td>
-                                                                    <?php if($rowdb2['OPERATIONCODE'] == 'INS3') : ?>
+                                                                    <?php if ($rowdb2['OPERATIONCODE'] == 'INS3') : ?>
                                                                         <?= $d_selesai_ins3['OP']; ?>
-                                                                    <?php elseif($rowdb2['OPERATIONCODE'] == 'CNP1') : ?>
+                                                                    <?php elseif ($rowdb2['OPERATIONCODE'] == 'CNP1') : ?>
                                                                         <?= $d_selesai_cnp1['OP']; ?>
                                                                     <?php else : ?>
                                                                         <?= $rowdb2['OP2']; ?>
@@ -705,15 +716,15 @@
                                                                 </td>
                                                                 <td align="center">
                                                                     <?php
-                                                                        if($rowdb2['GEROBAK'] == 'Tidak Perlu Gerobak'){
-                                                                            if($d_ket_leader['NO_GEROBAK']){
-                                                                                echo $d_ket_leader['NO_GEROBAK'];
-                                                                            }else{
-                                                                                echo "<span style='background-color:#CECECE;'>$rowdb2[GEROBAK]</span>";
-                                                                            }
-                                                                        }else{
-                                                                            echo $rowdb2['GEROBAK'];
+                                                                    if ($rowdb2['GEROBAK'] == 'Tidak Perlu Gerobak') {
+                                                                        if ($d_ket_leader['NO_GEROBAK']) {
+                                                                            echo $d_ket_leader['NO_GEROBAK'];
+                                                                        } else {
+                                                                            echo "<span style='background-color:#CECECE;'>$rowdb2[GEROBAK]</span>";
                                                                         }
+                                                                    } else {
+                                                                        echo $rowdb2['GEROBAK'];
+                                                                    }
                                                                     ?>
                                                                 </td>
                                                                 <td align="center"><?= $rowdb2['WORKCENTERCODE']; ?></td>
@@ -727,22 +738,21 @@
                                                                             </div>
                                                                             <div class="card m-t-15">
                                                                                 <div class="auth-box card-block">
-                                                                                <div class="row m-b-20">
-                                                                                    <div class="col-md-12 confirm">
-                                                                                        <h3 class="text-center txt-primary"><i class="icofont icofont-check-circled text-primary"></i> Notes</h3>
+                                                                                    <div class="row m-b-20">
+                                                                                        <div class="col-md-12 confirm">
+                                                                                            <h3 class="text-center txt-primary"><i class="icofont icofont-check-circled text-primary"></i> Notes</h3>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                                <p class="text-inverse text-left m-t-15 f-16"><b>Dear Leader, <br> Silahkan masukan keterangan dibawah ini.</b></p>
-                                                                                <div class="input-group">
-                                                                                    <span class="input-group-addon"><i class="icofont icofont-user-alt-7"></i></span>
-                                                                                    <input type="hidden" name="PRODUCTIONORDERCODE" value="<?= TRIM($rowdb2['PRODUCTIONORDERCODE']) ?>">
-                                                                                    <input type="hidden" name="PRODUCTIONDEMANDCODE" value="<?= TRIM($rowdb2['PRODUCTIONDEMANDCODE']) ?>">
-                                                                                    <input type="hidden" name="STEPNUMBER" value="<?= $rowdb2['STEPNUMBER'] ?>">
-                                                                                    <input type="hidden" name="OPERATIONCODE" value="<?= $rowdb2['OPERATIONCODE'] ?>">
-                                                                                    <input type="hidden" name="IPADDRESS" value="<?= $_SERVER['REMOTE_ADDR'] ?>">
-                                                                                    <input type="hidden" name="CREATEDATETIME" value="<?= date('Y-m-d H:i:s'); ?>">
-                                                                                    <textarea placeholder="your notes..." name="KETERANGAN" 
-                                                                                        style="width: 100%; 
+                                                                                    <p class="text-inverse text-left m-t-15 f-16"><b>Dear Leader, <br> Silahkan masukan keterangan dibawah ini.</b></p>
+                                                                                    <div class="input-group">
+                                                                                        <span class="input-group-addon"><i class="icofont icofont-user-alt-7"></i></span>
+                                                                                        <input type="hidden" name="PRODUCTIONORDERCODE" value="<?= TRIM($rowdb2['PRODUCTIONORDERCODE']) ?>">
+                                                                                        <input type="hidden" name="PRODUCTIONDEMANDCODE" value="<?= TRIM($rowdb2['PRODUCTIONDEMANDCODE']) ?>">
+                                                                                        <input type="hidden" name="STEPNUMBER" value="<?= $rowdb2['STEPNUMBER'] ?>">
+                                                                                        <input type="hidden" name="OPERATIONCODE" value="<?= $rowdb2['OPERATIONCODE'] ?>">
+                                                                                        <input type="hidden" name="IPADDRESS" value="<?= $_SERVER['REMOTE_ADDR'] ?>">
+                                                                                        <input type="hidden" name="CREATEDATETIME" value="<?= date('Y-m-d H:i:s'); ?>">
+                                                                                        <textarea placeholder="your notes..." name="KETERANGAN" style="width: 100%; 
                                                                                                 height: 150px; 
                                                                                                 padding: 12px 20px; 
                                                                                                 box-sizing: border-box;
@@ -751,24 +761,24 @@
                                                                                                 background-color: #f8f8f8; 
                                                                                                 font-size: 16px; 
                                                                                                 resize: none;"></textarea>
-                                                                                </div>
-                                                                                <div class="row m-t-15">
-                                                                                    <div class="col-md-12">
-                                                                                        <input type="text" class="form-control" placeholder="Kolom Nomor Gerobak Manual disini..." name="NO_GEROBAK">
+                                                                                    </div>
+                                                                                    <div class="row m-t-15">
+                                                                                        <div class="col-md-12">
+                                                                                            <input type="text" class="form-control" placeholder="Kolom Nomor Gerobak Manual disini..." name="NO_GEROBAK">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row m-t-15">
+                                                                                        <div class="col-md-12">
+                                                                                            <button name="simpan_note" value="simpan_note" autocomplete="off" class="btn btn-primary btn-md btn-block waves-effect text-center">Confirm</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12">
+                                                                                            <p class="text-inverse text-left m-b-0 m-t-10">Anda akan menambahkan notes untuk step <?= $rowdb2['OPERATIONCODE']; ?>.</p>
+                                                                                            <p class="text-inverse text-left"><b>Leader <?= $rowdb2['OPERATIONCODE']; ?></b></p>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="row m-t-15">
-                                                                                    <div class="col-md-12">
-                                                                                        <button name="simpan_note" value="simpan_note" autocomplete="off" class="btn btn-primary btn-md btn-block waves-effect text-center">Confirm</button>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="row">
-                                                                                    <div class="col-md-12">
-                                                                                        <p class="text-inverse text-left m-b-0 m-t-10">Anda akan menambahkan notes untuk step <?= $rowdb2['OPERATIONCODE']; ?>.</p>
-                                                                                        <p class="text-inverse text-left"><b>Leader <?= $rowdb2['OPERATIONCODE']; ?></b></p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                             </div>
                                                                         </form>
                                                                     </div>
@@ -783,21 +793,20 @@
                                                                             </div>
                                                                             <div class="card m-t-15">
                                                                                 <div class="auth-box card-block">
-                                                                                <div class="row m-b-20">
-                                                                                    <div class="col-md-12 confirm">
-                                                                                        <h3 class="text-center txt-primary"><i class="icofont icofont-check-circled text-primary"></i> Notes</h3>
+                                                                                    <div class="row m-b-20">
+                                                                                        <div class="col-md-12 confirm">
+                                                                                            <h3 class="text-center txt-primary"><i class="icofont icofont-check-circled text-primary"></i> Notes</h3>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                                <div class="input-group">
-                                                                                    <span class="input-group-addon"><i class="icofont icofont-user-alt-7"></i></span>
-                                                                                    <input type="hidden" name="PRODUCTIONORDERCODE" value="<?= TRIM($rowdb2['PRODUCTIONORDERCODE']) ?>">
-                                                                                    <input type="hidden" name="PRODUCTIONDEMANDCODE" value="<?= TRIM($rowdb2['PRODUCTIONDEMANDCODE']) ?>">
-                                                                                    <input type="hidden" name="STEPNUMBER" value="<?= $rowdb2['STEPNUMBER'] ?>">
-                                                                                    <input type="hidden" name="OPERATIONCODE" value="<?= $rowdb2['OPERATIONCODE'] ?>">
-                                                                                    <input type="hidden" name="IPADDRESS" value="<?= $_SERVER['REMOTE_ADDR'] ?>">
-                                                                                    <input type="hidden" name="CREATEDATETIME" value="<?= date('Y-m-d H:i:s'); ?>">
-                                                                                    <textarea placeholder="your notes..." name="KETERANGAN" 
-                                                                                        style="width: 100%; 
+                                                                                    <div class="input-group">
+                                                                                        <span class="input-group-addon"><i class="icofont icofont-user-alt-7"></i></span>
+                                                                                        <input type="hidden" name="PRODUCTIONORDERCODE" value="<?= TRIM($rowdb2['PRODUCTIONORDERCODE']) ?>">
+                                                                                        <input type="hidden" name="PRODUCTIONDEMANDCODE" value="<?= TRIM($rowdb2['PRODUCTIONDEMANDCODE']) ?>">
+                                                                                        <input type="hidden" name="STEPNUMBER" value="<?= $rowdb2['STEPNUMBER'] ?>">
+                                                                                        <input type="hidden" name="OPERATIONCODE" value="<?= $rowdb2['OPERATIONCODE'] ?>">
+                                                                                        <input type="hidden" name="IPADDRESS" value="<?= $_SERVER['REMOTE_ADDR'] ?>">
+                                                                                        <input type="hidden" name="CREATEDATETIME" value="<?= date('Y-m-d H:i:s'); ?>">
+                                                                                        <textarea placeholder="your notes..." name="KETERANGAN" style="width: 100%; 
                                                                                                 height: 150px; 
                                                                                                 padding: 12px 20px; 
                                                                                                 box-sizing: border-box;
@@ -806,24 +815,24 @@
                                                                                                 background-color: #f8f8f8; 
                                                                                                 font-size: 16px; 
                                                                                                 resize: none;"><?= $d_ket_leader['KETERANGAN']; ?></textarea>
-                                                                                </div>
-                                                                                <div class="row m-t-15">
-                                                                                    <div class="col-md-12">
-                                                                                        <input type="text" class="form-control" placeholder="Kolom Nomor Gerobak Manual disini..." name="NO_GEROBAK" value="<?= $d_ket_leader['NO_GEROBAK']; ?>">
+                                                                                    </div>
+                                                                                    <div class="row m-t-15">
+                                                                                        <div class="col-md-12">
+                                                                                            <input type="text" class="form-control" placeholder="Kolom Nomor Gerobak Manual disini..." name="NO_GEROBAK" value="<?= $d_ket_leader['NO_GEROBAK']; ?>">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row m-t-15">
+                                                                                        <div class="col-md-12">
+                                                                                            <button name="edit_note" value="edit_note" class="btn btn-primary btn-md btn-block waves-effect text-center">save changes</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12">
+                                                                                            <p class="text-inverse text-left m-b-0 m-t-10">Pastikan data yang anda masukan benar.</p>
+                                                                                            <p class="text-inverse text-left"><b>Leader <?= $rowdb2['OPERATIONCODE']; ?></b></p>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="row m-t-15">
-                                                                                    <div class="col-md-12">
-                                                                                        <button name="edit_note" value="edit_note" class="btn btn-primary btn-md btn-block waves-effect text-center">save changes</button>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="row">
-                                                                                    <div class="col-md-12">
-                                                                                        <p class="text-inverse text-left m-b-0 m-t-10">Pastikan data yang anda masukan benar.</p>
-                                                                                        <p class="text-inverse text-left"><b>Leader <?= $rowdb2['OPERATIONCODE']; ?></b></p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                             </div>
                                                                         </form>
                                                                     </div>
