@@ -4,8 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="#">
-    <meta name="keywords"
-        content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
+    <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> -->
@@ -17,14 +16,11 @@
     <link rel="stylesheet" type="text/css" href="files\assets\css\style.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\pcoded-horizontal.min.css">
-    <link rel="stylesheet" type="text/css"
-        href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css"
-        href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
 
-    <link rel="stylesheet" type="text/css"
-        href="files\assets\pages\data-table\extensions\buttons\css\buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\extensions\buttons\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
 </head>
 
@@ -64,7 +60,10 @@
 
             // Menampilkan data
             while ($row_history = sqlsrv_fetch_array($q_history)) {
-                $no_absen = ltrim($row_history['no_absen'], '0');
+                if ($row_history['no_absen'] != '' or $row_history['no_absen'] != null) {
+
+                    $no_absen = ltrim($row_history['no_absen'], '0');
+                }
                 $cari_nama_in = sqlsrv_query($con_hrd, "SELECT * FROM hrd.tbl_makar WHERE no_scan = ?", array($no_absen));
 
                 // Memeriksa kesalahan pada query
@@ -74,7 +73,7 @@
 
                 $nama_in = sqlsrv_fetch_array($cari_nama_in);
                 $ket = substr($row_history['ket'], 20);
-                ?>
+            ?>
                 <tr>
                     <td></td>
                     <td><?= htmlspecialchars($row_history['no_absen'] . ' - ' . ($nama_in['nama'] ?? '')); ?></td>
@@ -113,8 +112,7 @@
 <script src="files\bower_components\datatables.net-responsive-bs4\js\responsive.bootstrap4.min.js"></script>
 <script type="text/javascript" src="files\bower_components\i18next\js\i18next.min.js"></script>
 <script type="text/javascript" src="files\bower_components\i18next-xhr-backend\js\i18nextXHRBackend.min.js"></script>
-<script type="text/javascript"
-    src="files\bower_components\i18next-browser-languagedetector\js\i18nextBrowserLanguageDetector.min.js"></script>
+<script type="text/javascript" src="files\bower_components\i18next-browser-languagedetector\js\i18nextBrowserLanguageDetector.min.js"></script>
 <script type="text/javascript" src="files\bower_components\jquery-i18next\js\jquery-i18next.min.js"></script>
 <script src="files\assets\pages\data-table\extensions\buttons\js\extension-btns-custom.js"></script>
 <script src="files\assets\js\pcoded.min.js"></script>
@@ -137,9 +135,9 @@
         dom: 'Bfrtip',
         buttons: [{
             extend: 'excelHtml5',
-            customize: function (xlsx) {
+            customize: function(xlsx) {
                 var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                $('row c[r^="F"]', sheet).each(function () {
+                $('row c[r^="F"]', sheet).each(function() {
                     if ($('is t', this).text().replace(/[^\d]/g, '') * 1 >= 500000) {
                         $(this).attr('s', '20');
                     }
@@ -152,9 +150,9 @@
         dom: 'Bfrtip',
         buttons: [{
             extend: 'excelHtml5',
-            customize: function (xlsx) {
+            customize: function(xlsx) {
                 var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                $('row c[r^="F"]', sheet).each(function () {
+                $('row c[r^="F"]', sheet).each(function() {
                     if ($('is t', this).text().replace(/[^\d]/g, '') * 1 >= 500000) {
                         $(this).attr('s', '20');
                     }

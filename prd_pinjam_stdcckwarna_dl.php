@@ -41,7 +41,12 @@ if (isset($_POST['simpan'])) {
                                                                 archive = 'Belum_Diarsipkan'
                                                             WHERE
                                                                 id = '$id'");
-        $in_history     = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.buku_pinjam_history(id_buku_pinjam,no_absen,tgl_in,ket)VALUES('$id','$no_absen', '$tgl', '$ket')");
+
+        $sql = "INSERT INTO nowprd.buku_pinjam_history (id_buku_pinjam, no_absen, tgl_in, ket) VALUES (?, ?, ?, ?)";
+
+        $params = array($id, $no_absen, $tgl, $ket);
+        $in_history = sqlsrv_query($con_nowprd, $sql, $params);
+
         if ($in_history) {
             echo '<script language="javascript">';
             echo 'let text = "Berhasil menyimpan data !";
@@ -59,7 +64,12 @@ if (isset($_POST['simpan'])) {
                                                                     ket = '$ket'
                                                                 WHERE
                                                                     id = '$id'");
-        $out_history    = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.buku_pinjam_history(id_buku_pinjam,no_absen,tgl_out,ket)VALUES('$id','$no_absen', '$tgl', '$ket')");
+
+        $sqlhistry = "INSERT INTO nowprd.buku_pinjam_history (id_buku_pinjam, no_absen, tgl_out, ket) VALUES (?, ?, ?, ?)";
+
+        $paramss = array($id, $no_absen, $tgl, $ket);
+        $out_history = sqlsrv_query($con_nowprd, $sqlhistry, $paramss);
+
         if ($out_history) {
             echo '<script language="javascript">';
             echo 'let text = "Berhasil menyimpan data !";
