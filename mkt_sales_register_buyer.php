@@ -108,6 +108,10 @@
                                                             <th>TOTAL NETTO</th>
                                                             <th>TOTAL BRUTO</th>
                                                             <th>TOTAL NETTO</th>
+                                                            <th>TOTAL BRUTO</th>
+                                                            <th>TOTAL NETTO</th>
+                                                            <th>TOTAL BRUTO</th>
+                                                            <th>TOTAL NETTO</th>
                                                             <!-- <th>TOTAL BRUTO</th> -->
                                                             <!-- <th>TOTAL NETTO</th>                                                            
                                                    </thead>
