@@ -50,7 +50,7 @@ $conn_string    = "DRIVER={IBM ODBC DB2 DRIVER}; HOSTNAME=$hostname; PORT=$port;
 // $conn1 = db2_pconnect($conn_string,'', '');
 $conn1          = db2_connect($conn_string, '', '');
 
-$con_invoice        = mysqli_connect("10.0.0.10", "dit", "4dm1n", "invoice");
+// $con_invoice        = mysqli_connect("10.0.0.10", "dit", "4dm1n", "invoice");
 // $con_nowprd         = mysqli_connect("10.0.0.10", "dit", "4dm1n", "nowprd");
 // $con_db_dyeing      = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_dying");
 // $con_db_finishing   = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_finishing");
@@ -85,7 +85,7 @@ $con_db_dyeing  = sqlsrv_connect($hostSVR19, $db_dying);
 $con_db_qc      = sqlsrv_connect($hostSVR19, $db_qc);
 $con_db_lab     = sqlsrv_connect($hostSVR19, $dbLab);
 $con_hrd        = sqlsrv_connect($hostSVR19, $db_hrd);
-// $con_invoice    = sqlsrv_connect($hostSVR19, $db_invoice);
+$con_invoice    = sqlsrv_connect($hostSVR19, $db_invoice);
 $con_finishing  = sqlsrv_connect($hostSVR19, $db_finishing);
 $con_dbnow_mkt  = sqlsrv_connect($hostSVR19, $db_nowmkt);
 
@@ -115,10 +115,10 @@ if ($con_hrd) {
 } else {
     exit("SQLSVR19 Connection failed to con_hrd");
 }
-// if ($con_invoice) {
-// } else {
-//     exit("SQLSVR19 Connection failed to con_invoice");
-// }
+if ($con_invoice) {
+} else {
+    exit("SQLSVR19 Connection failed to con_invoice");
+}
 if ($con_finishing) {
 } else {
     exit("SQLSVR19 Connection failed to con_finishing");
@@ -127,4 +127,14 @@ if ($con_finishing) {
 if ($con_dbnow_mkt) {
 } else {
     exit("SQLSVR19 Connection failed to con_finishing");
+}
+
+
+
+// online pdo
+try {
+    $pdo = new PDO("sqlsrv:server=10.0.0.221;Database=nowprd", "sa", "Ind@taichen2024");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
