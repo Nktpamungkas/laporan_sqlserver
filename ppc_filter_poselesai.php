@@ -2,10 +2,16 @@
     ini_set("error_reporting", 1);
     session_start();
     require_once "koneksi.php";
-    mysqli_query($con_nowprd, "DELETE FROM itxview_poselesai WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM itxview_poselesai WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+
+    sqlsrv_query($con_nowprd, "DELETE FROM nowrpd.[itxview_poselesai]
+    WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
+
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[itxview_poselesai] WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    
     $tgljam = date('Y-m-d H:i:s');
-    mysqli_query($con_nowprd, "INSERT INTO cache_accessto (IPADDRESS,CREATIONDATETIME,ACCESSTO) VALUES('$_SERVER[REMOTE_ADDR]', '$tgljam','PO SELESAI')");
+
+    sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATIONDATETIME,ACCESSTO) 
+    VALUES('$_SERVER[REMOTE_ADDR]', '$tgljam','PO SELESAI')");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -220,41 +226,84 @@
                                                                                                                 WHERE 
                                                                                                                     isp.GOODSISSUEDATE BETWEEN '$tgl1_kirim' AND '$tgl2_kirim'
                                                                                                                     $where_rec");
+                                                                    $r_itxviewmemo=[];
                                                                     while ($row_itxviewmemo   = db2_fetch_assoc($itxviewmemo)) {
-                                                                        $r_itxviewmemo[]      = "('".TRIM(addslashes($row_itxviewmemo['ORDERDATE']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['PELANGGAN']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['NO_ORDER']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['NO_PO']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['KETERANGAN_PRODUCT']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['JENIS_KAIN']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['WARNA']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['NO_WARNA']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['DELIVERY']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['NETTO']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['DELAY']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['NO_KK']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['DEMAND']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['ORDERLINE']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['KETERANGAN']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['SURATJALAN']))."',"
-                                                                                                ."'".TRIM(addslashes($row_itxviewmemo['TGL_KIRIM']))."',"
+
+                                                                        foreach ($row_itxviewmemo as $key => $value) {
+                                                                            $row_itxviewmemo[$key] = TRIM(addslashes($value));
+                                                                        }
+
+                                                                        $r_itxviewmemo[]      = "(".DateTime::createFromFormat('d-m-Y', TRIM(addslashes($row_itxviewmemo['ORDERDATE']))).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['PELANGGAN'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['NO_ORDER'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['NO_PO'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['KETERANGAN_PRODUCT'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['JENIS_KAIN'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['WARNA'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['NO_WARNA'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['DELIVERY'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['NETTO'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['DELAY'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['NO_KK'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['DEMAND'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['ORDERLINE'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['KETERANGAN'])).","
+                                                                                                ."".TRIM(addslashes($row_itxviewmemo['SURATJALAN'])).","
+                                                                                                ."".DateTime::createFromFormat('Y-m-d', TRIM(addslashes($row_itxviewmemo['TGL_KIRIM']))).","
                                                                                                 ."'".$_SERVER['REMOTE_ADDR']."',"
-                                                                                                ."'".date('Y-m-d H:i:s')."',"
-                                                                                                ."'".'PO SELESAI'."')";
+                                                                                                ."".date('Y-m-d H:i:s').","
+                                                                                                ."".'PO SELESAI'.")";
                                                                     }
-                                                                    $value_itxviewmemo        = implode(',', $r_itxviewmemo);
-                                                                    $insert_itxviewmemo       = mysqli_query($con_nowprd, "INSERT INTO itxview_poselesai(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,JENIS_KAIN,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,QTY_BAGIKAIN_YD_MTR,NETTO,`DELAY`,NO_KK,DEMAND,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,SURATJALAN,TGL_KIRIM,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
+                                                                    
+                                                                    // $value_itxviewmemo        = implode(',', $r_itxviewmemo);
+                                                                    
+                                                                    $sql_insert_itxviewmemo="INSERT INTO nowprd.[itxview_poselesai](ORDERDATE,
+                                                                    PELANGGAN,
+                                                                    NO_ORDER,
+                                                                    NO_PO,
+                                                                    KETERANGAN_PRODUCT,
+                                                                    JENIS_KAIN,
+                                                                    WARNA,
+                                                                    NO_WARNA,
+                                                                    DELIVERY,
+                                                                    QTY_BAGIKAIN,
+                                                                    QTY_BAGIKAIN_YD_MTR,
+                                                                    NETTO,
+                                                                    [DELAY],
+                                                                    NO_KK,
+                                                                    DEMAND,
+                                                                    ORDERLINE,
+                                                                    PROGRESSSTATUS,
+                                                                    PROGRESSSTATUS_DEMAND,
+                                                                    KETERANGAN,
+                                                                    SURATJALAN,
+                                                                    TGL_KIRIM,
+                                                                    IPADDRESS,
+                                                                    CREATEDATETIME,
+                                                                    ACCESS_TO) 
+                                                                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+                                                                    $insert_itxviewmemo = sqlsrv_prepare($con_nowprd, $sql_insert_itxviewmemo, $r_itxviewmemo);
+                                                    
+                                                                    $cek=sqlsrv_execute($insert_itxviewmemo);
+
+                                                                    if ($cek === false) {
+                                                                        die(print_r(sqlsrv_errors(), true));
+                                                                    }
 
                                                                     // --------------------------------------------------------------------------------------------------------------- //
                                                                     $tgl1_kirim_2   = $_POST['tgl1_kirim'];
                                                                     $tgl2_kirim_2   = $_POST['tgl2_kirim'];
 
-                                                                    $sqlDB2 = "SELECT DISTINCT * FROM itxview_poselesai WHERE TGL_KIRIM BETWEEN '$tgl1_kirim_2' AND '$tgl2_kirim_2' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY NO_ORDER, ORDERLINE ASC";
-                                                                    $stmt   = mysqli_query($con_nowprd,$sqlDB2);
+                                                                    $sqlDB2 = "SELECT DISTINCT * FROM nowprd.[itxview_poselesai] WHERE TGL_KIRIM BETWEEN '$tgl1_kirim_2' AND '$tgl2_kirim_2' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' 
+                                                                    ORDER BY NO_ORDER, ORDERLINE ASC";
+
+                                                                    $stmt   = sqlsrv_query($con_nowprd,$sqlDB2);
+
                                                                 // PENCARIAN TANGGAL KIRIM
                                                             }else{
                                                                 // PENCARIAN BUKAN DENGAN TANGGAL KIRIM
@@ -286,7 +335,7 @@
                                                                                                 ."'".'PO SELESAI'."')";
                                                                     }
                                                                     $value_itxviewmemo        = implode(',', $r_itxviewmemo);
-                                                                    $insert_itxviewmemo       = mysqli_query($con_nowprd, "INSERT INTO itxview_poselesai(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,JENIS_KAIN,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,QTY_BAGIKAIN_YD_MTR,NETTO,`DELAY`,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
+                                                                    $insert_itxviewmemo       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[itxview_poselesai](ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,JENIS_KAIN,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,QTY_BAGIKAIN_YD_MTR,NETTO,`DELAY`,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
                                                                     
                                                                     // --------------------------------------------------------------------------------------------------------------- //
                                                                     $no_order_2     = $_POST['no_order'];
@@ -303,11 +352,12 @@
                                                                     }else{
                                                                         $where_date2     = "";
                                                                     }
-                                                                    $sqlDB2 = "SELECT DISTINCT * FROM itxview_poselesai WHERE $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY NO_ORDER, ORDERLINE ASC";
-                                                                    $stmt   = mysqli_query($con_nowprd,$sqlDB2);
+                                                                    $sqlDB2 = "SELECT DISTINCT * FROM nowprd.[itxview_poselesai] WHERE $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY NO_ORDER, ORDERLINE ASC";
+                                                                    $stmt   = sqlsrv_query($con_nowprd,$sqlDB2);
                                                                 // PENCARIAN BUKAN DENGAN TANGGAL KIRIM
                                                             }
-                                                            while ($rowdb2 = mysqli_fetch_array($stmt)) {
+
+                                                            while ($rowdb2 = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)){
                                                         ?>
                                                         <!-- WHILE -->
                                                         <?php 
@@ -698,8 +748,8 @@
                                                                 <td><?= substr($d_salesorder['CREATIONDATETIME'], 0, 10); ?></td><!-- DATE MARKETING -->
                                                                 <td>
                                                                     <?php
-                                                                        $terimabon  = mysqli_query($con_dbnow_mkt, "SELECT * FROM tbl_salesorder WHERE projectcode = '$rowdb2[NO_ORDER]'");
-                                                                        $d_terimabon= mysqli_fetch_assoc($terimabon);
+                                                                        $terimabon  = sqlsrv_query($con_dbnow_mkt, "SELECT * FROM db_mkt.[tbl_salesorder] WHERE projectcode = '$rowdb2[NO_ORDER]'");
+                                                                        $d_terimabon= sqlsrv_fetch_array($terimabon, SQLSRV_FETCH_ASSOC);
                                                                         echo $d_terimabon['ppc_terima'];
                                                                     ?>
                                                                 </td><!-- DATE PPC RECEIVED BO FROM RMP -->
@@ -952,8 +1002,8 @@
                                                                 <td><?= substr($d_salesorder['CREATIONDATETIME'], 0, 10); ?></td><!-- DATE MARKETING -->
                                                                 <td>
                                                                     <?php
-                                                                        $terimabon  = mysqli_query($con_dbnow_mkt, "SELECT * FROM tbl_salesorder WHERE projectcode = '$rowdb2[NO_ORDER]'");
-                                                                        $d_terimabon= mysqli_fetch_assoc($terimabon);
+                                                                        $terimabon  = sqlsrv_query($con_dbnow_mkt, "SELECT * FROM db_mkt.[tbl_salesorder] WHERE projectcode = '$rowdb2[NO_ORDER]'");
+                                                                        $d_terimabon= sqlsrv_fetch_array($terimabon, SQLSRV_FETCH_ASSOC);
                                                                         echo $d_terimabon['ppc_terima'];
                                                                     ?>
                                                                 </td><!-- DATE PPC RECEIVED BO FROM RMP -->
@@ -1213,7 +1263,7 @@
                                         ini_set("error_reporting", 1);
                                         session_start();
                                         require_once "koneksi.php";
-                                        mysqli_query($con_nowprd, "DELETE FROM itxview_poselesai");
+                                        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[itxview_poselesai]");
                                         header("Location: ppc_filter_poselesai.php");
                                     ?>
                                 <?php endif; ?>
