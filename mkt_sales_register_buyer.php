@@ -108,6 +108,10 @@
                                                             <th>TOTAL NETTO</th>
                                                             <th>TOTAL BRUTO</th>
                                                             <th>TOTAL NETTO</th>
+                                                            <th>TOTAL BRUTO</th>
+                                                            <th>TOTAL NETTO</th>
+                                                            <th>TOTAL BRUTO</th>
+                                                            <th>TOTAL NETTO</th>
                                                             <!-- <th>TOTAL BRUTO</th> -->
                                                             <!-- <th>TOTAL NETTO</th>                                                            
                                                    </thead>
@@ -211,7 +215,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                <?php //endif; ?>
+                                <?php 
+                                    endif; 
+                                ?>
                                 </div>
                             </div>
                         </div>
