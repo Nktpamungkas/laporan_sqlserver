@@ -7,7 +7,7 @@
     <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
-     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> --> 
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> -->
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
@@ -23,6 +23,7 @@
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\extensions\buttons\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
 </head>
+
 <body>
     <table id="excel-LA" class="table table-striped table-bordered nowrap" style="width:100%">
         <thead>
@@ -36,32 +37,55 @@
         </thead>
         <tbody>
             <?php
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php"; 
-                $kode = $_GET['kode'];
-                if(!empty($kode)){
-                    $where = "AND kode = 'te'";
-                }else{
-                    $where = "";
+            ini_set("error_reporting", 1);
+            session_start();
+            require_once "koneksi.php";
+
+            // Menangani input GET dengan aman
+            $id = isset($_GET['id']) ? $_GET['id'] : '';
+            $kode = isset($_GET['kode']) ? $_GET['kode'] : '';
+
+            // Menyiapkan query dengan parameter
+            $where = !empty($kode) ? "AND kode = 'te'" : "";
+            $sql = "SELECT * FROM nowprd.buku_pinjam_history WHERE id_buku_pinjam = ? $where ORDER BY id DESC";
+
+            // Menyiapkan statement
+            $params = array($id);
+            $q_history = sqlsrv_query($con_nowprd, $sql, $params);
+
+            // Memeriksa kesalahan pada query
+            if ($q_history === false) {
+                die(print_r(sqlsrv_errors(), true));
+            }
+
+            // Menampilkan data
+            while ($row_history = sqlsrv_fetch_array($q_history)) {
+                if ($row_history['no_absen'] != '' or $row_history['no_absen'] != null) {
+
+                    $no_absen = ltrim($row_history['no_absen'], '0');
                 }
-                $q_history  = mysqli_query($con_nowprd, "SELECT * FROM buku_pinjam_history WHERE id_buku_pinjam = '$_GET[id]' $where ORDER BY id DESC");
-                while ($row_history = mysqli_fetch_array($q_history)) {
-                    $no_absen       = ltrim($row_history['no_absen'], '0');
-                    $cari_nama_in   = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
-                    $nama_in        = mysqli_fetch_assoc($cari_nama_in);
-                    $ket            = substr($row_history['ket'], 20);
+                $cari_nama_in = sqlsrv_query($con_hrd, "SELECT * FROM hrd.tbl_makar WHERE no_scan = ?", array($no_absen));
+
+                // Memeriksa kesalahan pada query
+                if ($cari_nama_in === false) {
+                    die(print_r(sqlsrv_errors(), true));
+                }
+
+                $nama_in = sqlsrv_fetch_array($cari_nama_in);
+                $ket = substr($row_history['ket'], 20);
             ?>
-            <!-- <tr <?php if($ket == "Belum_Diarsipkan" OR $ket == "Diarsipkan") { echo "style='background-color: #00FF70;'"; } ?>> -->
-            <tr>
-                <td></td>
-                <td><?= $row_history['no_absen'].' - '.$nama_in['nama']; ?></td>
-                <td><?= $row_history['tgl_in']; ?></td>
-                <td><?= $row_history['tgl_out']; ?></td>
-                <td><?= $row_history['ket']; ?></td>
-            </tr>
+                <tr>
+                    <td></td>
+                    <td><?= htmlspecialchars($row_history['no_absen'] . ' - ' . ($nama_in['nama'] ?? '')); ?></td>
+                    <td><?= !empty($row_history['tgl_in']) && $row_history['tgl_in'] != '0000-00-00' ? $row_history['tgl_in'] : ''; ?>
+                    </td>
+                    <td><?= !empty($row_history['tgl_out']) && $row_history['tgl_out'] != '0000-00-00' ? $row_history['tgl_out'] : ''; ?>
+                    </td>
+                    <td><?= htmlspecialchars($row_history['ket']); ?></td>
+                </tr>
             <?php } ?>
         </tbody>
+
     </table>
 </body>
 <script type="text/javascript" src="files\bower_components\jquery\js\jquery.min.js"></script>
@@ -98,7 +122,10 @@
 
 <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
     gtag('js', new Date());
 
     gtag('config', 'UA-23581568-13');
@@ -135,4 +162,5 @@
     });
 </script>
 </body>
+
 </html>

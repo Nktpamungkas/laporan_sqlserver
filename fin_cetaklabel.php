@@ -1,4 +1,5 @@
 <?php
+// Done
     ini_set("error_reporting", 1);
     session_start();
     require_once "koneksi.php"; 
