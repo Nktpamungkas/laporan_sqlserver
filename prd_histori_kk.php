@@ -2,7 +2,7 @@
 session_start();
 require_once "koneksi.php";
 $datenow = date('Y-m-d H:i:s');
-mysqli_query($con_nowprd, "INSERT INTO log_history(KET,PRODUCTIONORDER,IPADDRESS,CREATEDATETIME) VALUES('HISTORI KK', '', '$_SERVER[REMOTE_ADDR]', '$datenow')");
+sqlsrv_query($con_nowprd, "INSERT INTO nowprd.log_history(KET,PRODUCTIONORDER,IPADDRESS,CREATEDATETIME) VALUES('HISTORI KK', '', '$_SERVER[REMOTE_ADDR]', '$datenow')");
 ?>
 <!DOCTYPE html>
 <html lang="en">
