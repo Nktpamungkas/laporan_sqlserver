@@ -267,32 +267,33 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             while ($row_itxviewmemo = db2_fetch_assoc($itxviewmemo)) {
                                                                 // var_dump(print_r($row_itxviewmemo));
                                                                 $r_itxviewmemo[] = [
-                                                                    TRIM(addslashes($row_itxviewmemo['ORDERDATE'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['PELANGGAN'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['NO_ORDER'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['NO_PO'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['KETERANGAN_PRODUCT'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['JENIS_KAIN'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['WARNA'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['NO_WARNA'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['DELIVERY'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])) ?: NULL,
-                                                                    TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])) ?: NULL,
-                                                                    TRIM(addslashes($row_itxviewmemo['NETTO'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['DELAY'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['NO_KK'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['DEMAND'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['ORDERLINE'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['KETERANGAN'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['SURATJALAN'])),
-                                                                    TRIM(addslashes($row_itxviewmemo['TGL_KIRIM'])),
-                                                                    $_SERVER['REMOTE_ADDR'],
-                                                                    date('Y-m-d H:i:s'),
-                                                                    'PO SELESAI'
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['ORDERDATE'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['PELANGGAN'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_ORDER'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_PO'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN_PRODUCT'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['JENIS_KAIN'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['WARNA'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_WARNA'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['DELIVERY'])),
+                                                                    (float) TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])),
+                                                                    (float) TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])),
+                                                                    (float) TRIM(addslashes($row_itxviewmemo['NETTO'])),
+                                                                    (int) TRIM(addslashes($row_itxviewmemo['DELAY'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_KK'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['DEMAND'])),
+                                                                    (float) TRIM(addslashes($row_itxviewmemo['ORDERLINE'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['SURATJALAN'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['TGL_KIRIM'])),
+                                                                    (string) $_SERVER['REMOTE_ADDR'],
+                                                                    (string) date('Y-m-d H:i:s'),
+                                                                    (string ) 'PO SELESAI'
                                                                 ];
                                                             }
+
                                                             try {
                                                                 // var_dump($r_itxviewmemo);
                                                                 $sql_insert_itxviewmemo = "INSERT INTO nowprd.[itxview_poselesai_test](
@@ -321,6 +322,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     CREATEDATETIME,
                                                                     ACCESS_TO) 
                                                                     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                                                                    
                                                                 // Prepare the statement
                                                                 $stmt = $pdo->prepare($sql_insert_itxviewmemo);
 
@@ -344,6 +346,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
 
                                                                     }
                                                                 }
+
                                                                 echo "Data successfully inserted!";
 
                                                             } catch (PDOException $e) {
