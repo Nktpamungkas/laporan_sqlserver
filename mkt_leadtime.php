@@ -2,6 +2,7 @@
     ini_set("error_reporting", 1);
     session_start();
     require_once "koneksi.php";
+<<<<<<< HEAD
     sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_leadtime WHERE CREATEDATETIME BETWEEN GETDATE() - 3 AND GETDATE() - 1");
     sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 
@@ -13,6 +14,19 @@
 
     sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE CREATEDATETIME BETWEEN GETDATE()-3 AND GETDATE()-1");
     sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+=======
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[itxview_leadtime] WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[itxview_leadtime] WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[posisikk_cache_leadtime] WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[posisikk_cache_leadtime] WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[itxview_posisikk_tgl_in_prodorder_ins3_leadtime] WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[itxview_posisikk_tgl_in_prodorder_ins3_leadtime] WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[itxview_posisikk_tgl_in_prodorder_cnp1_leadtime] WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[itxview_posisikk_tgl_in_prodorder_cnp1_leadtime] WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+>>>>>>> 554d583bc6954c445fc642dce26ada5296fca77c
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,8 +90,13 @@
                                         ini_set("error_reporting", 1);
                                         session_start();
                                         require_once "koneksi.php";
+<<<<<<< HEAD
                                         sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_leadtime");
+=======
+                                        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.[itxview_leadtime]");
+>>>>>>> 554d583bc6954c445fc642dce26ada5296fca77c
                                         header("Location: mkt_leadtime.php");
+                                       
                                     ?>
                                 <?php endif; ?>
                             </div>
