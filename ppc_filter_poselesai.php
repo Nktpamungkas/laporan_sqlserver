@@ -203,7 +203,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                        ini_set("error_reporting", 0);
+                                                        // ini_set("error_reporting", 0);
                                                         session_start();
                                                         require_once "koneksi.php";
                                                         $no_order = $_POST['no_order'];
@@ -290,12 +290,11 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     (string) TRIM(addslashes($row_itxviewmemo['TGL_KIRIM'])),
                                                                     (string) $_SERVER['REMOTE_ADDR'],
                                                                     (string) date('Y-m-d H:i:s'),
-                                                                    (string ) 'PO SELESAI'
+                                                                    (string) 'PO SELESAI'
                                                                 ];
                                                             }
 
                                                             try {
-                                                                // var_dump($r_itxviewmemo);
                                                                 $sql_insert_itxviewmemo = "INSERT INTO nowprd.[itxview_poselesai_test](
                                                                 ORDERDATE,
                                                                     PELANGGAN,
@@ -322,31 +321,31 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     CREATEDATETIME,
                                                                     ACCESS_TO) 
                                                                     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                                                                    
+
                                                                 // Prepare the statement
                                                                 $stmt = $pdo->prepare($sql_insert_itxviewmemo);
 
                                                                 // Define the data to be inserted
                                                                 $data = $r_itxviewmemo;
 
-                                                                foreach ($data as $row) {
-                                                                    echo '<pre>';
-
-                                                                    print_r($row);
-
-                                                                    echo '</pre>';
-
-                                                                    if (!$stmt->execute($row)) {
-                                                                        // Handle error
-                                                                        echo "Error: ";
-
-                                                                        print_r($stmt->errorInfo());
-
-                                                                        exit();
-
-                                                                    }
-                                                                }
-
+                                                                // foreach ($data as $row) {
+                                                                //     echo '<pre>';
+                                                    
+                                                                //     print_r($row);
+                                                    
+                                                                //     echo '</pre>';
+                                                    
+                                                                //     if (!$stmt->execute($row)) {
+                                                                //         // Handle error
+                                                                //         echo "Error: ";
+                                                    
+                                                                //         print_r($stmt->errorInfo());
+                                                    
+                                                                //         exit();
+                                                    
+                                                                //     }
+                                                                // }
+                                                    
                                                                 echo "Data successfully inserted!";
 
                                                             } catch (PDOException $e) {
@@ -358,7 +357,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             $tgl1_kirim_2 = $_POST['tgl1_kirim'];
                                                             $tgl2_kirim_2 = $_POST['tgl2_kirim'];
 
-                                                            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.[itxview_poselesai] WHERE TGL_KIRIM BETWEEN '$tgl1_kirim_2' AND '$tgl2_kirim_2' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' 
+                                                            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.[itxview_poselesai_test] WHERE TGL_KIRIM BETWEEN '$tgl1_kirim_2' AND '$tgl2_kirim_2' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' 
                                                                     ORDER BY NO_ORDER, ORDERLINE ASC";
 
                                                             $stmt = sqlsrv_query($con_nowprd, $sqlDB2);
@@ -367,35 +366,81 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                         } else {
                                                             // PENCARIAN BUKAN DENGAN TANGGAL KIRIM
                                                             // ITXVIEW_MEMOPENTINGPPC
-                                                            $itxviewmemo = db2_exec($conn1, "SELECT * FROM ITXVIEW_MEMOPENTINGPPC WHERE $where_order $where_date $where_rec");
+                                                            $itxviewmemo = db2_exec($conn1, "SELECT 
+                                                                                                * 
+                                                                                                FROM 
+                                                                                                    ITXVIEW_MEMOPENTINGPPC 
+                                                                                                WHERE 
+                                                                                                    $where_order $where_date $where_rec");
+                                                            $r_itxviewmemo = [];
                                                             while ($row_itxviewmemo = db2_fetch_assoc($itxviewmemo)) {
-                                                                $r_itxviewmemo[] = "('" . TRIM(addslashes($row_itxviewmemo['ORDERDATE'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['PELANGGAN'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['NO_ORDER'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['NO_PO'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['KETERANGAN_PRODUCT'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['JENIS_KAIN'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['WARNA'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['NO_WARNA'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['DELIVERY'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['NETTO'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['DELAY'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['NO_KK'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['DEMAND'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['LOT'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['ORDERLINE'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxviewmemo['KETERANGAN'])) . "',"
-                                                                    . "'" . $_SERVER['REMOTE_ADDR'] . "',"
-                                                                    . "'" . date('Y-m-d H:i:s') . "',"
-                                                                    . "'" . 'PO SELESAI' . "')";
+                                                                // var_dump(print_r($row_itxviewmemo));
+                                                                $r_itxviewmemo[] = [
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['ORDERDATE'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['PELANGGAN'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_ORDER'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_PO'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN_PRODUCT'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['JENIS_KAIN'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['WARNA'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_WARNA'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['DELIVERY'])),
+                                                                    (float) TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])),
+                                                                    (float) TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])),
+                                                                    (float) TRIM(addslashes($row_itxviewmemo['NETTO'])),
+                                                                    (int) TRIM(addslashes($row_itxviewmemo['DELAY'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_KK'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['DEMAND'])),
+                                                                    (float) TRIM(addslashes($row_itxviewmemo['ORDERLINE'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['SURATJALAN'])),
+                                                                    (string) TRIM(addslashes($row_itxviewmemo['TGL_KIRIM'])),
+                                                                    (string) $_SERVER['REMOTE_ADDR'],
+                                                                    (string) date('Y-m-d H:i:s'),
+                                                                    (string) 'PO SELESAI'
+                                                                ];
                                                             }
-                                                            $value_itxviewmemo = implode(',', $r_itxviewmemo);
-                                                            $insert_itxviewmemo = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[itxview_poselesai](ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,KETERANGAN_PRODUCT,JENIS_KAIN,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,QTY_BAGIKAIN_YD_MTR,NETTO,`DELAY`,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
+                                                            try {
+                                                                $sql_insert_itxviewmemo = "INSERT INTO nowprd.[itxview_poselesai_test](
+                                                                ORDERDATE,
+                                                                    PELANGGAN,
+                                                                    NO_ORDER,
+                                                                    NO_PO,
+                                                                    KETERANGAN_PRODUCT,
+                                                                    JENIS_KAIN,
+                                                                    WARNA,
+                                                                    NO_WARNA,
+                                                                    DELIVERY,
+                                                                    QTY_BAGIKAIN,
+                                                                    QTY_BAGIKAIN_YD_MTR,
+                                                                    NETTO,
+                                                                    [DELAY],
+                                                                    NO_KK,
+                                                                    DEMAND,
+                                                                    ORDERLINE,
+                                                                    PROGRESSSTATUS,
+                                                                    PROGRESSSTATUS_DEMAND,
+                                                                    KETERANGAN,
+                                                                    SURATJALAN,
+                                                                    TGL_KIRIM,
+                                                                    IPADDRESS,
+                                                                    CREATEDATETIME,
+                                                                    ACCESS_TO) 
+                                                                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
+                                                                // Prepare the statement
+                                                                $stmt = $pdo->prepare($sql_insert_itxviewmemo);
+
+                                                                echo "Data successfully inserted!";
+
+                                                            } catch (PDOException $e) {
+                                                                echo "xError: " . $e->getMessage();
+
+                                                            }
+                                                            // Define the data to be inserted
+                                                            $data = $r_itxviewmemo;
                                                             // --------------------------------------------------------------------------------------------------------------- //
                                                             $no_order_2 = $_POST['no_order'];
                                                             $tgl1_2 = $_POST['tgl1'];
@@ -411,10 +456,18 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             } else {
                                                                 $where_date2 = "";
                                                             }
-                                                            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.[itxview_poselesai] WHERE $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY NO_ORDER, ORDERLINE ASC";
+                                                            $sqlDB2 = "SELECT 
+                                                                            * 
+                                                                            FROM 
+                                                                            nowprd.[itxview_poselesai_test] 
+                                                                            WHERE $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' 
+                                                                            ORDER BY 
+                                                                            NO_ORDER, 
+                                                                            ORDERLINE ASC";
                                                             $stmt = sqlsrv_query($con_nowprd, $sqlDB2);
                                                             // PENCARIAN BUKAN DENGAN TANGGAL KIRIM
                                                         }
+
 
                                                         while ($rowdb2 = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                                             ?>
@@ -603,7 +656,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             }
                                                             ?>
                                                     <?php
-                                                            $q_salesorder = db2_exec($conn1, "SELECT * FROM SALESORDER WHERE CODE = '$rowdb2[NO_ORDER]'");
+                                                            $q_salesorder = db2_exec($conn1, "SELECT DISTINCT * FROM SALESORDER WHERE CODE = '$rowdb2[NO_ORDER]'");
                                                             $d_salesorder = db2_fetch_assoc($q_salesorder);
                                                             ?>
                                                     <?php
@@ -809,7 +862,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                         </td><!-- DATE MARKETING -->
                                                         <td>
                                                             <?php
-                                                                        $terimabon = sqlsrv_query($con_dbnow_mkt, "SELECT * FROM db_mkt.[tbl_salesorder] WHERE projectcode = '$rowdb2[NO_ORDER]'");
+                                                                        $terimabon = sqlsrv_query($con_dbnow_mkt, "SELECT * FROM dbnow_mkt.[tbl_salesorder] WHERE projectcode = '$rowdb2[NO_ORDER]'");
                                                                         $d_terimabon = sqlsrv_fetch_array($terimabon, SQLSRV_FETCH_ASSOC);
                                                                         echo $d_terimabon['ppc_terima'];
                                                                         ?>
@@ -1080,14 +1133,40 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                         </td><!-- DATE MARKETING -->
                                                         <td>
                                                             <?php
-                                                                        $terimabon = sqlsrv_query($con_dbnow_mkt, "SELECT * FROM db_mkt.[tbl_salesorder] WHERE projectcode = '$rowdb2[NO_ORDER]'");
-                                                                        $d_terimabon = sqlsrv_fetch_array($terimabon, SQLSRV_FETCH_ASSOC);
-                                                                        echo $d_terimabon['ppc_terima'];
+                                                                        // if ($rowdb2['NO_ORDER'] != NULL or $rowdb2['NO_ORDER'] != '') {
+                                                                        // var_dump(sqlsrv_errors($d_terimabon['ppc_terima']));
+                                                                        // var_dump($rowdb2['NO_ORDER']);
+                                                                        $terimabon = "SELECT DISTINCT * FROM dbnow_mkt.[tbl_salesorder] WHERE projectcode = '$rowdb2[NO_ORDER]'";
+                                                                        $qterimabon = sqlsrv_query($con_dbnow_mkt, $terimabon);
+                                                                        // var_dump($qterimabon);
+                                                                        if ($qterimabon) {
+                                                                            $d_terimabon = sqlsrv_fetch_array($qterimabon);
+                                                                            echo $d_terimabon['ppc_terima']->format('Y-m-d H:i:s');
+                                                                        }
+                                                                        // echo $d_terimabon['ppc_terima'];
+                                                                        // if ($d_terimabon['ppc_terima'] != NULL) {
+                                                                        //     echo $d_terimabon['ppc_terima'];
+                                                                        // } else {
+                                                                        //     echo '';
+                                                                        // }
+                                                            
+                                                                        // echo $d_terimabon['ppc_terima'];
+                                                                        // 
+                                                                        // } else {
+                                                                        // echo "SELECT 
+                                                                        //                                          * 
+                                                                        //                                          FROM 
+                                                                        //                                              dbnow_mkt.[tbl_salesorder] 
+                                                                        //                                          WHERE projectcode = '$rowdb2[NO_ORDER]' ";
+                                                                        //     var_dump(sqlsrv_errors($d_terimabon['ppc_terima']));
+                                                                        //     var_dump($rowdb2['NO_ORDER']);
+                                                                        // }
                                                                         ?>
                                                         </td><!-- DATE PPC RECEIVED BO FROM RMP -->
                                                         <td><?= $d_terimabon['ppc_bagilot']; ?></td>
                                                         <!-- DATE BAGI LOT -->
-                                                        <td><?= $rowdb2['ORDERDATE']; ?></td> <!-- TGL TERIMA ORDER -->
+                                                        <td><?= $rowdb2['ORDERDATE']->format('Y-m-d H:i:s'); ?></td>
+                                                        <!-- TGL TERIMA ORDER -->
                                                         <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
                                                         <td><?= $rowdb2['NO_ORDER'] . '-' . $rowdb2['ORDERLINE']; ?>
                                                         </td>
@@ -1098,14 +1177,14 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                         <!-- KETERANGAN PRODUCT -->
                                                         <td>
                                                             <?php
-                                                                        $q_lebar = db2_exec($conn1, "SELECT * FROM ITXVIEWLEBAR WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
+                                                                        $q_lebar = db2_exec($conn1, "SELECT DISTINCT * FROM ITXVIEWLEBAR WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
                                                                         $d_lebar = db2_fetch_assoc($q_lebar);
                                                                         ?>
                                                             <?= number_format($d_lebar['LEBAR'], 0); ?>
                                                         </td><!-- LEBAR -->
                                                         <td>
                                                             <?php
-                                                                        $q_gramasi = db2_exec($conn1, "SELECT * FROM ITXVIEWGRAMASI WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
+                                                                        $q_gramasi = db2_exec($conn1, "SELECT DISTINCT * FROM ITXVIEWGRAMASI WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
                                                                         $d_gramasi = db2_fetch_assoc($q_gramasi);
                                                                         ?>
                                                             <?php
@@ -1120,7 +1199,8 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                         </td> <!-- GRAMASI -->
                                                         <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                                                         <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                                                        <td><?= $rowdb2['DELIVERY']; ?></td> <!-- DELIVERY -->
+                                                        <td><?= $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); ?></td>
+                                                        <!-- DELIVERY -->
                                                         <td>
                                                             <?php
                                                                         if ($d_tglkniting_ready) {
