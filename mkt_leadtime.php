@@ -2,17 +2,17 @@
     ini_set("error_reporting", 1);
     session_start();
     require_once "koneksi.php";
-    mysqli_query($con_nowprd, "DELETE FROM itxview_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM itxview_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_leadtime WHERE CREATEDATETIME BETWEEN GETDATE() - 3 AND GETDATE() - 1");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 
-    mysqli_query($con_nowprd, "DELETE FROM posisikk_cache_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM posisikk_cache_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.posisikk_cache_leadtime WHERE CREATEDATETIME BETWEEN GETDATE() - 3 AND GETDATE() - 1");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.posisikk_cache_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 
-    mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE CREATEDATETIME BETWEEN GETDATE()-3 AND GETDATE()-1");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 
-    mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE CREATEDATETIME BETWEEN GETDATE()-3 AND GETDATE()-1");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,7 +76,7 @@
                                         ini_set("error_reporting", 1);
                                         session_start();
                                         require_once "koneksi.php";
-                                        mysqli_query($con_nowprd, "DELETE FROM itxview_leadtime");
+                                        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_leadtime");
                                         header("Location: mkt_leadtime.php");
                                     ?>
                                 <?php endif; ?>

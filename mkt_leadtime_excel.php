@@ -2,22 +2,22 @@
     // ini_set("error_reporting", 1);
     // session_start();
     // require_once "koneksi.php";
-    // mysqli_query($con_nowprd, "DELETE FROM itxview_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    // mysqli_query($con_nowprd, "DELETE FROM itxview_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    // sqlsrv_query($con_nowprd, "DELETE FROM itxview_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
+    // sqlsrv_query($con_nowprd, "DELETE FROM itxview_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 
-    // mysqli_query($con_nowprd, "DELETE FROM posisikk_cache_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    // mysqli_query($con_nowprd, "DELETE FROM posisikk_cache_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    // sqlsrv_query($con_nowprd, "DELETE FROM nowprd.posisikk_cache_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
+    // sqlsrv_query($con_nowprd, "DELETE FROM nowprd.posisikk_cache_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 
-    // mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    // mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    // sqlsrv_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
+    // sqlsrv_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 
-    // mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    // mysqli_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    // sqlsrv_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
+    // sqlsrv_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 ?>
 <?php
-    header("content-type:application/vnd-ms-excel");
-    header("content-disposition:attachment;filename=Leadtime Lululemon.xls");
-    header('Cache-Control: max-age=0');
+    // header("content-type:application/vnd-ms-excel");
+    // header("content-disposition:attachment;filename=Leadtime Lululemon.xls");
+    // header('Cache-Control: max-age=0');
 ?>
 <table border="1">
     <thead>
@@ -218,7 +218,7 @@
                                         ."'".'LEADTIME'."')";
             }
             $value_itxviewmemo        = implode(',', $r_itxviewmemo);
-            $insert_itxviewmemo       = mysqli_query($con_nowprd, "INSERT INTO itxview_leadtime(ORDERDATE,PELANGGAN,BUYER,NO_ITEM,NO_ORDER,NO_PO,ARTICLE_GROUP,ARTICLE_CODE,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,TGL_MUTASI,QTY_BAGIKAIN,NETTO,`DELAY`,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
+            $insert_itxviewmemo       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_leadtime(ORDERDATE,PELANGGAN,BUYER,NO_ITEM,NO_ORDER,NO_PO,ARTICLE_GROUP,ARTICLE_CODE,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,TGL_MUTASI,QTY_BAGIKAIN,NETTO,DELAY,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
                 
             // --------------------------------------------------------------------------------------------------------------- //
             $tgl1_2         = $_POST['tgl1'];
@@ -228,11 +228,11 @@
             }else{
                 $where_date2     = "";
             }
-            $sqlDB2 = "SELECT DISTINCT * FROM itxview_leadtime WHERE $where_date2 AND ACCESS_TO = 'LEADTIME' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY TGL_MUTASI ASC";
+            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_leadtime WHERE $where_date2 AND ACCESS_TO = 'LEADTIME' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY TGL_MUTASI ASC";
             // $sqlDB2 = "SELECT DISTINCT * FROM itxview_leadtime WHERE NO_KK = '00101307' AND ACCESS_TO = 'LEADTIME' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC ";
 
-            $stmt   = mysqli_query($con_nowprd, $sqlDB2);
-            while ($rowdb2 = mysqli_fetch_array($stmt)) {
+            $stmt   = sqlsrv_query($con_nowprd, $sqlDB2);
+            while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
         ?>
         <?php
             ini_set("error_reporting", 1);
@@ -283,7 +283,7 @@
                 // }
                 // if($r_posisikk_ins3){
                 //     $value_posisikk_ins3        = implode(',', $r_posisikk_ins3);
-                //     $insert_posisikk_ins3       = mysqli_query($con_nowprd, "INSERT INTO itxview_posisikk_tgl_in_prodorder_ins3_leadtime
+                //     $insert_posisikk_ins3       = sqlsrv_query($con_nowprd, "INSERT INTO itxview_posisikk_tgl_in_prodorder_ins3_leadtime
                 //                                                                         (PRODUCTIONORDERCODE,
                 //                                                                         OPERATIONCODE,
                 //                                                                         PROPROGRESSPROGRESSNUMBER,
@@ -318,7 +318,7 @@
                 //     $IPADDRESS                      = $_SERVER['REMOTE_ADDR'];
                 //     $CREATEDATETIME                 = date('Y-m-d H:i:s');
 
-                //     $insert_posisikk_cnp1       = mysqli_query($con_nowprd, "INSERT INTO itxview_posisikk_tgl_in_prodorder_cnp1_leadtime
+                //     $insert_posisikk_cnp1       = sqlsrv_query($con_nowprd, "INSERT INTO itxview_posisikk_tgl_in_prodorder_cnp1_leadtime
                 //                                                                         (PRODUCTIONORDERCODE,
                 //                                                                         OPERATIONCODE,
                 //                                                                         PROPROGRESSPROGRESSNUMBER,
@@ -366,7 +366,7 @@
                     $ipaddress      = $_SERVER['REMOTE_ADDR'];
                     $creationdate   = date('Y-m-d H:i:s');
 
-                    $insert_posisikk    = mysqli_query($con_nowprd, "INSERT INTO posisikk_cache_leadtime
+                    $insert_posisikk    = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.posisikk_cache_leadtime
                                                                                 (productionorder,
                                                                                 productiondemand,
                                                                                 stepnumber,
@@ -387,31 +387,31 @@
             // POSISI KK
 
             // BAT1
-                $q_posisikk_bat1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_bat1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime 
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BAT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_bat1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_bat1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BAT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
-                $row_posisikk_bat1_1      = mysqli_fetch_assoc($q_posisikk_bat1_1);
-                $row_posisikk_bat1_2      = mysqli_fetch_assoc($q_posisikk_bat1_2);
+                                                                            stepnumber DESC");
+                $row_posisikk_bat1_1      = sqlsrv_fetch_array($q_posisikk_bat1_1);
+                $row_posisikk_bat1_2      = sqlsrv_fetch_array($q_posisikk_bat1_2);
 
                 if($row_posisikk_bat1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_bat1         = date_create($row_posisikk_bat1_2['mulai']);
@@ -428,32 +428,32 @@
             // BAT1
 
             // BAT2
-                $q_posisikk_bat2_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_bat2_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BAT2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_bat2_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_bat2_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BAT2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_bat2_1      = mysqli_fetch_assoc($q_posisikk_bat2_1);
-                $row_posisikk_bat2_2      = mysqli_fetch_assoc($q_posisikk_bat2_2);
+                $row_posisikk_bat2_1      = sqlsrv_fetch_array($q_posisikk_bat2_1);
+                $row_posisikk_bat2_2      = sqlsrv_fetch_array($q_posisikk_bat2_2);
 
                 if($row_posisikk_bat2_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_bat2         = date_create($row_posisikk_bat2_2['mulai']);
@@ -470,32 +470,32 @@
             // BAT2
 
             // BKN1
-                $q_posisikk_bkn1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_bkn1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BKN1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_bkn1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_bkn1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BKN1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
                 
-                $row_posisikk_bkn1_1      = mysqli_fetch_assoc($q_posisikk_bkn1_1);
-                $row_posisikk_bkn1_2      = mysqli_fetch_assoc($q_posisikk_bkn1_2);
+                $row_posisikk_bkn1_1      = sqlsrv_fetch_array($q_posisikk_bkn1_1);
+                $row_posisikk_bkn1_2      = sqlsrv_fetch_array($q_posisikk_bkn1_2);
 
                 if($row_posisikk_bkn1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_bkn1        = date_create($row_posisikk_bkn1_2['mulai']);
@@ -512,33 +512,33 @@
             // BKN1
             
             // SCO1
-                $q_posisikk_sco1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sco1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SCO1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_sco1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sco1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SCO1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
                 
 
-                $row_posisikk_sco1_1      = mysqli_fetch_assoc($q_posisikk_sco1_1);
-                $row_posisikk_sco1_2      = mysqli_fetch_assoc($q_posisikk_sco1_2);
+                $row_posisikk_sco1_1      = sqlsrv_fetch_array($q_posisikk_sco1_1);
+                $row_posisikk_sco1_2      = sqlsrv_fetch_array($q_posisikk_sco1_2);
 
                 if($row_posisikk_sco1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_sco1        = date_create($row_posisikk_sco1_2['mulai']);
@@ -555,32 +555,32 @@
             // SCO1
 
             // RLX1
-                $q_posisikk_rlx1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_rlx1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'RLX1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_rlx1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_rlx1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'RLX1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_rlx1_1      = mysqli_fetch_assoc($q_posisikk_rlx1_1);
-                $row_posisikk_rlx1_2      = mysqli_fetch_assoc($q_posisikk_rlx1_2);
+                $row_posisikk_rlx1_1      = sqlsrv_fetch_array($q_posisikk_rlx1_1);
+                $row_posisikk_rlx1_2      = sqlsrv_fetch_array($q_posisikk_rlx1_2);
 
                 if($row_posisikk_rlx1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_rlx1         = date_create($row_posisikk_rlx1_2['mulai']);
@@ -597,32 +597,32 @@
             // RLX1
 
             // CBL1
-                $q_posisikk_cbl1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_cbl1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                            nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'CBL1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_cbl1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_cbl1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'CBL1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_cbl1_1      = mysqli_fetch_assoc($q_posisikk_cbl1_1);
-                $row_posisikk_cbl1_2      = mysqli_fetch_assoc($q_posisikk_cbl1_2);
+                $row_posisikk_cbl1_1      = sqlsrv_fetch_array($q_posisikk_cbl1_1);
+                $row_posisikk_cbl1_2      = sqlsrv_fetch_array($q_posisikk_cbl1_2);
 
                 if($row_posisikk_cbl1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_cbl1         = date_create($row_posisikk_cbl1_2['mulai']);
@@ -638,32 +638,32 @@
             // CBL1
 
             // MAT1
-                $q_posisikk_mat1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_mat1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'MAT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_mat1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_mat1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'MAT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_mat1_1      = mysqli_fetch_assoc($q_posisikk_mat1_1);
-                $row_posisikk_mat1_2      = mysqli_fetch_assoc($q_posisikk_mat1_2);
+                $row_posisikk_mat1_1      = sqlsrv_fetch_array($q_posisikk_mat1_1);
+                $row_posisikk_mat1_2      = sqlsrv_fetch_array($q_posisikk_mat1_2);
 
                 if($row_posisikk_mat1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_mat1         = date_create($row_posisikk_mat1_2['mulai']);
@@ -679,32 +679,32 @@
             // MAT1
 
             // PRE1
-                $q_posisikk_pre1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_pre1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'PRE1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_pre1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_pre1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'PRE1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_pre1_1      = mysqli_fetch_assoc($q_posisikk_pre1_1);
-                $row_posisikk_pre1_2      = mysqli_fetch_assoc($q_posisikk_pre1_2);
+                $row_posisikk_pre1_1      = sqlsrv_fetch_array($q_posisikk_pre1_1);
+                $row_posisikk_pre1_2      = sqlsrv_fetch_array($q_posisikk_pre1_2);
 
                 if($row_posisikk_pre1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_pre1         = date_create($row_posisikk_pre1_2['mulai']);
@@ -721,32 +721,32 @@
             // PRE1
 
             // RSE1
-                $q_posisikk_rse1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_rse1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'RSE1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_rse1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_rse1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'RSE1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_rse1_1      = mysqli_fetch_assoc($q_posisikk_rse1_1);
-                $row_posisikk_rse1_2      = mysqli_fetch_assoc($q_posisikk_rse1_2);
+                $row_posisikk_rse1_1      = sqlsrv_fetch_array($q_posisikk_rse1_1);
+                $row_posisikk_rse1_2      = sqlsrv_fetch_array($q_posisikk_rse1_2);
 
                 if($row_posisikk_rse1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_rse1         = date_create($row_posisikk_rse1_2['mulai']);
@@ -762,32 +762,32 @@
             // RSE1
 
             // RSE2
-                $q_posisikk_rse2_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_rse2_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'RSE2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_rse2_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_rse2_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'RSE2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_rse2_1      = mysqli_fetch_assoc($q_posisikk_rse2_1);
-                $row_posisikk_rse2_2      = mysqli_fetch_assoc($q_posisikk_rse2_2);
+                $row_posisikk_rse2_1      = sqlsrv_fetch_array($q_posisikk_rse2_1);
+                $row_posisikk_rse2_2      = sqlsrv_fetch_array($q_posisikk_rse2_2);
 
                 if($row_posisikk_rse2_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_rse2         = date_create($row_posisikk_rse2_2['mulai']);
@@ -804,32 +804,32 @@
             // RSE2
 
             // SHR1
-                $q_posisikk_shr1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_shr1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_shr1_1      = mysqli_fetch_assoc($q_posisikk_shr1_1);
-                $row_posisikk_shr1_2      = mysqli_fetch_assoc($q_posisikk_shr1_2);
+                $row_posisikk_shr1_1      = sqlsrv_fetch_array($q_posisikk_shr1_1);
+                $row_posisikk_shr1_2      = sqlsrv_fetch_array($q_posisikk_shr1_2);
 
                 if($row_posisikk_shr1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_shr1         = date_create($row_posisikk_shr1_2['mulai']);
@@ -846,32 +846,32 @@
             // SHR1
 
             // SHR2
-                $q_posisikk_shr2_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr2_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_shr2_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr2_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_shr2_1      = mysqli_fetch_assoc($q_posisikk_shr2_1);
-                $row_posisikk_shr2_2      = mysqli_fetch_assoc($q_posisikk_shr2_2);
+                $row_posisikk_shr2_1      = sqlsrv_fetch_array($q_posisikk_shr2_1);
+                $row_posisikk_shr2_2      = sqlsrv_fetch_array($q_posisikk_shr2_2);
 
                 if($row_posisikk_shr2_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_shr2         = date_create($row_posisikk_shr2_2['mulai']);
@@ -888,31 +888,31 @@
             // SHR2
 
             // SUE1
-                $q_posisikk_sue1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sue1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUE1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_sue1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sue1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUE1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
-                $row_posisikk_sue1_1      = mysqli_fetch_assoc($q_posisikk_sue1_1);
-                $row_posisikk_sue1_2      = mysqli_fetch_assoc($q_posisikk_sue1_2);
+                                                                            stepnumber DESC");
+                $row_posisikk_sue1_1      = sqlsrv_fetch_array($q_posisikk_sue1_1);
+                $row_posisikk_sue1_2      = sqlsrv_fetch_array($q_posisikk_sue1_2);
 
                 if($row_posisikk_sue1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_sue1         = date_create($row_posisikk_sue1_2['mulai']);
@@ -930,32 +930,32 @@
             // SUE1
 
             // SUE2
-                $q_posisikk_sue2_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sue2_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUE2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_sue2_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sue2_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUE2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_sue2_1      = mysqli_fetch_assoc($q_posisikk_sue2_1);
-                $row_posisikk_sue2_2      = mysqli_fetch_assoc($q_posisikk_sue2_2);
+                $row_posisikk_sue2_1      = sqlsrv_fetch_array($q_posisikk_sue2_1);
+                $row_posisikk_sue2_2      = sqlsrv_fetch_array($q_posisikk_sue2_2);
 
                 if($row_posisikk_sue2_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_sue2         = date_create($row_posisikk_sue2_2['mulai']);
@@ -972,32 +972,32 @@
             // SUE2
 
             // DYE1
-                $q_posisikk_dye1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye1_1        = sqlsrv_query($con_nowprd, "SELECT
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_dye1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye1_2        = sqlsrv_query($con_nowprd, "SELECT
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_dye1_1      = mysqli_fetch_assoc($q_posisikk_dye1_1);
-                $row_posisikk_dye1_2      = mysqli_fetch_assoc($q_posisikk_dye1_2);
+                $row_posisikk_dye1_1      = sqlsrv_fetch_array($q_posisikk_dye1_1);
+                $row_posisikk_dye1_2      = sqlsrv_fetch_array($q_posisikk_dye1_2);
 
                 if($row_posisikk_dye1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_dye1         = date_create($row_posisikk_dye1_2['mulai']);
@@ -1014,32 +1014,32 @@
             // DYE1
 
             // DYE2
-                $q_posisikk_dye2_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye2_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_dye2_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye2_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_dye2_1      = mysqli_fetch_assoc($q_posisikk_dye2_1);
-                $row_posisikk_dye2_2      = mysqli_fetch_assoc($q_posisikk_dye2_2);
+                $row_posisikk_dye2_1      = sqlsrv_fetch_array($q_posisikk_dye2_1);
+                $row_posisikk_dye2_2      = sqlsrv_fetch_array($q_posisikk_dye2_2);
 
                 if($row_posisikk_dye2_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_dye2         = date_create($row_posisikk_dye2_2['mulai']);
@@ -1056,32 +1056,32 @@
             // DYE2
 
             // DYE3
-                $q_posisikk_dye3_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye3_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE3'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_dye3_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye3_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE3'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_dye3_1      = mysqli_fetch_assoc($q_posisikk_dye3_1);
-                $row_posisikk_dye3_2      = mysqli_fetch_assoc($q_posisikk_dye3_2);
+                $row_posisikk_dye3_1      = sqlsrv_fetch_array($q_posisikk_dye3_1);
+                $row_posisikk_dye3_2      = sqlsrv_fetch_array($q_posisikk_dye3_2);
 
                 if($row_posisikk_dye3_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_dye3         = date_create($row_posisikk_dye3_2['mulai']);
@@ -1098,32 +1098,32 @@
             // DYE3
 
             // DYE4
-                $q_posisikk_dye4_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye4_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_dye4_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye4_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_dye4_1      = mysqli_fetch_assoc($q_posisikk_dye4_1);
-                $row_posisikk_dye4_2      = mysqli_fetch_assoc($q_posisikk_dye4_2);
+                $row_posisikk_dye4_1      = sqlsrv_fetch_array($q_posisikk_dye4_1);
+                $row_posisikk_dye4_2      = sqlsrv_fetch_array($q_posisikk_dye4_2);
 
                 if($row_posisikk_dye4_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_dye4         = date_create($row_posisikk_dye4_2['mulai']);
@@ -1140,32 +1140,32 @@
             // DYE4
 
             // DYE5
-                $q_posisikk_dye5_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye5_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE5'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_dye5_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye5_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE5'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
                 
-                $row_posisikk_dye5_1      = mysqli_fetch_assoc($q_posisikk_dye5_1);
-                $row_posisikk_dye5_2      = mysqli_fetch_assoc($q_posisikk_dye5_2);
+                $row_posisikk_dye5_1      = sqlsrv_fetch_array($q_posisikk_dye5_1);
+                $row_posisikk_dye5_2      = sqlsrv_fetch_array($q_posisikk_dye5_2);
 
                 if($row_posisikk_dye5_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_dye5         = date_create($row_posisikk_dye5_2['mulai']);
@@ -1182,32 +1182,32 @@
             // DYE5
 
             // DYE6
-                $q_posisikk_dye6_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye6_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE6'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_dye6_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_dye6_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'DYE6'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_dye6_1      = mysqli_fetch_assoc($q_posisikk_dye6_1);
-                $row_posisikk_dye6_2      = mysqli_fetch_assoc($q_posisikk_dye6_2);
+                $row_posisikk_dye6_1      = sqlsrv_fetch_array($q_posisikk_dye6_1);
+                $row_posisikk_dye6_2      = sqlsrv_fetch_array($q_posisikk_dye6_2);
 
                 if($row_posisikk_dye6_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_dye6         = date_create($row_posisikk_dye6_2['mulai']);
@@ -1224,32 +1224,32 @@
             // DYE6
 
             // SOP1
-                $q_posisikk_sop1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sop1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SOP1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_sop1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sop1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SOP1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_sop1_1      = mysqli_fetch_assoc($q_posisikk_sop1_1);
-                $row_posisikk_sop1_2      = mysqli_fetch_assoc($q_posisikk_sop1_2);
+                $row_posisikk_sop1_1      = sqlsrv_fetch_array($q_posisikk_sop1_1);
+                $row_posisikk_sop1_2      = sqlsrv_fetch_array($q_posisikk_sop1_2);
 
                 if($row_posisikk_sop1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_sop1         = date_create($row_posisikk_sop1_2['mulai']);
@@ -1266,32 +1266,32 @@
             // SOP1
 
             // BLD1
-                $q_posisikk_bld1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_bld1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BLD1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_bld1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_bld1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BLD1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_bld1_1      = mysqli_fetch_assoc($q_posisikk_bld1_1);
-                $row_posisikk_bld1_2      = mysqli_fetch_assoc($q_posisikk_bld1_2);
+                $row_posisikk_bld1_1      = sqlsrv_fetch_array($q_posisikk_bld1_1);
+                $row_posisikk_bld1_2      = sqlsrv_fetch_array($q_posisikk_bld1_2);
 
                 if($row_posisikk_bld1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_bld1         = date_create($row_posisikk_bld1_2['mulai']);
@@ -1308,32 +1308,32 @@
             // BLD1
 
             // BLP1
-                $q_posisikk_blp1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_blp1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BLP1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_blp1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_blp1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'BLP1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_blp1_1      = mysqli_fetch_assoc($q_posisikk_blp1_1);
-                $row_posisikk_blp1_2      = mysqli_fetch_assoc($q_posisikk_blp1_2);
+                $row_posisikk_blp1_1      = sqlsrv_fetch_array($q_posisikk_blp1_1);
+                $row_posisikk_blp1_2      = sqlsrv_fetch_array($q_posisikk_blp1_2);
 
                 if($row_posisikk_blp1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_blp1         = date_create($row_posisikk_blp1_2['mulai']);
@@ -1350,32 +1350,32 @@
             // BLP1
 
             // OPW1
-                $q_posisikk_opw1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_opw1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OPW1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_opw1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_opw1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OPW1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_opw1_1      = mysqli_fetch_assoc($q_posisikk_opw1_1);
-                $row_posisikk_opw1_2      = mysqli_fetch_assoc($q_posisikk_opw1_2);
+                $row_posisikk_opw1_1      = sqlsrv_fetch_array($q_posisikk_opw1_1);
+                $row_posisikk_opw1_2      = sqlsrv_fetch_array($q_posisikk_opw1_2);
 
                 if($row_posisikk_opw1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_opw1         = date_create($row_posisikk_opw1_2['mulai']);
@@ -1392,32 +1392,32 @@
             // OPW1
 
             // OVD1
-                $q_posisikk_ovd1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ovd1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OVD1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_ovd1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ovd1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OVD1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_ovd1_1      = mysqli_fetch_assoc($q_posisikk_ovd1_1);
-                $row_posisikk_ovd1_2      = mysqli_fetch_assoc($q_posisikk_ovd1_2);
+                $row_posisikk_ovd1_1      = sqlsrv_fetch_array($q_posisikk_ovd1_1);
+                $row_posisikk_ovd1_2      = sqlsrv_fetch_array($q_posisikk_ovd1_2);
 
                 if($row_posisikk_ovd1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_ovd1         = date_create($row_posisikk_ovd1_2['mulai']);
@@ -1434,32 +1434,32 @@
             // OVD1
 
             // OVN1
-                $q_posisikk_ovn1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ovn1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OVN1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_ovn1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ovn1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OVN1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_ovn1_1      = mysqli_fetch_assoc($q_posisikk_ovn1_1);
-                $row_posisikk_ovn1_2      = mysqli_fetch_assoc($q_posisikk_ovn1_2);
+                $row_posisikk_ovn1_1      = sqlsrv_fetch_array($q_posisikk_ovn1_1);
+                $row_posisikk_ovn1_2      = sqlsrv_fetch_array($q_posisikk_ovn1_2);
 
                 if($row_posisikk_ovn1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_ovn1         = date_create($row_posisikk_ovn1_2['mulai']);
@@ -1476,32 +1476,32 @@
             // OVN1
 
             // OVN2
-                $q_posisikk_ovn2_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ovn2_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OVN2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_ovn2_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ovn2_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OVN2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_ovn2_1      = mysqli_fetch_assoc($q_posisikk_ovn2_1);
-                $row_posisikk_ovn2_2      = mysqli_fetch_assoc($q_posisikk_ovn2_2);
+                $row_posisikk_ovn2_1      = sqlsrv_fetch_array($q_posisikk_ovn2_1);
+                $row_posisikk_ovn2_2      = sqlsrv_fetch_array($q_posisikk_ovn2_2);
 
                 if($row_posisikk_ovn2_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_ovn2         = date_create($row_posisikk_ovn2_2['mulai']);
@@ -1518,32 +1518,32 @@
             // OVN2
 
             // OVN3
-                $q_posisikk_ovn3_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ovn3_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OVN3'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_ovn3_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ovn3_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'OVN3'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
                 
-                $row_posisikk_ovn3_1      = mysqli_fetch_assoc($q_posisikk_ovn3_1);
-                $row_posisikk_ovn3_2      = mysqli_fetch_assoc($q_posisikk_ovn3_2);
+                $row_posisikk_ovn3_1      = sqlsrv_fetch_array($q_posisikk_ovn3_1);
+                $row_posisikk_ovn3_2      = sqlsrv_fetch_array($q_posisikk_ovn3_2);
 
                 if($row_posisikk_ovn3_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_ovn3         = date_create($row_posisikk_ovn3_2['mulai']);
@@ -1560,32 +1560,32 @@
             // OVN3
 
             // CPT1
-                $q_posisikk_cpt1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_cpt1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'CPT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_cpt1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_cpt1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'CPT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_cpt1_1      = mysqli_fetch_assoc($q_posisikk_cpt1_1);
-                $row_posisikk_cpt1_2      = mysqli_fetch_assoc($q_posisikk_cpt1_2);
+                $row_posisikk_cpt1_1      = sqlsrv_fetch_array($q_posisikk_cpt1_1);
+                $row_posisikk_cpt1_2      = sqlsrv_fetch_array($q_posisikk_cpt1_2);
 
                 if($row_posisikk_cpt1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_cpt1         = date_create($row_posisikk_cpt1_2['mulai']);
@@ -1602,32 +1602,32 @@
             // CPT1
 
             // FIN1
-                $q_posisikk_fin1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_fin1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'FIN1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_fin1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_fin1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'FIN1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_fin1_1      = mysqli_fetch_assoc($q_posisikk_fin1_1);
-                $row_posisikk_fin1_2      = mysqli_fetch_assoc($q_posisikk_fin1_2);
+                $row_posisikk_fin1_1      = sqlsrv_fetch_array($q_posisikk_fin1_1);
+                $row_posisikk_fin1_2      = sqlsrv_fetch_array($q_posisikk_fin1_2);
 
                 if($row_posisikk_fin1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_fin1         = date_create($row_posisikk_fin1_2['mulai']);
@@ -1644,32 +1644,32 @@
             // FIN1
 
             // FNJ1
-                $q_posisikk_fnj1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_fnj1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'FNJ1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_fnj1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_fnj1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'FNJ1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_fnj1_1      = mysqli_fetch_assoc($q_posisikk_fnj1_1);
-                $row_posisikk_fnj1_2      = mysqli_fetch_assoc($q_posisikk_fnj1_2);
+                $row_posisikk_fnj1_1      = sqlsrv_fetch_array($q_posisikk_fnj1_1);
+                $row_posisikk_fnj1_2      = sqlsrv_fetch_array($q_posisikk_fnj1_2);
 
                 if($row_posisikk_fnj1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_fnj1         = date_create($row_posisikk_fnj1_2['mulai']);
@@ -1686,32 +1686,32 @@
             // FNJ1
 
             // STM1
-                $q_posisikk_stm1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_stm1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'STM1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_stm1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_stm1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'STM1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_stm1_1      = mysqli_fetch_assoc($q_posisikk_stm1_1);
-                $row_posisikk_stm1_2      = mysqli_fetch_assoc($q_posisikk_stm1_2);
+                $row_posisikk_stm1_1      = sqlsrv_fetch_array($q_posisikk_stm1_1);
+                $row_posisikk_stm1_2      = sqlsrv_fetch_array($q_posisikk_stm1_2);
 
                 if($row_posisikk_stm1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_stm1         = date_create($row_posisikk_stm1_2['mulai']);
@@ -1728,32 +1728,32 @@
             // STM1
 
             // STM2
-                $q_posisikk_stm2_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_stm2_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'STM2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_stm2_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_stm2_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'STM2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_stm2_1      = mysqli_fetch_assoc($q_posisikk_stm2_1);
-                $row_posisikk_stm2_2      = mysqli_fetch_assoc($q_posisikk_stm2_2);
+                $row_posisikk_stm2_1      = sqlsrv_fetch_array($q_posisikk_stm2_1);
+                $row_posisikk_stm2_2      = sqlsrv_fetch_array($q_posisikk_stm2_2);
 
                 if($row_posisikk_stm2_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_stm2         = date_create($row_posisikk_stm2_2['mulai']);
@@ -1770,32 +1770,32 @@
             // STM2
 
             // TDR1
-                $q_posisikk_tdr1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_tdr1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'TDR1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_tdr1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_tdr1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'TDR1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_tdr1_1      = mysqli_fetch_assoc($q_posisikk_tdr1_1);
-                $row_posisikk_tdr1_2      = mysqli_fetch_assoc($q_posisikk_tdr1_2);
+                $row_posisikk_tdr1_1      = sqlsrv_fetch_array($q_posisikk_tdr1_1);
+                $row_posisikk_tdr1_2      = sqlsrv_fetch_array($q_posisikk_tdr1_2);
 
                 if($row_posisikk_tdr1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_tdr1         = date_create($row_posisikk_tdr1_2['mulai']);
@@ -1812,32 +1812,32 @@
             // TDR1
 
             // SHR3
-                $q_posisikk_shr3_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr3_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR3'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_shr3_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr3_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR3'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_shr3_1      = mysqli_fetch_assoc($q_posisikk_shr3_1);
-                $row_posisikk_shr3_2      = mysqli_fetch_assoc($q_posisikk_shr3_2);
+                $row_posisikk_shr3_1      = sqlsrv_fetch_array($q_posisikk_shr3_1);
+                $row_posisikk_shr3_2      = sqlsrv_fetch_array($q_posisikk_shr3_2);
 
                 if($row_posisikk_shr3_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_shr3         = date_create($row_posisikk_shr3_2['mulai']);
@@ -1854,32 +1854,32 @@
             // SHR3
 
             // SHR4
-                $q_posisikk_shr4_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr4_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_shr4_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr4_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_shr4_1      = mysqli_fetch_assoc($q_posisikk_shr4_1);
-                $row_posisikk_shr4_2      = mysqli_fetch_assoc($q_posisikk_shr4_2);
+                $row_posisikk_shr4_1      = sqlsrv_fetch_array($q_posisikk_shr4_1);
+                $row_posisikk_shr4_2      = sqlsrv_fetch_array($q_posisikk_shr4_2);
 
                 if($row_posisikk_shr4_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_shr4         = date_create($row_posisikk_shr4_2['mulai']);
@@ -1896,32 +1896,32 @@
             // SHR4
 
             // SHR5
-                $q_posisikk_shr5_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr5_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR5'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_shr5_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_shr5_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SHR5'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_shr5_1      = mysqli_fetch_assoc($q_posisikk_shr5_1);
-                $row_posisikk_shr5_2      = mysqli_fetch_assoc($q_posisikk_shr5_2);
+                $row_posisikk_shr5_1      = sqlsrv_fetch_array($q_posisikk_shr5_1);
+                $row_posisikk_shr5_2      = sqlsrv_fetch_array($q_posisikk_shr5_2);
 
                 if($row_posisikk_shr5_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_shr5         = date_create($row_posisikk_shr5_2['mulai']);
@@ -1938,32 +1938,32 @@
             // SHR5
 
             // SUE3
-                $q_posisikk_sue3_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sue3_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUE3'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_sue3_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sue3_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUE3'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_sue3_1      = mysqli_fetch_assoc($q_posisikk_sue3_1);
-                $row_posisikk_sue3_2      = mysqli_fetch_assoc($q_posisikk_sue3_2);
+                $row_posisikk_sue3_1      = sqlsrv_fetch_array($q_posisikk_sue3_1);
+                $row_posisikk_sue3_2      = sqlsrv_fetch_array($q_posisikk_sue3_2);
 
                 if($row_posisikk_sue3_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_sue3         = date_create($row_posisikk_sue3_2['mulai']);
@@ -1980,32 +1980,32 @@
             // SUE3
 
             // SUE4
-                $q_posisikk_sue4_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sue4_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUE4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_sue4_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sue4_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUE4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_sue4_1      = mysqli_fetch_assoc($q_posisikk_sue4_1);
-                $row_posisikk_sue4_2      = mysqli_fetch_assoc($q_posisikk_sue4_2);
+                $row_posisikk_sue4_1      = sqlsrv_fetch_array($q_posisikk_sue4_1);
+                $row_posisikk_sue4_2      = sqlsrv_fetch_array($q_posisikk_sue4_2);
 
                 if($row_posisikk_sue4_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_sue4         = date_create($row_posisikk_sue4_2['mulai']);
@@ -2022,32 +2022,32 @@
             // SUE4
 
             // FLT1
-                $q_posisikk_flt1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_flt1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'FLT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_flt1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_flt1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'FLT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_flt1_1      = mysqli_fetch_assoc($q_posisikk_flt1_1);
-                $row_posisikk_flt1_2      = mysqli_fetch_assoc($q_posisikk_flt1_2);
+                $row_posisikk_flt1_1      = sqlsrv_fetch_array($q_posisikk_flt1_1);
+                $row_posisikk_flt1_2      = sqlsrv_fetch_array($q_posisikk_flt1_2);
 
                 if($row_posisikk_flt1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_flt1         = date_create($row_posisikk_flt1_2['mulai']);
@@ -2064,32 +2064,32 @@
             // FLT1
 
             // INS2
-                $q_posisikk_ins2_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ins2_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'INS2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_ins2_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ins2_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'INS2'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_ins2_1      = mysqli_fetch_assoc($q_posisikk_ins2_1);
-                $row_posisikk_ins2_2      = mysqli_fetch_assoc($q_posisikk_ins2_2);
+                $row_posisikk_ins2_1      = sqlsrv_fetch_array($q_posisikk_ins2_1);
+                $row_posisikk_ins2_2      = sqlsrv_fetch_array($q_posisikk_ins2_2);
 
                 if($row_posisikk_ins2_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_ins2         = date_create($row_posisikk_ins2_2['mulai']);
@@ -2106,32 +2106,32 @@
             // INS2
 
             // ROT1
-                $q_posisikk_rot1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_rot1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'ROT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_rot1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_rot1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'ROT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_rot1_1      = mysqli_fetch_assoc($q_posisikk_rot1_1);
-                $row_posisikk_rot1_2      = mysqli_fetch_assoc($q_posisikk_rot1_2);
+                $row_posisikk_rot1_1      = sqlsrv_fetch_array($q_posisikk_rot1_1);
+                $row_posisikk_rot1_2      = sqlsrv_fetch_array($q_posisikk_rot1_2);
 
                 if($row_posisikk_rot1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_rot1         = date_create($row_posisikk_rot1_2['mulai']);
@@ -2148,32 +2148,32 @@
             // ROT1
 
             // SPT1
-                $q_posisikk_spt1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_spt1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SPT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_spt1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_spt1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SPT1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_spt1_1      = mysqli_fetch_assoc($q_posisikk_spt1_1);
-                $row_posisikk_spt1_2      = mysqli_fetch_assoc($q_posisikk_spt1_2);
+                $row_posisikk_spt1_1      = sqlsrv_fetch_array($q_posisikk_spt1_1);
+                $row_posisikk_spt1_2      = sqlsrv_fetch_array($q_posisikk_spt1_2);
 
                 if($row_posisikk_spt1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_spt1         = date_create($row_posisikk_spt1_2['mulai']);
@@ -2190,32 +2190,32 @@
             // SPT1
 
             // SUB1
-                $q_posisikk_sub1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sub1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUB1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_sub1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_sub1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'SUB1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
                 
-                $row_posisikk_sub1_1      = mysqli_fetch_assoc($q_posisikk_sub1_1);
-                $row_posisikk_sub1_2      = mysqli_fetch_assoc($q_posisikk_sub1_2);
+                $row_posisikk_sub1_1      = sqlsrv_fetch_array($q_posisikk_sub1_1);
+                $row_posisikk_sub1_2      = sqlsrv_fetch_array($q_posisikk_sub1_2);
 
                 if($row_posisikk_sub1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_sub1         = date_create($row_posisikk_sub1_2['mulai']);
@@ -2232,32 +2232,32 @@
             // SUB1
 
             // CUR1
-                $q_posisikk_cur1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_cur1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'CUR1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_cur1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_cur1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'CUR1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_cur1_1      = mysqli_fetch_assoc($q_posisikk_cur1_1);
-                $row_posisikk_cur1_2      = mysqli_fetch_assoc($q_posisikk_cur1_2);
+                $row_posisikk_cur1_1      = sqlsrv_fetch_array($q_posisikk_cur1_1);
+                $row_posisikk_cur1_2      = sqlsrv_fetch_array($q_posisikk_cur1_2);
 
                 if($row_posisikk_cur1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_cur1         = date_create($row_posisikk_cur1_2['mulai']);
@@ -2287,32 +2287,32 @@
             // INS3
 
             // QCF4
-                $q_posisikk_qcf4_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_qcf4_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'QCF4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_qcf4_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_qcf4_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'QCF4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_qcf4_1      = mysqli_fetch_assoc($q_posisikk_qcf4_1);
-                $row_posisikk_qcf4_2      = mysqli_fetch_assoc($q_posisikk_qcf4_2);
+                $row_posisikk_qcf4_1      = sqlsrv_fetch_array($q_posisikk_qcf4_1);
+                $row_posisikk_qcf4_2      = sqlsrv_fetch_array($q_posisikk_qcf4_2);
 
                 if($row_posisikk_qcf4_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_qcf4         = date_create($row_posisikk_qcf4_2['mulai']);
@@ -2342,32 +2342,32 @@
             // CNP1
 
             // GKJ1
-                $q_posisikk_gkj1_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_gkj1_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'GKJ1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_gkj1_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_gkj1_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'GKJ1'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_gkj1_1      = mysqli_fetch_assoc($q_posisikk_gkj1_1);
-                $row_posisikk_gkj1_2      = mysqli_fetch_assoc($q_posisikk_gkj1_2);
+                $row_posisikk_gkj1_1      = sqlsrv_fetch_array($q_posisikk_gkj1_1);
+                $row_posisikk_gkj1_2      = sqlsrv_fetch_array($q_posisikk_gkj1_2);
 
                 if($row_posisikk_gkj1_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_gkj1         = date_create($row_posisikk_gkj1_2['mulai']);
@@ -2384,32 +2384,32 @@
             // GKJ1
 
             // PPC4
-                $q_posisikk_ppc4_1        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ppc4_1        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'PPC4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber ASC LIMIT 1");
+                                                                            stepnumber ASC");
 
-                $q_posisikk_ppc4_2        = mysqli_query($con_nowprd, "SELECT
+                $q_posisikk_ppc4_2        = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
-                                                                            `posisikk_cache_leadtime` 
+                                                                             nowprd.posisikk_cache_leadtime  
                                                                         WHERE
                                                                             productionorder = '$rowdb2[NO_KK]'
                                                                             AND productiondemand = '$rowdb2[DEMAND]'
                                                                             AND operationcode = 'PPC4'
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
-                                                                            stepnumber DESC LIMIT 1");
+                                                                            stepnumber DESC");
 
-                $row_posisikk_ppc4_1      = mysqli_fetch_assoc($q_posisikk_ppc4_1);
-                $row_posisikk_ppc4_2      = mysqli_fetch_assoc($q_posisikk_ppc4_2);
+                $row_posisikk_ppc4_1      = sqlsrv_fetch_array($q_posisikk_ppc4_1);
+                $row_posisikk_ppc4_2      = sqlsrv_fetch_array($q_posisikk_ppc4_2);
 
                 if($row_posisikk_ppc4_1['mulai'] == '0000-00-00 00:00:00'){
                     $waktuawal_ppc4         = date_create($row_posisikk_ppc4_2['mulai']);
@@ -2524,8 +2524,8 @@
             <td><?= $rowdb2['NO_ITEM']; ?></td> <!-- NO ITEM -->
             <td><?= $rowdb2['KETERANGAN_PRODUCT']; ?></td> <!-- KETERANGAN PRODUCT -->
             <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
-            <td>`<?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
-            <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
+            <td> <?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
+            <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>"> <?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
             <td>
                 <?php
                     $q_orig_pd_code     = db2_exec($conn1, "SELECT 
@@ -2538,7 +2538,7 @@
                 ?>
                 <?= $d_orig_pd_code['ORIGINALPDCODE'] ?>
             </td> <!-- Original PD Code -->
-            <td>`<?= $rowdb2['LOT']; ?></td> <!-- LOT -->
+            <td> <?= $rowdb2['LOT']; ?></td> <!-- LOT -->
             <td>
                 <?php
                     // KK GABUNG
