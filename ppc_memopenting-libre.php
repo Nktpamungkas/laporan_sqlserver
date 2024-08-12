@@ -52,7 +52,7 @@ header('Cache-Control: max-age=0');
     </thead>
     <tbody>
         <?php
-            ini_set("error_reporting", 1);
+            // ini_set("error_reporting", 1);
             session_start();
             require_once "koneksi.php";
 
@@ -70,9 +70,9 @@ header('Cache-Control: max-age=0');
             } else {
                 $where_date2     = "";
             }
-            $sqlDB2 = "SELECT DISTINCT * FROM itxview_memopentingppc WHERE (PROGRESSSTATUS <> '6' AND PROGRESSSTATUS_DEMAND <> '6') $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'";
-            $stmt   = mysqli_query($con_nowprd, $sqlDB2);
-            while ($rowdb2 = mysqli_fetch_array($stmt)) {
+            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE (PROGRESSSTATUS <> '6' AND PROGRESSSTATUS_DEMAND <> '6') $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'";
+            $stmt   = sqlsrv_query($con_nowprd, $sqlDB2);
+            while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
         ?>
             <?php 
                 //Deteksi Production Demand Closed Atau Belum
@@ -353,7 +353,7 @@ header('Cache-Control: max-age=0');
             ?>
             <?php if($show_hide == 'show') : ?>
                 <tr>
-                    <td><?= $rowdb2['ORDERDATE']; ?></td> <!-- TGL TERIMA ORDER -->
+                    <td><?= $rowdb2['ORDERDATE']->format('Y-m-d H:i:s'); ?></td> <!-- TGL TERIMA ORDER -->
                     <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
                     <td><?= $rowdb2['NO_ORDER']; ?></td> <!-- NO. ORDER -->
                     <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->
@@ -380,7 +380,7 @@ header('Cache-Control: max-age=0');
                     </td> <!-- GRAMASI -->
                     <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                     <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                    <td><?= $rowdb2['DELIVERY']; ?></td> <!-- DELIVERY -->
+                    <td><?= $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); ?></td> <!-- DELIVERY -->
                     <td>
                         <?php
                             $q_actual_delivery      = db2_exec($conn1, "SELECT
@@ -561,14 +561,14 @@ header('Cache-Control: max-age=0');
                         <?php
                             // if($status_operation == 'Progress'){ // KALAU PROGRESS STATUSNYA PROGRESS
                                 if($kode_dept == 'DYE'){
-                                    $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT * FROM `tbl_schedule` WHERE nokk = '$rowdb2[NO_KK]'  AND NOT `status` = 'selesai'");
-                                    $data_schedule_dye  = mysqli_fetch_assoc($q_schedule_dye);
+                                    $q_schedule_dye     = sqlsrv_query($con_db_dyeing, "SELECT * FROM db_dying.tbl_schedule WHERE nokk = '$rowdb2[NO_KK]'  AND NOT status = 'selesai'");
+                                    $data_schedule_dye  = sqlsrv_fetch_array($q_schedule_dye, SQLSRV_FETCH_ASSOC);
                                     $nomesin            = $data_schedule_dye['no_mesin'];
                                     $nourut             = $data_schedule_dye['no_urut'];
                                 }elseif($kode_dept == 'FIN'){
-                                    $schedule_fin       = mysqli_query($con_db_finishing, "SELECT * FROM `tbl_schedule_new` WHERE nokk = '$rowdb2[NO_KK]' AND nodemand = '$rowdb2[DEMAND]' ORDER BY id DESC LIMIT 1");
-                                    $data_schedule_fin  = mysqli_fetch_assoc($schedule_fin);
-                                    $nomesin            = $data_schedule_fin['no_mesin']. '-'.substr(TRIM($data_schedule_fin['no_mesin']), -5, 2).substr(TRIM($data_schedule_fin['no_mesin']), -2);
+                                    $schedule_fin       = sqlsrv_query($con_finishing, "SELECT TOP 1 * FROM db_finishing.tbl_schedule_new WHERE nokk = '$rowdb2[NO_KK]' AND nodemand = '$rowdb2[DEMAND]' ORDER BY id DESC");
+                                    $data_schedule_fin  = sqlsrv_fetch_array($schedule_fin, SQLSRV_FETCH_ASSOC);
+                                    $nomesin            = $data_schedule_fin['no_mesin']. '-'.substr(TRIM($data_schedule_fin['no_mesin'] ?? ''), -5, 2).substr(TRIM($data_schedule_fin['no_mesin'] ?? ''), -2);
                                     $nourut             = $data_schedule_fin['nourut'];
                                 }else{
                                     $nomesin            = '';
@@ -591,7 +591,7 @@ header('Cache-Control: max-age=0');
                                 // echo $diff_totalharibagikain->m. ' Bulan, '.$diff_totalharibagikain->d. ' Hari';
                                 echo $diff_totalharibagikain->days. ' Hari';
                             }else{
-                                $tgl_buka_kartu   = date_create(substr($rowdb2['ORDERDATE'], 0, 10));
+                                $tgl_buka_kartu   = date_create(substr($rowdb2['ORDERDATE']->format('Y-m-d H:i:s'), 0, 10));
                                 $tglsekarang    = date_create(date('Y-m-d H:i:s'));
                                 $diff_totalharibagikain = date_diff($tgl_buka_kartu, $tglsekarang);
 
@@ -624,9 +624,9 @@ header('Cache-Control: max-age=0');
                         ?>
                     </td><!-- JAM -->
                     <td></td><!-- ALUR PROSES -->
-                    <td>`<?= $rowdb2['LOT']; ?></td> <!-- LOT -->
-                    <td><a target="_BLANK" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
-                    <td>`<?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
+                    <td><?= $rowdb2['LOT']; ?></td> <!-- LOT -->
+                    <td><a target="_BLANK" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>"><?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
+                    <td><?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
                     <td>
                         <?php
                             $sql_benang_booking_new		= db2_exec($conn1, "SELECT * FROM ITXVIEW_BOOKING_NEW WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]'

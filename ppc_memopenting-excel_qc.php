@@ -47,7 +47,7 @@
     </thead>
     <tbody>
         <?php
-            ini_set("error_reporting", 1);
+            // ini_set("error_reporting", 1);
             session_start();
             require_once "koneksi.php";
 
@@ -65,9 +65,9 @@
             } else {
                 $where_date2     = "";
             }
-            $sqlDB2 = "SELECT DISTINCT * FROM itxview_memopentingppc WHERE ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' $where_order2 $where_date2";
-            $stmt   = mysqli_query($con_nowprd, $sqlDB2);
-            while ($rowdb2 = mysqli_fetch_array($stmt)) {
+            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' $where_order2 $where_date2";
+            $stmt   = sqlsrv_query($con_nowprd, $sqlDB2);
+            while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
         ?>
         <?php 
             //Deteksi Production Demand Closed Atau Belum
@@ -328,7 +328,7 @@
             ?>
             <?php if($cek_operation == "MUNCUL" OR $cek_operation == NULL) : ?>
             <tr>
-                <td><?= $rowdb2['ORDERDATE']; ?></td> <!-- TGL TERIMA ORDER -->
+                <td><?= $rowdb2['ORDERDATE']->format('Y-m-d H:i:s'); ?></td> <!-- TGL TERIMA ORDER -->
                 <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
                 <td><?= $rowdb2['NO_ORDER']; ?></td> <!-- NO. ORDER -->
                 <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->
@@ -355,7 +355,7 @@
                 </td> <!-- GRAMASI -->
                 <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                 <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                <td><?= $rowdb2['DELIVERY']; ?></td> <!-- DELIVERY -->
+                <td><?= $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); ?></td> <!-- DELIVERY -->
                 <td>
                     <?php
                         $q_tglbagikain = db2_exec($conn1, "SELECT * FROM ITXVIEW_TGLBAGIKAIN WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
@@ -439,12 +439,14 @@
                 <td><?= $status_operation; ?></td> <!-- PROGRESS STATUS -->
                 <td>
                     <?php
-                        $tgl_bagikain   = date_create($d_tglbagikain['TRANSACTIONDATE']);
-                        $tglsekarang    = date_create(date('Y-m-d H:i:s'));
-                        
-                        $diff_totalharibagikain = date_diff($tgl_bagikain, $tglsekarang);
+                        if($d_tglbagikain['TRANSACTIONDATE'] != NULL) {
+                            $tgl_bagikain   = date_create($d_tglbagikain['TRANSACTIONDATE']);
+                            $tglsekarang    = date_create(date('Y-m-d H:i:s'));
+                            
+                            $diff_totalharibagikain = date_diff($tgl_bagikain, $tglsekarang);
 
-                        echo $diff_totalharibagikain->m. ' Bulan, '.$diff_totalharibagikain->d. ' Hari';
+                            echo $diff_totalharibagikain->m. ' Bulan, '.$diff_totalharibagikain->d. ' Hari';
+                        }
                     ?>
                 </td> <!-- TOTAL HARI BAGI KAIN -->
                 <td>

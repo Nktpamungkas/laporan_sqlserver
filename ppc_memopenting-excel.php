@@ -2,6 +2,14 @@
     header("content-type:application/vnd-ms-excel");
     header("content-disposition:attachment;filename=Memo Penting.xls");
     header('Cache-Control: max-age=0');
+
+    function cek($value) {
+        if(is_null($value) || $value == "") {
+            return NULL;
+        }
+    
+        return trim(addslashes($value));
+    }
 ?>
 <style>
     .str {
@@ -52,7 +60,7 @@
     </thead>
     <tbody>
         <?php
-            ini_set("error_reporting", 1);
+            // ini_set("error_reporting", 1);
             session_start();
             require_once "koneksi.php";
             if($_GET['akses'] == 'catch'){
@@ -84,34 +92,71 @@
                                                                             $where_no_po 
                                                                             $where_article 
                                                                             $where_nama_warna)");
+                $r_itxviewmemo = [];
                 while ($row_itxviewmemo   = db2_fetch_assoc($itxviewmemo)) {
-                $r_itxviewmemo[]      = "('".TRIM(addslashes($row_itxviewmemo['ORDERDATE']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['PELANGGAN']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['NO_ORDER']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['NO_PO']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['SUBCODE02']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['SUBCODE03']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['KETERANGAN_PRODUCT']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['WARNA']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['NO_WARNA']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['DELIVERY']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['NETTO']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['DELAY']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['NO_KK']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['DEMAND']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['LOT']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['ORDERLINE']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND']))."',"
-                                        ."'".TRIM(addslashes($row_itxviewmemo['KETERANGAN']))."',"
-                                        ."'".$_SERVER['REMOTE_ADDR']."',"
-                                        ."'".date('Y-m-d H:i:s')."',"
-                                        ."'".'MEMO'."')";
+                    $r_itxviewmemo[]      = [
+                        cek($row_itxviewmemo['ORDERDATE']),
+                        cek($row_itxviewmemo['PELANGGAN']),
+                        cek($row_itxviewmemo['NO_ORDER']),
+                        cek($row_itxviewmemo['NO_PO']),
+                        cek($row_itxviewmemo['SUBCODE02']),
+                        cek($row_itxviewmemo['SUBCODE03']),
+                        cek($row_itxviewmemo['KETERANGAN_PRODUCT']),
+                        cek($row_itxviewmemo['WARNA']),
+                        cek($row_itxviewmemo['NO_WARNA']),
+                        cek($row_itxviewmemo['DELIVERY']),
+                        cek($row_itxviewmemo['QTY_BAGIKAIN']),
+                        cek($row_itxviewmemo['NETTO']),
+                        cek($row_itxviewmemo['DELAY']),
+                        cek($row_itxviewmemo['NO_KK']),
+                        cek($row_itxviewmemo['DEMAND']),
+                        substr(cek($row_itxviewmemo['LOT']), 0, 7), // di database lengt7
+                        cek($row_itxviewmemo['ORDERLINE']),
+                        cek($row_itxviewmemo['PROGRESSSTATUS']),
+                        cek($row_itxviewmemo['PROGRESSSTATUS_DEMAND']),
+                        cek($row_itxviewmemo['KETERANGAN']),
+                        $_SERVER['REMOTE_ADDR'],
+                        date('Y-m-d H:i:s'),
+                        'MEMO'
+                    ];
 
                 }
-                $value_itxviewmemo        = implode(',', $r_itxviewmemo);
-                $insert_itxviewmemo       = mysqli_query($con_nowprd, "INSERT INTO itxview_memopentingppc(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,ARTICLE_GROUP,ARTICLE_CODE,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,`DELAY`,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
+                // $value_itxviewmemo        = implode(',', $r_itxviewmemo);
+                // $insert_itxviewmemo       = sqlsrv_query($con_nowprd, "INSERT INTO itxview_memopentingppc(ORDERDATE,PELANGGAN,NO_ORDER,NO_PO,ARTICLE_GROUP,ARTICLE_CODE,KETERANGAN_PRODUCT,WARNA,NO_WARNA,DELIVERY,QTY_BAGIKAIN,NETTO,DELAY,NO_KK,DEMAND,LOT,ORDERLINE,PROGRESSSTATUS,PROGRESSSTATUS_DEMAND,KETERANGAN,IPADDRESS,CREATEDATETIME,ACCESS_TO) VALUES $value_itxviewmemo");
+                try{
+                    // Define the query with placeholders
+                    $query = "
+                        INSERT INTO nowprd.itxview_memopentingppc (
+                            ORDERDATE, PELANGGAN, NO_ORDER, NO_PO, ARTICLE_GROUP, ARTICLE_CODE,
+                            KETERANGAN_PRODUCT, WARNA, NO_WARNA, DELIVERY, QTY_BAGIKAIN, NETTO,
+                            DELAY, NO_KK, DEMAND, LOT, ORDERLINE, PROGRESSSTATUS, PROGRESSSTATUS_DEMAND,
+                            KETERANGAN, IPADDRESS, CREATEDATETIME, ACCESS_TO
+                        ) VALUES (
+                            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                        )
+                    ";
+
+                    // Prepare the statement
+                    $stmt = $pdo->prepare($query);
+
+                    // Define the data to be inserted
+                    $data = $r_itxviewmemo;
+
+                    foreach ($data as $row) {
+                        // echo '<pre>';
+                        // print_r($row);
+                        // echo '</pre>';
+                        if (!$stmt->execute($row)) {
+                            // Handle error
+                            echo "Error: ";
+                            print_r($stmt->errorInfo());
+                            exit();
+                        }
+                    }
+                    // echo "Data successfully inserted!";
+                } catch (PDOException $e) {
+                    echo "xError: " . $e->getMessage();
+                }
 
                 $no_order_2 = $_GET['no_order'];
                 $tgl1_2     = $_GET['tgl1'];
@@ -127,8 +172,8 @@
                 } else {
                     $where_date2     = "";
                 }
-                $sqlDB2 = "SELECT DISTINCT * FROM itxview_memopentingppc WHERE (PROGRESSSTATUS <> '6' AND PROGRESSSTATUS_DEMAND <> '6') $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'";
-                $stmt   = mysqli_query($con_nowprd, $sqlDB2);
+                $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE (PROGRESSSTATUS <> '6' AND PROGRESSSTATUS_DEMAND <> '6') $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'";
+                $stmt   = sqlsrv_query($con_nowprd, $sqlDB2);
             }else{
                 $no_order_2 = $_GET['no_order'];
                 $tgl1_2     = $_GET['tgl1'];
@@ -144,10 +189,10 @@
                 } else {
                     $where_date2     = "";
                 }
-                $sqlDB2 = "SELECT DISTINCT * FROM itxview_memopentingppc WHERE (PROGRESSSTATUS <> '6' AND PROGRESSSTATUS_DEMAND <> '6') $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'";
-                $stmt   = mysqli_query($con_nowprd, $sqlDB2);
+                $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE (PROGRESSSTATUS <> '6' AND PROGRESSSTATUS_DEMAND <> '6') $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'";
+                $stmt   = sqlsrv_query($con_nowprd, $sqlDB2);
             }
-                while ($rowdb2 = mysqli_fetch_array($stmt)) {
+                while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
         ?>
             <?php 
                 //Deteksi Production Demand Closed Atau Belum
@@ -428,7 +473,7 @@
             ?>
             <?php if($show_hide == 'show') : ?>
                 <tr>
-                    <td><?= $rowdb2['ORDERDATE']; ?></td> <!-- TGL TERIMA ORDER -->
+                    <td><?= $rowdb2['ORDERDATE']->format('Y-m-d H:i:s'); ?></td> <!-- TGL TERIMA ORDER -->
                     <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
                     <td><?= $rowdb2['NO_ORDER']; ?></td> <!-- NO. ORDER -->
                     <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->
@@ -455,7 +500,7 @@
                     </td> <!-- GRAMASI -->
                     <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                     <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                    <td><?= $rowdb2['DELIVERY']; ?></td> <!-- DELIVERY -->
+                    <td><?= $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); ?></td> <!-- DELIVERY -->
                     <td>
                         <?php
                             $q_actual_delivery      = db2_exec($conn1, "SELECT
@@ -636,14 +681,14 @@
                         <?php
                             // if($status_operation == 'Progress'){ // KALAU PROGRESS STATUSNYA PROGRESS
                                 if($kode_dept == 'DYE'){
-                                    $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT * FROM `tbl_schedule` WHERE nokk = '$rowdb2[NO_KK]'  AND NOT `status` = 'selesai'");
-                                    $data_schedule_dye  = mysqli_fetch_assoc($q_schedule_dye);
+                                    $q_schedule_dye     = sqlsrv_query($con_db_dyeing, "SELECT * FROM db_dying.tbl_schedule WHERE nokk = '$rowdb2[NO_KK]'  AND NOT status = 'selesai'");
+                                    $data_schedule_dye  = sqlsrv_fetch_array($q_schedule_dye, SQLSRV_FETCH_ASSOC);
                                     $nomesin            = $data_schedule_dye['no_mesin'];
                                     $nourut             = $data_schedule_dye['no_urut'];
                                 }elseif($kode_dept == 'FIN'){
-                                    $schedule_fin       = mysqli_query($con_db_finishing, "SELECT * FROM `tbl_schedule_new` WHERE nokk = '$rowdb2[NO_KK]' AND nodemand = '$rowdb2[DEMAND]' ORDER BY id DESC LIMIT 1");
-                                    $data_schedule_fin  = mysqli_fetch_assoc($schedule_fin);
-                                    $nomesin            = $data_schedule_fin['no_mesin']. '-'.substr(TRIM($data_schedule_fin['no_mesin']), -5, 2).substr(TRIM($data_schedule_fin['no_mesin']), -2);
+                                    $schedule_fin       = sqlsrv_query($con_finishing, "SELECT TOP 1 * FROM db_finishing.tbl_schedule_new WHERE nokk = '$rowdb2[NO_KK]' AND nodemand = '$rowdb2[DEMAND]' ORDER BY id DESC");
+                                    $data_schedule_fin  = sqlsrv_fetch_array($schedule_fin, SQLSRV_FETCH_ASSOC);
+                                    $nomesin            = $data_schedule_fin['no_mesin']. '-'.substr(TRIM($data_schedule_fin['no_mesin'] ?? ''), -5, 2).substr(TRIM($data_schedule_fin['no_mesin'] ?? ''), -2);
                                     $nourut             = $data_schedule_fin['nourut'];
                                 }else{
                                     $nomesin            = '';
@@ -666,7 +711,7 @@
                                 // echo $diff_totalharibagikain->m. ' Bulan, '.$diff_totalharibagikain->d. ' Hari';
                                 echo $diff_totalharibagikain->days. ' Hari';
                             }else{
-                                $tgl_buka_kartu   = date_create(substr($rowdb2['ORDERDATE'], 0, 10));
+                                $tgl_buka_kartu   = date_create(substr($rowdb2['ORDERDATE']->format('Y-m-d H:i:s'), 0, 10));
                                 $tglsekarang    = date_create(date('Y-m-d H:i:s'));
                                 $diff_totalharibagikain = date_diff($tgl_buka_kartu, $tglsekarang);
 
@@ -699,9 +744,9 @@
                         ?>
                     </td><!-- JAM -->
                     <td></td><!-- ALUR PROSES -->
-                    <td>`<?= $rowdb2['LOT']; ?></td> <!-- LOT -->
-                    <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
-                    <td>`<?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
+                    <td><?= $rowdb2['LOT']; ?></td> <!-- LOT -->
+                    <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>"><?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
+                    <td><?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
                     <td>
                         <?php
                             $sql_benang_booking_new		= db2_exec($conn1, "SELECT * FROM ITXVIEW_BOOKING_NEW WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]'
