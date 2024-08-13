@@ -61,7 +61,7 @@
                                             session_start();
                                             require_once "koneksi.php";
 
-                                            $hasil_celup = sqlsrv_query($con_db_dyeing, "SELECT * FROM nowprd.tbl_hasilcelup WHERE nokk = '$_POST[prod_order]'");
+                                            $hasil_celup = sqlsrv_query($con_db_dyeing, "SELECT * FROM db_dying.tbl_hasilcelup WHERE nokk = '$_POST[prod_order]'");
                                             $dt_hc  = sqlsrv_fetch_array($hasil_celup);
 
                                             $_noprod    = substr($dt_hc['no_resep'], 0, 8);
