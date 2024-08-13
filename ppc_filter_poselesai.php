@@ -3,9 +3,9 @@ ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
 
-sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_poselesai_test WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_poselesai WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
 
-sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_poselesai_test WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_poselesai WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 
 $tgljam = date('Y-m-d H:i:s');
 
@@ -294,7 +294,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             }
 
                                                             try {
-                                                                $sql_insert_itxviewmemo = "INSERT INTO nowprd.[itxview_poselesai_test](
+                                                                $sql_insert_itxviewmemo = "INSERT INTO nowprd.[itxview_poselesai](
                                                                 ORDERDATE,
                                                                     PELANGGAN,
                                                                     NO_ORDER,
@@ -356,7 +356,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             $tgl1_kirim_2 = $_POST['tgl1_kirim'];
                                                             $tgl2_kirim_2 = $_POST['tgl2_kirim'];
 
-                                                            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.[itxview_poselesai_test] WHERE TGL_KIRIM BETWEEN '$tgl1_kirim_2' AND '$tgl2_kirim_2' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' 
+                                                            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.[itxview_poselesai] WHERE TGL_KIRIM BETWEEN '$tgl1_kirim_2' AND '$tgl2_kirim_2' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' 
                                                                     ORDER BY NO_ORDER, ORDERLINE ASC";
 
                                                             $stmt = sqlsrv_query($con_nowprd, $sqlDB2);
@@ -402,7 +402,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                 ];
                                                             }
                                                             try {
-                                                                $sql_insert_itxviewmemo = "INSERT INTO nowprd.[itxview_poselesai_test](
+                                                                $sql_insert_itxviewmemo = "INSERT INTO nowprd.[itxview_poselesai](
                                                                 ORDERDATE,
                                                                     PELANGGAN,
                                                                     NO_ORDER,
@@ -478,7 +478,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             $sqlDB2 = "SELECT 
                                                                             * 
                                                                             FROM 
-                                                                            nowprd.[itxview_poselesai_test] 
+                                                                            nowprd.[itxview_poselesai] 
                                                                             WHERE $where_order2 $where_date2 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' 
                                                                             ORDER BY 
                                                                             NO_ORDER, 
