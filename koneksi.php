@@ -138,3 +138,10 @@ try {
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }
+
+try {
+    $pdo_invoice = new PDO("sqlsrv:server=10.0.0.221;Database=invoice", "sa", "Ind@taichen2024");
+    $pdo_invoice->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Connection invoice failed: " . $e->getMessage());
+}
