@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>DYE - Check Rcode DYE LAB</title>
     <meta charset="utf-8">
@@ -9,7 +10,7 @@
     <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
-        <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> -->
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> -->
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
@@ -41,7 +42,9 @@
                                             <div class="row">
                                                 <div class="col-sm-12 col-xl-12 m-b-30">
                                                     <h4 class="sub-title">Production Order</h4>
-                                                    <input type="text" name="prod_order" class="form-control" value="<?php if (isset($_POST['submit'])){ echo $_POST['prod_order']; } ?>">
+                                                    <input type="text" name="prod_order" class="form-control" value="<?php if (isset($_POST['submit'])) {
+                                                                                                                            echo $_POST['prod_order'];
+                                                                                                                        } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
@@ -53,17 +56,17 @@
                                 <?php if (isset($_POST['submit'])) : ?>
                                     <div class="card">
                                         <div class="card-block">
-                                            <?php 
-                                                ini_set("error_reporting", 1);
-                                                session_start();
-                                                require_once "koneksi.php";
+                                            <?php
+                                            ini_set("error_reporting", 1);
+                                            session_start();
+                                            require_once "koneksi.php";
 
-                                                $hasil_celup = mysqli_query($con_db_dyeing, "SELECT * FROM tbl_hasilcelup WHERE nokk = '$_POST[prod_order]'");
-                                                $dt_hc  = mysqli_fetch_assoc($hasil_celup);
+                                            $hasil_celup = sqlsrv_query($con_db_dyeing, "SELECT * FROM nowprd.tbl_hasilcelup WHERE nokk = '$_POST[prod_order]'");
+                                            $dt_hc  = sqlsrv_fetch_array($hasil_celup);
 
-                                                $_noprod    = substr($dt_hc['no_resep'], 0,8);
-    						                    $_groupline	= substr($dt_hc['no_resep'], 9);
-                                                $rcode_recipe   = db2_exec($conn1, "SELECT 
+                                            $_noprod    = substr($dt_hc['no_resep'], 0, 8);
+                                            $_groupline    = substr($dt_hc['no_resep'], 9);
+                                            $rcode_recipe   = db2_exec($conn1, "SELECT 
                                                                                         a.VALUESTRING AS RCODE
                                                                                     FROM
                                                                                         PRODUCTIONRESERVATION p
@@ -71,12 +74,12 @@
                                                                                     LEFT JOIN ADSTORAGE a ON a.UNIQUEID = r.ABSUNIQUEID AND a.FIELDNAME = 'RCode'
                                                                                     WHERE 
                                                                                         p.PRODUCTIONORDERCODE = '$_noprod' AND GROUPLINE = '$_groupline'");
-                                                $dt_rcode    	= db2_fetch_assoc($rcode_recipe);
+                                            $dt_rcode        = db2_fetch_assoc($rcode_recipe);
                                             ?>
                                             <div class="row">
                                                 <div class="col-sm-12 col-xl-12 m-b-30">
                                                     <h4 class="sub-title">Rcode di dyeing (Legacy) : <b><?= $dt_hc['rcode']; ?></b> </h4>
-                                                    <h4 class="sub-title">Rcode di Laborat (Recipe - Additional Data - Rcode)  : <b><?= $dt_rcode['RCODE']; ?></b> </h4>
+                                                    <h4 class="sub-title">Rcode di Laborat (Recipe - Additional Data - Rcode) : <b><?= $dt_rcode['RCODE']; ?></b> </h4>
                                                 </div>
                                             </div>
                                         </div>
