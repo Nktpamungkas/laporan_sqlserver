@@ -1029,7 +1029,7 @@
                                                             $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
 
                                                             // itxview_detail_qa_data
-                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM nowprd.itxview_detail_qa_data 
+                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM itxview_detail_qa_data 
                                                                                                             WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
                                                                                                             AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
                                                                                                             AND OPERATIONCODE IN ('" . implode("','", $_POST['operation']) . "') 
@@ -1402,7 +1402,7 @@
                                                                     <th style="vertical-align: text-top;">:</th>
                                                                     <th style="vertical-align: text-top;">
                                                                         <?php
-                                                                        $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                        $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                         ?>
                                                                         <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                             <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
@@ -1710,7 +1710,7 @@
                                                                             ?>
                                                                             <?php if ($cek_QA_DATA7) : ?>
                                                                                 <?php
-                                                                                $q_routing  = sqlsrv_query($con_nowprd, "SELECT * FROM keterangan_leader 
+                                                                                $q_routing  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.keterangan_leader 
                                                                                                                             WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
                                                                                                                             AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
                                                                                                                             AND OPERATIONCODE = '$rowdb7[OPERATIONCODE]'");
@@ -2241,7 +2241,7 @@
                                                                             <th style="vertical-align: text-top;">:</th>
                                                                             <th style="vertical-align: text-top;">
                                                                                 <?php
-                                                                                $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                                $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                                 ?>
                                                                                 <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                                     <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
@@ -2722,7 +2722,7 @@
                                                             $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
 
                                                             // itxview_detail_qa_data
-                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM nowprd.itxview_detail_qa_data 
+                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM itxview_detail_qa_data 
                                                                                                         WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
                                                                                                         AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                         AND OPERATIONCODE IN ('" . implode("','", $_POST['operation2']) . "') 
@@ -3074,7 +3074,7 @@
                                                                     <th style="vertical-align: text-top;">:</th>
                                                                     <th style="vertical-align: text-top;">
                                                                         <?php
-                                                                        $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                        $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                         ?>
                                                                         <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                             <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
@@ -3382,7 +3382,7 @@
                                                                             ?>
                                                                             <?php if ($cek_QA_DATA7) : ?>
                                                                                 <?php
-                                                                                $q_routing  = sqlsrv_query($con_nowprd, "SELECT * FROM keterangan_leader 
+                                                                                $q_routing  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.keterangan_leader 
                                                                                                                         WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
                                                                                                                         AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]'
                                                                                                                         AND OPERATIONCODE = '$rowdb7[OPERATIONCODE]'");
@@ -3556,7 +3556,7 @@
                                                             $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
 
                                                             // itxview_detail_qa_data
-                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM nowprd.itxview_detail_qa_data 
+                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM itxview_detail_qa_data 
                                                                                                         WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
                                                                                                         AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                         AND OPERATIONCODE IN ('" . implode("','", $_POST['operation2']) . "') 
@@ -3914,7 +3914,7 @@
                                                                         <th style="vertical-align: text-top;">:</th>
                                                                         <th style="vertical-align: text-top;">
                                                                             <?php
-                                                                            $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                            $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                             ?>
                                                                             <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                                 <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
@@ -4222,7 +4222,7 @@
                                                                                 ?>
                                                                                 <?php if ($cek_QA_DATA7) : ?>
                                                                                     <?php
-                                                                                    $q_routing  = sqlsrv_query($con_nowprd, "SELECT * FROM keterangan_leader 
+                                                                                    $q_routing  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.keterangan_leader 
                                                                                                                             WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
                                                                                                                             AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]'
                                                                                                                             AND OPERATIONCODE = '$rowdb7[OPERATIONCODE]'");
@@ -4397,7 +4397,7 @@
                                                                 $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
 
                                                                 // itxview_detail_qa_data
-                                                                $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM nowprd.itxview_detail_qa_data 
+                                                                $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM itxview_detail_qa_data 
                                                                                                             WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
                                                                                                             AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                             AND OPERATIONCODE IN ('" . implode("','", $_POST['operation2']) . "') 
@@ -4755,7 +4755,7 @@
                                                                             <th style="vertical-align: text-top;">:</th>
                                                                             <th style="vertical-align: text-top;">
                                                                                 <?php
-                                                                                $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                                $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                                 ?>
                                                                                 <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                                     <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
@@ -5063,7 +5063,7 @@
                                                                                     ?>
                                                                                     <?php if ($cek_QA_DATA7) : ?>
                                                                                         <?php
-                                                                                        $q_routing  = sqlsrv_query($con_nowprd, "SELECT * FROM keterangan_leader 
+                                                                                        $q_routing  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.keterangan_leader 
                                                                                                                                 WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
                                                                                                                                 AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]'
                                                                                                                                 AND OPERATIONCODE = '$rowdb7[OPERATIONCODE]'");
