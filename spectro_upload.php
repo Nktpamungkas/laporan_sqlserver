@@ -106,7 +106,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                     if (isset($_POST['cari'])) {
                                                         $where_tgl  = "CONVERT(date, creationdate) BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'";
                                                     } else {
-                                                        $where_tgl  = "CONVERT(datetime, creationdate) = GETDATE()";
+                                                        $where_tgl  = "CONVERT(date, creationdate) = CONVERT(date, GETDATE())";
                                                     }
                                                     // echo "SELECT * FROM upload_spectro WHERE $where_tgl ORDER BY id DESC";
                                                     // $q_dataupload = sqlsrv_query($con_nowprd, "SELECT * FROM upload_spectro WHERE SUBSTR(creationdate, 1, 9) = SUBSTR(now(), 1,9) ORDER BY id DESC");
@@ -653,11 +653,9 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                     $statusy = "Gagal";
                                                 }
 
-                                                $sql = "INSERT INTO nowprd.upload_spectro (batch_name,whiteness,tint,yellowness,creationdate,ipaddress,statusheader,statuswhiteness,statustint,statusyellowness) VALUES ('$column1', '$column2', '$column3', '$column4', '$column5','$column6','$statusheader','$statusw','$statust','$statusy')";
-                                                $con_nowprd->query($sql);
+                                                sqlsrv_query($con_nowprd, "INSERT INTO nowprd.upload_spectro (batch_name,whiteness,tint,yellowness,creationdate,ipaddress,statusheader,statuswhiteness,statustint,statusyellowness) VALUES ('$column1', '$column2', '$column3', '$column4', '$column5','$column6','$statusheader','$statusw','$statust','$statusy')");
                                             }
                                         }
-                                        $con_nowprd->close();
                                         echo "<script type=\"text/javascript\">
                                                     window.location = \"spectro_upload.php\"
                                                     alert(\"CSV File berhasil terkirim ke NOW\");
