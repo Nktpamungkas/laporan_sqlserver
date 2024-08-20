@@ -108,6 +108,8 @@
                                                             ini_set("error_reporting", 1);
                                                             session_start();
                                                             require_once "koneksi.php";
+                                                            require_once "utils/query.php";
+
                                                             $_tgl1  = $_POST['tgl1'];
                                                             $_tgl2  = $_POST['tgl2'];
                                                             $q_salesreport = "SELECT *, 
@@ -134,44 +136,28 @@
                                                             }
 
                                                             $no     = 1;
-                                                            while ($row_salesreport = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                                                            while ($row_salesreport = resultSelect(sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC))) {
                                                         ?>
                                                         <tr>
                                                             <td><?= $row_salesreport['inv']; ?></td>
                                                             <td> 
                                                                 <?php
-                                                                    if ($row_salesreport['datenow'] instanceof DateTime) {
-                                                                       echo $row_salesreport['datenow']->format('Y-m-d'); 
-                                                                    } else {
-                                                                        echo '';
-                                                                    }
+                                                                    echo $row_salesreport['datenow'];
                                                                 ?>
                                                             </td>
                                                             <td>
                                                                 <?php
-                                                                    if ($row_salesreport['duedate_normal'] instanceof DateTime) {
-                                                                        echo $row_salesreport['duedate_normal']->format('Y-m-d'); 
-                                                                    } else {
-                                                                        echo '';
-                                                                    }
+                                                                    echo $row_salesreport['duedate_normal'];
                                                                 ?>
                                                             </td>
                                                             <td>
                                                                 <?php
-                                                                    if ($row_salesreport['date_kontrabon_normal'] instanceof DateTime) {
-                                                                        echo $row_salesreport['date_kontrabon_normal']->format('Y-m-d'); 
-                                                                    } else {
-                                                                        echo '';
-                                                                    }
+                                                                    echo $row_salesreport['date_kontrabon_normal'];
                                                                 ?>
                                                             </td>
                                                             <td>
                                                                 <?php
-                                                                    if ($row_salesreport['duedate_kontrabon_normal'] instanceof DateTime) {
-                                                                        echo $row_salesreport['duedate_kontrabon_normal']->format('Y-m-d'); 
-                                                                    } else {
-                                                                        echo '';
-                                                                    }
+                                                                    echo $row_salesreport['duedate_kontrabon_normal'];
                                                                 ?>
                                                             </td>
                                                             <td><?= $row_salesreport['idcustomerakunting_normal']; ?></td>
@@ -181,26 +167,22 @@
                                                             <td><?= $row_salesreport['orderno_normal']; ?></td>
                                                             <td><?= $row_salesreport['PO_NO']; ?></td>
                                                             <td><?= $row_salesreport['terms_normal']; ?></td>
-                                                            <td><?= (float)$row_salesreport['ratecurrency_normal']; ?></td>
-                                                            <td><?= (float)$row_salesreport['Berat']; ?></td>
-                                                            <td><?= (float)$row_salesreport['berat_lain']; ?></td>
-                                                            <td><?= (float)$row_salesreport['net_amount']; ?></td> <!-- DPP -->
-                                                            <td><?= (float)$row_salesreport['net_amount'] * $row_salesreport['ratecurrency_normal']; ?></td> <!-- DPP BC -->
-                                                            <td><?= $row_salesreport['net_amount'] * $row_salesreport['ppn']; ?></td> <!-- VAT -->
-                                                            <td><?= ($row_salesreport['net_amount'] * $row_salesreport['ratecurrency_normal']) * $row_salesreport['ppn']; ?></td> <!-- VAT BC -->
-                                                            <td><?= (float)$row_salesreport['net_amount'] + ($row_salesreport['net_amount'] * $row_salesreport['ppn']); ?></td> <!-- TOTAL -->
-                                                            <td><?= (float)($row_salesreport['net_amount'] * $row_salesreport['ratecurrency_normal']) + ($row_salesreport['net_amount'] * $row_salesreport['ratecurrency_normal']) * $row_salesreport['ppn']; ?></td> <!-- TOTAL BC -->
-                                                            <td><?= (float)$row_salesreport['net_amount'] + ($row_salesreport['net_amount'] * $row_salesreport['ppn']); ?></td> <!-- AMUONT -->
+                                                            <td><?= (float) $row_salesreport['ratecurrency_normal']; ?></td>
+                                                            <td><?= (float) $row_salesreport['Berat']; ?></td>
+                                                            <td><?= (float) $row_salesreport['berat_lain']; ?></td>
+                                                            <td><?= (float) $row_salesreport['net_amount']; ?></td> <!-- DPP -->
+                                                            <td><?= (float) $row_salesreport['net_amount'] * $row_salesreport['ratecurrency_normal']; ?></td> <!-- DPP BC -->
+                                                            <td><?= (float) $row_salesreport['net_amount'] * $row_salesreport['ppn']; ?></td> <!-- VAT -->
+                                                            <td><?= (float) ($row_salesreport['net_amount'] * $row_salesreport['ratecurrency_normal']) * $row_salesreport['ppn']; ?></td> <!-- VAT BC -->
+                                                            <td><?= (float) $row_salesreport['net_amount'] + ($row_salesreport['net_amount'] * $row_salesreport['ppn']); ?></td> <!-- TOTAL -->
+                                                            <td><?= (float) ($row_salesreport['net_amount'] * $row_salesreport['ratecurrency_normal']) + ($row_salesreport['net_amount'] * $row_salesreport['ratecurrency_normal']) * $row_salesreport['ppn']; ?></td> <!-- TOTAL BC -->
+                                                            <td><?= (float) $row_salesreport['net_amount'] + ($row_salesreport['net_amount'] * $row_salesreport['ppn']); ?></td> <!-- AMUONT -->
                                                             <td><?= $row_salesreport['PaymentID']; ?></td>
-                                                            <td><?= (float)$row_salesreport['Payment_total']; ?></td>
-                                                            <td><?= $row_salesreport['biaya_bank']; ?></td>
+                                                            <td><?= $row_salesreport['Payment_total']; ?></td>
+                                                            <td><?= (float) $row_salesreport['biaya_bank']; ?></td>
                                                             <td>
                                                                 <?php
-                                                                    if ($row_salesreport['date'] instanceof DateTime) {
-                                                                        echo $row_salesreport['date']->format('Y-m-d'); 
-                                                                    } else {
-                                                                        echo '';
-                                                                    }
+                                                                    echo $row_salesreport['date'];
                                                                 ?>
                                                             </td>
                                                         </tr>
