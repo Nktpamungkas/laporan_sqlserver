@@ -209,6 +209,7 @@ HOW TO USE
 
 4. ResultSelect
 
+    while ($row_data = resultSelect(sqlsrv_fetch_array($stmt))
 
 
 */
