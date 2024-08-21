@@ -1,23 +1,7 @@
 <?php
-// ini_set("error_reporting", 1);
-// session_start();
-// require_once "koneksi.php";
-// sqlsrv_query($con_nowprd, "DELETE FROM itxview_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-// sqlsrv_query($con_nowprd, "DELETE FROM itxview_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
-
-// sqlsrv_query($con_nowprd, "DELETE FROM nowprd.posisikk_cache_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-// sqlsrv_query($con_nowprd, "DELETE FROM nowprd.posisikk_cache_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
-
-// sqlsrv_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-// sqlsrv_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_ins3_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
-
-// sqlsrv_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-// sqlsrv_query($con_nowprd, "DELETE FROM itxview_posisikk_tgl_in_prodorder_cnp1_leadtime WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
-?>
-<?php
-// header("content-type:application/vnd-ms-excel");
-// header("content-disposition:attachment;filename=Leadtime Lululemon.xls");
-// header('Cache-Control: max-age=0');
+header("content-type:application/vnd-ms-excel");
+header("content-disposition:attachment;filename=Leadtime Lululemon.xls");
+header('Cache-Control: max-age=0');
 ?>
 <table border="1">
     <thead>
@@ -206,13 +190,13 @@
                 (string) TRIM(addslashes($row_itxviewmemo['NO_WARNA'])),
                 (string) TRIM(addslashes($row_itxviewmemo['DELIVERY'])),
                 (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTARTPROCESSDATE'])),
-                (float) TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])),
-                (int) TRIM(addslashes($row_itxviewmemo['NETTO'])),
-                (int) TRIM(addslashes($row_itxviewmemo['DELAY'])),
+                (float)  TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])),
+                (int)    TRIM(addslashes($row_itxviewmemo['NETTO'])),
+                (int)    TRIM(addslashes($row_itxviewmemo['DELAY'])),
                 (string) TRIM(addslashes($row_itxviewmemo['NO_KK'])),
                 (string) TRIM(addslashes($row_itxviewmemo['DEMAND'])),
                 (string) TRIM(addslashes($row_itxviewmemo['LOT'])),
-                (float) TRIM(addslashes($row_itxviewmemo['ORDERLINE'])),
+                (float)  TRIM(addslashes($row_itxviewmemo['ORDERLINE'])),
                 (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS'])),
                 (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
                 (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN'])),
@@ -275,7 +259,7 @@
                 }
             }
 
-            echo "Data successfully inserted!";
+            // echo "Data successfully inserted!";
 
         } catch (PDOException $e) {
             echo "xError: " . $e->getMessage();
@@ -420,23 +404,21 @@
                                                         AND p.PRODUCTIONDEMANDCODE = '00275249'
                                                         -- AND p.PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]'
                                                     ORDER BY p.STEPNUMBER ASC");
+
             while ($row_posisikk = db2_fetch_assoc($q_posisikk)) {
                 $prod_order = TRIM(addslashes($row_posisikk['PRODUCTIONORDERCODE']));
                 $prod_demand = TRIM(addslashes($row_posisikk['PRODUCTIONDEMANDCODE']));
                 $stepnumber = TRIM(addslashes($row_posisikk['STEPNUMBER']));
                 $operationcode = TRIM(addslashes($row_posisikk['OPERATIONCODE']));
-                // $mulai = (string) TRIM($row_posisikk['MULAI']);
                 $mulai = TRIM(addslashes($row_posisikk['MULAI']));
                 $selesai = TRIM(addslashes($row_posisikk['SELESAI']));
-                // $selesai = (string) TRIM($row_posisikk['SELESAI']);
                 $ipaddress = $_SERVER['REMOTE_ADDR'];
                 $creationdate = (string) date('Y-m-d H:i:s');
-                // var_dump($selesai);
-                // echo $mulai;
+
                 if ($mulai != null) {
                     $mulai = TRIM(addslashes($row_posisikk['MULAI']));
                 } else {
-                    $mulai_1 = null;
+                    $mulai = null;
                 }
                 $insert_posisikk = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.posisikk_cache_leadtime
                                                                                 (productionorder,
@@ -497,7 +479,7 @@
             if ($waktuawal_bat1 != null and $waktuakhir_bat1 != null) {
                 $diff_bat1 = date_diff($waktuawal_bat1, $waktuakhir_bat1);
             } else {
-                echo 0;
+                $diff_bat1 = 0;
             }
             // BAT1
         
@@ -540,9 +522,8 @@
             if ($waktuawal_bat2 != null and $waktuakhir_bat2 != null) {
                 $diff_bat2 = date_diff($waktuawal_bat2, $waktuakhir_bat2);
             } else {
-                echo 0;
+                $diff_bat2 = 0;
             }
-            // $diff_bat2 = date_diff($waktuawal_bat2, $waktuakhir_bat2);
             // BAT2
         
             // BKN1
@@ -754,7 +735,7 @@
             if ($waktuawal_mat1 != null and $waktuakhir_mat1 != null) {
                 $diff_mat1 = date_diff($waktuawal_mat1, $waktuakhir_mat1);
             } else {
-                echo 0;
+                $diff_mat1 = 0 ;
             }
 
             // MAT1
@@ -1135,7 +1116,7 @@
             if ($waktuawal_dye2 != null and $waktuakhir_dye2 != null) {
                 $diff_dye2 = date_diff($waktuawal_dye2, $waktuakhir_dye2);
             } else {
-                echo 0;
+                $diff_dye2 = 0;
             }
             // DYE2
         
@@ -1222,7 +1203,7 @@
             if ($waktuawal_dye4 != null and $waktuakhir_dye4 != null) {
                 $diff_dye4 = date_diff($waktuawal_dye4, $waktuakhir_dye4);
             } else {
-                echo 0;
+                $diff_dye4 = 0;
             }
             // DYE4
         
@@ -1478,7 +1459,7 @@
 
                 $diff_opw1 = date_diff($waktuawal_opw1, $waktuakhir_opw1);
             } else {
-                echo 0;
+                $diff_opw1 = 0;
             }
 
             // OPW1
@@ -1524,7 +1505,7 @@
             if ($waktuawal_ovd1 != null and $waktuakhir_ovd1 != null) {
                 $diff_ovn1 = date_diff($waktuawal_ovd1, $waktuakhir_ovd1);
             } else {
-                echo 0;
+                $diff_ovn1 = 0;
             }
             // $diff_ovd1 = date_diff($waktuawal_ovd1, $waktuakhir_ovd1);
             // OVD1
@@ -1570,7 +1551,7 @@
             if ($waktuawal_ovn1 != null and $waktuakhir_ovn1 != null) {
                 $diff_ovn1 = date_diff($waktuawal_ovn1, $waktuakhir_ovn1);
             } else {
-                echo 0;
+                $diff_ovn1 = 0;
             }
             // OVN1
         
@@ -1615,7 +1596,7 @@
             if ($waktuawal_ovn2 != null and $waktuakhir_ovn2 != null) {
                 $diff_ovn2 = date_diff($waktuawal_ovn2, $waktuakhir_ovn2);
             } else {
-                echo null;
+                $diff_ovn2 = 0;
             }
 
             // OVN2
@@ -1787,7 +1768,7 @@
             if ($waktuawal_fnj1 != null and $waktuakhir_fnj1 != null) {
                 $diff_fnj1 = date_diff($waktuawal_fnj1, $waktuakhir_fnj1);
             } else {
-                echo 0;
+                $diff_fnj1 = 0;
             }
             // FNJ1
         
@@ -2404,11 +2385,7 @@
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
                                                                             stepnumber ASC");
-            echo $rowdb2['NO_KK'];
-            echo '-';
-            echo $rowdb2['DEMAND'];
-            echo '-';
-            echo $rowdb2['REMOTE_ADDR'];
+
             $q_posisikk_qcf4_2 = sqlsrv_query($con_nowprd, "SELECT TOP 1
                                                                             * 
                                                                         FROM
@@ -2431,18 +2408,15 @@
                 $waktuawal_qcf4 = date_create($row_posisikk_qcf4_1['mulai']);
                 $waktuakhir_qcf4 = date_create($row_posisikk_qcf4_1['mulai']);
             } else {
-                // var_dump($row_posisikk_qcf4_2['mulai']);
                 $waktuawal_qcf4 = $row_posisikk_qcf4_1['mulai'];
-                // var_dump($waktuawal_qcf4);
                 $waktuakhir_qcf4 = $row_posisikk_qcf4_2['selesai'];
-                // var_dump($waktuakhir_qcf4);
             }
-            // echo $waktuawal_qcf4;
+
             if ($waktuawal_qcf4 != NULL & $waktuakhir_qcf4 != null || $waktuawal_qcf4 != '' & $waktuakhir_qcf4 != '') {
                 $diff_qcf4 = date_diff($waktuawal_qcf4, $waktuakhir_qcf4);
-            } else
-                echo '';
-            // $diff_qcf4 = date_diff($waktuawal_qcf4, $waktuakhir_qcf4);
+            } else {
+                $diff_qcf4 = 0;
+            }
             // QCF4
         
             // CNP1
@@ -2499,7 +2473,7 @@
             if ($waktuawal_gkj1 != null and $waktuakhir_gkj1 != null) {
                 $diff_gkj1 = date_diff($waktuawal_gkj1, $waktuakhir_gkj1);
             } else {
-                echo 0;
+                $diff_gkj1 = 0;
             }
             // $diff_gkj1 = date_diff($waktuawal_gkj1, $waktuakhir_gkj1);
             // GKJ1
@@ -2545,7 +2519,7 @@
             if ($waktuawal_ppc4 != NULL & $waktuakhir_ppc4 != NULL) {
                 $diff_ppc4 = date_diff($waktuawal_ppc4, $waktuakhir_ppc4);
             } else {
-                echo '';
+               $diff_ppc4 = 0;
             }
 
             // PPC4
