@@ -316,6 +316,11 @@
                                         </a>
                                     </li>
                                     <li class="">
+                                        <a href="prd_elements_cut.php" data-i18n="nav.animations.main">
+                                            History Cut Elements
+                                        </a>
+                                    </li>
+                                    <li class="">
                                         <a href="prd_laporan_mesin3.php" data-i18n="nav.animations.main">
                                             Macro Plan
                                         </a>
