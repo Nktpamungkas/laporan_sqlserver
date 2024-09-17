@@ -11,19 +11,23 @@ if (isset($_POST['simpan'])) {
     $tgl = date('Y-m-d H:i:s');
 
     if ($status == 'Pinjam') {
-        $update_query = "UPDATE db_dying.tbl_montemp 
-                         SET absen_in = ?, tgl_in = ?, keterangan = ?, absen_out = NULL, tgl_out = NULL, archive = 'Belum_Diarsipkan' 
-                         WHERE id = ?";
+		$update_query = mysqli_query($con_db_dyeing, "UPDATE tbl_montemp
+												SET absen_in = '$no_absen',
+													tgl_in = '$tgl',
+													keterangan = '$ket',
+													absen_out = null,
+													tgl_out = null,
+													archive = 'Belum_Diarsipkan'
+												WHERE
+													id = '$id'");
         $insert_query = "INSERT INTO nowprd.buku_pinjam_history (id_buku_pinjam, kode, no_absen, tgl_in, ket) VALUES (?, 'te', ?, ?, ?)";
 
         // Menyiapkan dan mengeksekusi query
-        $stmt_update = sqlsrv_prepare($con_db_dyeing, $update_query, array($no_absen, $tgl, $ket, $id));
         $stmt_insert = sqlsrv_prepare($con_nowprd, $insert_query, array($id, $no_absen, $tgl, $ket));
 
-        $success_update = sqlsrv_execute($stmt_update);
         $success_insert = sqlsrv_execute($stmt_insert);
 
-        if ($success_update && $success_insert) {
+        if ($update_query && $success_insert) {
             echo '<script language="javascript">
                     alert("Berhasil menyimpan data !");
                     window.location.href = "prd_pinjam_stdcckwarna_te.php";
@@ -31,21 +35,22 @@ if (isset($_POST['simpan'])) {
         } else {
             // Menampilkan kesalahan jika update atau insert gagal
             echo '<pre>';
-            echo 'Error Update: ' . print_r(sqlsrv_errors(), true) . "\n";
             echo 'Error Insert: ' . print_r(sqlsrv_errors(), true);
             echo '</pre>';
         }
+		
     } else {
-        $update_query = "UPDATE db_dying.tbl_montemp 
-                         SET absen_in = ?, tgl_in = ?, keterangan = ?, absen_out = NULL, tgl_out = NULL, archive = 'Belum_Diarsipkan' 
-                         WHERE id = ?";
+		$out = mysqli_query($con_db_dyeing, "UPDATE tbl_montemp
+												SET absen_out = '$no_absen',
+													tgl_out = '$tgl',
+													keterangan = '$ket'
+												WHERE
+													id = '$id'");
         $insert_query = "INSERT INTO nowprd.buku_pinjam_history (id_buku_pinjam, kode, no_absen, tgl_out, ket) VALUES (?, 'te', ?, ?, ?)";
 
         // Menyiapkan dan mengeksekusi query
-        $stmt_update = sqlsrv_prepare($con_db_dyeing, $update_query, array($no_absen, $tgl, $ket, $id));
         $stmt_insert = sqlsrv_prepare($con_nowprd, $insert_query, array($id, $no_absen, $tgl, $ket));
 
-        $success_update = sqlsrv_execute($stmt_update);
         $success_insert = sqlsrv_execute($stmt_insert);
 
         if ($success_update && $success_insert) {
@@ -56,7 +61,6 @@ if (isset($_POST['simpan'])) {
         } else {
             // Menampilkan kesalahan jika update atau insert gagal
             echo '<pre>';
-            echo 'Error Update: ' . print_r(sqlsrv_errors(), true) . "\n";
             echo 'Error Insert: ' . print_r(sqlsrv_errors(), true);
             echo '</pre>';
         }
@@ -204,29 +208,28 @@ if (isset($_POST['simpan'])) {
 													</thead>
 													<tbody>
 														<?php
-                                                            $q_bukupinjam = sqlsrv_query($con_db_dyeing, "SELECT
-                                                                                                            a.id,
-                                                                                                            a.nokk,
-                                                                                                            a.nodemand,
-                                                                                                            b.no_mesin,
-                                                                                                            b.no_warna,
-                                                                                                            b.warna,
-                                                                                                            a.absen_in,
-                                                                                                            a.tgl_in,
-                                                                                                            a.tgl_out,
-                                                                                                            a.archive,
-                                                                                                            a.keterangan,
-                                                                                                            b.lot 
-                                                                                                        FROM
-                                                                                                            db_dying.tbl_montemp a
-                                                                                                            LEFT JOIN db_dying.tbl_schedule b ON b.id = a.id_schedule 
-                                                                                                        WHERE
-                                                                                                            ( a.tgl_in IS NOT NULL OR a.tgl_out IS NOT NULL ) 
-                                                                                                        ORDER BY
-                                                                                                            a.id DESC");
-                                                            ?>
-														<?php while ($row_bukupinjam = sqlsrv_fetch_array($q_bukupinjam)) {
-                                                            ?>
+															$q_bukupinjam = mysqli_query($con_db_dyeing, "SELECT
+																												a.id,
+																												a.nokk,
+																												a.nodemand,
+																												b.no_mesin,
+																												b.no_warna,
+																												b.warna,
+																												a.absen_in,
+																												a.tgl_in,
+																												a.tgl_out,
+																												a.archive,
+																												a.keterangan,
+																												b.lot
+																											FROM
+																												tbl_montemp a
+																											LEFT JOIN tbl_schedule b ON b.id = a.id_schedule
+																											WHERE
+																												(a.tgl_in IS NOT NULL OR a.tgl_out IS NOT NULL)
+																											ORDER BY
+																												a.id DESC");
+															?>
+															<?php while ($row_bukupinjam = mysqli_fetch_array($q_bukupinjam)) { ?>
 														<tr>
 															<td><?= sprintf("%'.06d\n", $row_bukupinjam['id']); ?></td>
 															<td><?= $row_bukupinjam['nokk']; ?></td>

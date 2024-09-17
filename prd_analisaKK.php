@@ -808,19 +808,19 @@
                                                                             $prod_order     = TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']);
                                                                             $prod_demand    = TRIM($demand);
 
-                                                                            $q_dye_montemp      = sqlsrv_query($con_db_dyeing, "SELECT TOP 1
+                                                                            $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
                                                                                                                                     a.id AS idm,
                                                                                                                                     b.id AS ids,
                                                                                                                                     b.no_resep 
                                                                                                                                 FROM
-                                                                                                                                    db_dying.tbl_montemp a
-                                                                                                                                    LEFT JOIN db_dying.tbl_schedule b ON a.id_schedule = b.id
-                                                                                                                                    LEFT JOIN db_dying.tbl_setting_mesin c ON b.nokk = c.nokk 
+                                                                                                                                    tbl_montemp a
+                                                                                                                                    LEFT JOIN tbl_schedule b ON a.id_schedule = b.id
+                                                                                                                                    LEFT JOIN tbl_setting_mesin c ON b.nokk = c.nokk 
                                                                                                                                 WHERE
                                                                                                                                     b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
                                                                                                                                 ORDER BY
-                                                                                                                                    a.id DESC");
-                                                                            $d_dye_montemp      = sqlsrv_fetch_array($q_dye_montemp);
+                                                                                                                                    a.id DESC LIMIT 1 ");
+                                                                            $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
 
                                                                             ?>
                                                                             <th style="text-align: center;">
@@ -1662,7 +1662,7 @@
                                                                                     $prod_order     = TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']);
                                                                                     $prod_demand    = TRIM($demand);
 
-                                                                                    $q_dye_montemp      = sqlsrv_query($con_db_dyeing, "SELECT TOP 1
+                                                                                    $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
                                                                                                                                             a.id AS idm,
                                                                                                                                             b.id AS ids,
                                                                                                                                             b.no_resep 
@@ -1673,8 +1673,8 @@
                                                                                                                                         WHERE
                                                                                                                                             b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
                                                                                                                                         ORDER BY
-                                                                                                                                            a.id DESC");
-                                                                                    $d_dye_montemp      = sqlsrv_fetch_array($q_dye_montemp);
+                                                                                                                                            a.id DESC LIMIT 1 ");
+                                                                                    $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
 
                                                                                     ?>
                                                                                     <th style="text-align: center;">
@@ -2501,7 +2501,7 @@
                                                                                             $prod_order     = TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']);
                                                                                             $prod_demand    = TRIM($demand);
 
-                                                                                            $q_dye_montemp      = sqlsrv_query($con_db_dyeing, "SELECT TOP 1
+                                                                                            $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
                                                                                                                                                     a.id AS idm,
                                                                                                                                                     b.id AS ids,
                                                                                                                                                     b.no_resep 
@@ -2512,8 +2512,8 @@
                                                                                                                                                 WHERE
                                                                                                                                                     b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
                                                                                                                                                 ORDER BY
-                                                                                                                                                    a.id DESC ");
-                                                                                            $d_dye_montemp      = sqlsrv_fetch_array($q_dye_montemp);
+                                                                                                                                                    a.id DESC LIMIT 1 ");
+                                                                                            $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
 
                                                                                             ?>
                                                                                             <th style="text-align: center;">
@@ -3334,7 +3334,7 @@
                                                                                     $prod_order     = TRIM($d_ITXVIEWKK_2['PRODUCTIONORDERCODE']);
                                                                                     $prod_demand    = TRIM($demand_2);
 
-                                                                                    $q_dye_montemp      = sqlsrv_query($con_db_dyeing, "SELECT TOP 1
+                                                                                    $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
                                                                                                                                         a.id AS idm,
                                                                                                                                         b.id AS ids,
                                                                                                                                         b.no_resep 
@@ -3345,8 +3345,8 @@
                                                                                                                                     WHERE
                                                                                                                                         b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
                                                                                                                                     ORDER BY
-                                                                                                                                        a.id DESC");
-                                                                                    $d_dye_montemp      = sqlsrv_fetch_array($q_dye_montemp);
+                                                                                                                                        a.id DESC LIMIT 1 ");
+                                                                                    $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
 
                                                                                     ?>
                                                                                     <th style="text-align: center;">
@@ -4174,7 +4174,7 @@
                                                                                         $prod_order     = TRIM($d_ITXVIEWKK_2['PRODUCTIONORDERCODE']);
                                                                                         $prod_demand    = TRIM($demand_2);
 
-                                                                                        $q_dye_montemp      = sqlsrv_query($con_db_dyeing, "SELECT TOP 1
+                                                                                        $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
                                                                                                                                             a.id AS idm,
                                                                                                                                             b.id AS ids,
                                                                                                                                             b.no_resep 
@@ -4185,8 +4185,8 @@
                                                                                                                                         WHERE
                                                                                                                                             b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
                                                                                                                                         ORDER BY
-                                                                                                                                            a.id DESC");
-                                                                                        $d_dye_montemp      = sqlsrv_fetch_array($q_dye_montemp);
+                                                                                                                                            a.id DESC LIMIT 1 ");
+                                                                                        $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
 
                                                                                         ?>
                                                                                         <th style="text-align: center;">
@@ -5015,7 +5015,7 @@
                                                                                             $prod_order     = TRIM($d_ITXVIEWKK_2['PRODUCTIONORDERCODE']);
                                                                                             $prod_demand    = TRIM($demand_2);
 
-                                                                                            $q_dye_montemp      = sqlsrv_query($con_db_dyeing, "SELECT TOP 1
+                                                                                            $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
                                                                                                                                                 a.id AS idm,
                                                                                                                                                 b.id AS ids,
                                                                                                                                                 b.no_resep 
@@ -5026,8 +5026,8 @@
                                                                                                                                             WHERE
                                                                                                                                                 b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
                                                                                                                                             ORDER BY
-                                                                                                                                                a.id DESC");
-                                                                                            $d_dye_montemp      = sqlsrv_fetch_array($q_dye_montemp);
+                                                                                                                                                a.id DESC LIMIT 1 ");
+                                                                                            $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
 
                                                                                             ?>
                                                                                             <th style="text-align: center;">
