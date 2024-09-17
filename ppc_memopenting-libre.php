@@ -3,7 +3,7 @@
 header("content-disposition:attachment;filename=Memo Penting.ods");
 header('Cache-Control: max-age=0');
 
-include_once "./utils/helper.php";
+include_once "utils/helper.php";
 ?>
 <style>
     .str {

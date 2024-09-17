@@ -2,8 +2,8 @@
     ini_set("error_reporting", 1);
     session_start();
     require_once "koneksi.php";
-    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.ITXVIEWRESEP WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.ITXVIEWRESEP WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
+    sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -95,7 +95,7 @@
                                         }
                                         $value_itxviewresep        = implode(',', $r_itxviewresep);
                                         $insert_itxviewresep       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxviewresep(GROUPLINE,PRODRESERVATIONLINKGROUPCODE,SUBCODE01_RESERVATION,PICKUPQUANTITY,PRODUCTIONORDERCODE,SUFFIXCODE_RESERVATION,RECIPENUMBERID,SUFFIXCODE,GROUPNUMBER,CODE,SUBCODE,CONSUMPTION,COMMENTLINE,LONGDESCRIPTION,RECIPESUBCODE01,SUBCODE01,SUBCODE02,SUBCODE03,CONSUMPTIONTYPE,RECIPETYPE,PICKUPPERCENTAGE,RESIDUALBATHVOLUME,IPADDRESS,CREATEDATETIME) VALUES $value_itxviewresep");
-                                        
+
                                     ?>
                                     <?php endif; ?>
                                     <div class="row">
@@ -181,13 +181,13 @@
                                                                                 <?php
                                                                                     $prod_order     = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
                                                                                     $groupline      = sprintf("%08d", substr($_POST['bon_resep'], 9));
-                                                                                    $q_consumtion   = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.ITXVIEWRESEP 
+                                                                                    $q_consumtion   = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.itxviewresep 
                                                                                                                                         WHERE 
                                                                                                                                             SUBCODE = '$row_la[PRODUCT_CODE]' 
                                                                                                                                             AND PRODUCTIONORDERCODE = '$prod_order'
                                                                                                                                             AND GROUPLINE = '$groupline'
                                                                                                                                             AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
-                                                                                    $d_consumtion   = sqlsrv_fetch_array($q_consumtion, SQLSRV_FETCH_ASSOC);
+                                                                                    $d_consumtion   = sqlsrv_fetch_array($q_consumtion);
                                                                                     echo $d_consumtion['CONSUMPTION'];
                                                                                 ?>
                                                                             </td>
@@ -276,7 +276,7 @@
                                                                                 <?php
                                                                                     $prod_order     = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
                                                                                     $groupline      = sprintf("%08d", substr($_POST['bon_resep'], 9));
-                                                                                    $q_consumtion   = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.ITXVIEWRESEP 
+                                                                                    $q_consumtion   = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.itxviewresep 
                                                                                                                                         WHERE 
                                                                                                                                             SUBCODE = '$row_CAMS[CODE]' 
                                                                                                                                             AND PRODUCTIONORDERCODE = '$prod_order' 
