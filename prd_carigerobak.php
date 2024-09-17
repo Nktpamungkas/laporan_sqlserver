@@ -573,19 +573,9 @@
                                                     </tr>
                                                     <?php else : ?>
                                                     <?php 
-                                                                    // FIELDNYA = tempat, kain_gerobak
-                                                                    $q_ncp      = sqlsrv_query($con_db_qc, "SELECT 
-                                                                                                                * 
-                                                                                                                FROM 
-                                                                                                                db_qc.db_qc.tbl_ncp_qcf_now
-                                                                                                                WHERE nokk = '$row_iptip[PRODUCTIONORDERCODE]' 
-                                                                                                                AND nodemand = '$row_iptip[PRODUCTIONDEMANDCODE]'
-                                                                                                                ");
-                                                                    $row_ncp    = sqlsrv_fetch_array($q_ncp, SQLSRV_FETCH_ASSOC);
-                                                                    // if(!$row_ncp){
-                                                                    //     var_dump(sqlsrv_errors());
-                                                                    // }
-                                                                ?>
+                                                        $q_ncp      = mysqli_query($con_db_qc, "SELECT * FROM `tbl_ncp_qcf_now` WHERE nokk = '$row_iptip[PRODUCTIONORDERCODE]' AND nodemand = '$row_iptip[PRODUCTIONDEMANDCODE]'");
+                                                        $row_ncp    = mysqli_fetch_assoc($q_ncp);
+                                                    ?>
                                                     <?php if($row_ncp) : ?>
                                                     <tr>
                                                         <td><?= $row_iptip['STEPNUMBER'] ?></td>
