@@ -238,10 +238,10 @@ if (isset($_POST['simpan'])) {
 															<td>
 																<?php
                                                                         $no_absen = ltrim($row_bukupinjam['absen_in'], '0');
-                                                                        $cari_nama_in = sqlsrv_query($con_hrd, "SELECT * FROM hrd.tbl_makar WHERE no_scan = '$no_absen'");
-                                                                        $cari_nama_out = sqlsrv_query($con_hrd, "SELECT * FROM hrd.tbl_makar WHERE no_scan = '$no_absen'");
-                                                                        $nama_in = sqlsrv_fetch_array($cari_nama_in);
-                                                                        $nama_out = sqlsrv_fetch_array($cari_nama_out);
+                                                                        $cari_nama_in = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
+                                                                        $cari_nama_out = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
+                                                                        $nama_in = mysqli_fetch_assoc($cari_nama_in);
+                                                                        $nama_out = mysqli_fetch_assoc($cari_nama_out);
                                                                         if (!empty($row_bukupinjam['tgl_in'])) {
                                                                             echo "Dipinjam : $nama_in[nama] <br>";
                                                                             echo "Waktu Pinjam :$row_bukupinjam[tgl_in] <br><br>";

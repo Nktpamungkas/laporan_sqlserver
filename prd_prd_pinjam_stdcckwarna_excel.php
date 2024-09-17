@@ -57,10 +57,10 @@ header('Cache-Control: max-age=0');
                 <td><?= $row_bukupinjam['customer']; ?></td>
                 <td>
                     <?php
-                    $cari_nama_in = sqlsrv_query($con_hrd, "SELECT * FROM hrd.tbl_makar WHERE no_scan = '" . $row_bukupinjam['absen_in'] . "'");
-                    $cari_nama_out = sqlsrv_query($con_hrd, "SELECT * FROM hrd.tbl_makar WHERE no_scan = '" . $row_bukupinjam['absen_out'] . "'");
-                    $nama_in = sqlsrv_fetch_array($cari_nama_in);
-                    $nama_out = sqlsrv_fetch_array($cari_nama_out);
+                    $cari_nama_in = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$row_bukupinjam[absen_in]'");
+                    $cari_nama_out = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$row_bukupinjam[absen_out]'");
+                    $nama_in    = mysqli_fetch_assoc($cari_nama_in);
+                    $nama_out   = mysqli_fetch_assoc($cari_nama_out);
                     if (!empty($row_bukupinjam['tgl_in'])) {
                         // Pastikan $row_bukupinjam['tgl_in'] adalah objek DateTime
                         if ($row_bukupinjam['tgl_in'] instanceof DateTime) {

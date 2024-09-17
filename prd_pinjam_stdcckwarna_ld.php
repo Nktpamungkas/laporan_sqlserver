@@ -380,8 +380,8 @@ if (isset($_POST['simpan'])) {
                                                                         if ($d_history['no_absen'] != null or $d_history['no_absen'] != '') {
                                                                             $no_absen    = ltrim($d_history['no_absen'], '0');
                                                                         }
-                                                                        $cari_nama   = sqlsrv_query($con_hrd, "SELECT * FROM hrd.tbl_makar WHERE no_scan = '$no_absen'");
-                                                                        $nama        = sqlsrv_fetch_array($cari_nama);
+                                                                        $cari_nama   = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
+                                                                        $nama        = mysqli_fetch_assoc($cari_nama);
 
                                                                         if ($d_history['tgl_in']) {
                                                                             echo "Dipinjam : $nama[nama] <br>";

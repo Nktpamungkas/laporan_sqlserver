@@ -60,19 +60,10 @@
 
             // Menampilkan data
             while ($row_history = sqlsrv_fetch_array($q_history)) {
-                if ($row_history['no_absen'] != '' or $row_history['no_absen'] != null) {
-
-                    $no_absen = ltrim($row_history['no_absen'], '0');
-                }
-                $cari_nama_in = sqlsrv_query($con_hrd, "SELECT * FROM hrd.tbl_makar WHERE no_scan = ?", array($no_absen));
-
-                // Memeriksa kesalahan pada query
-                if ($cari_nama_in === false) {
-                    die(print_r(sqlsrv_errors(), true));
-                }
-
-                $nama_in = sqlsrv_fetch_array($cari_nama_in);
-                $ket = substr($row_history['ket'], 20);
+                $no_absen       = ltrim($row_history['no_absen'], '0');
+                $cari_nama_in   = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
+                $nama_in        = mysqli_fetch_assoc($cari_nama_in);
+                $ket            = substr($row_history['ket'], 20);
             ?>
                 <tr>
                     <td></td>
