@@ -570,7 +570,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                             $cache_MULAI    = $d_cache['tanggal_in'];
                                                                             ?>
                                                                             <?php if ($cache_MULAI) : ?>
-                                                                                <span style="background-color: #A5CEA8;"><?= $cache_MULAI; ?></span>
+                                                                                <span style="background-color: #A5CEA8;"><?= $cache_MULAI->format('Y-m-d H:i:s'); ?></span>
                                                                             <?php else : ?>
                                                                                 <?php if ($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
                                                                                     <form action="" method="POST">
@@ -659,7 +659,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                             $cache_SELESAI    = $d_cache['tanggal_out'];
                                                                             ?>
                                                                             <?php if ($cache_SELESAI) : ?>
-                                                                                <span style="background-color: #A5CEA8;"><?= $cache_SELESAI; ?></span>
+                                                                                <span style="background-color: #A5CEA8;"><?= $cache_SELESAI->format('Y-m-d H:i:s');; ?></span>
                                                                             <?php else : ?>
                                                                                 <?php if ($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
                                                                                     <form action="" method="POST">

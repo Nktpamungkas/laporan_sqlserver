@@ -501,7 +501,7 @@
                     </td> <!-- GRAMASI -->
                     <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                     <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                    <td><?= $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); ?></td> <!-- DELIVERY -->
+                    <td><?php if($rowdb2['DELIVERY']){ echo $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); } ?></td> <!-- DELIVERY -->
                     <td>
                         <?php
                             $q_actual_delivery      = db2_exec($conn1, "SELECT
