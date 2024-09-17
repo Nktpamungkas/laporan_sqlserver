@@ -884,10 +884,15 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     </td><!-- DATE MARKETING -->
                                                                     <td>
                                                                         <?php
-                                                                        $terimabon = sqlsrv_query($con_dbnow_mkt, "SELECT * FROM dbnow_mkt.[tbl_salesorder] WHERE projectcode = '$rowdb2[NO_ORDER]'");
-                                                                        $d_terimabon = sqlsrv_fetch_array($terimabon, SQLSRV_FETCH_ASSOC);
-                                                                        echo $d_terimabon['ppc_terima']->format('Y-m-d H:i:s');
+                                                                            // $terimabon = sqlsrv_query($con_dbnow_mkt, "SELECT * FROM dbnow_mkt.[tbl_salesorder] WHERE projectcode = '$rowdb2[NO_ORDER]'");
+                                                                            // $d_terimabon = sqlsrv_fetch_array($terimabon, SQLSRV_FETCH_ASSOC);
+                                                                            // echo $d_terimabon['ppc_terima']->format('Y-m-d H:i:s');
+
+                                                                            $terimabon  = mysqli_query($con_dbnow_mkt, "SELECT * FROM tbl_salesorder WHERE projectcode = '$rowdb2[NO_ORDER]'");
+                                                                            $d_terimabon= mysqli_fetch_assoc($terimabon);
+                                                                            echo $d_terimabon['ppc_terima'];
                                                                         ?>
+                                                                        
                                                                     </td><!-- DATE PPC RECEIVED BO FROM RMP -->
                                                                     <td><?= $d_terimabon['ppc_bagilot']->format('Y-m-d H:i:s'); ?>
                                                                     </td>
@@ -1156,18 +1161,18 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     </td><!-- DATE MARKETING -->
                                                                     <td>
                                                                         <?php
-                                                                        // if ($rowdb2['NO_ORDER'] != NULL or $rowdb2['NO_ORDER'] != '') {
-                                                                        // var_dump(sqlsrv_errors($d_terimabon['ppc_terima']));
-                                                                        // echo $rowdb2['NO_ORDER'];
-                                                                        $terimabon = "SELECT
-                                                                            DISTINCT *
-                                                                        FROM
-                                                                            dbnow_mkt.tbl_salesorder
-                                                                        WHERE
-                                                                            projectcode = '$rowdb2[NO_ORDER]'";
-                                                                        $qterimabon = sqlsrv_query($con_dbnow_mkt, $terimabon);
-                                                                        $d_terimabon = sqlsrv_fetch_array($qterimabon);
-                                                                        // var_dump($d_terimabon);
+                                                                        // $terimabon = "SELECT
+                                                                        //                     DISTINCT *
+                                                                        //                 FROM
+                                                                        //                     dbnow_mkt.tbl_salesorder
+                                                                        //                 WHERE
+                                                                        //                     projectcode = '$rowdb2[NO_ORDER]'";
+                                                                        // $qterimabon = sqlsrv_query($con_dbnow_mkt, $terimabon);
+                                                                        // $d_terimabon = sqlsrv_fetch_array($qterimabon);
+                                                                        
+                                                                        $terimabon  = mysqli_query($con_dbnow_mkt, "SELECT DISTINCT * FROM tbl_salesorder WHERE projectcode = '$rowdb2[NO_ORDER]'");
+                                                                        $d_terimabon= mysqli_fetch_assoc($terimabon);
+
                                                                         if ($d_terimabon['ppc_terima'] != NULL or $d_terimabon['ppc_terima'] != '') {
                                                                             echo $d_terimabon['ppc_terima']->format('Y-m-d H:i:s');
                                                                         } else {

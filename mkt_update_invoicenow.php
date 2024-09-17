@@ -1,15 +1,14 @@
 <?php
-if (isset($_POST['update'])) {
-    require_once "koneksi.php";
-    
-    $tgl1 = $_POST['tgl1'];
-    $tgl2 = $_POST['tgl2'];
-    if ($tgl1 && $tgl2) {
-        $where = "WHERE TGL_INV BETWEEN '$tgl1' AND '$tgl2'";
-    } else {
-        $where = "";
-    }
-    $q_cekinvoice_now = db2_exec($conn1, "SELECT INVOICE,
+    if (isset($_POST['update'])) {
+        require_once "koneksi.php";
+        $tgl1   = $_POST['tgl1'];
+        $tgl2   = $_POST['tgl2'];
+        if($tgl1 && $tgl2){
+            $where  = "WHERE TGL_INV BETWEEN '$tgl1' AND '$tgl2'";
+        }else{
+            $where  = "";
+        }
+        $q_cekinvoice_now   = db2_exec($conn1, "SELECT INVOICE,
                                                     TGL_INV,
                                                     DUE,
                                                     KODE_CUS,
@@ -47,185 +46,106 @@ if (isset($_POST['update'])) {
                                                 FROM 
                                                     ITXVIEW_INVOICE_NOINVOICE
                                                 $where");
-    while ($row_invoicenow = db2_fetch_assoc($q_cekinvoice_now)) {
-        // echo $row_invoicenow['INVOICE'].'<br>';
-        $cek_invoice = sqlsrv_query($con_invoice, "SELECT count(*) AS jumlah FROM invoice.new_invoice_normal_now WHERE invoice_normal = '$row_invoicenow[INVOICE]'");
-        $row_invoice = sqlsrv_fetch_array($cek_invoice, SQLSRV_FETCH_ASSOC);
-        if ($row_invoice['jumlah'] >= 1) {
-            try {
-                $query = "UPDATE invoice.new_invoice_normal_now
-                                SET [date] = ?,
-                                    due = ?,
-                                    terms = ?,
-                                    [order] = ?,
-                                    kodebep = ?,
-                                    namabep = ?,
-                                    kodecus = ?,
-                                    namacus = ?,
-                                    no_po = ?,
-                                    curr = ?,
-                                    ratecurrency_normal = ?,
-                                    unit = ?,
-                                    ppn = ?,
-                                    faktur_pajak = ?,
-                                    npwp = ?,
-                                    berat = ?,
-                                    berat_lain = ?,
-                                    total_invoice = ?,
-                                    total_payment = ?,
-                                    template = ?,
-                                    dpp = ?,
-                                    tgl_buatinv = ?
-                            WHERE 
-                                    invoice_normal = ?
-                                    AND statuspayment = ? ";
-
-                $stmt = $pdo_invoice->prepare($query);
-
-                $data = [
-                    (string) $row_invoicenow['TGL_INV'],
-                    (string) $row_invoicenow['DUE'],
-                    (string) $row_invoicenow['PAYMENT_TERMS'],
-                    (string) $row_invoicenow['NO_ORDER'],
-                    (string) $row_invoicenow['KODE_BEP'],
-                    (string) $row_invoicenow['NAMA_BEP'],
-                    (string) $row_invoicenow['KODE_CUS'],
-                    (string) $row_invoicenow['NAMA_CUS'],
-                    (string) $row_invoicenow['NO_PO'],
-                    (string) $row_invoicenow['CURR'],
-                    (int) $row_invoicenow['RATE'],
-                    (string) $row_invoicenow['UNIT'],
-                    (float) $row_invoicenow['PPN'],
-                    (string) $row_invoicenow['FAKTUR_PAJAK'],
-                    (string) $row_invoicenow['NPWP'],
-                    (float) $row_invoicenow['BERAT'],
-                    (float) $row_invoicenow['BERAT_LAIN'],
-                    (float) $row_invoicenow['TOTAL_PAYMENT'],
-                    (float) $row_invoicenow['TOTAL_PAYMENT'],
-                    (string) $row_invoicenow['DESC_KAIN'],
-                    (float) $row_invoicenow['DPP'],
-                    (string) $row_invoicenow['TGL_CREATE'],
-                    (string) $row_invoicenow['INVOICE'],
-                    (string) ''
-                ];
-
-                // echo '<pre>';
-                // print_r($data);
-                // echo '</pre>';
-                if (!$stmt->execute($data)) {
-                    // Handle error
-                    echo "Error: ";
-                    print_r($stmt->errorInfo());
-                    exit();
-                }
-                // echo "Data successfully updated!";
-                echo '<script language="javascript">';
-                echo 'let text = "Berhasil menyimpan data !";
-                        if (confirm(text) == true) {
-                            document.location.href = "mkt_update_invoicenow.php";
-                        } else {
-                            document.location.href = "mkt_update_invoicenow.php";
-                        }';
-                echo '</script>';
-            } catch (PDOException $e) {
-                echo "xError: " . $e->getMessage();
+        while ($row_invoicenow = db2_fetch_assoc($q_cekinvoice_now)) {
+            // echo $row_invoicenow['INVOICE'].'<br>';
+            $cek_invoice    = mysqli_query($con_invoice, "SELECT count(*) AS jumlah FROM new_invoice_normal_now WHERE invoice_normal = '$row_invoicenow[INVOICE]'");
+            $row_invoice    = mysqli_fetch_assoc($cek_invoice);
+            if($row_invoice['jumlah'] >= 1){
+                $exec_updateinvoice    = mysqli_query($con_invoice, "UPDATE new_invoice_normal_now
+                                                                        SET `date` = '$row_invoicenow[TGL_INV]',
+                                                                            due = '$row_invoicenow[DUE]',
+                                                                            terms = '$row_invoicenow[PAYMENT_TERMS]',
+                                                                            `order` = '$row_invoicenow[NO_ORDER]',
+                                                                            kodebep = '$row_invoicenow[KODE_BEP]',
+                                                                            namabep = '$row_invoicenow[NAMA_BEP]',
+                                                                            kodecus = '$row_invoicenow[KODE_CUS]',
+                                                                            namacus = '$row_invoicenow[NAMA_CUS]',
+                                                                            no_po = '$row_invoicenow[NO_PO]',
+                                                                            curr = '$row_invoicenow[CURR]',
+                                                                            ratecurrency_normal = '$row_invoicenow[RATE]',
+                                                                            unit = '$row_invoicenow[UNIT]',
+                                                                            ppn = '$row_invoicenow[PPN]',
+                                                                            faktur_pajak = '$row_invoicenow[FAKTUR_PAJAK]',
+                                                                            npwp = '$row_invoicenow[NPWP]',
+                                                                            berat = '$row_invoicenow[BERAT]',
+                                                                            berat_lain = '$row_invoicenow[BERAT_LAIN]',
+                                                                            total_invoice = '$row_invoicenow[TOTAL_PAYMENT]',
+                                                                            total_payment = '$row_invoicenow[TOTAL_PAYMENT]',
+                                                                            template = '$row_invoicenow[DESC_KAIN]',
+                                                                            dpp = '$row_invoicenow[DPP]',
+                                                                            tgl_buatinv = '$row_invoicenow[TGL_CREATE]'
+                                                                    WHERE 
+                                                                            invoice_normal = '$row_invoicenow[INVOICE]'
+                                                                            AND statuspayment = ''");
+                
+            }else{
+                $exec_insertinvoice     = mysqli_query($con_invoice, "INSERT INTO new_invoice_normal_now(invoice_normal,
+                                                                                                            `date`,
+                                                                                                            due,
+                                                                                                            terms,
+                                                                                                            template,
+                                                                                                            `order`,
+                                                                                                            kodebep,
+                                                                                                            namabep,
+                                                                                                            kodecus,
+                                                                                                            namacus,
+                                                                                                            no_po,
+                                                                                                            curr,
+                                                                                                            ratecurrency_normal,
+                                                                                                            unit,
+                                                                                                            ppn,
+                                                                                                            faktur_pajak,
+                                                                                                            npwp,
+                                                                                                            berat,
+                                                                                                            berat_lain,
+                                                                                                            dpp,
+                                                                                                            total_invoice,
+                                                                                                            total_payment,
+                                                                                                            tgl_buatinv)
+                                                                                                VALUES ('$row_invoicenow[INVOICE]',
+                                                                                                        '$row_invoicenow[TGL_INV]',
+                                                                                                        '$row_invoicenow[DUE]',
+                                                                                                        '$row_invoicenow[PAYMENT_TERMS]',
+                                                                                                        '$row_invoicenow[DESC_KAIN]',
+                                                                                                        '$row_invoicenow[NO_ORDER]',
+                                                                                                        '$row_invoicenow[KODE_BEP]',
+                                                                                                        '$row_invoicenow[NAMA_BEP]',
+                                                                                                        '$row_invoicenow[KODE_CUS]',
+                                                                                                        '$row_invoicenow[NAMA_CUS]',
+                                                                                                        '$row_invoicenow[NO_PO]',
+                                                                                                        '$row_invoicenow[CURR]',
+                                                                                                        '$row_invoicenow[RATE]',
+                                                                                                        '$row_invoicenow[UNIT]',
+                                                                                                        '$row_invoicenow[PPN]',
+                                                                                                        '$row_invoicenow[FAKTUR_PAJAK]',
+                                                                                                        '$row_invoicenow[NPWP]',
+                                                                                                        '$row_invoicenow[BERAT]',
+                                                                                                        '$row_invoicenow[BERAT_LAIN]',
+                                                                                                        '$row_invoicenow[DPP]',
+                                                                                                        '$row_invoicenow[TOTAL_PAYMENT]',
+                                                                                                        '$row_invoicenow[TOTAL_PAYMENT]',
+                                                                                                        '$row_invoicenow[TGL_CREATE]')");
             }
-
-        } else {
-            try {
-                $query = "INSERT INTO invoice.new_invoice_normal_now(
-                                        invoice_normal,
-                                        [date],
-                                        due,
-                                        terms,
-                                        template,
-                                        [order],
-                                        kodebep,
-                                        namabep,
-                                        kodecus,
-                                        namacus,
-                                        no_po,
-                                        curr,
-                                        ratecurrency_normal,
-                                        unit,
-                                        ppn,
-                                        faktur_pajak,
-                                        npwp,
-                                        berat,
-                                        berat_lain,
-                                        dpp,
-                                        total_invoice,
-                                        total_payment,
-                                        statuspayment,
-                                        [status],
-                                        tgl_buatinv)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                $stmt = $pdo_invoice->prepare($query);
-                $data = [
-                    (string) $row_invoicenow['INVOICE'],
-                    (string) $row_invoicenow['TGL_INV'],
-                    (string) $row_invoicenow['DUE'],
-                    (string) $row_invoicenow['PAYMENT_TERMS'],
-                    (string) $row_invoicenow['DESC_KAIN'],
-                    (string) $row_invoicenow['NO_ORDER'],
-                    (string) $row_invoicenow['KODE_BEP'],
-                    (string) $row_invoicenow['NAMA_BEP'],
-                    (string) $row_invoicenow['KODE_CUS'],
-                    (string) $row_invoicenow['NAMA_CUS'],
-                    (string) $row_invoicenow['NO_PO'],
-                    (string) $row_invoicenow['CURR'],
-                    (int) $row_invoicenow['RATE'],
-                    (string) $row_invoicenow['UNIT'],
-                    (float) $row_invoicenow['PPN'],
-                    (string) $row_invoicenow['FAKTUR_PAJAK'],
-                    (string) $row_invoicenow['NPWP'],
-                    (float) $row_invoicenow['BERAT'],
-                    (float) $row_invoicenow['BERAT_LAIN'],
-                    (float) $row_invoicenow['DPP'],
-                    (float) $row_invoicenow['TOTAL_PAYMENT'],
-                    (float) $row_invoicenow['TOTAL_PAYMENT'],
-                    (string) '',
-                    (string) '',
-                    (string) $row_invoicenow['TGL_CREATE']
-                ];
-
-                // echo '<pre>';
-                // print_r($data);
-                // echo '</pre>';
-                if (!$stmt->execute($data)) {
-                    // Handle error
-                    echo "Error: ";
-                    print_r($stmt->errorInfo());
-                    exit();
-                }
-                // echo "Data successfully inserted!";
-                echo '<script language="javascript">';
-                echo 'let text = "Berhasil menyimpan data !";
-                        if (confirm(text) == true) {
-                            document.location.href = "mkt_update_invoicenow.php";
-                        } else {
-                            document.location.href = "mkt_update_invoicenow.php";
-                        }';
-                echo '</script>';
-            } catch (PDOException $e) {
-                echo "xError: " . $e->getMessage();
-            }
-
         }
+        echo '<script language="javascript">';
+        echo 'let text = "Berhasil menyimpan data !";
+                if (confirm(text) == true) {
+                    document.location.href = "mkt_update_invoicenow.php";
+                } else {
+                    document.location.href = "mkt_update_invoicenow.php";
+                }';
+        echo '</script>';
     }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>MKT - UPDATE INVOICE</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="#">
-    <meta name="keywords"
-        content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
+    <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
@@ -237,11 +157,9 @@ if (isset($_POST['update'])) {
     <link rel="stylesheet" type="text/css" href="files\assets\css\style.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\pcoded-horizontal.min.css">
-    <link rel="stylesheet" type="text/css"
-        href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css"
-        href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
 </head>
 <style>
     .blink_me {
@@ -255,7 +173,6 @@ if (isset($_POST['update'])) {
     }
 </style>
 <?php require_once 'header.php'; ?>
-
 <body>
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
@@ -273,22 +190,16 @@ if (isset($_POST['update'])) {
                                             <div class="form-group row">
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Dari Tanggal</h4>
-                                                    <input type="date" name="tgl1" class="form-control" value="<?php if (isset($_POST['submit'])) {
-                                                        echo $_POST['tgl1'];
-                                                    } ?>">
+                                                    <input type="date" name="tgl1" class="form-control" value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl1']; } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Sampai Tanggal</h4>
-                                                    <input type="date" name="tgl2" class="form-control" value="<?php if (isset($_POST['submit'])) {
-                                                        echo $_POST['tgl2'];
-                                                    } ?>">
+                                                    <input type="date" name="tgl2" class="form-control" value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>">
                                                 </div>
                                             </div>
                                             <div class="col-sm-12 col-xl-12 m-b-30">
-                                                <button type="submit" name="update" class="btn btn-primary btn-sm"><i
-                                                        class="icofont icofont-save"></i> Update Invoice</button>
-                                                <p>*Note : Jika ingin update seluruh tanggal, silahkan klik <b>Update
-                                                        Invoice</b> secara langsung tanpa memilih tanggal.</p>
+                                                <button type="submit" name="update" class="btn btn-primary btn-sm"><i class="icofont icofont-save"></i> Update Invoice</button>
+                                                <p>*Note : Jika ingin update seluruh tanggal, silahkan klik <b>Update Invoice</b> secara langsung tanpa memilih tanggal.</p>
                                             </div>
                                         </div>
                                     </form>
