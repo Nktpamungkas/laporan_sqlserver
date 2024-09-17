@@ -2,6 +2,8 @@
 // header("content-type:application/vnd-ms-excel");
 header("content-disposition:attachment;filename=Memo Penting.ods");
 header('Cache-Control: max-age=0');
+
+include_once "./utils/helper.php";
 ?>
 <style>
     .str {
@@ -382,7 +384,7 @@ header('Cache-Control: max-age=0');
                     <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                     <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
 
-                    <td><?php if($rowdb2['DELIVERY']){ echo $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); } ?></td> <!-- DELIVERY -->
+                    <td><?php echo cek($rowdb2['DELIVERY']); ?></td> <!-- DELIVERY -->
                     <td>
                         <?php
                             $q_actual_delivery      = db2_exec($conn1, "SELECT

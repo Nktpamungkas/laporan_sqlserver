@@ -3,13 +3,7 @@
     header("content-disposition:attachment;filename=Memo Penting.xls");
     header('Cache-Control: max-age=0');
 
-    function cek($value) {
-        if(is_null($value) || $value == "") {
-            return NULL;
-        }
-    
-        return trim(addslashes($value));
-    }
+    include_once "./utils/helper.php";
 ?>
 <style>
     .str {
@@ -501,7 +495,7 @@
                     </td> <!-- GRAMASI -->
                     <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                     <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                    <td><?php if($rowdb2['DELIVERY']){ echo $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); } ?></td> <!-- DELIVERY -->
+                    <td><?php echo cek($rowdb2['DELIVERY']); ?></td> <!-- DELIVERY -->
                     <td>
                         <?php
                             $q_actual_delivery      = db2_exec($conn1, "SELECT
