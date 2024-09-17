@@ -2,16 +2,10 @@
 ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
+include_once "./utils/helper.php";
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE());");
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 
-function cek($value) {
-    if(is_null($value) || $value == "") {
-        return NULL;
-    }
-
-    return trim(addslashes($value));
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -325,13 +319,13 @@ function cek($value) {
                                                                 cek($row_itxviewmemo['KETERANGAN_PRODUCT']),
                                                                 cek($row_itxviewmemo['WARNA']),
                                                                 cek($row_itxviewmemo['NO_WARNA']),
-                                                                cek($row_itxviewmemo['DELIVERY']),
+                                                                cek(addslashes($row_itxviewmemo['DELIVERY'])),
                                                                 cek($row_itxviewmemo['QTY_BAGIKAIN']),
                                                                 cek($row_itxviewmemo['NETTO']),
                                                                 cek($row_itxviewmemo['DELAY']),
                                                                 cek($row_itxviewmemo['NO_KK']),
                                                                 cek($row_itxviewmemo['DEMAND']),
-                                                                substr(cek($row_itxviewmemo['LOT']), 0, 7), // di database length nya 7
+                                                                substr(cek($row_itxviewmemo['LOT']) ?? '', 0, 7), // di database length nya 7
                                                                 cek($row_itxviewmemo['ORDERLINE']),
                                                                 cek($row_itxviewmemo['PROGRESSSTATUS']),
                                                                 cek($row_itxviewmemo['PROGRESSSTATUS_DEMAND']),
@@ -690,7 +684,7 @@ function cek($value) {
                                                                     $q_lebar = db2_exec($conn1, "SELECT * FROM ITXVIEWLEBAR WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
                                                                     $d_lebar = db2_fetch_assoc($q_lebar);
                                                                     ?>
-                                                                    <?= number_format($d_lebar['LEBAR'], 0); ?>
+                                                                    <?= number_format($d_lebar['LEBAR'] ?? 0, 0); ?>
                                                                 </td><!-- LEBAR -->
                                                                 <td>
                                                                     <?php
@@ -709,7 +703,7 @@ function cek($value) {
                                                                 </td> <!-- GRAMASI -->
                                                                 <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                                                                 <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                                                                <td><?php if($rowdb2['DELIVERY']){ echo $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); } ?></td> <!-- DELIVERY -->
+                                                                <td><?php echo cek( $rowdb2['DELIVERY']);?></td> <!-- DELIVERY -->
                                                                 <td>
                                                                     <?php
                                                                     $q_actual_delivery      = db2_exec($conn1, "SELECT
@@ -870,12 +864,12 @@ function cek($value) {
                                                                     echo $d_qtypacking['QTY_PACKING'];
                                                                     ?>
                                                                 </td> <!-- QTY PACKING -->
-                                                                <td><?= number_format($rowdb2['NETTO'], 0); ?></td> <!-- NETTO KG-->
+                                                                <td><?= number_format($rowdb2['NETTO'] ?? 0, 0); ?></td> <!-- NETTO KG-->
                                                                 <td>
                                                                     <?php
                                                                     $sql_netto_yd = db2_exec($conn1, "SELECT * FROM ITXVIEW_NETTO WHERE CODE = '$rowdb2[DEMAND]'");
                                                                     $d_netto_yd = db2_fetch_assoc($sql_netto_yd);
-                                                                    echo number_format($d_netto_yd['BASESECONDARYQUANTITY'], 0);
+                                                                    echo number_format($d_netto_yd['BASESECONDARYQUANTITY'] ?? 0, 0);
                                                                     ?>
                                                                 </td> <!-- NETTO YD-->
                                                                 <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
@@ -898,7 +892,7 @@ function cek($value) {
                                                                     } elseif ($kode_dept == 'FIN') {
                                                                         $schedule_fin       = mysqli_query($con_db_finishing, "SELECT * FROM `tbl_schedule_new` WHERE nokk = '$rowdb2[NO_KK]' AND nodemand = '$rowdb2[DEMAND]' ORDER BY id DESC LIMIT 1");
                                                                         $data_schedule_fin  = mysqli_fetch_assoc($schedule_fin);
-                                                                        $nomesin            = $data_schedule_fin['no_mesin'] . '-' . substr(TRIM($data_schedule_fin['no_mesin']), -5, 2) . substr(TRIM($data_schedule_fin['no_mesin']), -2);
+                                                                        $nomesin            = $data_schedule_fin['no_mesin'] . '-' . substr(TRIM($data_schedule_fin['no_mesin'] ?? ''), -5, 2) . substr(TRIM($data_schedule_fin['no_mesin'] ?? ''), -2);
                                                                         $nourut             = $data_schedule_fin['nourut'];
                                                                     } else {
                                                                         $nomesin            = '';
