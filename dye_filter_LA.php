@@ -94,7 +94,7 @@
                                                                     ."'".date('Y-m-d H:i:s')."')";
                                         }
                                         $value_itxviewresep        = implode(',', $r_itxviewresep);
-                                        $insert_itxviewresep       = mysqli_query($con_nowprd, "INSERT INTO itxviewresep(GROUPLINE,PRODRESERVATIONLINKGROUPCODE,SUBCODE01_RESERVATION,PICKUPQUANTITY,PRODUCTIONORDERCODE,SUFFIXCODE_RESERVATION,RECIPENUMBERID,SUFFIXCODE,GROUPNUMBER,CODE,SUBCODE,CONSUMPTION,COMMENTLINE,LONGDESCRIPTION,RECIPESUBCODE01,SUBCODE01,SUBCODE02,SUBCODE03,CONSUMPTIONTYPE,RECIPETYPE,PICKUPPERCENTAGE,RESIDUALBATHVOLUME,IPADDRESS,CREATEDATETIME) VALUES $value_itxviewresep");
+                                        $insert_itxviewresep       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxviewresep(GROUPLINE,PRODRESERVATIONLINKGROUPCODE,SUBCODE01_RESERVATION,PICKUPQUANTITY,PRODUCTIONORDERCODE,SUFFIXCODE_RESERVATION,RECIPENUMBERID,SUFFIXCODE,GROUPNUMBER,CODE,SUBCODE,CONSUMPTION,COMMENTLINE,LONGDESCRIPTION,RECIPESUBCODE01,SUBCODE01,SUBCODE02,SUBCODE03,CONSUMPTIONTYPE,RECIPETYPE,PICKUPPERCENTAGE,RESIDUALBATHVOLUME,IPADDRESS,CREATEDATETIME) VALUES $value_itxviewresep");
                                         
                                     ?>
                                     <?php endif; ?>
@@ -181,13 +181,13 @@
                                                                                 <?php
                                                                                     $prod_order     = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
                                                                                     $groupline      = sprintf("%08d", substr($_POST['bon_resep'], 9));
-                                                                                    $q_consumtion   = mysqli_query($con_nowprd, "SELECT * FROM ITXVIEWRESEP 
+                                                                                    $q_consumtion   = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.ITXVIEWRESEP 
                                                                                                                                         WHERE 
                                                                                                                                             SUBCODE = '$row_la[PRODUCT_CODE]' 
                                                                                                                                             AND PRODUCTIONORDERCODE = '$prod_order'
                                                                                                                                             AND GROUPLINE = '$groupline'
                                                                                                                                             AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
-                                                                                    $d_consumtion   = mysqli_fetch_assoc($q_consumtion);
+                                                                                    $d_consumtion   = sqlsrv_fetch_array($q_consumtion, SQLSRV_FETCH_ASSOC);
                                                                                     echo $d_consumtion['CONSUMPTION'];
                                                                                 ?>
                                                                             </td>
@@ -276,13 +276,13 @@
                                                                                 <?php
                                                                                     $prod_order     = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
                                                                                     $groupline      = sprintf("%08d", substr($_POST['bon_resep'], 9));
-                                                                                    $q_consumtion   = mysqli_query($con_nowprd, "SELECT * FROM ITXVIEWRESEP 
+                                                                                    $q_consumtion   = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.ITXVIEWRESEP 
                                                                                                                                         WHERE 
                                                                                                                                             SUBCODE = '$row_CAMS[CODE]' 
                                                                                                                                             AND PRODUCTIONORDERCODE = '$prod_order' 
                                                                                                                                             AND GROUPLINE = '$groupline'
                                                                                                                                             AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
-                                                                                    $d_consumtion   = mysqli_fetch_assoc($q_consumtion);
+                                                                                    $d_consumtion   = sqlsrv_fetch_array($q_consumtion, SQLSRV_FETCH_ASSOC);
                                                                                     echo $d_consumtion['CONSUMPTION'];
                                                                                 ?>
                                                                             </td>
