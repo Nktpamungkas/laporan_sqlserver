@@ -349,7 +349,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                 // echo "Data successfully inserted!";
 
                                                             } catch (PDOException $e) {
-                                                                echo "xError: " . $e->getMessage();
+                                                                //echo "xError: " . $e->getMessage();
 
                                                             }
 
@@ -458,7 +458,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                 // echo "Data successfully inserted!";
 
                                                             } catch (PDOException $e) {
-                                                                echo "xError: " . $e->getMessage();
+                                                                //echo "xError: " . $e->getMessage();
 
                                                             }
                                                             // --------------------------------------------------------------------------------------------------------------- //
