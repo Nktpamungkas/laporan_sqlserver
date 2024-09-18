@@ -2,6 +2,7 @@
 ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
+require_once "utils/helper.php";
 
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_poselesai WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
 
@@ -1174,7 +1175,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         $d_terimabon= mysqli_fetch_assoc($terimabon);
 
                                                                         if ($d_terimabon['ppc_terima'] != NULL or $d_terimabon['ppc_terima'] != '') {
-                                                                            echo $d_terimabon['ppc_terima']->format('Y-m-d H:i:s');
+                                                                            echo cek($d_terimabon['ppc_terima']);
                                                                         } else {
                                                                             echo '';
                                                                         }
@@ -1182,7 +1183,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         ?>
                                                                     </td><!-- DATE PPC RECEIVED BO FROM RMP -->
                                                                     <td><?php if ($d_terimabon['ppc_bagilot'] != NULL or $d_terimabon['ppc_bagilot'] != '') {
-                                                                        echo $d_terimabon['ppc_bagilot']->format('Y-m-d H:i:s');
+                                                                        echo cek($d_terimabon['ppc_bagilot']);
                                                                     } else {
                                                                         echo '';
                                                                     }
@@ -1190,7 +1191,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     </td>
                                                                     <!-- DATE BAGI LOT -->
                                                                     <td><?php if ($rowdb2['ORDERDATE'] != NULL or $rowdb2['ORDERDATE'] != '') {
-                                                                        echo $rowdb2['ORDERDATE']->format('Y-m-d H:i:s');
+                                                                        echo cek($rowdb2['ORDERDATE']);
                                                                     } else {
                                                                         echo '';
                                                                     }
