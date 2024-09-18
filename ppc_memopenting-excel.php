@@ -150,7 +150,7 @@
                     }
                     // echo "Data successfully inserted!";
                 } catch (PDOException $e) {
-                    echo "xError: " . $e->getMessage();
+                    //echo "xError: " . $e->getMessage();
                 }
 
                 $no_order_2 = $_GET['no_order'];
