@@ -255,7 +255,15 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_
                                                                                                                                             AND GROUPLINE = '$groupline'
                                                                                                                                             AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
                                                                                     $d_consumtion = sqlsrv_fetch_array($q_consumtion);
-                                                                                    echo $d_consumtion['CONSUMPTION'];
+
+                                                                                    $f_consumption = $d_consumtion['CONSUMPTION'];
+                                                                                    if (is_numeric($f_consumption) && floor($f_consumption) != $f_consumption) {
+                                                                                        // Jika nilai adalah desimal, tambahkan 0 di depannya jika diperlukan
+                                                                                        echo "0" . ltrim($f_consumption, '0');
+                                                                                    } else {
+                                                                                        // Jika nilai bukan desimal, tampilkan sebagaimana adanya
+                                                                                        echo $f_consumption;
+                                                                                    }
                                                                                     ?>
                                                                                 </td>
                                                                             <?php endif; ?>
@@ -356,7 +364,14 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_
                                                                                                                                             AND GROUPLINE = '$groupline'
                                                                                                                                             AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
                                                                                         $d_consumtion = sqlsrv_fetch_array($q_consumtion, SQLSRV_FETCH_ASSOC);
-                                                                                        echo $d_consumtion['CONSUMPTION'];
+                                                                                        $f_consumption = $d_consumtion['CONSUMPTION'];
+                                                                                        if (is_numeric($f_consumption) && floor($f_consumption) != $f_consumption) {
+                                                                                            // Jika nilai adalah desimal, tambahkan 0 di depannya jika diperlukan
+                                                                                            echo "0" . ltrim($f_consumption, '0');
+                                                                                        } else {
+                                                                                            // Jika nilai bukan desimal, tampilkan sebagaimana adanya
+                                                                                            echo $f_consumption;
+                                                                                        }
                                                                                         ?>
                                                                                     </td>
                                                                                 <?php endif; ?>
