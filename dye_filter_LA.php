@@ -1,22 +1,25 @@
-<?php 
-    ini_set("error_reporting", 1);
-    session_start();
-    require_once "koneksi.php";
-    mysqli_query($con_nowprd, "DELETE FROM ITXVIEWRESEP WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
-    mysqli_query($con_nowprd, "DELETE FROM ITXVIEWRESEP WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'"); 
+<?php
+ini_set("error_reporting", 1);
+session_start();
+require_once "koneksi.php";
+include_once "utils/helper.php";
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE CREATEDATETIME BETWEEN NOW() - INTERVAL 3 DAY AND NOW() - INTERVAL 1 DAY");
+sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>DYE - Hasil Aktual LA/CAMS</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="#">
-    <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
+    <meta name="keywords"
+        content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
-     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> --> 
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet"> -->
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
@@ -25,11 +28,14 @@
     <link rel="stylesheet" type="text/css" href="files\assets\css\style.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\pcoded-horizontal.min.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
 
-    <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\extensions\buttons\css\buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="files\assets\pages\data-table\extensions\buttons\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
 </head>
 <?php require_once 'header.php'; ?>
@@ -51,52 +57,109 @@
                                             <div class="row">
                                                 <div class="col-sm-12 col-xl-12 m-b-30">
                                                     <h4 class="sub-title">BON RESEP </h4>
-                                                    <input type="text" class="form-control" name="bon_resep" value="<?php if (isset($_POST['submit'])){ echo $_POST['bon_resep']; } ?>" required>
+                                                    <input type="text" class="form-control" name="bon_resep" value="<?php if (isset($_POST['submit'])) {
+                                                        echo $_POST['bon_resep'];
+                                                    } ?>" required>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
-                                                    <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> <i class="icofont icofont-search-alt-1"></i> Cari data</button>
+                                                    <button type="submit" name="submit" class="btn btn-primary"><i
+                                                            class="icofont icofont-search-alt-1"></i> <i
+                                                            class="icofont icofont-search-alt-1"></i> Cari data</button>
                                                 </div>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
-                                <?php if (isset($_POST['submit'])) : ?>
-                                    <?php if($_SERVER['REMOTE_ADDR'] == '10.0.5.127') : ?> <!-- IP MBA ANTIE LABORAT -->
-                                    <?php else : ?>
-                                    <?php
+                                <?php if (isset($_POST['submit'])): ?>
+                                    <?php if ($_SERVER['REMOTE_ADDR'] == '10.0.5.127'): ?>
+                                        <!-- IP MBA ANTIE LABORAT -->
+                                    <?php else: ?>
+                                        <?php
                                         // itxviewresep db2
-                                        $prod_order     = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
-                                        $itxviewresep              = db2_exec($conn1, "SELECT * FROM ITXVIEWRESEP WHERE PRODUCTIONORDERCODE = '$prod_order'");
-                                        while ($row_itxviewresep   = db2_fetch_assoc($itxviewresep)) {
-                                            $r_itxviewresep[]      = "('".TRIM(addslashes($row_itxviewresep['GROUPLINE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['PRODRESERVATIONLINKGROUPCODE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['SUBCODE01_RESERVATION']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['PICKUPQUANTITY']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['PRODUCTIONORDERCODE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['SUFFIXCODE_RESERVATION']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['RECIPENUMBERID']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['SUFFIXCODE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['GROUPNUMBER']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['CODE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['SUBCODE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['CONSUMPTION']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['COMMENTLINE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['LONGDESCRIPTION']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['RECIPESUBCODE01']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['SUBCODE01']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['SUBCODE02']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['SUBCODE03']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['CONSUMPTIONTYPE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['RECIPETYPE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['PICKUPPERCENTAGE']))."',"
-                                                                    ."'".TRIM(addslashes($row_itxviewresep['RESIDUALBATHVOLUME']))."',"
-                                                                    ."'".$_SERVER['REMOTE_ADDR']."',"
-                                                                    ."'".date('Y-m-d H:i:s')."')";
+                                        $prod_order = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
+                                        $itxviewresep = db2_exec($conn1, "SELECT * FROM ITXVIEWRESEP WHERE PRODUCTIONORDERCODE = '$prod_order'");
+                                        while ($row_itxviewresep = db2_fetch_assoc($itxviewresep)) {
+                                            $r_itxviewmemo[] = [
+                                                cek($row_itxviewresep['GROUPLINE']),
+                                                cek($row_itxviewresep['PRODRESERVATIONLINKGROUPCODE']),
+                                                cek($row_itxviewresep['SUBCODE01_RESERVATION']),
+                                                cek($row_itxviewresep['PICKUPQUANTITY']),
+                                                cek($row_itxviewresep['PRODUCTIONORDERCODE']),
+                                                cek($row_itxviewresep['SUFFIXCODE_RESERVATION']),
+                                                cek($row_itxviewresep['RECIPENUMBERID']),
+                                                cek($row_itxviewresep['SUFFIXCODE']),
+                                                cek($row_itxviewresep['GROUPNUMBER']),
+                                                cek($row_itxviewresep['CODE']),
+                                                cek($row_itxviewresep['SUBCODE']),
+                                                cek($row_itxviewresep['CONSUMPTION']),
+                                                cek($row_itxviewresep['COMMENTLINE']),
+                                                cek($row_itxviewresep['LONGDESCRIPTION']),
+                                                cek($row_itxviewresep['RECIPESUBCODE01']),
+                                                cek($row_itxviewresep['SUBCODE01']),
+                                                cek($row_itxviewresep['SUBCODE02']),
+                                                cek($row_itxviewresep['SUBCODE03']),
+                                                cek($row_itxviewresep['CONSUMPTIONTYPE']),
+                                                cek($row_itxviewresep['RECIPETYPE']),
+                                                cek($row_itxviewresep['PICKUPPERCENTAGE']),
+                                                cek($row_itxviewresep['RESIDUALBATHVOLUME']),
+                                                $_SERVER['REMOTE_ADDR'],
+                                                date('Y-m-d H:i:s')
+                                            ];
+
+                                            try {
+                                                // Define the query with placeholders
+                                                $query = "INSERT INTO nowprd.itxviewresep (
+                                                                GROUPLINE,
+                                                                PRODRESERVATIONLINKGROUPCODE,
+                                                                SUBCODE01_RESERVATION,
+                                                                PICKUPQUANTITY,
+                                                                PRODUCTIONORDERCODE,
+                                                                SUFFIXCODE_RESERVATION,
+                                                                RECIPENUMBERID,
+                                                                SUFFIXCODE,
+                                                                GROUPNUMBER,
+                                                                CODE,
+                                                                SUBCODE,
+                                                                CONSUMPTION,
+                                                                COMMENTLINE,
+                                                                LONGDESCRIPTION,
+                                                                RECIPESUBCODE01,
+                                                                SUBCODE01,
+                                                                SUBCODE02,
+                                                                SUBCODE03,
+                                                                CONSUMPTIONTYPE,
+                                                                RECIPETYPE,
+                                                                PICKUPPERCENTAGE,
+                                                                RESIDUALBATHVOLUME,
+                                                                IPADDRESS,
+                                                                CREATEDATETIME
+                                                            ) VALUES (
+                                                                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                                                                )
+                                                            ";
+                                                // Prepare the statement
+                                                $stmt = $pdo->prepare($query);
+
+                                                // Define the data to be inserted
+                                                $data = $r_itxviewmemo;
+
+                                                foreach ($data as $row) {
+                                                    // echo '<pre>';
+                                                    // print_r($row);
+                                                    // echo '</pre>';
+                                                    if (!$stmt->execute($row)) {
+                                                        // Handle error
+                                                        echo "Error: ";
+                                                        print_r($stmt->errorInfo());
+                                                        exit();
+                                                    }
+                                                }
+                                                // echo "Data successfully inserted!";
+                                            } catch (PDOException $e) {
+                                                echo "xError: " . $e->getMessage();
+                                            }
                                         }
-                                        $value_itxviewresep        = implode(',', $r_itxviewresep);
-                                        $insert_itxviewresep       = mysqli_query($con_nowprd, "INSERT INTO itxviewresep(GROUPLINE,PRODRESERVATIONLINKGROUPCODE,SUBCODE01_RESERVATION,PICKUPQUANTITY,PRODUCTIONORDERCODE,SUFFIXCODE_RESERVATION,RECIPENUMBERID,SUFFIXCODE,GROUPNUMBER,CODE,SUBCODE,CONSUMPTION,COMMENTLINE,LONGDESCRIPTION,RECIPESUBCODE01,SUBCODE01,SUBCODE02,SUBCODE03,CONSUMPTIONTYPE,RECIPETYPE,PICKUPPERCENTAGE,RESIDUALBATHVOLUME,IPADDRESS,CREATEDATETIME) VALUES $value_itxviewresep");
-                                        
-                                    ?>
+                                        ?>
                                     <?php endif; ?>
                                     <div class="row">
                                         <div class="col-6">
@@ -105,7 +168,8 @@
                                                     <h4>FROM MECHINE LOGIC ART : TICKET</h4>
                                                     <div class="row">
                                                         <div class="table-responsive dt-responsive">
-                                                            <table id="excel-LA" class="table table-striped table-bordered nowrap">
+                                                            <table id="excel-LA"
+                                                                class="table table-striped table-bordered nowrap">
                                                                 <thead>
                                                                     <tr align="center">
                                                                         <th width='5px' hidden>NO</th>
@@ -114,8 +178,9 @@
                                                                         <th width='100px'>PROD ORDER</th>
                                                                         <th width='100px'>LOTCODE</th>
                                                                         <th width='100px'>DYC</th>
-                                                                        <?php if($_SERVER['REMOTE_ADDR'] == '10.0.5.127') : ?> <!-- IP MBA ANTIE LABORAT -->
-                                                                        <?php else : ?>
+                                                                        <?php if ($_SERVER['REMOTE_ADDR'] == '10.0.5.127'): ?>
+                                                                            <!-- IP MBA ANTIE LABORAT -->
+                                                                        <?php else: ?>
                                                                             <th width='100px'>CONSUMTION</th>
                                                                         <?php endif; ?>
                                                                         <th width='100px'>TARGET</th>
@@ -123,10 +188,10 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    <?php 
-                                                                        ini_set("error_reporting", 1);
-                                                                        require_once "koneksi.php";
-                                                                        $sql_LA = "SELECT  
+                                                                    <?php
+                                                                    ini_set("error_reporting", 1);
+                                                                    require_once "koneksi.php";
+                                                                    $sql_LA = "SELECT  
                                                                                         TICKET_DETAIL.RES_STRING3 AS BARIS,
                                                                                         TICKET_DETAIL.COMP_DATE,
                                                                                         TICKET_DETAIL.COMP_TIME,
@@ -153,48 +218,58 @@
                                                                                             Ticket_Detail_Addition.ID_NO LIKE '%$_POST[bon_resep]%'
                                                                                     ORDER BY 
                                                                                         BARIS ASC";
-                                                                        $stmt   = sqlsrv_query($conn_sql, $sql_LA);
-                                                                        $no     = 1;
-                                                                        while ($row_la = sqlsrv_fetch_array($stmt)) {
-                                                                    ?>
-                                                                    <tr>
-                                                                        <td hidden><?= $row_la['BARIS']; ?></td>
-                                                                        <td>
-                                                                            <?php if(date('d-m-Y', strtotime($row_la['COMP_DATE'])) == '01-01-1970') : ?>
-                                                                            <?php else : ?>
-                                                                                <?= date('d-m-Y', strtotime($row_la['COMP_DATE'])); ?>, <?= date('H:i:s', strtotime($row_la['COMP_TIME'])); ?>
-                                                                            <?php endif; ?>
-                                                                        </td>
-                                                                        <td>
-                                                                            <?php
+                                                                    $stmt = sqlsrv_query($conn_sql, $sql_LA);
+                                                                    $no = 1;
+                                                                    while ($row_la = sqlsrv_fetch_array($stmt)) {
+                                                                        ?>
+                                                                        <tr>
+                                                                            <td hidden><?= $row_la['BARIS']; ?></td>
+                                                                            <td>
+                                                                                <?php if (date('d-m-Y', strtotime($row_la['COMP_DATE'])) == '01-01-1970'): ?>
+                                                                                <?php else: ?>
+                                                                                    <?= date('d-m-Y', strtotime($row_la['COMP_DATE'])); ?>,
+                                                                                    <?= date('H:i:s', strtotime($row_la['COMP_TIME'])); ?>
+                                                                                <?php endif; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <?php
                                                                                 $sql_desc = db2_exec($conn1, "SELECT * FROM PRODUCT WHERE TRIM(SUBCODE01) || '-' || TRIM(SUBCODE02) || '-' || TRIM(SUBCODE03) = '$row_la[PRODUCT_CODE]'");
                                                                                 $d_row_desc = db2_fetch_assoc($sql_desc);
                                                                                 echo $d_row_desc['LONGDESCRIPTION'];
-                                                                            ?>
-                                                                        </td>
-                                                                        <td><?= $row_la['ID_NO']; ?></td>
-                                                                        <td></td>
-                                                                        <td><?= $row_la['PRODUCT_CODE']; ?></td>
-                                                                        <?php if($_SERVER['REMOTE_ADDR'] == '10.0.5.127') : ?> <!-- IP MBA ANTIE LABORAT -->
-                                                                        <?php else : ?>
-                                                                            <td>
-                                                                                <?php
-                                                                                    $prod_order     = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
-                                                                                    $groupline      = sprintf("%08d", substr($_POST['bon_resep'], 9));
-                                                                                    $q_consumtion   = mysqli_query($con_nowprd, "SELECT * FROM ITXVIEWRESEP 
+                                                                                ?>
+                                                                            </td>
+                                                                            <td><?= $row_la['ID_NO']; ?></td>
+                                                                            <td></td>
+                                                                            <td><?= $row_la['PRODUCT_CODE']; ?></td>
+                                                                            <?php if ($_SERVER['REMOTE_ADDR'] == '10.0.5.127'): ?>
+                                                                                <!-- IP MBA ANTIE LABORAT -->
+                                                                            <?php else: ?>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    $prod_order = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
+                                                                                    $groupline = sprintf("%08d", substr($_POST['bon_resep'], 9));
+                                                                                    $q_consumtion = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.itxviewresep 
                                                                                                                                         WHERE 
                                                                                                                                             SUBCODE = '$row_la[PRODUCT_CODE]' 
                                                                                                                                             AND PRODUCTIONORDERCODE = '$prod_order'
                                                                                                                                             AND GROUPLINE = '$groupline'
                                                                                                                                             AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
-                                                                                    $d_consumtion   = mysqli_fetch_assoc($q_consumtion);
-                                                                                    echo $d_consumtion['CONSUMPTION'];
-                                                                                ?>
-                                                                            </td>
-                                                                        <?php endif; ?>
-                                                                        <td><?= $row_la['TARGET_WT']; ?></td>
-                                                                        <td><?= $row_la['ACTUAL_WT']; ?></td>
-                                                                    </tr>
+                                                                                    $d_consumtion = sqlsrv_fetch_array($q_consumtion);
+
+                                                                                    $f_consumption = $d_consumtion['CONSUMPTION'];
+                                                                                    if (is_numeric($f_consumption) && floor($f_consumption) != $f_consumption) {
+                                                                                        // Jika nilai adalah desimal, tambahkan 0 di depannya jika diperlukan
+                                                                                        echo "0" . ltrim($f_consumption, '0');
+                                                                                    } else {
+                                                                                        // Jika nilai bukan desimal, tampilkan sebagaimana adanya
+                                                                                        echo $f_consumption;
+                                                                                    }
+                                                                                    ?>
+                                                                                </td>
+                                                                            <?php endif; ?>
+                                                                            <td><?= $row_la['TARGET_WT']; ?></td>
+                                                                            <td><?= $row_la['ACTUAL_WT']; ?></td>
+                                                                        </tr>
                                                                     <?php } ?>
                                                                 </tbody>
                                                             </table>
@@ -203,36 +278,38 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <?php if(substr($_POST['bon_resep'],8,1) == "-") : ?>
-                                        <div class="col-6">
-                                            <div class="card">
-                                                <div class="card-block">
-                                                    <h4>FROM MECHINE CAMS : TAICHEN_CAMS_LIVE</h4>
-                                                    <div class="row">
-                                                        <div class="table-responsive dt-responsive">
-                                                            <table id="excel-cams" class="table table-striped table-bordered nowrap">
-                                                                <thead>
-                                                                    <tr align="center">
-                                                                        <th width='5px' hidden>NO</th>
-                                                                        <th width='100px'>TRANS DATE</th>
-                                                                        <th width='100px'>DESCRIPTION</th>
-                                                                        <th width='100px'>PROD ORDER</th>
-                                                                        <th width='100px'>LOTCODE</th>
-                                                                        <th width='100px'>DYC</th>
-                                                                        <?php if($_SERVER['REMOTE_ADDR'] == '10.0.5.127') : ?> <!-- IP MBA ANTIE LABORAT -->
-                                                                        <?php else : ?>
-                                                                            <th width='100px'>CONSUMTION</th>
-                                                                        <?php endif; ?>
-                                                                        <th width='100px'>TARGET</th>
-                                                                        <th width='100px'>ACTUAL</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <?php 
+                                        <?php if (substr($_POST['bon_resep'], 8, 1) == "-"): ?>
+                                            <div class="col-6">
+                                                <div class="card">
+                                                    <div class="card-block">
+                                                        <h4>FROM MECHINE CAMS : TAICHEN_CAMS_LIVE</h4>
+                                                        <div class="row">
+                                                            <div class="table-responsive dt-responsive">
+                                                                <table id="excel-cams"
+                                                                    class="table table-striped table-bordered nowrap">
+                                                                    <thead>
+                                                                        <tr align="center">
+                                                                            <th width='5px' hidden>NO</th>
+                                                                            <th width='100px'>TRANS DATE</th>
+                                                                            <th width='100px'>DESCRIPTION</th>
+                                                                            <th width='100px'>PROD ORDER</th>
+                                                                            <th width='100px'>LOTCODE</th>
+                                                                            <th width='100px'>DYC</th>
+                                                                            <?php if ($_SERVER['REMOTE_ADDR'] == '10.0.5.127'): ?>
+                                                                                <!-- IP MBA ANTIE LABORAT -->
+                                                                            <?php else: ?>
+                                                                                <th width='100px'>CONSUMTION</th>
+                                                                            <?php endif; ?>
+                                                                            <th width='100px'>TARGET</th>
+                                                                            <th width='100px'>ACTUAL</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <?php
                                                                         ini_set("error_reporting", 1);
                                                                         require_once "koneksi.php";
                                                                         $bonresep = substr($_POST['bon_resep'], 0, 8);
-                                                                        $bonresep_line = substr($_POST['bon_resep'], 9,4);
+                                                                        $bonresep_line = substr($_POST['bon_resep'], 9, 4);
                                                                         $sql_CAMS = "SELECT
                                                                                             rs_reservationline,
                                                                                             rs_creationdatetime,
@@ -251,53 +328,69 @@
                                                                                         WHERE
                                                                                             rs_productionordercode LIKE '%$bonresep%' AND rs_reservationline > $bonresep_line AND rs_reservationline < $bonresep_line+100 AND NOT (rs_subcode02 = '' OR rs_subcode03 = '')";
                                                                         $stmt_CAMS = sqlsrv_query($conn_cams, $sql_CAMS);
-                                                                        $no     = 1;
+                                                                        $no = 1;
 
-                                                                        while ($row_CAMS= sqlsrv_fetch_array($stmt_CAMS)) {
-                                                                    ?>
-                                                                    <tr>
-                                                                        <td hidden><?= $row_CAMS['rs_reservationline']; ?></td>
-                                                                        <td><?= $row_CAMS['rs_creationdatetime']->format('d-m-Y, H:i:s'); ?></td>
-                                                                        <td>
-                                                                            <?php
-                                                                                $sql_desc = db2_exec($conn1, "SELECT * FROM PRODUCT WHERE SUBCODE01 = '$row_CAMS[rs_subcode01]' AND
+                                                                        while ($row_CAMS = sqlsrv_fetch_array($stmt_CAMS)) {
+                                                                            ?>
+                                                                            <tr>
+                                                                                <td hidden><?= $row_CAMS['rs_reservationline']; ?>
+                                                                                </td>
+                                                                                <td><?= $row_CAMS['rs_creationdatetime']->format('d-m-Y, H:i:s'); ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    $sql_desc = db2_exec($conn1, "SELECT * FROM PRODUCT WHERE SUBCODE01 = '$row_CAMS[rs_subcode01]' AND
                                                                                                                                         SUBCODE02 = '$row_CAMS[rs_subcode02]' AND 
                                                                                                                                         SUBCODE03 = '$row_CAMS[rs_subcode03]'");
-                                                                                $d_row_desc = db2_fetch_assoc($sql_desc);
-                                                                                echo $d_row_desc['LONGDESCRIPTION'];
-                                                                            ?>
-                                                                        </td>
-                                                                        <td><?= $row_CAMS['rs_productionordercode']; ?>-<?= $bonresep_line; ?></td>
-                                                                        <td></td>
-                                                                        <td><?= $row_CAMS['CODE']; ?></td>
-                                                                        <?php if($_SERVER['REMOTE_ADDR'] == '10.0.5.127') : ?> <!-- IP MBA ANTIE LABORAT -->
-                                                                        <?php else : ?>
-                                                                            <td>
-                                                                                <?php
-                                                                                    $prod_order     = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
-                                                                                    $groupline      = sprintf("%08d", substr($_POST['bon_resep'], 9));
-                                                                                    $q_consumtion   = mysqli_query($con_nowprd, "SELECT * FROM ITXVIEWRESEP 
+                                                                                    $d_row_desc = db2_fetch_assoc($sql_desc);
+                                                                                    echo $d_row_desc['LONGDESCRIPTION'];
+                                                                                    ?>
+                                                                                </td>
+                                                                                <td><?= $row_CAMS['rs_productionordercode']; ?>-<?= $bonresep_line; ?>
+                                                                                </td>
+                                                                                <td></td>
+                                                                                <td><?= $row_CAMS['CODE']; ?></td>
+                                                                                <?php if ($_SERVER['REMOTE_ADDR'] == '10.0.5.127'): ?>
+                                                                                    <!-- IP MBA ANTIE LABORAT -->
+                                                                                <?php else: ?>
+                                                                                    <td>
+                                                                                        <?php
+                                                                                        $prod_order = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
+                                                                                        $groupline = sprintf("%08d", substr($_POST['bon_resep'], 9));
+                                                                                        $q_consumtion = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.itxviewresep 
                                                                                                                                         WHERE 
                                                                                                                                             SUBCODE = '$row_CAMS[CODE]' 
                                                                                                                                             AND PRODUCTIONORDERCODE = '$prod_order' 
                                                                                                                                             AND GROUPLINE = '$groupline'
                                                                                                                                             AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
-                                                                                    $d_consumtion   = mysqli_fetch_assoc($q_consumtion);
-                                                                                    echo $d_consumtion['CONSUMPTION'];
-                                                                                ?>
-                                                                            </td>
-                                                                        <?php endif; ?> 
-                                                                        <td><?= $row_CAMS['ACUAN_QTY']; ?></td>
-                                                                        <td><?php if($row_CAMS['AKTUAL_QTY'] != 0){ echo $row_CAMS['AKTUAL_QTY']; }else{ echo '';} ?></td>
-                                                                    </tr>
-                                                                    <?php } ?>
-                                                                </tbody>
-                                                            </table>
+                                                                                        $d_consumtion = sqlsrv_fetch_array($q_consumtion, SQLSRV_FETCH_ASSOC);
+                                                                                        $f_consumption = $d_consumtion['CONSUMPTION'];
+                                                                                        if (is_numeric($f_consumption) && floor($f_consumption) != $f_consumption) {
+                                                                                            // Jika nilai adalah desimal, tambahkan 0 di depannya jika diperlukan
+                                                                                            echo "0" . ltrim($f_consumption, '0');
+                                                                                        } else {
+                                                                                            // Jika nilai bukan desimal, tampilkan sebagaimana adanya
+                                                                                            echo $f_consumption;
+                                                                                        }
+                                                                                        ?>
+                                                                                    </td>
+                                                                                <?php endif; ?>
+                                                                                <td><?= $row_CAMS['ACUAN_QTY']; ?></td>
+                                                                                <td><?php if ($row_CAMS['AKTUAL_QTY'] != 0) {
+                                                                                    echo $row_CAMS['AKTUAL_QTY'];
+                                                                                } else {
+                                                                                    echo '';
+                                                                                } ?>
+                                                                                </td>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         <?php endif; ?>
                                     </div>
                                 <?php endif; ?>
@@ -331,8 +424,10 @@
     <script src="files\bower_components\datatables.net-responsive\js\dataTables.responsive.min.js"></script>
     <script src="files\bower_components\datatables.net-responsive-bs4\js\responsive.bootstrap4.min.js"></script>
     <script type="text/javascript" src="files\bower_components\i18next\js\i18next.min.js"></script>
-    <script type="text/javascript" src="files\bower_components\i18next-xhr-backend\js\i18nextXHRBackend.min.js"></script>
-    <script type="text/javascript" src="files\bower_components\i18next-browser-languagedetector\js\i18nextBrowserLanguageDetector.min.js"></script>
+    <script type="text/javascript" src="files\bower_components\i18next-xhr-backend\js\i18nextXHRBackend.min.js">
+    </script>
+    <script type="text/javascript"
+        src="files\bower_components\i18next-browser-languagedetector\js\i18nextBrowserLanguageDetector.min.js"></script>
     <script type="text/javascript" src="files\bower_components\jquery-i18next\js\jquery-i18next.min.js"></script>
     <script src="files\assets\pages\data-table\extensions\buttons\js\extension-btns-custom.js"></script>
     <script src="files\assets\js\pcoded.min.js"></script>
@@ -342,7 +437,10 @@
 
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
         gtag('js', new Date());
 
         gtag('config', 'UA-23581568-13');
@@ -352,9 +450,9 @@
             dom: 'Bfrtip',
             buttons: [{
                 extend: 'excelHtml5',
-                customize: function(xlsx) {
+                customize: function (xlsx) {
                     var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                    $('row c[r^="F"]', sheet).each(function() {
+                    $('row c[r^="F"]', sheet).each(function () {
                         if ($('is t', this).text().replace(/[^\d]/g, '') * 1 >= 500000) {
                             $(this).attr('s', '20');
                         }
@@ -367,9 +465,9 @@
             dom: 'Bfrtip',
             buttons: [{
                 extend: 'excelHtml5',
-                customize: function(xlsx) {
+                customize: function (xlsx) {
                     var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                    $('row c[r^="F"]', sheet).each(function() {
+                    $('row c[r^="F"]', sheet).each(function () {
                         if ($('is t', this).text().replace(/[^\d]/g, '') * 1 >= 500000) {
                             $(this).attr('s', '20');
                         }
@@ -379,4 +477,5 @@
         });
     </script>
 </body>
+
 </html>
