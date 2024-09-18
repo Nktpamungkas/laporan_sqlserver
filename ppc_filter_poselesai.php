@@ -267,30 +267,30 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             while ($row_itxviewmemo = db2_fetch_assoc($itxviewmemo)) {
                                                                 // var_dump(print_r($row_itxviewmemo));
                                                                 $r_itxviewmemo[] = [
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['ORDERDATE'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['PELANGGAN'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_ORDER'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_PO'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN_PRODUCT'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['JENIS_KAIN'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['WARNA'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_WARNA'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['DELIVERY'])),
-                                                                    (float) TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])),
-                                                                    (float) TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])),
-                                                                    (float) TRIM(addslashes($row_itxviewmemo['NETTO'])),
-                                                                    (int) TRIM(addslashes($row_itxviewmemo['DELAY'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_KK'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['DEMAND'])),
-                                                                    (float) TRIM(addslashes($row_itxviewmemo['ORDERLINE'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['SURATJALAN'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['TGL_KIRIM'])),
-                                                                    (string) $_SERVER['REMOTE_ADDR'],
-                                                                    (string) date('Y-m-d H:i:s'),
-                                                                    (string) 'PO SELESAI'
+                                                                    cek(($row_itxviewmemo['ORDERDATE'])),
+                                                                    cek(($row_itxviewmemo['PELANGGAN'])),
+                                                                    cek(($row_itxviewmemo['NO_ORDER'])),
+                                                                    cek(($row_itxviewmemo['NO_PO'])),
+                                                                    cek(($row_itxviewmemo['KETERANGAN_PRODUCT'])),
+                                                                    cek(($row_itxviewmemo['JENIS_KAIN'])),
+                                                                    cek(($row_itxviewmemo['WARNA'])),
+                                                                    cek(($row_itxviewmemo['NO_WARNA'])),
+                                                                    cek(($row_itxviewmemo['DELIVERY'])),
+                                                                    cek(($row_itxviewmemo['QTY_BAGIKAIN'])),
+                                                                    cek(($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])),
+                                                                    cek(($row_itxviewmemo['NETTO'])),
+                                                                    cek(($row_itxviewmemo['DELAY'])),
+                                                                    cek(($row_itxviewmemo['NO_KK'])),
+                                                                    cek(($row_itxviewmemo['DEMAND'])),
+                                                                    cek(($row_itxviewmemo['ORDERLINE'])),
+                                                                    cek(($row_itxviewmemo['PROGRESSSTATUS'])),
+                                                                    cek(($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
+                                                                    cek(($row_itxviewmemo['KETERANGAN'])),
+                                                                    cek(($row_itxviewmemo['SURATJALAN'])),
+                                                                    cek(($row_itxviewmemo['TGL_KIRIM'])),
+                                                                    $_SERVER['REMOTE_ADDR'],
+                                                                    date('Y-m-d H:i:s'),
+                                                                    'PO SELESAI'
                                                                 ];
                                                             }
 
@@ -369,37 +369,37 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             $itxviewmemo = db2_exec($conn1, "SELECT 
                                                                                                 * 
                                                                                                 FROM 
-                                                                                                    ITXVIEW_MEMOPENTINGPPC 
+                                                                                                    ITXVIEW_MEMOPENTINGPPC as im
                                                                                                 WHERE 
                                                                                                     $where_order $where_date $where_rec");
                                                             $r_itxviewmemo = [];
                                                             while ($row_itxviewmemo = db2_fetch_assoc($itxviewmemo)) {
                                                                 // var_dump(print_r($row_itxviewmemo));
                                                                 $r_itxviewmemo[] = [
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['ORDERDATE'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['PELANGGAN'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_ORDER'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_PO'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN_PRODUCT'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['JENIS_KAIN'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['WARNA'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_WARNA'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['DELIVERY'])),
-                                                                    (float) TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])),
-                                                                    (float) TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])),
-                                                                    (float) TRIM(addslashes($row_itxviewmemo['NETTO'])),
-                                                                    (int) TRIM(addslashes($row_itxviewmemo['DELAY'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['NO_KK'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['DEMAND'])),
-                                                                    (float) TRIM(addslashes($row_itxviewmemo['ORDERLINE'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['SURATJALAN'])),
-                                                                    (string) TRIM(addslashes($row_itxviewmemo['TGL_KIRIM'])),
-                                                                    (string) $_SERVER['REMOTE_ADDR'],
-                                                                    (string) date('Y-m-d H:i:s'),
-                                                                    (string) 'PO SELESAI'
+                                                                     cek(($row_itxviewmemo['ORDERDATE'])),
+                                                                     cek(($row_itxviewmemo['PELANGGAN'])),
+                                                                     cek(($row_itxviewmemo['NO_ORDER'])),
+                                                                     cek(($row_itxviewmemo['NO_PO'])),
+                                                                     cek(($row_itxviewmemo['KETERANGAN_PRODUCT'])),
+                                                                     cek(($row_itxviewmemo['JENIS_KAIN'])),
+                                                                     cek(($row_itxviewmemo['WARNA'])),
+                                                                     cek(($row_itxviewmemo['NO_WARNA'])),
+                                                                     cek(($row_itxviewmemo['DELIVERY'])),
+                                                                     cek(($row_itxviewmemo['QTY_BAGIKAIN'])),
+                                                                     cek(($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])),
+                                                                     cek(($row_itxviewmemo['NETTO'])),
+                                                                     cek(($row_itxviewmemo['DELAY'])),
+                                                                     cek(($row_itxviewmemo['NO_KK'])),
+                                                                     cek(($row_itxviewmemo['DEMAND'])),
+                                                                     cek(($row_itxviewmemo['ORDERLINE'])),
+                                                                     cek(($row_itxviewmemo['PROGRESSSTATUS'])),
+                                                                     cek(($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
+                                                                     cek(($row_itxviewmemo['KETERANGAN'])),
+                                                                     cek(($row_itxviewmemo['SURATJALAN'])),
+                                                                     cek(($row_itxviewmemo['TGL_KIRIM'])),
+                                                                     $_SERVER['REMOTE_ADDR'],
+                                                                     date('Y-m-d H:i:s'),
+                                                                     'PO SELESAI'
                                                                 ];
                                                             }
                                                             try {
@@ -1158,7 +1158,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                 </tr>
                                                             <?php else: ?>
                                                                 <tr>
-                                                                    <td><?= substr($d_salesorder['CREATIONDATETIME'], 0, 10); ?>
+                                                                    <td><?= cek($d_salesorder['CREATIONDATETIME'], 0, 10); ?>
                                                                     </td><!-- DATE MARKETING -->
                                                                     <td>
                                                                         <?php
@@ -1210,7 +1210,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         $q_lebar = db2_exec($conn1, "SELECT DISTINCT * FROM ITXVIEWLEBAR WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
                                                                         $d_lebar = db2_fetch_assoc($q_lebar);
                                                                         ?>
-                                                                        <?= number_format($d_lebar['LEBAR'], 0); ?>
+                                                                        <?= cek($d_lebar['LEBAR'], 0); ?>
                                                                     </td><!-- LEBAR -->
                                                                     <td>
                                                                         <?php
@@ -1229,7 +1229,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     </td> <!-- GRAMASI -->
                                                                     <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                                                                     <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                                                                    <td><?= $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); ?></td>
+                                                                    <td><?= cek($rowdb2['DELIVERY']);?></td>
                                                                     <!-- DELIVERY -->
                                                                     <td>
                                                                         <?php
@@ -1327,7 +1327,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
                                                                             0
                                                                         <?php else: ?>
-                                                                            <?= number_format($rowdb2['QTY_BAGIKAIN'], 2); ?>
+                                                                            <?= cek($rowdb2['QTY_BAGIKAIN'], 2); ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- BRUTO/BAGI KAIN -->
                                                                     <td>
@@ -1343,7 +1343,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
                                                                             0
                                                                         <?php else: ?>
-                                                                            <?= number_format($rowdb2['QTY_BAGIKAIN_YD_MTR'], 2); ?>
+                                                                            <?= cek($rowdb2['QTY_BAGIKAIN_YD_MTR'], 2); ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- BRUTO/BAGI KAIN YARD -->
                                                                     <td>
@@ -1352,7 +1352,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         $d_qtysalinan = db2_fetch_assoc($q_qtysalinan);
                                                                         ?>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                            <?= number_format($d_qtysalinan['USERPRIMARYQUANTITY'], 3) ?>
+                                                                            <?= cek($d_qtysalinan['USERPRIMARYQUANTITY'], 3) ?>
                                                                         <?php else: ?>
                                                                             0
                                                                         <?php endif; ?>
@@ -1361,34 +1361,34 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         <?php
                                                                         $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
                                                                         $d_qtypacking = db2_fetch_assoc($q_qtypacking);
-                                                                        echo number_format($d_qtypacking['QTY_PACKING'], 2);
+                                                                        echo cek($d_qtypacking['QTY_PACKING'], 2);
                                                                         ?>
                                                                     </td> <!-- QTY PACKING -->
                                                                     <td>
                                                                         <?php
                                                                         $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
                                                                         $d_qtypacking = db2_fetch_assoc($q_qtypacking);
-                                                                        echo number_format($d_qtypacking['QTY_PACKING_YARD'], 2);
+                                                                        echo cek($d_qtypacking['QTY_PACKING_YARD'], 2);
                                                                         ?>
                                                                     </td> <!-- QTY PACKING YARD -->
                                                                     <td><?= $qty_sisa; ?></td> <!-- QTY SISA -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
                                                                         <?php else: ?>
-                                                                            <?= number_format($d_qtypacking_sum['QTY_PACKING'], 2) - number_format($rowdb2['NETTO'], 2); ?>
+                                                                            <?= cek($d_qtypacking_sum['QTY_PACKING'], 2) - cek($rowdb2['NETTO'], 2); ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- QTY PACKING KURANG KG -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
                                                                         <?php else: ?>
-                                                                            <?= number_format($d_qtypacking_sum['QTY_PACKING_YARD'], 2) - number_format($d_netto_yd['BASESECONDARYQUANTITY'], 2); ?>
+                                                                            <?= cek($d_qtypacking_sum['QTY_PACKING_YARD'], 2) - cek($d_netto_yd['BASESECONDARYQUANTITY'], 2); ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- QTY PACKING KURANG YARD/METER -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
 
                                                                         <?php else: ?>
-                                                                            <?= number_format($rowdb2['NETTO'], 0); ?>
+                                                                            <?= cek($rowdb2['NETTO'], 0); ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- NETTO KG-->
                                                                     <td>
@@ -1396,7 +1396,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
 
                                                                         <?php else: ?>
                                                                             <?php
-                                                                            echo number_format($d_netto_yd['BASESECONDARYQUANTITY'], 0);
+                                                                            echo cek($d_netto_yd['BASESECONDARYQUANTITY'], 0);
                                                                             ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- NETTO YD-->
@@ -1428,20 +1428,20 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     <!-- NO SURAT JALAN -->
                                                                     <td><?= $d_suratjalan['ROLL']; ?></td> <!-- ROLL -->
                                                                     <td><?= $d_suratjalan['TGL_KIRIM']; ?></td> <!-- TGL KIRIM -->
-                                                                    <td><?= number_format($d_suratjalan['QTY_KIRIM_KG'], 2); ?></td>
+                                                                    <td><?= cek($d_suratjalan['QTY_KIRIM_KG'], 2); ?></td>
                                                                     <!-- QTY KIRIM KG -->
-                                                                    <td><?= number_format($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2); ?>
+                                                                    <td><?= cek($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2); ?>
                                                                     </td> <!-- QTY KIRIM YARD/METER -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
                                                                         <?php else: ?>
-                                                                            <?= number_format($d_suratjalan['QTY_KIRIM_KG'], 2) - number_format($rowdb2['NETTO'], 2); ?>
+                                                                            <?= cek($d_suratjalan['QTY_KIRIM_KG'], 2) - cek($rowdb2['NETTO'], 2); ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- QTY KURANG KG -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
                                                                         <?php else: ?>
-                                                                            <?= number_format($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2) - number_format($d_netto_yd['BASESECONDARYQUANTITY'], 2); ?>
+                                                                            <?= cek($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2) - cek($d_netto_yd['BASESECONDARYQUANTITY'], 2); ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- QTY KURANG YARD/METER -->
                                                                     <td><?= $d_suratjalan['FOC']; ?></td> <!-- FOC -->
