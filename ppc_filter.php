@@ -2,7 +2,7 @@
 ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
-include_once "./utils/helper.php";
+include_once "utils/helper.php";
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE());");
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 
@@ -310,7 +310,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                         $r_itxviewmemo = [];
                                                         while ($row_itxviewmemo   = db2_fetch_assoc($itxviewmemo)) {
                                                             $r_itxviewmemo[] = [
-                                                                cek($row_itxviewmemo['ORDERDATE']),
+                                                                cek(addslashes($row_itxviewmemo['ORDERDATE'])),
                                                                 cek($row_itxviewmemo['PELANGGAN']),
                                                                 cek($row_itxviewmemo['NO_ORDER']),
                                                                 cek($row_itxviewmemo['NO_PO']),
@@ -336,7 +336,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                             ];
                                                         }
 
-                                                        try{
+                                                        try {
                                                             // Define the query with placeholders
                                                             $query = "
                                                                 INSERT INTO nowprd.itxview_memopentingppc (
@@ -348,17 +348,19 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                                                                 )
                                                             ";
-
+                                                        
                                                             // Prepare the statement
                                                             $stmt = $pdo->prepare($query);
-
+                                                        
                                                             // Define the data to be inserted
-                                                            $data = $r_itxviewmemo;
-
-                                                            foreach ($data as $row) {
-                                                                // echo '<pre>';
-                                                                // print_r($row);
-                                                                // echo '</pre>';
+                                                            foreach ($r_itxviewmemo as $row) {
+                                                                // Ensure data is properly encoded and does not contain problematic characters
+                                                                $row = array_map(function($value) {
+                                                                    // Check if the value is not null before converting encoding
+                                                                    return $value !== null ? mb_convert_encoding($value, 'UTF-8', 'auto') : $value;
+                                                                }, $row);
+                                                        
+                                                                // Execute the statement with the data
                                                                 if (!$stmt->execute($row)) {
                                                                     // Handle error
                                                                     echo "Error: ";
@@ -366,10 +368,11 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                     exit();
                                                                 }
                                                             }
-                                                            // echo "Data successfully inserted!";
+                                                            echo " ";
                                                         } catch (PDOException $e) {
                                                             echo "xError: " . $e->getMessage();
                                                         }
+                                                        
 
                                                         // --------------------------------------------------------------------------------------------------------------- //
                                                         $prod_order_2     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
