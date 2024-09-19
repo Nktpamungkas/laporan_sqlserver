@@ -550,7 +550,7 @@
                                                                 <?php
                                                                 $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                 ?>
-                                                                <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
+                                                                <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
                                                                     <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                 <?php } ?>
                                                             </th>
@@ -1404,7 +1404,7 @@
                                                                         <?php
                                                                         $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                         ?>
-                                                                        <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
+                                                                        <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
                                                                             <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                         <?php } ?>
                                                                     </th>
@@ -2243,7 +2243,7 @@
                                                                                 <?php
                                                                                 $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                                 ?>
-                                                                                <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
+                                                                                <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
                                                                                     <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                                 <?php } ?>
                                                                             </th>
@@ -3076,7 +3076,7 @@
                                                                         <?php
                                                                         $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                         ?>
-                                                                        <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
+                                                                        <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
                                                                             <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                         <?php } ?>
                                                                     </th>
@@ -3916,7 +3916,7 @@
                                                                             <?php
                                                                             $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                             ?>
-                                                                            <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
+                                                                            <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
                                                                                 <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                             <?php } ?>
                                                                         </th>
@@ -4757,7 +4757,7 @@
                                                                                 <?php
                                                                                 $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                                 ?>
-                                                                                <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
+                                                                                <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
                                                                                     <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                                 <?php } ?>
                                                                             </th>
