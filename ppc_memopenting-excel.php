@@ -4,6 +4,10 @@
     header('Cache-Control: max-age=0');
 
     include_once "utils/helper.php";
+
+    if (count($_GET) < 2) {
+        exit('Parameter filter harus di isi.');
+    }
 ?>
 <style>
     .str {
@@ -59,34 +63,59 @@
             session_start();
             require_once "koneksi.php";
             if($_GET['akses'] == 'catch'){
-                $no_order = $_GET['no_order'];
-                $tgl1     = $_GET['tgl1'];
-                $tgl2     = $_GET['tgl2'];
-                if($no_order){
-                    $where_order            = "NO_ORDER = '$no_order'";
-                }else{
-                    $where_order            = "";
+
+                $prod_order     = $_GET['prod_order'] ?? '';
+                $prod_demand    = $_GET['prod_demand'] ?? '';
+                $no_order       = $_GET['no_order'] ?? '';
+                $tgl1           = $_GET['tgl1'] ?? '';
+                $tgl2           = $_GET['tgl2'] ?? '';
+                $no_po          = $_GET['no_po'] ?? '';
+                $article_group  = $_GET['article_group'] ?? '';
+                $article_code   = $_GET['article_code'] ?? '';
+                $nama_warna     = $_GET['nama_warna'] ?? '';
+                $kkoke          = $_GET['kkoke'] ?? '';
+
+                $conditions = [];
+                $conditions2 = [];
+                
+                // Menambahkan kondisi berdasarkan filter yang diisi
+                if ($nama_warna) {
+                    $conditions[] = "WARNA LIKE '%$nama_warna%'";
                 }
-                if($tgl1 & $tgl2){
-                    $where_date             = "DELIVERY BETWEEN '$tgl1' AND '$tgl2'";
-                }else{
-                    $where_date             = "";
+                if ($prod_order) {
+                    $conditions[] = "NO_KK = '$prod_order'";
                 }
+                if ($prod_demand) {
+                    $conditions[] = "DEMAND = '$prod_demand'";
+                }
+                if ($no_order) {
+                    $conditions[] = "NO_ORDER = '$no_order'";
+                }
+                if ($tgl1 && $tgl2) {
+                    $conditions[] = "DELIVERY BETWEEN '$tgl1' AND '$tgl2'";
+                }
+                if ($no_po) {
+                    $conditions[] = "NO_PO = '$no_po'";
+                }
+                if ($article_group && $article_code) {
+                    $conditions[] = "SUBCODE02 = '$article_group' AND SUBCODE03 = '$article_code'";
+                }
+                if ($kkoke === 'tidak') {
+                    $conditions2[] = "NOT PROGRESSSTATUS = '6' AND NOT PROGRESSSTATUS_DEMAND = '6'";
+                }
+                
+                // Menyusun string kondisi
+                $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
+                
+                // Menyusun query
+                $query = "SELECT * FROM (SELECT * FROM ITXVIEW_MEMOPENTINGPPC WHERE $conditionsString)";
+                
+                if (count($conditions2) > 0) {
+                    $query .= " WHERE " . implode(" AND ", $conditions2);
+                }
+
                 // ITXVIEW_MEMOPENTINGPPC
-                $itxviewmemo              = db2_exec($conn1, "SELECT 
-                                                                    * 
-                                                                FROM(SELECT 
-                                                                            * 
-                                                                        FROM 
-                                                                            ITXVIEW_MEMOPENTINGPPC 
-                                                                        WHERE 
-                                                                            $where_prodorder 
-                                                                            $where_proddemand 
-                                                                            $where_order 
-                                                                            $where_date 
-                                                                            $where_no_po 
-                                                                            $where_article 
-                                                                            $where_nama_warna)");
+                $itxviewmemo              = db2_exec($conn1, $query, array('cursor'=>DB2_SCROLLABLE));
                 $r_itxviewmemo = [];
                 while ($row_itxviewmemo   = db2_fetch_assoc($itxviewmemo)) {
                     $r_itxviewmemo[]      = [

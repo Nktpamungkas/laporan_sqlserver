@@ -1,5 +1,5 @@
 <?php
-ini_set("error_reporting", 1);
+// ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
 include_once "utils/helper.php";
@@ -235,78 +235,58 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                     </thead>
                                                     <tbody>
                                                         <?php
-                                                        // ini_set("error_reporting", 0);
-                                                        session_start();
-                                                        require_once "koneksi.php";
                                                         $prod_order     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
                                                         $prod_demand    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
-                                                        $no_order       = $_POST['no_order'];
-                                                        $tgl1           = $_POST['tgl1'];
-                                                        $tgl2           = $_POST['tgl2'];
-                                                        $no_po          = $_POST['no_po'];
-                                                        $article_group  = $_POST['article_group'];
-                                                        $article_code   = $_POST['article_code'];
-                                                        $nama_warna     = $_POST['nama_warna'];
-                                                        $kkoke          = $_POST['kkoke'];
-
+                                                        $no_order       = $_POST['no_order'] ?? '';
+                                                        $tgl1           = $_POST['tgl1'] ?? '';
+                                                        $tgl2           = $_POST['tgl2'] ?? '';
+                                                        $no_po          = $_POST['no_po'] ?? '';
+                                                        $article_group  = $_POST['article_group'] ?? '';
+                                                        $article_code   = $_POST['article_code'] ?? '';
+                                                        $nama_warna     = $_POST['nama_warna'] ?? '';
+                                                        $kkoke          = $_POST['kkoke'] ?? '';
+                                                        
+                                                        $conditions = [];
+                                                        $conditions2 = [];
+                                                        
+                                                        // Menambahkan kondisi berdasarkan filter yang diisi
                                                         if ($nama_warna) {
-                                                            $where_nama_warna   = "AND WARNA LIKE '%$nama_warna%'";
-                                                        } else {
-                                                            $where_nama_warna   = "";
+                                                            $conditions[] = "WARNA LIKE '%$nama_warna%'";
                                                         }
                                                         if ($prod_order) {
-                                                            $where_prodorder        = "NO_KK  = '$prod_order'";
-                                                        } else {
-                                                            $where_prodorder        = "";
+                                                            $conditions[] = "NO_KK = '$prod_order'";
                                                         }
                                                         if ($prod_demand) {
-                                                            $where_proddemand       = "DEMAND = '$prod_demand'";
-                                                        } else {
-                                                            $where_proddemand       = "";
+                                                            $conditions[] = "DEMAND = '$prod_demand'";
                                                         }
                                                         if ($no_order) {
-                                                            $where_order            = "NO_ORDER = '$no_order'";
-                                                        } else {
-                                                            $where_order            = "";
+                                                            $conditions[] = "NO_ORDER = '$no_order'";
                                                         }
-                                                        if ($tgl1 & $tgl2) {
-                                                            $where_date             = "DELIVERY BETWEEN '$tgl1' AND '$tgl2'";
-                                                        } else {
-                                                            $where_date             = "";
+                                                        if ($tgl1 && $tgl2) {
+                                                            $conditions[] = "DELIVERY BETWEEN '$tgl1' AND '$tgl2'";
                                                         }
                                                         if ($no_po) {
-                                                            $where_no_po            = "NO_PO = '$no_po'";
-                                                        } else {
-                                                            $where_no_po            = "";
+                                                            $conditions[] = "NO_PO = '$no_po'";
                                                         }
-                                                        if ($article_group & $article_code) {
-                                                            $where_article          = "SUBCODE02 = '$article_group' AND SUBCODE03 = '$article_code'";
-                                                        } else {
-                                                            $where_article          = "";
+                                                        if ($article_group && $article_code) {
+                                                            $conditions[] = "SUBCODE02 = '$article_group' AND SUBCODE03 = '$article_code'";
                                                         }
-
-                                                        if ($kkoke == 'ya') {
-                                                            $where_kkoke            = "";
-                                                        } elseif ($kkoke == 'tidak') {
-                                                            $where_kkoke            = "WHERE NOT PROGRESSSTATUS = '6' AND NOT PROGRESSSTATUS_DEMAND = '6'";
+                                                        if ($kkoke === 'tidak') {
+                                                            $conditions2[] = "NOT PROGRESSSTATUS = '6' AND NOT PROGRESSSTATUS_DEMAND = '6'";
+                                                        }
+                                                        
+                                                        // Menyusun string kondisi
+                                                        $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
+                                                        
+                                                        // Menyusun query
+                                                        $query = "SELECT * FROM (SELECT * FROM ITXVIEW_MEMOPENTINGPPC WHERE $conditionsString)";
+                                                        
+                                                        if (count($conditions2) > 0) {
+                                                            $query .= " WHERE " . implode(" AND ", $conditions2);
                                                         }
 
                                                         // ITXVIEW_MEMOPENTINGPPC
-                                                        $itxviewmemo              = db2_exec($conn1, "SELECT 
-                                                                                                                * 
-                                                                                                            FROM(SELECT 
-                                                                                                                        * 
-                                                                                                                    FROM 
-                                                                                                                        ITXVIEW_MEMOPENTINGPPC 
-                                                                                                                    WHERE 
-                                                                                                                        $where_prodorder 
-                                                                                                                        $where_proddemand 
-                                                                                                                        $where_order 
-                                                                                                                        $where_date 
-                                                                                                                        $where_no_po 
-                                                                                                                        $where_article 
-                                                                                                                        $where_nama_warna)
-                                                                                                            $where_kkoke");
+                                                        $itxviewmemo              = db2_exec($conn1, $query, array('cursor'=>DB2_SCROLLABLE));
                                                         $r_itxviewmemo = [];
                                                         while ($row_itxviewmemo   = db2_fetch_assoc($itxviewmemo)) {
                                                             $r_itxviewmemo[] = [
@@ -377,45 +357,41 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                         // --------------------------------------------------------------------------------------------------------------- //
                                                         $prod_order_2     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
                                                         $prod_demand_2    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
-                                                        $no_order_2     = $_POST['no_order'];
-                                                        $tgl1_2         = $_POST['tgl1'];
-                                                        $tgl2_2         = $_POST['tgl2'];
-                                                        $no_po2         = $_POST['no_po'];
-                                                        $article_group2 = $_POST['article_group'];
-                                                        $article_code2  = $_POST['article_code'];
+                                                        $no_order_2     = $_POST['no_order'] ?? '';
+                                                        $tgl1_2         = $_POST['tgl1'] ?? '';
+                                                        $tgl2_2         = $_POST['tgl2'] ?? '';
+                                                        $no_po2         = $_POST['no_po'] ?? '';
+                                                        $article_group2 = $_POST['article_group'] ?? '';
+                                                        $article_code2  = $_POST['article_code'] ?? '';
+
+                                                        $conditions = [];
 
                                                         if ($prod_order_2) {
-                                                            $where_prodorder2    = "NO_KK  = '$prod_order'";
-                                                        } else {
-                                                            $where_prodorder2    = "";
+                                                            $conditions[] = "NO_KK  = '$prod_order'";
                                                         }
                                                         if ($prod_demand_2) {
-                                                            $where_proddemand2    = "DEMAND = '$prod_demand'";
-                                                        } else {
-                                                            $where_proddemand2    = "";
+                                                            $conditions[] = "DEMAND = '$prod_demand'";
                                                         }
                                                         if ($no_order_2) {
-                                                            $where_order2    = "NO_ORDER = '$no_order_2'";
-                                                        } else {
-                                                            $where_order2    = "";
+                                                            $conditions[] = "NO_ORDER = '$no_order_2'";
                                                         }
                                                         if ($tgl1_2 & $tgl2_2) {
-                                                            $where_date2     = "DELIVERY BETWEEN '$tgl1_2' AND '$tgl2_2'";
-                                                        } else {
-                                                            $where_date2     = "";
+                                                            $conditions[] = "DELIVERY BETWEEN '$tgl1_2' AND '$tgl2_2'";
                                                         }
                                                         if ($no_po2) {
-                                                            $where_no_po2            = "NO_PO = '$no_po'";
-                                                        } else {
-                                                            $where_no_po2            = "";
+                                                            $conditions[] = "NO_PO = '$no_po'";
                                                         }
                                                         if ($article_group2 & $article_code2) {
-                                                            $where_article2          = "ARTICLE_GROUP = '$article_group2' AND ARTICLE_CODE = '$article_code2'";
-                                                        } else {
-                                                            $where_article2          = "";
+                                                            $conditions[] = "ARTICLE_GROUP = '$article_group2' AND ARTICLE_CODE = '$article_code2'";
                                                         }
-                                                        $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE $where_prodorder2 $where_proddemand2 $where_order2 $where_date2 $where_no_po2 $where_article2 AND ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
-                                                        $stmt   = sqlsrv_query($con_nowprd, $sqlDB2);
+
+                                                        // Menyusun string kondisi
+                                                        $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
+                                                        
+                                                        // Menyusun query
+                                                        $query = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE $conditionsString AND ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
+
+                                                        $stmt   = sqlsrv_query($con_nowprd, $query);
                                                         while ($rowdb2 = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                                         ?>
                                                             <?php
@@ -984,11 +960,19 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                     ini_set("error_reporting", 1);
                                     session_start();
                                     require_once "koneksi.php";
-                                    $no_order = $_POST['no_order'];
-                                    $tgl1 = $_POST['tgl1'];
-                                    $tgl2 = $_POST['tgl2'];
 
-                                    echo '<script>window.location.href = "ppc_memopenting-excel.php?no_order=' . $no_order . '&tgl1=' . $tgl1 . '&tgl2=' . $tgl2 . '&akses=catch";</script>';
+                                    $prod_order     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
+                                    $prod_demand    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
+                                    $no_order       = $_POST['no_order'] ?? '';
+                                    $tgl1           = $_POST['tgl1'] ?? '';
+                                    $tgl2           = $_POST['tgl2'] ?? '';
+                                    $no_po          = $_POST['no_po'] ?? '';
+                                    $article_group  = $_POST['article_group'] ?? '';
+                                    $article_code   = $_POST['article_code'] ?? '';
+                                    $nama_warna     = $_POST['nama_warna'] ?? '';
+                                    $kkoke          = $_POST['kkoke'] ?? '';
+
+                                    echo '<script>window.location.href = "ppc_memopenting-excel.php?prod_order=' . $prod_order . '&prod_demand=' . $prod_demand . '&no_order=' . $no_order . '&tgl1=' . $tgl1 . '&tgl2=' . $tgl2 . '&no_po=' . $no_po . '&article_group=' . $article_group . '&article_code=' . $article_code . '&nama_warna=' . $nama_warna . '&kkoke=' . $kkoke . '&akses=catch";</script>';
                                     ?>
                                 <?php endif; ?>
                             </div>
