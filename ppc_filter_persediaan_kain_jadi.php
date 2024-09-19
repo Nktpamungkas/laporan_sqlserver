@@ -53,7 +53,7 @@ if (isset($_POST['cari_tahun'])) {
                                                 </div>
                                                 <div class="col-sm-12 col-xl-6 m-b-30">
                                                     <h4 class="sub-title">Tahun:</h4>
-                                                    <?php $years = range(2022, strftime("2030", time())); ?>
+                                                    <?php $years = range(2022, date("Y", strtotime("2030-01-01")));  ?>
                                                     <select name="thn" class="form-control form-control-primary" required>
                                                         <option disabled selected value="">Select Year</option>
                                                         <?php foreach ($years as $year) : ?>
