@@ -2,6 +2,7 @@
 ini_set("error_reporting", 0);
 session_start();
 require_once "koneksi.php";
+include "utils/helper.php";
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3
 WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3 WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
@@ -570,7 +571,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                             $cache_MULAI    = $d_cache['tanggal_in'];
                                                                             ?>
                                                                             <?php if ($cache_MULAI) : ?>
-                                                                                <span style="background-color: #A5CEA8;"><?= $cache_MULAI->format('Y-m-d H:i:s'); ?></span>
+                                                                                <span style="background-color: #A5CEA8;"><?= cek($cache_MULAI,'Y-m-d H:i:s'); ?></span>
                                                                             <?php else : ?>
                                                                                 <?php if ($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
                                                                                     <form action="" method="POST">
@@ -659,7 +660,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                             $cache_SELESAI    = $d_cache['tanggal_out'];
                                                                             ?>
                                                                             <?php if ($cache_SELESAI) : ?>
-                                                                                <span style="background-color: #A5CEA8;"><?= $cache_SELESAI->format('Y-m-d H:i:s');; ?></span>
+                                                                                <span style="background-color: #A5CEA8;"><?= cek($cache_SELESAI,'Y-m-d H:i:s'); ?></span>
                                                                             <?php else : ?>
                                                                                 <?php if ($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
                                                                                     <form action="" method="POST">
