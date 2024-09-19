@@ -878,287 +878,20 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                                                 ORDER BY p.STEPNUMBER ASC LIMIT 1");
                                                             $row_tgl_celup = db2_fetch_assoc($q_tglcelup);
                                                             ?>
-                                                            <?php $jeniskain = $rowdb2['JENIS_KAIN'];
+                                                            <?php 
+                                                            
+                                                            $jeniskain = $rowdb2['JENIS_KAIN'];
+
                                                             if ($_POST['rec'] == 'rec' and str_contains($jeniskain, 'RECYCLED')): ?>
                                                                 <tr>
-                                                                    <td><?= substr($d_salesorder['CREATIONDATETIME'], 0, 10); ?>
-                                                                    </td><!-- DATE MARKETING -->
                                                                     <td>
-                                                                        <?php
-                                                                            // $terimabon = sqlsrv_query($con_dbnow_mkt, "SELECT * FROM dbnow_mkt.[tbl_salesorder] WHERE projectcode = '$rowdb2[NO_ORDER]'");
-                                                                            // $d_terimabon = sqlsrv_fetch_array($terimabon, SQLSRV_FETCH_ASSOC);
-                                                                            // echo $d_terimabon['ppc_terima']->format('Y-m-d H:i:s');
-
-                                                                            $terimabon  = mysqli_query($con_dbnow_mkt, "SELECT * FROM tbl_salesorder WHERE projectcode = '$rowdb2[NO_ORDER]'");
-                                                                            $d_terimabon= mysqli_fetch_assoc($terimabon);
-                                                                            echo $d_terimabon['ppc_terima'];
+                                                                        <?php 
+                                                                                if(!empty(cek($d_salesorder['CREATIONDATETIME']))){
+                                                                                echo substr($d_salesorder['CREATIONDATETIME'], 0, 10); 
+                                                                                }else{
+                                                                                echo cek($d_salesorder['CREATIONDATETIME']);
+                                                                                }
                                                                         ?>
-                                                                        
-                                                                    </td><!-- DATE PPC RECEIVED BO FROM RMP -->
-                                                                    <td><?= $d_terimabon['ppc_bagilot']->format('Y-m-d H:i:s'); ?>
-                                                                    </td>
-                                                                    <!-- DATE BAGI LOT -->
-                                                                    <td><?= $rowdb2['ORDERDATE']; ?></td> <!-- TGL TERIMA ORDER -->
-                                                                    <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
-                                                                    <td><?= $rowdb2['NO_ORDER'] . '-' . $rowdb2['ORDERLINE']; ?>
-                                                                    </td>
-                                                                    <!-- NO. ORDER -->
-                                                                    <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->
-                                                                    <td><?= $rowdb2['JENIS_KAIN']; ?></td> <!-- JENIS KAIN -->
-                                                                    <td><?= $rowdb2['KETERANGAN_PRODUCT']; ?></td>
-                                                                    <!-- KETERANGAN PRODUCT -->
-                                                                    <td>
-                                                                        <?php
-                                                                        $q_lebar = db2_exec($conn1, "SELECT * FROM ITXVIEWLEBAR WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
-                                                                        $d_lebar = db2_fetch_assoc($q_lebar);
-                                                                        ?>
-                                                                        <?= number_format($d_lebar['LEBAR'], 0); ?>
-                                                                    </td><!-- LEBAR -->
-                                                                    <td>
-                                                                        <?php
-                                                                        $q_gramasi = db2_exec($conn1, "SELECT * FROM ITXVIEWGRAMASI WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
-                                                                        $d_gramasi = db2_fetch_assoc($q_gramasi);
-                                                                        ?>
-                                                                        <?php
-                                                                        if ($d_gramasi['GRAMASI_KFF']) {
-                                                                            echo number_format($d_gramasi['GRAMASI_KFF'], 0);
-                                                                        } elseif ($d_gramasi['GRAMASI_FKF']) {
-                                                                            echo number_format($d_gramasi['GRAMASI_FKF'], 0);
-                                                                        } else {
-                                                                            echo '-';
-                                                                        }
-                                                                        ?>
-                                                                    </td> <!-- GRAMASI -->
-                                                                    <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
-                                                                    <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                                                                    <td><?= $rowdb2['DELIVERY']; ?></td> <!-- DELIVERY -->
-                                                                    <td>
-                                                                        <?php
-                                                                        if ($d_tglkniting_ready) {
-                                                                            echo $d_tglkniting_ready;
-                                                                        }
-                                                                        if ($d_benang_rajutg_ready) {
-                                                                            echo $d_benang_rajutg_ready;
-                                                                        }
-                                                                        ?>
-                                                                    </td> <!-- GREIGE SCHEDULE -->
-                                                                    <td>
-                                                                        <?php
-                                                                        $q_element = db2_exec($conn1, "SELECT DISTINCT
-                                                                                                                s2.TRANSACTIONDATE 
-                                                                                                            FROM 
-                                                                                                                STOCKTRANSACTION s 
-                                                                                                            LEFT JOIN STOCKTRANSACTION s2 ON s2.ITEMELEMENTCODE = s.ITEMELEMENTCODE AND s2.TEMPLATECODE = '204'
-                                                                                                            WHERE
-                                                                                                                s.TEMPLATECODE = '120' 
-                                                                                                                AND s.ORDERCODE = '$rowdb2[NO_KK]' -- PRODUCTION NUMBER
-                                                                                                                AND s.PROJECTCODE = '$rowdb2[NO_ORDER]'
-                                                                                                                AND SUBSTR(s.ITEMELEMENTCODE, 1,1) = '0'");
-                                                                        $d_elemet = db2_fetch_assoc($q_element);
-                                                                        $q_elementCut = db2_exec($conn1, "SELECT DISTINCT
-                                                                                                                s4.TRANSACTIONDATE 
-                                                                                                            FROM 
-                                                                                                                STOCKTRANSACTION s
-                                                                                                            LEFT JOIN STOCKTRANSACTION s2 ON s2.ITEMELEMENTCODE = s.ITEMELEMENTCODE AND s2.TEMPLATECODE  = '342'
-                                                                                                            LEFT JOIN STOCKTRANSACTION s3 ON s3.TRANSACTIONNUMBER = s2.CUTORGTRTRANSACTIONNUMBER 
-                                                                                                            LEFT JOIN STOCKTRANSACTION s4 ON s4.ITEMELEMENTCODE = s3.ITEMELEMENTCODE AND s4.TEMPLATECODE = '204'
-                                                                                                            WHERE
-                                                                                                                s.TEMPLATECODE = '120' 
-                                                                                                                AND s.ORDERCODE = '$rowdb2[NO_KK]' -- PRODUCTION NUMBER
-                                                                                                                AND s.PROJECTCODE = '$rowdb2[NO_ORDER]'
-                                                                                                                AND SUBSTR(s.ITEMELEMENTCODE, 1,1) = '8'");
-                                                                        $d_elemetCut = db2_fetch_assoc($q_elementCut);
-                                                                        if ($d_elemet['TRANSACTIONDATE'] == $d_elemetCut['TRANSACTIONDATE']) {
-                                                                            if ($d_elemet['TRANSACTIONDATE']) {
-                                                                                echo $d_elemet['TRANSACTIONDATE'];
-                                                                            } else {
-                                                                                echo $d_elemetCut['TRANSACTIONDATE'];
-                                                                            }
-                                                                        } else {
-                                                                            echo $d_elemet['TRANSACTIONDATE'] . '<br>';
-                                                                            echo $d_elemetCut['TRANSACTIONDATE'];
-                                                                        }
-                                                                        ?>
-                                                                    </td> <!-- ACTUAL DATE GREIGE -->
-                                                                    <td>
-                                                                        <?php
-                                                                        $q_tglbagikain = db2_exec($conn1, "SELECT * FROM ITXVIEW_TGLBAGIKAIN WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
-                                                                        $d_tglbagikain = db2_fetch_assoc($q_tglbagikain);
-                                                                        ?>
-                                                                        <?= $d_tglbagikain['TRANSACTIONDATE']; ?>
-                                                                    </td> <!-- BAGI KAIN TGL -->
-                                                                    <td><?= $row_tgl_celup['MULAI']; ?></td> <!-- TGL CELUP -->
-                                                                    <td>
-                                                                        <?php
-                                                                        // KK GABUNG
-                                                                        // $q_roll_gabung      = db2_exec($conn1, "SELECT 
-                                                                        //                                     COUNT(*) AS ROLL
-                                                                        //                                 FROM 
-                                                                        //                                     PRODUCTIONDEMAND p 
-                                                                        //                                 LEFT JOIN STOCKTRANSACTION s ON s.ORDERCODE = p.CODE
-                                                                        //                                 WHERE 
-                                                                        //                                     p.RESERVATIONORDERCODE = '$rowdb2[DEMAND]'");
-                                                                        // $d_roll_gabung      = db2_fetch_assoc($q_roll_gabung);
-                                                            
-                                                                        // KK TIDAK GABUNG
-                                                                        $q_roll_tdk_gabung = db2_exec($conn1, "SELECT count(*) AS ROLL, s2.PRODUCTIONORDERCODE
-                                                                                                                    FROM STOCKTRANSACTION s2 
-                                                                                                                    WHERE s2.ITEMTYPECODE ='KGF' AND s2.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
-                                                                                                                    GROUP BY s2.PRODUCTIONORDERCODE");
-                                                                        $d_roll_tdk_gabung = db2_fetch_assoc($q_roll_tdk_gabung);
-
-                                                                        // if(!empty($d_roll_gabung['ROLL'])){
-                                                                        // $roll   = $d_roll_gabung['ROLL'];
-                                                                        // }else{
-                                                                        $roll = $d_roll_tdk_gabung['ROLL'];
-                                                                        // }
-                                                                        ?>
-                                                                        <?= $roll; ?>
-                                                                    </td> <!-- ROLL -->
-                                                                    <td>
-                                                                        <?php
-                                                                        $q_orig_pd_code = db2_exec($conn1, "SELECT 
-                                                                                                                    *, a.VALUESTRING AS ORIGINALPDCODE
-                                                                                                                FROM 
-                                                                                                                    PRODUCTIONDEMAND p 
-                                                                                                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
-                                                                                                                WHERE p.CODE = '$rowdb2[DEMAND]'");
-                                                                        $d_orig_pd_code = db2_fetch_assoc($q_orig_pd_code);
-                                                                        ?>
-                                                                        <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                            0
-                                                                        <?php else: ?>
-                                                                            <?= number_format($rowdb2['QTY_BAGIKAIN'], 2); ?>
-                                                                        <?php endif; ?>
-                                                                    </td> <!-- BRUTO/BAGI KAIN -->
-                                                                    <td>
-                                                                        <?php
-                                                                        $q_orig_pd_code = db2_exec($conn1, "SELECT 
-                                                                                                                    *, a.VALUESTRING AS ORIGINALPDCODE
-                                                                                                                FROM 
-                                                                                                                    PRODUCTIONDEMAND p 
-                                                                                                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
-                                                                                                                WHERE p.CODE = '$rowdb2[DEMAND]'");
-                                                                        $d_orig_pd_code = db2_fetch_assoc($q_orig_pd_code);
-                                                                        ?>
-                                                                        <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                            0
-                                                                        <?php else: ?>
-                                                                            <?= number_format($rowdb2['QTY_BAGIKAIN_YD_MTR'], 2); ?>
-                                                                        <?php endif; ?>
-                                                                    </td> <!-- BRUTO/BAGI KAIN YARD -->
-                                                                    <td>
-                                                                        <?php
-                                                                        $q_qtysalinan = db2_exec($conn1, "SELECT * FROM PRODUCTIONDEMAND WHERE CODE = '$rowdb2[DEMAND]'");
-                                                                        $d_qtysalinan = db2_fetch_assoc($q_qtysalinan);
-                                                                        ?>
-                                                                        <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                            <?= number_format($d_qtysalinan['USERPRIMARYQUANTITY'], 3) ?>
-                                                                        <?php else: ?>
-                                                                            0
-                                                                        <?php endif; ?>
-                                                                    </td> <!-- QTY SALINAN -->
-                                                                    <td>
-                                                                        <?php
-                                                                        $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
-                                                                        $d_qtypacking = db2_fetch_assoc($q_qtypacking);
-                                                                        echo number_format($d_qtypacking['QTY_PACKING'], 2);
-                                                                        ?>
-                                                                    </td> <!-- QTY PACKING -->
-                                                                    <td>
-                                                                        <?php
-                                                                        $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
-                                                                        $d_qtypacking = db2_fetch_assoc($q_qtypacking);
-                                                                        echo number_format($d_qtypacking['QTY_PACKING_YARD'], 2);
-                                                                        ?>
-                                                                    </td> <!-- QTY PACKING YARD -->
-                                                                    <td><?= $qty_sisa; ?></td> <!-- QTY SISA -->
-                                                                    <td>
-                                                                        <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                        <?php else: ?>
-                                                                            <?= number_format($d_qtypacking_sum['QTY_PACKING'], 2) - number_format($rowdb2['NETTO'], 2); ?>
-                                                                        <?php endif; ?>
-                                                                    </td> <!-- QTY PACKING KURANG KG -->
-                                                                    <td>
-                                                                        <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                        <?php else: ?>
-                                                                            <?= number_format($d_qtypacking_sum['QTY_PACKING_YARD'], 2) - number_format($d_netto_yd['BASESECONDARYQUANTITY'], 2); ?>
-                                                                        <?php endif; ?>
-                                                                    </td> <!-- QTY PACKING KURANG YARD/METER -->
-                                                                    <td>
-                                                                        <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-
-                                                                        <?php else: ?>
-                                                                            <?= number_format($rowdb2['NETTO'], 0); ?>
-                                                                        <?php endif; ?>
-                                                                    </td> <!-- NETTO KG-->
-                                                                    <td>
-                                                                        <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-
-                                                                        <?php else: ?>
-                                                                            <?php
-                                                                            echo number_format($d_netto_yd['BASESECONDARYQUANTITY'], 0);
-                                                                            ?>
-                                                                        <?php endif; ?>
-                                                                    </td> <!-- NETTO YD-->
-                                                                    <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
-                                                                    <td><?= $kode_dept; ?></td> <!-- KODE DEPT -->
-                                                                    <td><?= $status_terakhir; ?></td> <!-- STATUS TERAKHIR -->
-                                                                    <td><?= $status_operation; ?></td> <!-- PROGRESS STATUS -->
-                                                                    <td><?= $rowdb2['LOT']; ?></td> <!-- LOT -->
-                                                                    <td><a target="_BLANK"
-                                                                            href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a>
-                                                                    </td> <!-- DEMAND -->
-                                                                    <td>`<?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
-                                                                    <td>
-                                                                        <?php if ($d_benang_booking_new) {
-                                                                            echo $d_benang_booking_new . '. Greige Ready';
-                                                                        } ?>
-                                                                    </td> <!-- CATATAN PO GREIGE -->
-                                                                    <td></td> <!-- TARGET SELESAI -->
-                                                                    <td><?= $rowdb2['KETERANGAN']; ?></td> <!-- KETERANGAN -->
-                                                                    <td><?= $d_orig_pd_code['ORIGINALPDCODE']; ?></td>
-                                                                    <!-- ORIGINAL PD CODE -->
-                                                                    <?php if ($_SERVER['REMOTE_ADDR'] == '10.0.5.132'): ?>
-                                                                        <td>
-                                                                            <?= $groupstep_option; ?>
-                                                                            <?= $status; ?>
-                                                                        </td>
-                                                                    <?php endif; ?>
-                                                                    <td><?= $d_suratjalan['SURAT_JALAN']; ?></td>
-                                                                    <!-- NO SURAT JALAN -->
-                                                                    <td><?= $d_suratjalan['ROLL']; ?></td> <!-- ROLL -->
-                                                                    <td><?= $d_suratjalan['TGL_KIRIM']; ?></td> <!-- TGL KIRIM -->
-                                                                    <td><?= number_format($d_suratjalan['QTY_KIRIM_KG'], 2); ?></td>
-                                                                    <!-- QTY KIRIM KG -->
-                                                                    <td><?= number_format($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2); ?>
-                                                                    </td> <!-- QTY KIRIM YARD/METER -->
-                                                                    <td>
-                                                                        <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                        <?php else: ?>
-                                                                            <?= number_format($d_suratjalan['QTY_KIRIM_KG'], 2) - number_format($rowdb2['NETTO'], 2); ?>
-                                                                        <?php endif; ?>
-                                                                    </td> <!-- QTY KIRIM KURANG KG -->
-                                                                    <td>
-                                                                        <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                        <?php else: ?>
-                                                                            <?= number_format($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2) - number_format($d_netto_yd['BASESECONDARYQUANTITY'], 2); ?>
-                                                                        <?php endif; ?>
-                                                                    </td> <!-- QTY KIRIM KURANG YARD/METER -->
-                                                                    <td><?= $d_suratjalan['FOC']; ?></td> <!-- FOC -->
-                                                                    <td>
-                                                                        <?php
-                                                                        if ($rowdb2['QTY_BAGIKAIN'] != 0) {
-                                                                            echo number_format(($rowdb2['QTY_BAGIKAIN'] - $d_qtypacking['QTY_PACKING']) / $rowdb2['QTY_BAGIKAIN'] * 100, 2) . " %";
-                                                                        } else {
-                                                                            echo "0%";
-                                                                        }
-                                                                        ?>
-                                                                    </td><!-- LOSS -->
-                                                                </tr>
-                                                            <?php else: ?>
-                                                                <tr>
-                                                                    <td><?= cek($d_salesorder['CREATIONDATETIME'], 0, 10); ?>
                                                                     </td><!-- DATE MARKETING -->
                                                                     <td>
                                                                         <?php
@@ -1174,28 +907,21 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         $terimabon  = mysqli_query($con_dbnow_mkt, "SELECT DISTINCT * FROM tbl_salesorder WHERE projectcode = '$rowdb2[NO_ORDER]'");
                                                                         $d_terimabon= mysqli_fetch_assoc($terimabon);
 
-                                                                        if ($d_terimabon['ppc_terima'] != NULL or $d_terimabon['ppc_terima'] != '') {
-                                                                            echo cek($d_terimabon['ppc_terima']);
-                                                                        } else {
-                                                                            echo '';
-                                                                        }
+                                                                        echo cek($d_terimabon['ppc_terima']);
 
                                                                         ?>
                                                                     </td><!-- DATE PPC RECEIVED BO FROM RMP -->
-                                                                    <td><?php if ($d_terimabon['ppc_bagilot'] != NULL or $d_terimabon['ppc_bagilot'] != '') {
-                                                                        echo cek($d_terimabon['ppc_bagilot']);
-                                                                    } else {
-                                                                        echo '';
-                                                                    }
-                                                                    ?>
+                                                                    <td>
+                                                                        <?php 
+                                                                                cek($d_terimabon['ppc_bagilot']);
+                                                                        ?>
                                                                     </td>
                                                                     <!-- DATE BAGI LOT -->
-                                                                    <td><?php if ($rowdb2['ORDERDATE'] != NULL or $rowdb2['ORDERDATE'] != '') {
+                                                                    <td>
+                                                                    <?php 
                                                                         echo cek($rowdb2['ORDERDATE']);
-                                                                    } else {
-                                                                        echo '';
-                                                                    }
-                                                                    ?> </td>
+                                                                    ?> 
+                                                                    </td>
                                                                     <!-- TGL TERIMA ORDER -->
                                                                     <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
                                                                     <td><?= $rowdb2['NO_ORDER'] . '-' . $rowdb2['ORDERLINE']; ?>
@@ -1211,6 +937,13 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         $d_lebar = db2_fetch_assoc($q_lebar);
                                                                         ?>
                                                                         <?= cek($d_lebar['LEBAR'], 0); ?>
+                                                                        <?php
+                                                                            if(!empty(cek($d_lebar['LEBAR']))){
+                                                                                echo number_format($d_lebar['LEBAR'], 0); 
+                                                                            }else{
+                                                                                echo 0;
+                                                                            }
+                                                                        ?>
                                                                     </td><!-- LEBAR -->
                                                                     <td>
                                                                         <?php
@@ -1219,11 +952,11 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         ?>
                                                                         <?php
                                                                         if ($d_gramasi['GRAMASI_KFF']) {
-                                                                            echo number_format($d_gramasi['GRAMASI_KFF'], 0);
+                                                                                echo number_format($d_gramasi['GRAMASI_KFF'], 0);
                                                                         } elseif ($d_gramasi['GRAMASI_FKF']) {
-                                                                            echo number_format($d_gramasi['GRAMASI_FKF'], 0);
+                                                                                echo number_format($d_gramasi['GRAMASI_FKF'], 0);
                                                                         } else {
-                                                                            echo '-';
+                                                                                echo '-';
                                                                         }
                                                                         ?>
                                                                     </td> <!-- GRAMASI -->
@@ -1234,48 +967,48 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     <td>
                                                                         <?php
                                                                         if ($d_tglkniting_ready) {
-                                                                            echo $d_tglkniting_ready;
+                                                                                echo $d_tglkniting_ready;
                                                                         }
                                                                         if ($d_benang_rajutg_ready) {
-                                                                            echo $d_benang_rajutg_ready;
+                                                                                echo $d_benang_rajutg_ready;
                                                                         }
                                                                         ?>
                                                                     </td> <!-- GREIGE SCHEDULE -->
                                                                     <td>
                                                                         <?php
                                                                         $q_element = db2_exec($conn1, "SELECT DISTINCT
-                                                                                                                s2.TRANSACTIONDATE 
+                                                                                                                    s2.TRANSACTIONDATE 
                                                                                                             FROM 
-                                                                                                                STOCKTRANSACTION s 
+                                                                                                                    STOCKTRANSACTION s 
                                                                                                             LEFT JOIN STOCKTRANSACTION s2 ON s2.ITEMELEMENTCODE = s.ITEMELEMENTCODE AND s2.TEMPLATECODE = '204'
                                                                                                             WHERE
-                                                                                                                s.TEMPLATECODE = '120' 
-                                                                                                                AND s.ORDERCODE = '$rowdb2[NO_KK]' -- PRODUCTION NUMBER
-                                                                                                                AND s.PROJECTCODE = '$rowdb2[NO_ORDER]'
-                                                                                                                AND SUBSTR(s.ITEMELEMENTCODE, 1,1) = '0'");
+                                                                                                                    s.TEMPLATECODE = '120' 
+                                                                                                                    AND s.ORDERCODE = '$rowdb2[NO_KK]' -- PRODUCTION NUMBER
+                                                                                                                    AND s.PROJECTCODE = '$rowdb2[NO_ORDER]'
+                                                                                                                    AND SUBSTR(s.ITEMELEMENTCODE, 1,1) = '0'");
                                                                         $d_elemet = db2_fetch_assoc($q_element);
                                                                         $q_elementCut = db2_exec($conn1, "SELECT DISTINCT
-                                                                                                                s4.TRANSACTIONDATE 
+                                                                                                                    s4.TRANSACTIONDATE 
                                                                                                             FROM 
-                                                                                                                STOCKTRANSACTION s
+                                                                                                                    STOCKTRANSACTION s
                                                                                                             LEFT JOIN STOCKTRANSACTION s2 ON s2.ITEMELEMENTCODE = s.ITEMELEMENTCODE AND s2.TEMPLATECODE  = '342'
                                                                                                             LEFT JOIN STOCKTRANSACTION s3 ON s3.TRANSACTIONNUMBER = s2.CUTORGTRTRANSACTIONNUMBER 
                                                                                                             LEFT JOIN STOCKTRANSACTION s4 ON s4.ITEMELEMENTCODE = s3.ITEMELEMENTCODE AND s4.TEMPLATECODE = '204'
                                                                                                             WHERE
-                                                                                                                s.TEMPLATECODE = '120' 
-                                                                                                                AND s.ORDERCODE = '$rowdb2[NO_KK]' -- PRODUCTION NUMBER
-                                                                                                                AND s.PROJECTCODE = '$rowdb2[NO_ORDER]'
-                                                                                                                AND SUBSTR(s.ITEMELEMENTCODE, 1,1) = '8'");
+                                                                                                                    s.TEMPLATECODE = '120' 
+                                                                                                                    AND s.ORDERCODE = '$rowdb2[NO_KK]' -- PRODUCTION NUMBER
+                                                                                                                    AND s.PROJECTCODE = '$rowdb2[NO_ORDER]'
+                                                                                                                    AND SUBSTR(s.ITEMELEMENTCODE, 1,1) = '8'");
                                                                         $d_elemetCut = db2_fetch_assoc($q_elementCut);
                                                                         if ($d_elemet['TRANSACTIONDATE'] == $d_elemetCut['TRANSACTIONDATE']) {
-                                                                            if ($d_elemet['TRANSACTIONDATE']) {
+                                                                                if ($d_elemet['TRANSACTIONDATE']) {
                                                                                 echo $d_elemet['TRANSACTIONDATE'];
-                                                                            } else {
+                                                                                } else {
                                                                                 echo $d_elemetCut['TRANSACTIONDATE'];
-                                                                            }
+                                                                                }
                                                                         } else {
-                                                                            echo $d_elemet['TRANSACTIONDATE'] . '<br>';
-                                                                            echo $d_elemetCut['TRANSACTIONDATE'];
+                                                                                echo $d_elemet['TRANSACTIONDATE'] . '<br>';
+                                                                                echo $d_elemetCut['TRANSACTIONDATE'];
                                                                         }
                                                                         ?>
                                                                     </td> <!-- ACTUAL DATE GREIGE -->
@@ -1298,7 +1031,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         //                                 WHERE 
                                                                         //                                     p.RESERVATIONORDERCODE = '$rowdb2[DEMAND]'");
                                                                         // $d_roll_gabung      = db2_fetch_assoc($q_roll_gabung);
-                                                            
+
                                                                         // KK TIDAK GABUNG
                                                                         $q_roll_tdk_gabung = db2_exec($conn1, "SELECT count(*) AS ROLL, s2.PRODUCTIONORDERCODE
                                                                                                                     FROM STOCKTRANSACTION s2 
@@ -1318,32 +1051,46 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         <?php
                                                                         $q_orig_pd_code = db2_exec($conn1, "SELECT 
                                                                                                                     *, a.VALUESTRING AS ORIGINALPDCODE
-                                                                                                                FROM 
+                                                                                                                    FROM 
                                                                                                                     PRODUCTIONDEMAND p 
-                                                                                                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
-                                                                                                                WHERE p.CODE = '$rowdb2[DEMAND]'");
+                                                                                                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
+                                                                                                                    WHERE p.CODE = '$rowdb2[DEMAND]'");
                                                                         $d_orig_pd_code = db2_fetch_assoc($q_orig_pd_code);
                                                                         ?>
+
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                            0
+                                                                                0
                                                                         <?php else: ?>
-                                                                            <?= cek($rowdb2['QTY_BAGIKAIN'], 2); ?>
+                                                                                <?php
+                                                                                if(!empty(cek($rowdb2['QTY_BAGIKAIN']))){
+                                                                                    echo number_format($rowdb2['QTY_BAGIKAIN'], 2); 
+                                                                                }else{
+                                                                                    echo 0;
+                                                                                }
+                                                                                ?>
                                                                         <?php endif; ?>
+
                                                                     </td> <!-- BRUTO/BAGI KAIN -->
                                                                     <td>
                                                                         <?php
                                                                         $q_orig_pd_code = db2_exec($conn1, "SELECT 
                                                                                                                     *, a.VALUESTRING AS ORIGINALPDCODE
-                                                                                                                FROM 
+                                                                                                                    FROM 
                                                                                                                     PRODUCTIONDEMAND p 
-                                                                                                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
-                                                                                                                WHERE p.CODE = '$rowdb2[DEMAND]'");
+                                                                                                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
+                                                                                                                    WHERE p.CODE = '$rowdb2[DEMAND]'");
                                                                         $d_orig_pd_code = db2_fetch_assoc($q_orig_pd_code);
                                                                         ?>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                            0
+                                                                                0
                                                                         <?php else: ?>
-                                                                            <?= cek($rowdb2['QTY_BAGIKAIN_YD_MTR'], 2); ?>
+                                                                                <?php
+                                                                                if(!empty(cek($rowdb2['QTY_BAGIKAIN_YD_MTR']))){
+                                                                                    echo number_format($rowdb2['QTY_BAGIKAIN_YD_MTR'], 2); 
+                                                                                }else{
+                                                                                    echo 0;
+                                                                                }
+                                                                                ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- BRUTO/BAGI KAIN YARD -->
                                                                     <td>
@@ -1352,66 +1099,123 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         $d_qtysalinan = db2_fetch_assoc($q_qtysalinan);
                                                                         ?>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
-                                                                            <?= cek($d_qtysalinan['USERPRIMARYQUANTITY'], 3) ?>
+                                                                                <?php
+                                                                                if(!empty(cek($d_qtysalinan['USERPRIMARYQUANTITY']))){
+                                                                                    echo number_format($d_qtysalinan['USERPRIMARYQUANTITY'], 3); 
+                                                                                }else{
+                                                                                    echo 0;
+                                                                                }
+                                                                                ?>
                                                                         <?php else: ?>
-                                                                            0
+                                                                                0
                                                                         <?php endif; ?>
                                                                     </td> <!-- QTY SALINAN -->
                                                                     <td>
                                                                         <?php
                                                                         $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
                                                                         $d_qtypacking = db2_fetch_assoc($q_qtypacking);
-                                                                        echo cek($d_qtypacking['QTY_PACKING'], 2);
+
+                                                                        if(!empty(cek($d_qtypacking['QTY_PACKING']))){
+                                                                                echo number_format($d_qtypacking['QTY_PACKING'], 2); 
+                                                                        }else{
+                                                                                echo 0;
+                                                                        }
                                                                         ?>
                                                                     </td> <!-- QTY PACKING -->
                                                                     <td>
                                                                         <?php
                                                                         $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
                                                                         $d_qtypacking = db2_fetch_assoc($q_qtypacking);
-                                                                        echo cek($d_qtypacking['QTY_PACKING_YARD'], 2);
+
+                                                                        if(!empty(cek($d_qtypacking['QTY_PACKING_YARD']))){
+                                                                                echo number_format($d_qtypacking['QTY_PACKING_YARD'], 2); 
+                                                                        }else{
+                                                                                echo 0;
+                                                                        }
                                                                         ?>
                                                                     </td> <!-- QTY PACKING YARD -->
-                                                                    <td><?= $qty_sisa; ?></td> <!-- QTY SISA -->
+                                                                    <td><?= cek($qty_sisa); ?></td> <!-- QTY SISA -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+                                                                                0
                                                                         <?php else: ?>
-                                                                            <?= cek($d_qtypacking_sum['QTY_PACKING'], 2) - cek($rowdb2['NETTO'], 2); ?>
+                                                                                <?php
+                                                                                if(!empty(cek($d_qtypacking_sum['QTY_PACKING']))){
+                                                                                    $QTYPACKING_PKG=number_format($d_qtypacking_sum['QTY_PACKING'],2);
+                                                                                }else{
+                                                                                    $QTYPACKING_PKG=0;
+                                                                                }
+
+                                                                                if(!empty(cek($rowdb2['NETTO']))){
+                                                                                    $NETTO_PKG=number_format($rowdb2['NETTO'],2);
+                                                                                }else{
+                                                                                    $NETTO_PKG=0;
+                                                                                }
+
+                                                                                echo $QTYPACKING_PKG-$NETTO_PKG;
+                                                                                ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- QTY PACKING KURANG KG -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
                                                                         <?php else: ?>
-                                                                            <?= cek($d_qtypacking_sum['QTY_PACKING_YARD'], 2) - cek($d_netto_yd['BASESECONDARYQUANTITY'], 2); ?>
+
+                                                                                <?php
+                                                                                if(!empty(cek($d_qtypacking_sum['QTY_PACKING_YARD']))){
+                                                                                    $QTYPACKING_PKY=number_format($d_qtypacking_sum['QTY_PACKING_YARD'],2);
+                                                                                }else{
+                                                                                    $QTYPACKING_PKY=0;
+                                                                                }
+
+                                                                                if(!empty(cek($d_netto_yd['BASESECONDARYQUANTITY']))){
+                                                                                    $NETTO_PKY=number_format($d_netto_yd['BASESECONDARYQUANTITY'],2);
+                                                                                }else{
+                                                                                    $NETTO_PKY=0;
+                                                                                }
+
+                                                                                echo $QTYPACKING_PKY-$NETTO_PKY;
+                                                                                ?>    
+
                                                                         <?php endif; ?>
                                                                     </td> <!-- QTY PACKING KURANG YARD/METER -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
 
                                                                         <?php else: ?>
-                                                                            <?= cek($rowdb2['NETTO'], 0); ?>
+                                                                                <?php
+                                                                                if(!empty(cek($rowdb2['NETTO']))){
+                                                                                    echo number_format(cek($rowdb2['NETTO'], 0)); 
+                                                                                }else{
+                                                                                    echo 0;
+                                                                                }
+                                                                                ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- NETTO KG-->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
 
                                                                         <?php else: ?>
-                                                                            <?php
-                                                                            echo cek($d_netto_yd['BASESECONDARYQUANTITY'], 0);
-                                                                            ?>
+                                                                                <?php
+                                                                                if(!empty(cek($d_netto_yd['BASESECONDARYQUANTITY']))){
+                                                                                    echo number_format(cek($d_netto_yd['BASESECONDARYQUANTITY'], 0)); 
+                                                                                }else{
+                                                                                    echo 0;
+                                                                                }
+                                                                                ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- NETTO YD-->
-                                                                    <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
+                                                                    <td><?= cek($rowdb2['DELAY']); ?></td> <!-- DELAY -->
                                                                     <td><?= $kode_dept; ?></td> <!-- KODE DEPT -->
                                                                     <td><?= $status_terakhir; ?></td> <!-- STATUS TERAKHIR -->
                                                                     <td><?= $status_operation; ?></td> <!-- PROGRESS STATUS -->
                                                                     <td><?= $rowdb2['LOT']; ?></td> <!-- LOT -->
                                                                     <td><a target="_BLANK"
-                                                                            href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a>
+                                                                                href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a>
                                                                     </td> <!-- DEMAND -->
                                                                     <td>`<?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
                                                                     <td>
                                                                         <?php if ($d_benang_booking_new) {
-                                                                            echo $d_benang_booking_new . '. Greige Ready';
+                                                                                echo $d_benang_booking_new . '. Greige Ready';
                                                                         } ?>
                                                                     </td> <!-- CATATAN PO GREIGE -->
                                                                     <td></td> <!-- TARGET SELESAI -->
@@ -1420,40 +1224,501 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     <!-- ORIGINAL PD CODE -->
                                                                     <?php if ($_SERVER['REMOTE_ADDR'] == '10.0.5.132'): ?>
                                                                         <td>
-                                                                            <?= $groupstep_option; ?>
-                                                                            <?= $status; ?>
+                                                                                <?= $groupstep_option; ?>
+                                                                                <?= $status; ?>
                                                                         </td>
                                                                     <?php endif; ?>
                                                                     <td><?= $d_suratjalan['SURAT_JALAN']; ?></td>
                                                                     <!-- NO SURAT JALAN -->
-                                                                    <td><?= $d_suratjalan['ROLL']; ?></td> <!-- ROLL -->
-                                                                    <td><?= $d_suratjalan['TGL_KIRIM']; ?></td> <!-- TGL KIRIM -->
-                                                                    <td><?= cek($d_suratjalan['QTY_KIRIM_KG'], 2); ?></td>
+                                                                    <td><?= cek($d_suratjalan['ROLL']); ?></td> <!-- ROLL -->
+                                                                    <td><?= cek($d_suratjalan['TGL_KIRIM']); ?></td> <!-- TGL KIRIM -->
+                                                                    <td>
+                                                                        <?php
+                                                                                if(!empty(cek($d_suratjalan['QTY_KIRIM_KG']))){
+                                                                                echo number_format($d_suratjalan['QTY_KIRIM_KG'], 2); 
+                                                                                }else{
+                                                                                echo 0;
+                                                                                }
+                                                                        ?>
+                                                                    </td>
                                                                     <!-- QTY KIRIM KG -->
-                                                                    <td><?= cek($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2); ?>
+                                                                    <td>
+                                                                        <?php
+                                                                                if(!empty(cek($d_suratjalan['QTY_KIRIM_YARD_MTR']))){
+                                                                                echo number_format($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2); 
+                                                                                }else{
+                                                                                echo 0;
+                                                                                }
+                                                                        ?>
                                                                     </td> <!-- QTY KIRIM YARD/METER -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
                                                                         <?php else: ?>
-                                                                            <?= cek($d_suratjalan['QTY_KIRIM_KG'], 2) - cek($rowdb2['NETTO'], 2); ?>
+                                                                                <?php
+                                                                                if(!empty(cek($d_suratjalan['QTY_KIRIM_KG']))){
+                                                                                    $QTYKIRIM_PKRG=number_format($d_suratjalan['QTY_KIRIM_KG'],2);
+                                                                                }else{
+                                                                                    $QTYKIRIM_PKRG=0;
+                                                                                }
+
+                                                                                if(!empty(cek($rowdb2['NETTO']))){
+                                                                                    $NETTO_PKRG=number_format($rowdb2['NETTO'],2);
+                                                                                }else{
+                                                                                    $NETTO_PKRG=0;
+                                                                                }
+
+                                                                                echo $QTYKIRIM_PKRG-$NETTO_PKRG;
+                                                                                ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- QTY KURANG KG -->
                                                                     <td>
                                                                         <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
                                                                         <?php else: ?>
-                                                                            <?= cek($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2) - cek($d_netto_yd['BASESECONDARYQUANTITY'], 2); ?>
+                                                                                <?php
+                                                                                if(!empty(cek($d_suratjalan['QTY_KIRIM_YARD_MTR']))){
+                                                                                    $QTYKIRIM_PKRY=number_format($d_suratjalan['QTY_KIRIM_YARD_MTR'],2);
+                                                                                }else{
+                                                                                    $QTYKIRIM_PKRY=0;
+                                                                                }
+
+                                                                                if(!empty(cek($d_netto_yd['BASESECONDARYQUANTITY']))){
+                                                                                    $NETTO_PKRY=number_format($d_netto_yd['BASESECONDARYQUANTITY'],2);
+                                                                                }else{
+                                                                                    $NETTO_PKRY=0;
+                                                                                }
+
+                                                                                echo $QTYKIRIM_PKRY-$NETTO_PKRY;
+                                                                                ?>
                                                                         <?php endif; ?>
                                                                     </td> <!-- QTY KURANG YARD/METER -->
                                                                     <td><?= $d_suratjalan['FOC']; ?></td> <!-- FOC -->
                                                                     <td>
                                                                         <?php
-                                                                        if ($rowdb2['QTY_BAGIKAIN'] != 0) {
-                                                                            echo number_format(($rowdb2['QTY_BAGIKAIN'] - $d_qtypacking['QTY_PACKING']) / $rowdb2['QTY_BAGIKAIN'] * 100, 2) . " %";
+                                                                        if ($rowdb2['QTY_BAGIKAIN'] != 0 ) {
+                                                                                echo number_format(($rowdb2['QTY_BAGIKAIN'] - $d_qtypacking['QTY_PACKING']) / $rowdb2['QTY_BAGIKAIN'] * 100, 2) . " %";
                                                                         } else {
-                                                                            echo "0%";
+                                                                                echo "0%";
                                                                         }
                                                                         ?>
                                                                     </td><!-- LOSS -->
+                                                                </tr>
+                                                            <?php else: ?>
+                                                                <tr>
+                                                                <td>
+                                                                    <?php 
+                                                                            if(!empty(cek($d_salesorder['CREATIONDATETIME']))){
+                                                                            echo substr($d_salesorder['CREATIONDATETIME'], 0, 10); 
+                                                                            }else{
+                                                                            echo cek($d_salesorder['CREATIONDATETIME']);
+                                                                            }
+                                                                    ?>
+                                                                </td><!-- DATE MARKETING -->
+                                                                <td>
+                                                                    <?php
+                                                                    // $terimabon = "SELECT
+                                                                    //                     DISTINCT *
+                                                                    //                 FROM
+                                                                    //                     dbnow_mkt.tbl_salesorder
+                                                                    //                 WHERE
+                                                                    //                     projectcode = '$rowdb2[NO_ORDER]'";
+                                                                    // $qterimabon = sqlsrv_query($con_dbnow_mkt, $terimabon);
+                                                                    // $d_terimabon = sqlsrv_fetch_array($qterimabon);
+                                                                    
+                                                                    $terimabon  = mysqli_query($con_dbnow_mkt, "SELECT DISTINCT * FROM tbl_salesorder WHERE projectcode = '$rowdb2[NO_ORDER]'");
+                                                                    $d_terimabon= mysqli_fetch_assoc($terimabon);
+
+                                                                    echo cek($d_terimabon['ppc_terima']);
+
+                                                                    ?>
+                                                                </td><!-- DATE PPC RECEIVED BO FROM RMP -->
+                                                                <td>
+                                                                    <?php 
+                                                                    echo cek($d_terimabon['ppc_bagilot']);
+                                                                    ?>
+                                                                </td>
+                                                                <!-- DATE BAGI LOT -->
+                                                                <td>
+                                                                <?php 
+                                                                    echo cek($rowdb2['ORDERDATE']);
+                                                                ?> 
+                                                                </td>
+                                                                <!-- TGL TERIMA ORDER -->
+                                                                <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
+                                                                <td><?= $rowdb2['NO_ORDER'] . '-' . $rowdb2['ORDERLINE']; ?>
+                                                                </td>
+                                                                <!-- NO. ORDER -->
+                                                                <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->
+                                                                <td><?= $rowdb2['JENIS_KAIN']; ?></td> <!-- JENIS KAIN -->
+                                                                <td><?= $rowdb2['KETERANGAN_PRODUCT']; ?></td>
+                                                                <!-- KETERANGAN PRODUCT -->
+                                                                <td>
+                                                                    <?php
+                                                                    $q_lebar = db2_exec($conn1, "SELECT DISTINCT * FROM ITXVIEWLEBAR WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
+                                                                    $d_lebar = db2_fetch_assoc($q_lebar);
+                                                                    ?>
+                                                                    <?php
+                                                                        if(!empty(cek($d_lebar['LEBAR']))){
+                                                                            echo number_format($d_lebar['LEBAR'], 0); 
+                                                                        }else{
+                                                                            echo 0;
+                                                                        }
+                                                                    ?>
+                                                                </td><!-- LEBAR -->
+                                                                <td>
+                                                                    <?php
+                                                                    $q_gramasi = db2_exec($conn1, "SELECT DISTINCT * FROM ITXVIEWGRAMASI WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
+                                                                    $d_gramasi = db2_fetch_assoc($q_gramasi);
+                                                                    ?>
+                                                                    <?php
+                                                                    if ($d_gramasi['GRAMASI_KFF']) {
+                                                                            echo number_format($d_gramasi['GRAMASI_KFF'], 0);
+                                                                    } elseif ($d_gramasi['GRAMASI_FKF']) {
+                                                                            echo number_format($d_gramasi['GRAMASI_FKF'], 0);
+                                                                    } else {
+                                                                            echo '-';
+                                                                    }
+                                                                    ?>
+                                                                </td> <!-- GRAMASI -->
+                                                                <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
+                                                                <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
+                                                                <td><?= cek($rowdb2['DELIVERY']);?></td>
+                                                                <!-- DELIVERY -->
+                                                                <td>
+                                                                    <?php
+                                                                    if ($d_tglkniting_ready) {
+                                                                            echo $d_tglkniting_ready;
+                                                                    }
+                                                                    if ($d_benang_rajutg_ready) {
+                                                                            echo $d_benang_rajutg_ready;
+                                                                    }
+                                                                    ?>
+                                                                </td> <!-- GREIGE SCHEDULE -->
+                                                                <td>
+                                                                    <?php
+                                                                    $q_element = db2_exec($conn1, "SELECT DISTINCT
+                                                                                                                s2.TRANSACTIONDATE 
+                                                                                                        FROM 
+                                                                                                                STOCKTRANSACTION s 
+                                                                                                        LEFT JOIN STOCKTRANSACTION s2 ON s2.ITEMELEMENTCODE = s.ITEMELEMENTCODE AND s2.TEMPLATECODE = '204'
+                                                                                                        WHERE
+                                                                                                                s.TEMPLATECODE = '120' 
+                                                                                                                AND s.ORDERCODE = '$rowdb2[NO_KK]' -- PRODUCTION NUMBER
+                                                                                                                AND s.PROJECTCODE = '$rowdb2[NO_ORDER]'
+                                                                                                                AND SUBSTR(s.ITEMELEMENTCODE, 1,1) = '0'");
+                                                                    $d_elemet = db2_fetch_assoc($q_element);
+                                                                    $q_elementCut = db2_exec($conn1, "SELECT DISTINCT
+                                                                                                                s4.TRANSACTIONDATE 
+                                                                                                        FROM 
+                                                                                                                STOCKTRANSACTION s
+                                                                                                        LEFT JOIN STOCKTRANSACTION s2 ON s2.ITEMELEMENTCODE = s.ITEMELEMENTCODE AND s2.TEMPLATECODE  = '342'
+                                                                                                        LEFT JOIN STOCKTRANSACTION s3 ON s3.TRANSACTIONNUMBER = s2.CUTORGTRTRANSACTIONNUMBER 
+                                                                                                        LEFT JOIN STOCKTRANSACTION s4 ON s4.ITEMELEMENTCODE = s3.ITEMELEMENTCODE AND s4.TEMPLATECODE = '204'
+                                                                                                        WHERE
+                                                                                                                s.TEMPLATECODE = '120' 
+                                                                                                                AND s.ORDERCODE = '$rowdb2[NO_KK]' -- PRODUCTION NUMBER
+                                                                                                                AND s.PROJECTCODE = '$rowdb2[NO_ORDER]'
+                                                                                                                AND SUBSTR(s.ITEMELEMENTCODE, 1,1) = '8'");
+                                                                    $d_elemetCut = db2_fetch_assoc($q_elementCut);
+                                                                    if ($d_elemet['TRANSACTIONDATE'] == $d_elemetCut['TRANSACTIONDATE']) {
+                                                                            if ($d_elemet['TRANSACTIONDATE']) {
+                                                                            echo $d_elemet['TRANSACTIONDATE'];
+                                                                            } else {
+                                                                            echo $d_elemetCut['TRANSACTIONDATE'];
+                                                                            }
+                                                                    } else {
+                                                                            echo $d_elemet['TRANSACTIONDATE'] . '<br>';
+                                                                            echo $d_elemetCut['TRANSACTIONDATE'];
+                                                                    }
+                                                                    ?>
+                                                                </td> <!-- ACTUAL DATE GREIGE -->
+                                                                <td>
+                                                                    <?php
+                                                                    $q_tglbagikain = db2_exec($conn1, "SELECT * FROM ITXVIEW_TGLBAGIKAIN WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
+                                                                    $d_tglbagikain = db2_fetch_assoc($q_tglbagikain);
+                                                                    ?>
+                                                                    <?= $d_tglbagikain['TRANSACTIONDATE']; ?>
+                                                                </td> <!-- BAGI KAIN TGL -->
+                                                                <td><?= $row_tgl_celup['MULAI']; ?></td> <!-- TGL CELUP -->
+                                                                <td>
+                                                                    <?php
+                                                                    // KK GABUNG
+                                                                    // $q_roll_gabung      = db2_exec($conn1, "SELECT 
+                                                                    //                                     COUNT(*) AS ROLL
+                                                                    //                                 FROM 
+                                                                    //                                     PRODUCTIONDEMAND p 
+                                                                    //                                 LEFT JOIN STOCKTRANSACTION s ON s.ORDERCODE = p.CODE
+                                                                    //                                 WHERE 
+                                                                    //                                     p.RESERVATIONORDERCODE = '$rowdb2[DEMAND]'");
+                                                                    // $d_roll_gabung      = db2_fetch_assoc($q_roll_gabung);
+
+                                                                    // KK TIDAK GABUNG
+                                                                    $q_roll_tdk_gabung = db2_exec($conn1, "SELECT count(*) AS ROLL, s2.PRODUCTIONORDERCODE
+                                                                                                                FROM STOCKTRANSACTION s2 
+                                                                                                                WHERE s2.ITEMTYPECODE ='KGF' AND s2.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
+                                                                                                                GROUP BY s2.PRODUCTIONORDERCODE");
+                                                                    $d_roll_tdk_gabung = db2_fetch_assoc($q_roll_tdk_gabung);
+
+                                                                    // if(!empty($d_roll_gabung['ROLL'])){
+                                                                    // $roll   = $d_roll_gabung['ROLL'];
+                                                                    // }else{
+                                                                    $roll = $d_roll_tdk_gabung['ROLL'];
+                                                                    // }
+                                                                    ?>
+                                                                    <?= $roll; ?>
+                                                                </td> <!-- ROLL -->
+                                                                <td>
+                                                                    <?php
+                                                                    $q_orig_pd_code = db2_exec($conn1, "SELECT 
+                                                                                                                *, a.VALUESTRING AS ORIGINALPDCODE
+                                                                                                                FROM 
+                                                                                                                PRODUCTIONDEMAND p 
+                                                                                                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
+                                                                                                                WHERE p.CODE = '$rowdb2[DEMAND]'");
+                                                                    $d_orig_pd_code = db2_fetch_assoc($q_orig_pd_code);
+                                                                    ?>
+
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+                                                                            0
+                                                                    <?php else: ?>
+                                                                            <?php
+                                                                            if(!empty(cek($rowdb2['QTY_BAGIKAIN']))){
+                                                                                echo number_format($rowdb2['QTY_BAGIKAIN'], 2); 
+                                                                            }else{
+                                                                                echo 0;
+                                                                            }
+                                                                            ?>
+                                                                    <?php endif; ?>
+
+                                                                </td> <!-- BRUTO/BAGI KAIN -->
+                                                                <td>
+                                                                    <?php
+                                                                    $q_orig_pd_code = db2_exec($conn1, "SELECT 
+                                                                                                                *, a.VALUESTRING AS ORIGINALPDCODE
+                                                                                                                FROM 
+                                                                                                                PRODUCTIONDEMAND p 
+                                                                                                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
+                                                                                                                WHERE p.CODE = '$rowdb2[DEMAND]'");
+                                                                    $d_orig_pd_code = db2_fetch_assoc($q_orig_pd_code);
+                                                                    ?>
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+                                                                            0
+                                                                    <?php else: ?>
+                                                                            <?php
+                                                                            if(!empty(cek($rowdb2['QTY_BAGIKAIN_YD_MTR']))){
+                                                                                echo number_format($rowdb2['QTY_BAGIKAIN_YD_MTR'], 2); 
+                                                                            }else{
+                                                                                echo 0;
+                                                                            }
+                                                                            ?>
+                                                                    <?php endif; ?>
+                                                                </td> <!-- BRUTO/BAGI KAIN YARD -->
+                                                                <td>
+                                                                    <?php
+                                                                    $q_qtysalinan = db2_exec($conn1, "SELECT * FROM PRODUCTIONDEMAND WHERE CODE = '$rowdb2[DEMAND]'");
+                                                                    $d_qtysalinan = db2_fetch_assoc($q_qtysalinan);
+                                                                    ?>
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+                                                                            <?php
+                                                                            if(!empty(cek($d_qtysalinan['USERPRIMARYQUANTITY']))){
+                                                                                echo number_format($d_qtysalinan['USERPRIMARYQUANTITY'], 3); 
+                                                                            }else{
+                                                                                echo 0;
+                                                                            }
+                                                                            ?>
+                                                                    <?php else: ?>
+                                                                            0
+                                                                    <?php endif; ?>
+                                                                </td> <!-- QTY SALINAN -->
+                                                                <td>
+                                                                    <?php
+                                                                    $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
+                                                                    $d_qtypacking = db2_fetch_assoc($q_qtypacking);
+
+                                                                    if(!empty(cek($d_qtypacking['QTY_PACKING']))){
+                                                                            echo number_format($d_qtypacking['QTY_PACKING'], 2); 
+                                                                    }else{
+                                                                            echo 0;
+                                                                    }
+                                                                    ?>
+                                                                </td> <!-- QTY PACKING -->
+                                                                <td>
+                                                                    <?php
+                                                                    $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
+                                                                    $d_qtypacking = db2_fetch_assoc($q_qtypacking);
+
+                                                                    if(!empty(cek($d_qtypacking['QTY_PACKING_YARD']))){
+                                                                            echo number_format($d_qtypacking['QTY_PACKING_YARD'], 2); 
+                                                                    }else{
+                                                                            echo 0;
+                                                                    }
+                                                                    ?>
+                                                                </td> <!-- QTY PACKING YARD -->
+                                                                <td><?= cek($qty_sisa); ?></td> <!-- QTY SISA -->
+                                                                <td>
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+                                                                    <?php else: ?>
+                                                                            <?php
+                                                                            if(!empty(cek($d_qtypacking_sum['QTY_PACKING']))){
+                                                                                $QTYPACKING_PKG=number_format($d_qtypacking_sum['QTY_PACKING'],2);
+                                                                            }else{
+                                                                                $QTYPACKING_PKG=0;
+                                                                            }
+
+                                                                            if(!empty(cek($rowdb2['NETTO']))){
+                                                                                $NETTO_PKG=number_format($rowdb2['NETTO'],2);
+                                                                            }else{
+                                                                                $NETTO_PKG=0;
+                                                                            }
+
+                                                                            echo $QTYPACKING_PKG-$NETTO_PKG;
+                                                                            ?>
+                                                                    <?php endif; ?>
+                                                                </td> <!-- QTY PACKING KURANG KG -->
+                                                                <td>
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+                                                                    <?php else: ?>
+
+                                                                            <?php
+                                                                            if(!empty(cek($d_qtypacking_sum['QTY_PACKING_YARD']))){
+                                                                                $QTYPACKING_PKY=number_format($d_qtypacking_sum['QTY_PACKING_YARD'],2);
+                                                                            }else{
+                                                                                $QTYPACKING_PKY=0;
+                                                                            }
+
+                                                                            if(!empty(cek($d_netto_yd['BASESECONDARYQUANTITY']))){
+                                                                                $NETTO_PKY=number_format($d_netto_yd['BASESECONDARYQUANTITY'],2);
+                                                                            }else{
+                                                                                $NETTO_PKY=0;
+                                                                            }
+
+                                                                            echo $QTYPACKING_PKY-$NETTO_PKY;
+                                                                            ?>    
+
+                                                                    <?php endif; ?>
+                                                                </td> <!-- QTY PACKING KURANG YARD/METER -->
+                                                                <td>
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+
+                                                                    <?php else: ?>
+                                                                            <?php
+                                                                            if(!empty(cek($rowdb2['NETTO']))){
+                                                                                echo number_format(cek($rowdb2['NETTO'], 0)); 
+                                                                            }else{
+                                                                                echo 0;
+                                                                            }
+                                                                            ?>
+                                                                    <?php endif; ?>
+                                                                </td> <!-- NETTO KG-->
+                                                                <td>
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+
+                                                                    <?php else: ?>
+                                                                            <?php
+                                                                            if(!empty(cek($d_netto_yd['BASESECONDARYQUANTITY']))){
+                                                                                echo number_format(cek($d_netto_yd['BASESECONDARYQUANTITY'], 0)); 
+                                                                            }else{
+                                                                                echo 0;
+                                                                            }
+                                                                            ?>
+                                                                    <?php endif; ?>
+                                                                </td> <!-- NETTO YD-->
+                                                                <td><?= cek($rowdb2['DELAY']); ?></td> <!-- DELAY -->
+                                                                <td><?= $kode_dept; ?></td> <!-- KODE DEPT -->
+                                                                <td><?= $status_terakhir; ?></td> <!-- STATUS TERAKHIR -->
+                                                                <td><?= $status_operation; ?></td> <!-- PROGRESS STATUS -->
+                                                                <td><?= $rowdb2['LOT']; ?></td> <!-- LOT -->
+                                                                <td><a target="_BLANK"
+                                                                            href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a>
+                                                                </td> <!-- DEMAND -->
+                                                                <td>`<?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
+                                                                <td>
+                                                                    <?php if ($d_benang_booking_new) {
+                                                                            echo $d_benang_booking_new . '. Greige Ready';
+                                                                    } ?>
+                                                                </td> <!-- CATATAN PO GREIGE -->
+                                                                <td></td> <!-- TARGET SELESAI -->
+                                                                <td><?= $rowdb2['KETERANGAN']; ?></td> <!-- KETERANGAN -->
+                                                                <td><?= $d_orig_pd_code['ORIGINALPDCODE']; ?></td>
+                                                                <!-- ORIGINAL PD CODE -->
+                                                                <?php if ($_SERVER['REMOTE_ADDR'] == '10.0.5.132'): ?>
+                                                                    <td>
+                                                                            <?= $groupstep_option; ?>
+                                                                            <?= $status; ?>
+                                                                    </td>
+                                                                <?php endif; ?>
+                                                                <td><?= $d_suratjalan['SURAT_JALAN']; ?></td>
+                                                                <!-- NO SURAT JALAN -->
+                                                                <td><?= cek($d_suratjalan['ROLL']); ?></td> <!-- ROLL -->
+                                                                <td><?= cek($d_suratjalan['TGL_KIRIM']); ?></td> <!-- TGL KIRIM -->
+                                                                <td>
+                                                                    <?php
+                                                                            if(!empty(cek($d_suratjalan['QTY_KIRIM_KG']))){
+                                                                            echo number_format($d_suratjalan['QTY_KIRIM_KG'], 2); 
+                                                                            }else{
+                                                                            echo 0;
+                                                                            }
+                                                                    ?>
+                                                                </td>
+                                                                <!-- QTY KIRIM KG -->
+                                                                <td>
+                                                                    <?php
+                                                                            if(!empty(cek($d_suratjalan['QTY_KIRIM_YARD_MTR']))){
+                                                                            echo number_format($d_suratjalan['QTY_KIRIM_YARD_MTR'], 2); 
+                                                                            }else{
+                                                                            echo 0;
+                                                                            }
+                                                                    ?>
+                                                                </td> <!-- QTY KIRIM YARD/METER -->
+                                                                <td>
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+                                                                    <?php else: ?>
+                                                                            <?php
+                                                                            if(!empty(cek($d_suratjalan['QTY_KIRIM_KG']))){
+                                                                                $QTYKIRIM_PKRG=number_format($d_suratjalan['QTY_KIRIM_KG'],2);
+                                                                            }else{
+                                                                                $QTYKIRIM_PKRG=0;
+                                                                            }
+
+                                                                            if(!empty(cek($rowdb2['NETTO']))){
+                                                                                $NETTO_PKRG=number_format($rowdb2['NETTO'],2);
+                                                                            }else{
+                                                                                $NETTO_PKRG=0;
+                                                                            }
+
+                                                                            echo $QTYKIRIM_PKRG-$NETTO_PKRG;
+                                                                            ?>
+                                                                    <?php endif; ?>
+                                                                </td> <!-- QTY KURANG KG -->
+                                                                <td>
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']): ?>
+                                                                    <?php else: ?>
+                                                                            <?php
+                                                                            if(!empty(cek($d_suratjalan['QTY_KIRIM_YARD_MTR']))){
+                                                                                $QTYKIRIM_PKRY=number_format($d_suratjalan['QTY_KIRIM_YARD_MTR'],2);
+                                                                            }else{
+                                                                                $QTYKIRIM_PKRY=0;
+                                                                            }
+
+                                                                            if(!empty(cek($d_netto_yd['BASESECONDARYQUANTITY']))){
+                                                                                $NETTO_PKRY=number_format($d_netto_yd['BASESECONDARYQUANTITY'],2);
+                                                                            }else{
+                                                                                $NETTO_PKRY=0;
+                                                                            }
+
+                                                                            echo $QTYKIRIM_PKRY-$NETTO_PKRY;
+                                                                            ?>
+                                                                    <?php endif; ?>
+                                                                </td> <!-- QTY KURANG YARD/METER -->
+                                                                <td><?= $d_suratjalan['FOC']; ?></td> <!-- FOC -->
+                                                                <td>
+                                                                    <?php
+                                                                    if ($rowdb2['QTY_BAGIKAIN'] != 0 ) {
+                                                                            echo number_format(($rowdb2['QTY_BAGIKAIN'] - $d_qtypacking['QTY_PACKING']) / $rowdb2['QTY_BAGIKAIN'] * 100, 2) . " %";
+                                                                    } else {
+                                                                            echo "0%";
+                                                                    }
+                                                                    ?>
+                                                                </td><!-- LOSS -->
                                                                 </tr>
                                                             <?php endif; ?>
                                                         <?php } ?>
