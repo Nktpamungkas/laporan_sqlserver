@@ -136,12 +136,6 @@ if (isset($_POST['submit'])) {
     }
 
 } elseif (isset($_POST['simpan_tambah'])) {
-    // Dapatkan pemeriksaan kesalahan serupa seperti di atas
-} elseif (isset($_POST['update_warna'])) {
-    // Dapatkan pemeriksaan kesalahan serupa seperti di atas
-
-
-} elseif (isset($_POST['simpan_tambah'])) {
     if ($_POST['no_warna']) {
         $no_warna = $_POST['no_warna'];
     } elseif (empty($_POST['no_warna'])) {
