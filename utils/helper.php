@@ -32,3 +32,13 @@ function array_trim_cek($array) {
 
     return NULL;
 }
+
+function calculateDateDiff($waktuawal, $waktuakhir) {
+    if ($waktuawal != null && $waktuakhir != null) {
+        $diff = date_diff($waktuawal, $waktuakhir);
+    } else {
+        $diff = 0;
+    }
+    
+    return $diff;
+}

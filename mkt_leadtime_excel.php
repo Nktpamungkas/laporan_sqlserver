@@ -139,6 +139,7 @@ header('Cache-Control: max-age=0');
         // ini_set("error_reporting", 1);
         // session_start();
         require_once "koneksi.php";
+        require_once "utils/helper.php";
         set_time_limit(0);
         $tgl1 = $_POST['tgl1'];
         $tgl2 = $_POST['tgl2'];
@@ -177,29 +178,29 @@ header('Cache-Control: max-age=0');
         $r_itxviewmemo = [];
         while ($row_itxviewmemo = db2_fetch_assoc($itxviewmemo)) {
             $r_itxviewmemo[] = [
-                TRIM(addslashes($row_itxviewmemo['ORDERDATE'])),
-                (string) TRIM(addslashes($row_itxviewmemo['LANGGANAN'])),
-                (string) TRIM(addslashes($row_itxviewmemo['BUYER'])),
-                (string) TRIM(addslashes($row_itxviewmemo['NO_ITEM'])),
-                (string) TRIM(addslashes($row_itxviewmemo['NO_ORDER'])),
-                (string) TRIM(addslashes($row_itxviewmemo['NO_PO'])),
-                (string) TRIM(addslashes($row_itxviewmemo['SUBCODE02'])),
-                (string) TRIM(addslashes($row_itxviewmemo['SUBCODE03'])),
-                (string) TRIM(addslashes($row_itxviewmemo['JENIS_KAIN'])),
-                (string) TRIM(addslashes($row_itxviewmemo['WARNA'])),
-                (string) TRIM(addslashes($row_itxviewmemo['NO_WARNA'])),
-                (string) TRIM(addslashes($row_itxviewmemo['DELIVERY'])),
-                (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTARTPROCESSDATE'])),
-                (float)  TRIM(addslashes($row_itxviewmemo['QTY_BAGIKAIN'])),
-                (int)    TRIM(addslashes($row_itxviewmemo['NETTO'])),
-                (int)    TRIM(addslashes($row_itxviewmemo['DELAY'])),
-                (string) TRIM(addslashes($row_itxviewmemo['NO_KK'])),
-                (string) TRIM(addslashes($row_itxviewmemo['DEMAND'])),
-                (string) TRIM(addslashes($row_itxviewmemo['LOT'])),
-                (float)  TRIM(addslashes($row_itxviewmemo['ORDERLINE'])),
-                (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS'])),
-                (string) TRIM(addslashes($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
-                (string) TRIM(addslashes($row_itxviewmemo['KETERANGAN'])),
+                (string) cek($row_itxviewmemo['ORDERDATE']),
+                (string) str_replace("'", "",$row_itxviewmemo['LANGGANAN']),
+                (string) str_replace("'", "",$row_itxviewmemo['BUYER']),
+                (string) str_replace("'", "",$row_itxviewmemo['NO_ITEM']),
+                (string) str_replace("'", "",$row_itxviewmemo['NO_ORDER']),
+                (string) str_replace("'", "",$row_itxviewmemo['NO_PO']),
+                (string) str_replace("'", "",$row_itxviewmemo['SUBCODE02']),
+                (string) str_replace("'", "",$row_itxviewmemo['SUBCODE03']),
+                (string) str_replace("'", "",$row_itxviewmemo['JENIS_KAIN']),
+                (string) str_replace("'", "",$row_itxviewmemo['WARNA']),
+                (string) str_replace("'", "",$row_itxviewmemo['NO_WARNA']),
+                (string) str_replace("'", "",$row_itxviewmemo['DELIVERY']),
+                (string) str_replace("'", "",$row_itxviewmemo['PROGRESSSTARTPROCESSDATE']),
+                (float)  cek($row_itxviewmemo['QTY_BAGIKAIN']),
+                (int)    cek($row_itxviewmemo['NETTO']),
+                (int)    cek($row_itxviewmemo['DELAY']),
+                (string) str_replace("'", "",$row_itxviewmemo['NO_KK']),
+                (string) str_replace("'", "",$row_itxviewmemo['DEMAND']),
+                (string) cek($row_itxviewmemo['LOT']),
+                (float)  cek($row_itxviewmemo['ORDERLINE']),
+                (string) str_replace("'", "",$row_itxviewmemo['PROGRESSSTATUS']),
+                (string) str_replace("'", "",$row_itxviewmemo['PROGRESSSTATUS_DEMAND']),
+                (string) str_replace("'", "",$row_itxviewmemo['KETERANGAN']),
                 (string) $_SERVER['REMOTE_ADDR'],
                 (string) date('Y-m-d H:i:s'),
                 (string) 'LEADTIME'
@@ -406,20 +407,15 @@ header('Cache-Control: max-age=0');
                                                     ORDER BY p.STEPNUMBER ASC");
 
             while ($row_posisikk = db2_fetch_assoc($q_posisikk)) {
-                $prod_order = TRIM(addslashes($row_posisikk['PRODUCTIONORDERCODE']));
-                $prod_demand = TRIM(addslashes($row_posisikk['PRODUCTIONDEMANDCODE']));
-                $stepnumber = TRIM(addslashes($row_posisikk['STEPNUMBER']));
-                $operationcode = TRIM(addslashes($row_posisikk['OPERATIONCODE']));
-                $mulai = TRIM(addslashes($row_posisikk['MULAI']));
-                $selesai = TRIM(addslashes($row_posisikk['SELESAI']));
+                $prod_order = str_replace("'", "",$row_posisikk['PRODUCTIONORDERCODE']);
+                $prod_demand = str_replace("'", "",$row_posisikk['PRODUCTIONDEMANDCODE']);
+                $stepnumber =str_replace("'", "",$row_posisikk['STEPNUMBER']);
+                $operationcode = str_replace("'", "",$row_posisikk['OPERATIONCODE']);
+                $mulai = cek($row_posisikk['MULAI']);
+                $selesai = cek($row_posisikk['SELESAI']);
                 $ipaddress = $_SERVER['REMOTE_ADDR'];
                 $creationdate = (string) date('Y-m-d H:i:s');
 
-                if ($mulai != null) {
-                    $mulai = TRIM(addslashes($row_posisikk['MULAI']));
-                } else {
-                    $mulai = null;
-                }
                 $insert_posisikk = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.posisikk_cache_leadtime
                                                                                 (productionorder,
                                                                                 productiondemand,
@@ -464,20 +460,23 @@ header('Cache-Control: max-age=0');
                                                                             AND ipaddress = '$_SERVER[REMOTE_ADDR]'
                                                                         ORDER BY 
                                                                             stepnumber DESC");
+
             $row_posisikk_bat1_1 = sqlsrv_fetch_array($q_posisikk_bat1_1);
             $row_posisikk_bat1_2 = sqlsrv_fetch_array($q_posisikk_bat1_2);
-            if ($row_posisikk_bat1_1['mulai'] == '1900-01-01 00:00:00.000') {
+
+            if ($row_posisikk_bat1_1['mulai'] == null) {
                 $waktuawal_bat1 = date_create($row_posisikk_bat1_2['mulai']);
                 $waktuakhir_bat1 = date_create($row_posisikk_bat1_2['selesai']);
-            } elseif ($row_posisikk_bat1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } else if($row_posisikk_bat1_2['selesai'] == null) {
                 $waktuawal_bat1 = date_create($row_posisikk_bat1_1['mulai']);
                 $waktuakhir_bat1 = date_create($row_posisikk_bat1_1['mulai']);
             } else {
                 $waktuawal_bat1 = $row_posisikk_bat1_1['mulai'];
                 $waktuakhir_bat1 = $row_posisikk_bat1_2['selesai'];
             }
+
             if ($waktuawal_bat1 != null and $waktuakhir_bat1 != null) {
-                $diff_bat1 = date_diff($waktuawal_bat1, $waktuakhir_bat1);
+                $diff_bat1 = calculateDateDiff($waktuawal_bat1, $waktuakhir_bat1);
             } else {
                 $diff_bat1 = 0;
             }
@@ -509,18 +508,20 @@ header('Cache-Control: max-age=0');
                                                                             stepnumber DESC");
             $row_posisikk_bat2_1 = sqlsrv_fetch_array($q_posisikk_bat2_1);
             $row_posisikk_bat2_2 = sqlsrv_fetch_array($q_posisikk_bat2_2);
-            if ($row_posisikk_bat2_1['mulai'] == '1900-01-01 00:00:00.000') {
+
+            if ($row_posisikk_bat2_1['mulai'] == null) {
                 $waktuawal_bat2 = date_create($row_posisikk_bat2_2['mulai']);
                 $waktuakhir_bat2 = date_create($row_posisikk_bat2_2['selesai']);
-            } elseif ($row_posisikk_bat2_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_bat2_2['selesai'] == null) {
                 $waktuawal_bat2 = date_create($row_posisikk_bat2_1['mulai']);
                 $waktuakhir_bat2 = date_create($row_posisikk_bat2_1['mulai']);
             } else {
                 $waktuawal_bat2 = $row_posisikk_bat2_1['mulai'];
                 $waktuakhir_bat2 = $row_posisikk_bat2_2['selesai'];
             }
+
             if ($waktuawal_bat2 != null and $waktuakhir_bat2 != null) {
-                $diff_bat2 = date_diff($waktuawal_bat2, $waktuakhir_bat2);
+                $diff_bat2 = calculateDateDiff($waktuawal_bat2, $waktuakhir_bat2);
             } else {
                 $diff_bat2 = 0;
             }
@@ -554,17 +555,22 @@ header('Cache-Control: max-age=0');
             $row_posisikk_bkn1_1 = sqlsrv_fetch_array($q_posisikk_bkn1_1);
             $row_posisikk_bkn1_2 = sqlsrv_fetch_array($q_posisikk_bkn1_2);
 
-            if ($row_posisikk_bkn1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_bkn1_1['mulai'] == null) {
                 $waktuawal_bkn1 = date_create($row_posisikk_bkn1_2['mulai']);
                 $waktuawal_bkn1 = date_create($row_posisikk_bkn1_2['selesai']);
-            } elseif ($row_posisikk_bkn1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_bkn1_2['selesai'] == null) {
                 $waktuawal_bkn1 = date_create($row_posisikk_bkn1_1['mulai']);
                 $waktuakhir_bkn1 = date_create($row_posisikk_bkn1_1['mulai']);
             } else {
                 $waktuawal_bkn1 = date_create($row_posisikk_bkn1_1['mulai']);
                 $waktuakhir_bkn1 = date_create($row_posisikk_bkn1_2['selesai']);
             }
-            $diff_bkn1 = date_diff($waktuawal_bkn1, $waktuakhir_bkn1);
+
+            if ($waktuawal_bkn1  != null and $waktuakhir_bkn1  != null) {
+                $diff_bkn1  = calculateDateDiff($waktuawal_bkn1 , $waktuakhir_bkn1 );
+            } else {
+                $diff_bkn1  = 0;
+            }
 
             // BKN1
         
@@ -597,17 +603,22 @@ header('Cache-Control: max-age=0');
             $row_posisikk_sco1_1 = sqlsrv_fetch_array($q_posisikk_sco1_1);
             $row_posisikk_sco1_2 = sqlsrv_fetch_array($q_posisikk_sco1_2);
 
-            if ($row_posisikk_sco1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_sco1_1['mulai'] == null) {
                 $waktuawal_sco1 = date_create($row_posisikk_sco1_2['mulai']);
                 $waktuakhir_sco1 = date_create($row_posisikk_sco1_2['selesai']);
-            } elseif ($row_posisikk_sco1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_sco1_2['selesai'] == null) {
                 $waktuawal_sco1 = date_create($row_posisikk_sco1_1['mulai']);
                 $waktuakhir_sco1 = date_create($row_posisikk_sco1_1['mulai']);
             } else {
                 $waktuawal_sco1 = date_create($row_posisikk_sco1_1['mulai']);
                 $waktuakhir_sco1 = date_create($row_posisikk_sco1_2['selesai']);
             }
-            $diff_sco1 = date_diff($waktuawal_sco1, $waktuakhir_sco1);
+
+            if ($waktuawal_sco1 != null and $waktuakhir_sco1  != null) {
+                $diff_sco1 = calculateDateDiff($waktuawal_sco1 , $waktuakhir_sco1 );
+            } else {
+                $diff_sco1 = 0;
+            }
 
             // SCO1
         
@@ -639,17 +650,23 @@ header('Cache-Control: max-age=0');
             $row_posisikk_rlx1_1 = sqlsrv_fetch_array($q_posisikk_rlx1_1);
             $row_posisikk_rlx1_2 = sqlsrv_fetch_array($q_posisikk_rlx1_2);
 
-            if ($row_posisikk_rlx1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_rlx1_1['mulai'] == null) {
                 $waktuawal_rlx1 = date_create($row_posisikk_rlx1_2['mulai']);
                 $waktuakhir_rlx1 = date_create($row_posisikk_rlx1_2['selesai']);
-            } elseif ($row_posisikk_rlx1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_rlx1_2['selesai'] == null) {
                 $waktuawal_rlx1 = date_create($row_posisikk_rlx1_1['mulai']);
                 $waktuakhir_rlx1 = date_create($row_posisikk_rlx1_1['mulai']);
             } else {
                 $waktuawal_rlx1 = date_create($row_posisikk_rlx1_1['mulai']);
                 $waktuakhir_rlx1 = date_create($row_posisikk_rlx1_2['selesai']);
             }
-            $diff_rlx1 = date_diff($waktuawal_rlx1, $waktuakhir_rlx1);
+
+            if ($waktuawal_rlx1 != null and $waktuakhir_rlx1  != null) {
+                $diff_rlx1 = calculateDateDiff($waktuawal_rlx1 , $waktuakhir_rlx1 );
+            } else {
+                $diff_rlx1 = 0;
+            }
+            
 
             // RLX1
         
@@ -681,17 +698,22 @@ header('Cache-Control: max-age=0');
             $row_posisikk_cbl1_1 = sqlsrv_fetch_array($q_posisikk_cbl1_1);
             $row_posisikk_cbl1_2 = sqlsrv_fetch_array($q_posisikk_cbl1_2);
 
-            if ($row_posisikk_cbl1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_cbl1_1['mulai'] == null) {
                 $waktuawal_cbl1 = date_create($row_posisikk_cbl1_2['mulai']);
                 $waktuakhir_cbl1 = date_create($row_posisikk_cbl1_2['selesai']);
-            } elseif ($row_posisikk_cbl1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_cbl1_2['selesai'] == null) {
                 $waktuawal_cbl1 = date_create($row_posisikk_cbl1_1['mulai']);
                 $waktuakhir_cbl1 = date_create($row_posisikk_cbl1_1['mulai']);
             } else {
                 $waktuawal_cbl1 = date_create($row_posisikk_cbl1_1['mulai']);
                 $waktuakhir_cbl1 = date_create($row_posisikk_cbl1_2['selesai']);
             }
-            $diff_cbl1 = date_diff($waktuawal_cbl1, $waktuakhir_cbl1);
+
+            if ($waktuawal_cbl1 != null and $waktuakhir_cbl1  != null) {
+                $diff_cbl1 = calculateDateDiff($waktuawal_cbl1 , $waktuakhir_cbl1);
+            } else {
+                $diff_cbl1 = 0;
+            }
             // CBL1
         
             // MAT1
@@ -722,18 +744,19 @@ header('Cache-Control: max-age=0');
             $row_posisikk_mat1_1 = sqlsrv_fetch_array($q_posisikk_mat1_1);
             $row_posisikk_mat1_2 = sqlsrv_fetch_array($q_posisikk_mat1_2);
 
-            if ($row_posisikk_mat1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_mat1_1['mulai'] == null) {
                 $waktuawal_mat1 = date_create($row_posisikk_mat1_2['mulai']);
                 $waktuakhir_mat1 = date_create($row_posisikk_mat1_2['selesai']);
-            } elseif ($row_posisikk_mat1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_mat1_2['selesai'] == null) {
                 $waktuawal_mat1 = date_create($row_posisikk_mat1_1['mulai']);
                 $waktuakhir_mat1 = date_create($row_posisikk_mat1_1['mulai']);
             } else {
                 $waktuawal_mat1 = $row_posisikk_mat1_1['mulai'];
                 $waktuakhir_mat1 = $row_posisikk_mat1_2['selesai'];
             }
+
             if ($waktuawal_mat1 != null and $waktuakhir_mat1 != null) {
-                $diff_mat1 = date_diff($waktuawal_mat1, $waktuakhir_mat1);
+                $diff_mat1 = calculateDateDiff($waktuawal_mat1, $waktuakhir_mat1);
             } else {
                 $diff_mat1 = 0 ;
             }
@@ -768,17 +791,22 @@ header('Cache-Control: max-age=0');
             $row_posisikk_pre1_1 = sqlsrv_fetch_array($q_posisikk_pre1_1);
             $row_posisikk_pre1_2 = sqlsrv_fetch_array($q_posisikk_pre1_2);
 
-            if ($row_posisikk_pre1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_pre1_1['mulai'] == null) {
                 $waktuawal_pre1 = date_create($row_posisikk_pre1_2['mulai']);
                 $waktuakhir_pre1 = date_create($row_posisikk_pre1_2['selesai']);
-            } elseif ($row_posisikk_pre1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_pre1_2['selesai'] == null) {
                 $waktuawal_pre1 = date_create($row_posisikk_pre1_1['mulai']);
                 $waktuakhir_pre1 = date_create($row_posisikk_pre1_1['mulai']);
             } else {
                 $waktuawal_pre1 = date_create($row_posisikk_pre1_1['mulai']);
                 $waktuakhir_pre1 = date_create($row_posisikk_pre1_2['selesai']);
             }
-            $diff_pre1 = date_diff($waktuawal_pre1, $waktuakhir_pre1);
+
+            if ($waktuawal_pre1 != null and $waktuakhir_pre1  != null) {
+                $diff_pre1 = calculateDateDiff($waktuawal_pre1 , $waktuakhir_pre1);
+            } else {
+                $diff_pre1 = 0;
+            }
 
             // PRE1
         
@@ -810,17 +838,22 @@ header('Cache-Control: max-age=0');
             $row_posisikk_rse1_1 = sqlsrv_fetch_array($q_posisikk_rse1_1);
             $row_posisikk_rse1_2 = sqlsrv_fetch_array($q_posisikk_rse1_2);
 
-            if ($row_posisikk_rse1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_rse1_1['mulai'] == null) {
                 $waktuawal_rse1 = date_create($row_posisikk_rse1_2['mulai']);
                 $waktuakhir_rse1 = date_create($row_posisikk_rse1_2['selesai']);
-            } elseif ($row_posisikk_rse1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_rse1_2['selesai'] == null) {
                 $waktuawal_rse1 = date_create($row_posisikk_rse1_1['mulai']);
                 $waktuakhir_rse1 = date_create($row_posisikk_rse1_1['mulai']);
             } else {
                 $waktuawal_rse1 = date_create($row_posisikk_rse1_1['mulai']);
                 $waktuakhir_rse1 = date_create($row_posisikk_rse1_2['selesai']);
             }
-            $diff_rse1 = date_diff($waktuawal_rse1, $waktuakhir_rse1);
+            
+            if ($waktuawal_rse1 != null and $waktuakhir_rse1  != null) {
+                $diff_rse1 = calculateDateDiff($waktuawal_rse1 , $waktuakhir_rse1);
+            } else {
+                $diff_rse1 = 0;
+            }
             // RSE1
         
             // RSE2
@@ -851,10 +884,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_rse2_1 = sqlsrv_fetch_array($q_posisikk_rse2_1);
             $row_posisikk_rse2_2 = sqlsrv_fetch_array($q_posisikk_rse2_2);
 
-            if ($row_posisikk_rse2_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_rse2_1['mulai'] == null) {
                 $waktuawal_rse2 = date_create($row_posisikk_rse2_2['mulai']);
                 $waktuakhir_rse2 = date_create($row_posisikk_rse2_2['selesai']);
-            } elseif ($row_posisikk_rse2_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_rse2_2['selesai'] == null) {
                 $waktuawal_rse2 = date_create($row_posisikk_rse2_1['mulai']);
                 $waktuakhir_rse2 = date_create($row_posisikk_rse2_1['mulai']);
             } else {
@@ -862,7 +895,11 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_rse2 = date_create($row_posisikk_rse2_2['selesai']);
             }
 
-            $diff_rse2 = date_diff($waktuawal_rse2, $waktuakhir_rse2);
+            if ($waktuawal_rse2 != null and $waktuakhir_rse2  != null) {
+                $diff_rse2 = calculateDateDiff($waktuawal_rse2 , $waktuakhir_rse2);
+            } else {
+                $diff_rse2 = 0;
+            }
             // RSE2
         
             // SHR1
@@ -893,10 +930,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_shr1_1 = sqlsrv_fetch_array($q_posisikk_shr1_1);
             $row_posisikk_shr1_2 = sqlsrv_fetch_array($q_posisikk_shr1_2);
 
-            if ($row_posisikk_shr1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_shr1_1['mulai'] == null) {
                 $waktuawal_shr1 = date_create($row_posisikk_shr1_2['mulai']);
                 $waktuakhir_shr1 = date_create($row_posisikk_shr1_2['selesai']);
-            } elseif ($row_posisikk_shr1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_shr1_2['selesai'] == null) {
                 $waktuawal_shr1 = date_create($row_posisikk_shr1_1['mulai']);
                 $waktuakhir_shr1 = date_create($row_posisikk_shr1_1['mulai']);
             } else {
@@ -904,7 +941,11 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_shr1 = date_create($row_posisikk_shr1_2['selesai']);
             }
 
-            $diff_shr1 = date_diff($waktuawal_shr1, $waktuakhir_shr1);
+            if ($waktuawal_shr1 != null and $waktuakhir_shr1  != null) {
+                $diff_shr1 = calculateDateDiff($waktuawal_shr1 , $waktuakhir_shr1);
+            } else {
+                $diff_shr1 = 0;
+            }
             // SHR1
         
             // SHR2
@@ -935,10 +976,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_shr2_1 = sqlsrv_fetch_array($q_posisikk_shr2_1);
             $row_posisikk_shr2_2 = sqlsrv_fetch_array($q_posisikk_shr2_2);
 
-            if ($row_posisikk_shr2_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_shr2_1['mulai'] == null) {
                 $waktuawal_shr2 = date_create($row_posisikk_shr2_2['mulai']);
                 $waktuakhir_shr2 = date_create($row_posisikk_shr2_2['selesai']);
-            } elseif ($row_posisikk_shr2_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_shr2_2['selesai'] == null) {
                 $waktuawal_shr2 = date_create($row_posisikk_shr2_1['mulai']);
                 $waktuakhir_shr2 = date_create($row_posisikk_shr2_1['mulai']);
             } else {
@@ -946,7 +987,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_shr2 = date_create($row_posisikk_shr2_2['selesai']);
             }
 
-            $diff_shr2 = date_diff($waktuawal_shr2, $waktuakhir_shr2);
+            $diff_shr2 = calculateDateDiff($waktuawal_shr2, $waktuakhir_shr2);
             // SHR2
         
             // SUE1
@@ -976,10 +1017,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_sue1_1 = sqlsrv_fetch_array($q_posisikk_sue1_1);
             $row_posisikk_sue1_2 = sqlsrv_fetch_array($q_posisikk_sue1_2);
 
-            if ($row_posisikk_sue1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_sue1_1['mulai'] == null) {
                 $waktuawal_sue1 = date_create($row_posisikk_sue1_2['mulai']);
                 $waktuakhir_sue1 = date_create($row_posisikk_sue1_2['selesai']);
-            } elseif ($row_posisikk_sue1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_sue1_2['selesai'] == null) {
                 $waktuawal_sue1 = date_create($row_posisikk_sue1_1['mulai']);
                 $waktuakhir_sue1 = date_create($row_posisikk_sue1_1['mulai']);
             } else {
@@ -987,7 +1028,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_sue1 = date_create($row_posisikk_sue1_2['selesai']);
             }
 
-            $diff_sue1 = date_diff($waktuawal_sue1, $waktuakhir_sue1);
+            $diff_sue1 = calculateDateDiff($waktuawal_sue1, $waktuakhir_sue1);
 
             // SUE1
         
@@ -1019,10 +1060,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_sue2_1 = sqlsrv_fetch_array($q_posisikk_sue2_1);
             $row_posisikk_sue2_2 = sqlsrv_fetch_array($q_posisikk_sue2_2);
 
-            if ($row_posisikk_sue2_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_sue2_1['mulai'] == null) {
                 $waktuawal_sue2 = date_create($row_posisikk_sue2_2['mulai']);
                 $waktuakhir_sue2 = date_create($row_posisikk_sue2_2['selesai']);
-            } elseif ($row_posisikk_sue2_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_sue2_2['selesai'] == null) {
                 $waktuawal_sue2 = date_create($row_posisikk_sue2_1['mulai']);
                 $waktuakhir_sue2 = date_create($row_posisikk_sue2_1['mulai']);
             } else {
@@ -1030,7 +1071,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_sue2 = date_create($row_posisikk_sue2_2['selesai']);
             }
 
-            $diff_sue2 = date_diff($waktuawal_sue2, $waktuakhir_sue2);
+            $diff_sue2 = calculateDateDiff($waktuawal_sue2, $waktuakhir_sue2);
             // SUE2
         
             // DYE1
@@ -1061,10 +1102,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_dye1_1 = sqlsrv_fetch_array($q_posisikk_dye1_1);
             $row_posisikk_dye1_2 = sqlsrv_fetch_array($q_posisikk_dye1_2);
 
-            if ($row_posisikk_dye1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_dye1_1['mulai'] == null) {
                 $waktuawal_dye1 = date_create($row_posisikk_dye1_2['mulai']);
                 $waktuakhir_dye1 = date_create($row_posisikk_dye1_2['selesai']);
-            } elseif ($row_posisikk_dye1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_dye1_2['selesai'] == null) {
                 $waktuawal_dye1 = date_create($row_posisikk_dye1_1['mulai']);
                 $waktuakhir_dye1 = date_create($row_posisikk_dye1_1['mulai']);
             } else {
@@ -1072,7 +1113,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_dye1 = date_create($row_posisikk_dye1_2['selesai']);
             }
 
-            $diff_dye1 = date_diff($waktuawal_dye1, $waktuakhir_dye1);
+            $diff_dye1 = calculateDateDiff($waktuawal_dye1, $waktuakhir_dye1);
             // DYE1
         
             // DYE2
@@ -1103,10 +1144,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_dye2_1 = sqlsrv_fetch_array($q_posisikk_dye2_1);
             $row_posisikk_dye2_2 = sqlsrv_fetch_array($q_posisikk_dye2_2);
 
-            if ($row_posisikk_dye2_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_dye2_1['mulai'] == null) {
                 $waktuawal_dye2 = date_create($row_posisikk_dye2_2['mulai']);
                 $waktuakhir_dye2 = date_create($row_posisikk_dye2_2['selesai']);
-            } elseif ($row_posisikk_dye2_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_dye2_2['selesai'] == null) {
                 $waktuawal_dye2 = date_create($row_posisikk_dye2_1['mulai']);
                 $waktuakhir_dye2 = date_create($row_posisikk_dye2_1['mulai']);
             } else {
@@ -1114,7 +1155,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_dye2 = $row_posisikk_dye2_2['selesai'];
             }
             if ($waktuawal_dye2 != null and $waktuakhir_dye2 != null) {
-                $diff_dye2 = date_diff($waktuawal_dye2, $waktuakhir_dye2);
+                $diff_dye2 = calculateDateDiff($waktuawal_dye2, $waktuakhir_dye2);
             } else {
                 $diff_dye2 = 0;
             }
@@ -1148,10 +1189,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_dye3_1 = sqlsrv_fetch_array($q_posisikk_dye3_1);
             $row_posisikk_dye3_2 = sqlsrv_fetch_array($q_posisikk_dye3_2);
 
-            if ($row_posisikk_dye3_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_dye3_1['mulai'] == null) {
                 $waktuawal_dye3 = date_create($row_posisikk_dye3_2['mulai']);
                 $waktuakhir_dye3 = date_create($row_posisikk_dye3_2['selesai']);
-            } elseif ($row_posisikk_dye3_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_dye3_2['selesai'] == null) {
                 $waktuawal_dye3 = date_create($row_posisikk_dye3_1['mulai']);
                 $waktuakhir_dye3 = date_create($row_posisikk_dye3_1['mulai']);
             } else {
@@ -1159,7 +1200,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_dye3 = date_create($row_posisikk_dye3_2['selesai']);
             }
 
-            $diff_dye3 = date_diff($waktuawal_dye3, $waktuakhir_dye3);
+            $diff_dye3 = calculateDateDiff($waktuawal_dye3, $waktuakhir_dye3);
             // DYE3
         
             // DYE4
@@ -1190,10 +1231,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_dye4_1 = sqlsrv_fetch_array($q_posisikk_dye4_1);
             $row_posisikk_dye4_2 = sqlsrv_fetch_array($q_posisikk_dye4_2);
 
-            if ($row_posisikk_dye4_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_dye4_1['mulai'] == null) {
                 $waktuawal_dye4 = date_create($row_posisikk_dye4_2['mulai']);
                 $waktuakhir_dye4 = date_create($row_posisikk_dye4_2['selesai']);
-            } elseif ($row_posisikk_dye4_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_dye4_2['selesai'] == null) {
                 $waktuawal_dye4 = date_create($row_posisikk_dye4_1['mulai']);
                 $waktuakhir_dye4 = date_create($row_posisikk_dye4_1['mulai']);
             } else {
@@ -1201,7 +1242,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_dye4 = $row_posisikk_dye4_2['selesai'];
             }
             if ($waktuawal_dye4 != null and $waktuakhir_dye4 != null) {
-                $diff_dye4 = date_diff($waktuawal_dye4, $waktuakhir_dye4);
+                $diff_dye4 = calculateDateDiff($waktuawal_dye4, $waktuakhir_dye4);
             } else {
                 $diff_dye4 = 0;
             }
@@ -1235,10 +1276,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_dye5_1 = sqlsrv_fetch_array($q_posisikk_dye5_1);
             $row_posisikk_dye5_2 = sqlsrv_fetch_array($q_posisikk_dye5_2);
 
-            if ($row_posisikk_dye5_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_dye5_1['mulai'] == null) {
                 $waktuawal_dye5 = date_create($row_posisikk_dye5_2['mulai']);
                 $waktuakhir_dye5 = date_create($row_posisikk_dye5_2['selesai']);
-            } elseif ($row_posisikk_dye5_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_dye5_2['selesai'] == null) {
                 $waktuawal_dye5 = date_create($row_posisikk_dye5_1['mulai']);
                 $waktuakhir_dye5 = date_create($row_posisikk_dye5_1['mulai']);
             } else {
@@ -1246,7 +1287,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_dye5 = date_create($row_posisikk_dye5_2['selesai']);
             }
 
-            $diff_dye5 = date_diff($waktuawal_dye5, $waktuakhir_dye5);
+            $diff_dye5 = calculateDateDiff($waktuawal_dye5, $waktuakhir_dye5);
             // DYE5
         
             // DYE6
@@ -1277,10 +1318,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_dye6_1 = sqlsrv_fetch_array($q_posisikk_dye6_1);
             $row_posisikk_dye6_2 = sqlsrv_fetch_array($q_posisikk_dye6_2);
 
-            if ($row_posisikk_dye6_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_dye6_1['mulai'] == null) {
                 $waktuawal_dye6 = date_create($row_posisikk_dye6_2['mulai']);
                 $waktuakhir_dye6 = date_create($row_posisikk_dye6_2['selesai']);
-            } elseif ($row_posisikk_dye6_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_dye6_2['selesai'] == null) {
                 $waktuawal_dye6 = date_create($row_posisikk_dye6_1['mulai']);
                 $waktuakhir_dye6 = date_create($row_posisikk_dye6_1['mulai']);
             } else {
@@ -1288,7 +1329,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_dye6 = date_create($row_posisikk_dye6_2['selesai']);
             }
 
-            $diff_dye6 = date_diff($waktuawal_dye6, $waktuakhir_dye6);
+            $diff_dye6 = calculateDateDiff($waktuawal_dye6, $waktuakhir_dye6);
             // DYE6
         
             // SOP1
@@ -1319,10 +1360,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_sop1_1 = sqlsrv_fetch_array($q_posisikk_sop1_1);
             $row_posisikk_sop1_2 = sqlsrv_fetch_array($q_posisikk_sop1_2);
 
-            if ($row_posisikk_sop1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_sop1_1['mulai'] == null) {
                 $waktuawal_sop1 = date_create($row_posisikk_sop1_2['mulai']);
                 $waktuakhir_sop1 = date_create($row_posisikk_sop1_2['selesai']);
-            } elseif ($row_posisikk_sop1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_sop1_2['selesai'] == null) {
                 $waktuawal_sop1 = date_create($row_posisikk_sop1_1['mulai']);
                 $waktuakhir_sop1 = date_create($row_posisikk_sop1_1['mulai']);
             } else {
@@ -1330,7 +1371,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_sop1 = date_create($row_posisikk_sop1_2['selesai']);
             }
 
-            $diff_sop1 = date_diff($waktuawal_sop1, $waktuakhir_sop1);
+            $diff_sop1 = calculateDateDiff($waktuawal_sop1, $waktuakhir_sop1);
             // SOP1
         
             // BLD1
@@ -1361,10 +1402,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_bld1_1 = sqlsrv_fetch_array($q_posisikk_bld1_1);
             $row_posisikk_bld1_2 = sqlsrv_fetch_array($q_posisikk_bld1_2);
 
-            if ($row_posisikk_bld1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_bld1_1['mulai'] == null) {
                 $waktuawal_bld1 = date_create($row_posisikk_bld1_2['mulai']);
                 $waktuakhir_bld1 = date_create($row_posisikk_bld1_2['selesai']);
-            } elseif ($row_posisikk_bld1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_bld1_2['selesai'] == null) {
                 $waktuawal_bld1 = date_create($row_posisikk_bld1_1['mulai']);
                 $waktuakhir_bld1 = date_create($row_posisikk_bld1_1['mulai']);
             } else {
@@ -1372,7 +1413,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_bld1 = date_create($row_posisikk_bld1_2['selesai']);
             }
 
-            $diff_bld1 = date_diff($waktuawal_bld1, $waktuakhir_bld1);
+            $diff_bld1 = calculateDateDiff($waktuawal_bld1, $waktuakhir_bld1);
             // BLD1
         
             // BLP1
@@ -1403,10 +1444,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_blp1_1 = sqlsrv_fetch_array($q_posisikk_blp1_1);
             $row_posisikk_blp1_2 = sqlsrv_fetch_array($q_posisikk_blp1_2);
 
-            if ($row_posisikk_blp1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_blp1_1['mulai'] == null) {
                 $waktuawal_blp1 = date_create($row_posisikk_blp1_2['mulai']);
                 $waktuakhir_blp1 = date_create($row_posisikk_blp1_2['selesai']);
-            } elseif ($row_posisikk_blp1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_blp1_2['selesai'] == null) {
                 $waktuawal_blp1 = date_create($row_posisikk_blp1_1['mulai']);
                 $waktuakhir_blp1 = date_create($row_posisikk_blp1_1['mulai']);
             } else {
@@ -1414,7 +1455,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_blp1 = date_create($row_posisikk_blp1_2['selesai']);
             }
 
-            $diff_blp1 = date_diff($waktuawal_blp1, $waktuakhir_blp1);
+            $diff_blp1 = calculateDateDiff($waktuawal_blp1, $waktuakhir_blp1);
             // BLP1
         
             // OPW1
@@ -1445,10 +1486,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_opw1_1 = sqlsrv_fetch_array($q_posisikk_opw1_1);
             $row_posisikk_opw1_2 = sqlsrv_fetch_array($q_posisikk_opw1_2);
 
-            if ($row_posisikk_opw1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_opw1_1['mulai'] == null) {
                 $waktuawal_opw1 = date_create($row_posisikk_opw1_2['mulai']);
                 $waktuakhir_opw1 = date_create($row_posisikk_opw1_2['selesai']);
-            } elseif ($row_posisikk_opw1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_opw1_2['selesai'] == null) {
                 $waktuawal_opw1 = date_create($row_posisikk_opw1_1['mulai']);
                 $waktuakhir_opw1 = date_create($row_posisikk_opw1_1['mulai']);
             } else {
@@ -1457,7 +1498,7 @@ header('Cache-Control: max-age=0');
             }
             if ($waktuawal_opw1 != null and $waktuakhir_opw1 != null) {
 
-                $diff_opw1 = date_diff($waktuawal_opw1, $waktuakhir_opw1);
+                $diff_opw1 = calculateDateDiff($waktuawal_opw1, $waktuakhir_opw1);
             } else {
                 $diff_opw1 = 0;
             }
@@ -1492,10 +1533,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_ovd1_1 = sqlsrv_fetch_array($q_posisikk_ovd1_1);
             $row_posisikk_ovd1_2 = sqlsrv_fetch_array($q_posisikk_ovd1_2);
 
-            if ($row_posisikk_ovd1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_ovd1_1['mulai'] == null) {
                 $waktuawal_ovd1 = date_create($row_posisikk_ovd1_2['mulai']);
                 $waktuakhir_ovd1 = date_create($row_posisikk_ovd1_2['selesai']);
-            } elseif ($row_posisikk_ovd1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_ovd1_2['selesai'] == null) {
                 $waktuawal_ovd1 = date_create($row_posisikk_ovd1_1['mulai']);
                 $waktuakhir_ovd1 = date_create($row_posisikk_ovd1_1['mulai']);
             } else {
@@ -1503,11 +1544,11 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_ovd1 = $row_posisikk_ovd1_2['selesai'];
             }
             if ($waktuawal_ovd1 != null and $waktuakhir_ovd1 != null) {
-                $diff_ovn1 = date_diff($waktuawal_ovd1, $waktuakhir_ovd1);
+                $diff_ovn1 = calculateDateDiff($waktuawal_ovd1, $waktuakhir_ovd1);
             } else {
                 $diff_ovn1 = 0;
             }
-            // $diff_ovd1 = date_diff($waktuawal_ovd1, $waktuakhir_ovd1);
+            // $diff_ovd1 = calculateDateDiff($waktuawal_ovd1, $waktuakhir_ovd1);
             // OVD1
         
             // OVN1
@@ -1538,10 +1579,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_ovn1_1 = sqlsrv_fetch_array($q_posisikk_ovn1_1);
             $row_posisikk_ovn1_2 = sqlsrv_fetch_array($q_posisikk_ovn1_2);
 
-            if ($row_posisikk_ovn1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_ovn1_1['mulai'] == null) {
                 $waktuawal_ovn1 = date_create($row_posisikk_ovn1_2['mulai']);
                 $waktuakhir_ovn1 = date_create($row_posisikk_ovn1_2['selesai']);
-            } elseif ($row_posisikk_ovn1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_ovn1_2['selesai'] == null) {
                 $waktuawal_ovn1 = date_create($row_posisikk_ovn1_1['mulai']);
                 $waktuakhir_ovn1 = date_create($row_posisikk_ovn1_1['mulai']);
             } else {
@@ -1549,7 +1590,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_ovn1 = $row_posisikk_ovn1_2['selesai'];
             }
             if ($waktuawal_ovn1 != null and $waktuakhir_ovn1 != null) {
-                $diff_ovn1 = date_diff($waktuawal_ovn1, $waktuakhir_ovn1);
+                $diff_ovn1 = calculateDateDiff($waktuawal_ovn1, $waktuakhir_ovn1);
             } else {
                 $diff_ovn1 = 0;
             }
@@ -1583,10 +1624,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_ovn2_1 = sqlsrv_fetch_array($q_posisikk_ovn2_1);
             $row_posisikk_ovn2_2 = sqlsrv_fetch_array($q_posisikk_ovn2_2);
 
-            if ($row_posisikk_ovn2_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_ovn2_1['mulai'] == null) {
                 $waktuawal_ovn2 = date_create($row_posisikk_ovn2_2['mulai']);
                 $waktuakhir_ovn2 = date_create($row_posisikk_ovn2_2['selesai']);
-            } elseif ($row_posisikk_ovn2_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_ovn2_2['selesai'] == null) {
                 $waktuawal_ovn2 = date_create($row_posisikk_ovn2_1['mulai']);
                 $waktuakhir_ovn2 = date_create($row_posisikk_ovn2_1['mulai']);
             } else {
@@ -1594,7 +1635,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_ovn2 = $row_posisikk_ovn2_2['selesai'];
             }
             if ($waktuawal_ovn2 != null and $waktuakhir_ovn2 != null) {
-                $diff_ovn2 = date_diff($waktuawal_ovn2, $waktuakhir_ovn2);
+                $diff_ovn2 = calculateDateDiff($waktuawal_ovn2, $waktuakhir_ovn2);
             } else {
                 $diff_ovn2 = 0;
             }
@@ -1629,10 +1670,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_ovn3_1 = sqlsrv_fetch_array($q_posisikk_ovn3_1);
             $row_posisikk_ovn3_2 = sqlsrv_fetch_array($q_posisikk_ovn3_2);
 
-            if ($row_posisikk_ovn3_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_ovn3_1['mulai'] == null) {
                 $waktuawal_ovn3 = date_create($row_posisikk_ovn3_2['mulai']);
                 $waktuakhir_ovn3 = date_create($row_posisikk_ovn3_2['selesai']);
-            } elseif ($row_posisikk_ovn3_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_ovn3_2['selesai'] == null) {
                 $waktuawal_ovn3 = date_create($row_posisikk_ovn3_1['mulai']);
                 $waktuakhir_ovn3 = date_create($row_posisikk_ovn3_1['mulai']);
             } else {
@@ -1640,7 +1681,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_ovn3 = date_create($row_posisikk_ovn3_2['selesai']);
             }
 
-            $diff_ovn3 = date_diff($waktuawal_ovn3, $waktuakhir_ovn3);
+            $diff_ovn3 = calculateDateDiff($waktuawal_ovn3, $waktuakhir_ovn3);
             // OVN3
         
             // CPT1
@@ -1671,10 +1712,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_cpt1_1 = sqlsrv_fetch_array($q_posisikk_cpt1_1);
             $row_posisikk_cpt1_2 = sqlsrv_fetch_array($q_posisikk_cpt1_2);
 
-            if ($row_posisikk_cpt1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_cpt1_1['mulai'] == null) {
                 $waktuawal_cpt1 = date_create($row_posisikk_cpt1_2['mulai']);
                 $waktuakhir_cpt1 = date_create($row_posisikk_cpt1_2['selesai']);
-            } elseif ($row_posisikk_cpt1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_cpt1_2['selesai'] == null) {
                 $waktuawal_cpt1 = date_create($row_posisikk_cpt1_1['mulai']);
                 $waktuakhir_cpt1 = date_create($row_posisikk_cpt1_1['mulai']);
             } else {
@@ -1682,7 +1723,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_cpt1 = date_create($row_posisikk_cpt1_2['selesai']);
             }
 
-            $diff_cpt1 = date_diff($waktuawal_cpt1, $waktuakhir_cpt1);
+            $diff_cpt1 = calculateDateDiff($waktuawal_cpt1, $waktuakhir_cpt1);
             // CPT1
         
             // FIN1
@@ -1713,10 +1754,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_fin1_1 = sqlsrv_fetch_array($q_posisikk_fin1_1);
             $row_posisikk_fin1_2 = sqlsrv_fetch_array($q_posisikk_fin1_2);
 
-            if ($row_posisikk_fin1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_fin1_1['mulai'] == null) {
                 $waktuawal_fin1 = date_create($row_posisikk_fin1_2['mulai']);
                 $waktuakhir_fin1 = date_create($row_posisikk_fin1_2['selesai']);
-            } elseif ($row_posisikk_fin1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_fin1_2['selesai'] == null) {
                 $waktuawal_fin1 = date_create($row_posisikk_fin1_1['mulai']);
                 $waktuakhir_fin1 = date_create($row_posisikk_fin1_1['mulai']);
             } else {
@@ -1724,7 +1765,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_fin1 = date_create($row_posisikk_fin1_2['selesai']);
             }
 
-            $diff_fin1 = date_diff($waktuawal_fin1, $waktuakhir_fin1);
+            $diff_fin1 = calculateDateDiff($waktuawal_fin1, $waktuakhir_fin1);
             // FIN1
         
             // FNJ1
@@ -1755,10 +1796,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_fnj1_1 = sqlsrv_fetch_array($q_posisikk_fnj1_1);
             $row_posisikk_fnj1_2 = sqlsrv_fetch_array($q_posisikk_fnj1_2);
 
-            if ($row_posisikk_fnj1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_fnj1_1['mulai'] == null) {
                 $waktuawal_fnj1 = date_create($row_posisikk_fnj1_2['mulai']);
                 $waktuakhir_fnj1 = date_create($row_posisikk_fnj1_2['selesai']);
-            } elseif ($row_posisikk_fnj1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_fnj1_2['selesai'] == null) {
                 $waktuawal_fnj1 = date_create($row_posisikk_fnj1_1['mulai']);
                 $waktuakhir_fnj1 = date_create($row_posisikk_fnj1_1['mulai']);
             } else {
@@ -1766,7 +1807,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_fnj1 = $row_posisikk_fnj1_2['selesai'];
             }
             if ($waktuawal_fnj1 != null and $waktuakhir_fnj1 != null) {
-                $diff_fnj1 = date_diff($waktuawal_fnj1, $waktuakhir_fnj1);
+                $diff_fnj1 = calculateDateDiff($waktuawal_fnj1, $waktuakhir_fnj1);
             } else {
                 $diff_fnj1 = 0;
             }
@@ -1800,10 +1841,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_stm1_1 = sqlsrv_fetch_array($q_posisikk_stm1_1);
             $row_posisikk_stm1_2 = sqlsrv_fetch_array($q_posisikk_stm1_2);
 
-            if ($row_posisikk_stm1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_stm1_1['mulai'] == null) {
                 $waktuawal_stm1 = date_create($row_posisikk_stm1_2['mulai']);
                 $waktuakhir_stm1 = date_create($row_posisikk_stm1_2['selesai']);
-            } elseif ($row_posisikk_stm1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_stm1_2['selesai'] == null) {
                 $waktuawal_stm1 = date_create($row_posisikk_stm1_1['mulai']);
                 $waktuakhir_stm1 = date_create($row_posisikk_stm1_1['mulai']);
             } else {
@@ -1811,7 +1852,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_stm1 = date_create($row_posisikk_stm1_2['selesai']);
             }
 
-            $diff_stm1 = date_diff($waktuawal_stm1, $waktuakhir_stm1);
+            $diff_stm1 = calculateDateDiff($waktuawal_stm1, $waktuakhir_stm1);
             // STM1
         
             // STM2
@@ -1842,10 +1883,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_stm2_1 = sqlsrv_fetch_array($q_posisikk_stm2_1);
             $row_posisikk_stm2_2 = sqlsrv_fetch_array($q_posisikk_stm2_2);
 
-            if ($row_posisikk_stm2_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_stm2_1['mulai'] == null) {
                 $waktuawal_stm2 = date_create($row_posisikk_stm2_2['mulai']);
                 $waktuakhir_stm2 = date_create($row_posisikk_stm2_2['selesai']);
-            } elseif ($row_posisikk_stm2_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_stm2_2['selesai'] == null) {
                 $waktuawal_stm2 = date_create($row_posisikk_stm2_1['mulai']);
                 $waktuakhir_stm2 = date_create($row_posisikk_stm2_1['mulai']);
             } else {
@@ -1853,7 +1894,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_stm2 = date_create($row_posisikk_stm2_2['selesai']);
             }
 
-            $diff_stm2 = date_diff($waktuawal_stm2, $waktuakhir_stm2);
+            $diff_stm2 = calculateDateDiff($waktuawal_stm2, $waktuakhir_stm2);
             // STM2
         
             // TDR1
@@ -1884,10 +1925,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_tdr1_1 = sqlsrv_fetch_array($q_posisikk_tdr1_1);
             $row_posisikk_tdr1_2 = sqlsrv_fetch_array($q_posisikk_tdr1_2);
 
-            if ($row_posisikk_tdr1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_tdr1_1['mulai'] == null) {
                 $waktuawal_tdr1 = date_create($row_posisikk_tdr1_2['mulai']);
                 $waktuakhir_tdr1 = date_create($row_posisikk_tdr1_2['selesai']);
-            } elseif ($row_posisikk_tdr1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_tdr1_2['selesai'] == null) {
                 $waktuawal_tdr1 = date_create($row_posisikk_tdr1_1['mulai']);
                 $waktuakhir_tdr1 = date_create($row_posisikk_tdr1_1['mulai']);
             } else {
@@ -1895,7 +1936,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_tdr1 = date_create($row_posisikk_tdr1_2['selesai']);
             }
 
-            $diff_tdr1 = date_diff($waktuawal_tdr1, $waktuakhir_tdr1);
+            $diff_tdr1 = calculateDateDiff($waktuawal_tdr1, $waktuakhir_tdr1);
             // TDR1
         
             // SHR3
@@ -1926,10 +1967,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_shr3_1 = sqlsrv_fetch_array($q_posisikk_shr3_1);
             $row_posisikk_shr3_2 = sqlsrv_fetch_array($q_posisikk_shr3_2);
 
-            if ($row_posisikk_shr3_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_shr3_1['mulai'] == null) {
                 $waktuawal_shr3 = date_create($row_posisikk_shr3_2['mulai']);
                 $waktuakhir_shr3 = date_create($row_posisikk_shr3_2['selesai']);
-            } elseif ($row_posisikk_shr3_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_shr3_2['selesai'] == null) {
                 $waktuawal_shr3 = date_create($row_posisikk_shr3_1['mulai']);
                 $waktuakhir_shr3 = date_create($row_posisikk_shr3_1['mulai']);
             } else {
@@ -1937,7 +1978,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_shr3 = date_create($row_posisikk_shr3_2['selesai']);
             }
 
-            $diff_shr3 = date_diff($waktuawal_shr3, $waktuakhir_shr3);
+            $diff_shr3 = calculateDateDiff($waktuawal_shr3, $waktuakhir_shr3);
             // SHR3
         
             // SHR4
@@ -1968,10 +2009,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_shr4_1 = sqlsrv_fetch_array($q_posisikk_shr4_1);
             $row_posisikk_shr4_2 = sqlsrv_fetch_array($q_posisikk_shr4_2);
 
-            if ($row_posisikk_shr4_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_shr4_1['mulai'] == null) {
                 $waktuawal_shr4 = date_create($row_posisikk_shr4_2['mulai']);
                 $waktuakhir_shr4 = date_create($row_posisikk_shr4_2['selesai']);
-            } elseif ($row_posisikk_shr4_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_shr4_2['selesai'] == null) {
                 $waktuawal_shr4 = date_create($row_posisikk_shr4_1['mulai']);
                 $waktuakhir_shr4 = date_create($row_posisikk_shr4_1['mulai']);
             } else {
@@ -1979,7 +2020,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_shr4 = date_create($row_posisikk_shr4_2['selesai']);
             }
 
-            $diff_shr4 = date_diff($waktuawal_shr4, $waktuakhir_shr4);
+            $diff_shr4 = calculateDateDiff($waktuawal_shr4, $waktuakhir_shr4);
             // SHR4
         
             // SHR5
@@ -2010,10 +2051,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_shr5_1 = sqlsrv_fetch_array($q_posisikk_shr5_1);
             $row_posisikk_shr5_2 = sqlsrv_fetch_array($q_posisikk_shr5_2);
 
-            if ($row_posisikk_shr5_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_shr5_1['mulai'] == null) {
                 $waktuawal_shr5 = date_create($row_posisikk_shr5_2['mulai']);
                 $waktuakhir_shr5 = date_create($row_posisikk_shr5_2['selesai']);
-            } elseif ($row_posisikk_shr5_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_shr5_2['selesai'] == null) {
                 $waktuawal_shr5 = date_create($row_posisikk_shr5_1['mulai']);
                 $waktuakhir_shr5 = date_create($row_posisikk_shr5_1['selesai']);
             } else {
@@ -2021,7 +2062,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_shr5 = date_create($row_posisikk_shr5_2['selesai']);
             }
 
-            $diff_shr5 = date_diff($waktuawal_shr5, $waktuakhir_shr5);
+            $diff_shr5 = calculateDateDiff($waktuawal_shr5, $waktuakhir_shr5);
             // SHR5
         
             // SUE3
@@ -2052,10 +2093,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_sue3_1 = sqlsrv_fetch_array($q_posisikk_sue3_1);
             $row_posisikk_sue3_2 = sqlsrv_fetch_array($q_posisikk_sue3_2);
 
-            if ($row_posisikk_sue3_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_sue3_1['mulai'] == null) {
                 $waktuawal_sue3 = date_create($row_posisikk_sue3_2['mulai']);
                 $waktuakhir_sue3 = date_create($row_posisikk_sue3_2['selesai']);
-            } elseif ($row_posisikk_sue3_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_sue3_2['selesai'] == null) {
                 $waktuawal_sue3 = date_create($row_posisikk_sue3_1['mulai']);
                 $waktuakhir_sue3 = date_create($row_posisikk_sue3_1['mulai']);
             } else {
@@ -2063,7 +2104,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_sue3 = date_create($row_posisikk_sue3_2['selesai']);
             }
 
-            $diff_sue3 = date_diff($waktuawal_sue3, $waktuakhir_sue3);
+            $diff_sue3 = calculateDateDiff($waktuawal_sue3, $waktuakhir_sue3);
             // SUE3
         
             // SUE4
@@ -2094,10 +2135,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_sue4_1 = sqlsrv_fetch_array($q_posisikk_sue4_1);
             $row_posisikk_sue4_2 = sqlsrv_fetch_array($q_posisikk_sue4_2);
 
-            if ($row_posisikk_sue4_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_sue4_1['mulai'] == null) {
                 $waktuawal_sue4 = date_create($row_posisikk_sue4_2['mulai']);
                 $waktuakhir_sue4 = date_create($row_posisikk_sue4_2['selesai']);
-            } elseif ($row_posisikk_sue4_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_sue4_2['selesai'] == null) {
                 $waktuawal_sue4 = date_create($row_posisikk_sue4_1['mulai']);
                 $waktuakhir_sue4 = date_create($row_posisikk_sue4_1['mulai']);
             } else {
@@ -2105,7 +2146,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_sue4 = date_create($row_posisikk_sue4_2['selesai']);
             }
 
-            $diff_sue4 = date_diff($waktuawal_sue4, $waktuakhir_sue4);
+            $diff_sue4 = calculateDateDiff($waktuawal_sue4, $waktuakhir_sue4);
             // SUE4
         
             // FLT1
@@ -2136,10 +2177,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_flt1_1 = sqlsrv_fetch_array($q_posisikk_flt1_1);
             $row_posisikk_flt1_2 = sqlsrv_fetch_array($q_posisikk_flt1_2);
 
-            if ($row_posisikk_flt1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_flt1_1['mulai'] == null) {
                 $waktuawal_flt1 = date_create($row_posisikk_flt1_2['mulai']);
                 $waktuakhir_flt1 = date_create($row_posisikk_flt1_2['selesai']);
-            } elseif ($row_posisikk_flt1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_flt1_2['selesai'] == null) {
                 $waktuawal_flt1 = date_create($row_posisikk_flt1_1['mulai']);
                 $waktuakhir_flt1 = date_create($row_posisikk_flt1_1['mulai']);
             } else {
@@ -2147,7 +2188,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_flt1 = date_create($row_posisikk_flt1_2['selesai']);
             }
 
-            $diff_flt1 = date_diff($waktuawal_flt1, $waktuakhir_flt1);
+            $diff_flt1 = calculateDateDiff($waktuawal_flt1, $waktuakhir_flt1);
             // FLT1
         
             // INS2
@@ -2178,10 +2219,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_ins2_1 = sqlsrv_fetch_array($q_posisikk_ins2_1);
             $row_posisikk_ins2_2 = sqlsrv_fetch_array($q_posisikk_ins2_2);
 
-            if ($row_posisikk_ins2_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_ins2_1['mulai'] == null) {
                 $waktuawal_ins2 = date_create($row_posisikk_ins2_2['mulai']);
                 $waktuakhir_ins2 = date_create($row_posisikk_ins2_2['selesai']);
-            } elseif ($row_posisikk_ins2_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_ins2_2['selesai'] == null) {
                 $waktuawal_ins2 = date_create($row_posisikk_ins2_1['mulai']);
                 $waktuakhir_ins2 = date_create($row_posisikk_ins2_1['mulai']);
             } else {
@@ -2189,7 +2230,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_ins2 = date_create($row_posisikk_ins2_2['selesai']);
             }
 
-            $diff_ins2 = date_diff($waktuawal_ins2, $waktuakhir_ins2);
+            $diff_ins2 = calculateDateDiff($waktuawal_ins2, $waktuakhir_ins2);
             // INS2
         
             // ROT1
@@ -2220,10 +2261,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_rot1_1 = sqlsrv_fetch_array($q_posisikk_rot1_1);
             $row_posisikk_rot1_2 = sqlsrv_fetch_array($q_posisikk_rot1_2);
 
-            if ($row_posisikk_rot1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_rot1_1['mulai'] == null) {
                 $waktuawal_rot1 = date_create($row_posisikk_rot1_2['mulai']);
                 $waktuakhir_rot1 = date_create($row_posisikk_rot1_2['selesai']);
-            } elseif ($row_posisikk_rot1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_rot1_2['selesai'] == null) {
                 $waktuawal_rot1 = date_create($row_posisikk_rot1_1['mulai']);
                 $waktuakhir_rot1 = date_create($row_posisikk_rot1_1['mulai']);
             } else {
@@ -2231,7 +2272,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_rot1 = date_create($row_posisikk_rot1_2['selesai']);
             }
 
-            $diff_rot1 = date_diff($waktuawal_rot1, $waktuakhir_rot1);
+            $diff_rot1 = calculateDateDiff($waktuawal_rot1, $waktuakhir_rot1);
             // ROT1
         
             // SPT1
@@ -2262,10 +2303,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_spt1_1 = sqlsrv_fetch_array($q_posisikk_spt1_1);
             $row_posisikk_spt1_2 = sqlsrv_fetch_array($q_posisikk_spt1_2);
 
-            if ($row_posisikk_spt1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_spt1_1['mulai'] == null) {
                 $waktuawal_spt1 = date_create($row_posisikk_spt1_2['mulai']);
                 $waktuakhir_spt1 = date_create($row_posisikk_spt1_2['selesai']);
-            } elseif ($row_posisikk_spt1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_spt1_2['selesai'] == null) {
                 $waktuawal_spt1 = date_create($row_posisikk_spt1_1['mulai']);
                 $waktuakhir_spt1 = date_create($row_posisikk_spt1_1['mulai']);
             } else {
@@ -2273,7 +2314,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_spt1 = date_create($row_posisikk_spt1_2['selesai']);
             }
 
-            $diff_spt1 = date_diff($waktuawal_spt1, $waktuakhir_spt1);
+            $diff_spt1 = calculateDateDiff($waktuawal_spt1, $waktuakhir_spt1);
             // SPT1
         
             // SUB1
@@ -2304,10 +2345,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_sub1_1 = sqlsrv_fetch_array($q_posisikk_sub1_1);
             $row_posisikk_sub1_2 = sqlsrv_fetch_array($q_posisikk_sub1_2);
 
-            if ($row_posisikk_sub1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_sub1_1['mulai'] == null) {
                 $waktuawal_sub1 = date_create($row_posisikk_sub1_2['mulai']);
                 $waktuakhir_sub1 = date_create($row_posisikk_sub1_2['selesai']);
-            } elseif ($row_posisikk_sub1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_sub1_2['selesai'] == null) {
                 $waktuawal_sub1 = date_create($row_posisikk_sub1_1['mulai']);
                 $waktuakhir_sub1 = date_create($row_posisikk_sub1_1['mulai']);
             } else {
@@ -2315,7 +2356,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_sub1 = date_create($row_posisikk_sub1_2['selesai']);
             }
 
-            $diff_sub1 = date_diff($waktuawal_sub1, $waktuakhir_sub1);
+            $diff_sub1 = calculateDateDiff($waktuawal_sub1, $waktuakhir_sub1);
             // SUB1
         
             // CUR1
@@ -2346,10 +2387,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_cur1_1 = sqlsrv_fetch_array($q_posisikk_cur1_1);
             $row_posisikk_cur1_2 = sqlsrv_fetch_array($q_posisikk_cur1_2);
 
-            if ($row_posisikk_cur1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_cur1_1['mulai'] == null) {
                 $waktuawal_cur1 = date_create($row_posisikk_cur1_2['mulai']);
                 $waktuakhir_cur1 = date_create($row_posisikk_cur1_2['selesai']);
-            } elseif ($row_posisikk_cur1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_cur1_2['selesai'] == null) {
                 $waktuawal_cur1 = date_create($row_posisikk_cur1_1['mulai']);
                 $waktuakhir_cur1 = date_create($row_posisikk_cur1_1['mulai']);
             } else {
@@ -2357,7 +2398,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_cur1 = date_create($row_posisikk_cur1_2['selesai']);
             }
 
-            $diff_cur1 = date_diff($waktuawal_cur1, $waktuakhir_cur1);
+            $diff_cur1 = calculateDateDiff($waktuawal_cur1, $waktuakhir_cur1);
             // CUR1
         
             // INS3
@@ -2370,7 +2411,7 @@ header('Cache-Control: max-age=0');
             $waktuawal_ins3 = date_create($row_posisikk_ins3_1['MULAI']);
             $waktuakhir_ins3 = date_create($row_posisikk_ins3_2['MULAI']);
 
-            $diff_ins3 = date_diff($waktuawal_ins3, $waktuakhir_ins3);
+            $diff_ins3 = calculateDateDiff($waktuawal_ins3, $waktuakhir_ins3);
             // INS3
         
             // QCF4
@@ -2401,10 +2442,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_qcf4_1 = sqlsrv_fetch_array($q_posisikk_qcf4_1);
             $row_posisikk_qcf4_2 = sqlsrv_fetch_array($q_posisikk_qcf4_2);
 
-            if ($row_posisikk_qcf4_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_qcf4_1['mulai'] == null) {
                 $waktuawal_qcf4 = date_create($row_posisikk_qcf4_2['mulai']);
                 $waktuakhir_qcf4 = date_create($row_posisikk_qcf4_2['selesai']);
-            } elseif ($row_posisikk_qcf4_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_qcf4_2['selesai'] == null) {
                 $waktuawal_qcf4 = date_create($row_posisikk_qcf4_1['mulai']);
                 $waktuakhir_qcf4 = date_create($row_posisikk_qcf4_1['mulai']);
             } else {
@@ -2413,7 +2454,7 @@ header('Cache-Control: max-age=0');
             }
 
             if ($waktuawal_qcf4 != NULL & $waktuakhir_qcf4 != null || $waktuawal_qcf4 != '' & $waktuakhir_qcf4 != '') {
-                $diff_qcf4 = date_diff($waktuawal_qcf4, $waktuakhir_qcf4);
+                $diff_qcf4 = calculateDateDiff($waktuawal_qcf4, $waktuakhir_qcf4);
             } else {
                 $diff_qcf4 = 0;
             }
@@ -2429,7 +2470,7 @@ header('Cache-Control: max-age=0');
             $waktuawal_cnp1 = date_create($row_posisikk_cnp1_1['MULAI']);
             $waktuakhir_cnp1 = date_create($row_posisikk_cnp1_2['MULAI']);
 
-            $diff_cnp1 = date_diff($waktuawal_cnp1, $waktuakhir_cnp1);
+            $diff_cnp1 = calculateDateDiff($waktuawal_cnp1, $waktuakhir_cnp1);
             // CNP1
         
             // GKJ1
@@ -2460,10 +2501,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_gkj1_1 = sqlsrv_fetch_array($q_posisikk_gkj1_1);
             $row_posisikk_gkj1_2 = sqlsrv_fetch_array($q_posisikk_gkj1_2);
 
-            if ($row_posisikk_gkj1_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_gkj1_1['mulai'] == null) {
                 $waktuawal_gkj1 = date_create($row_posisikk_gkj1_2['mulai']);
                 $waktuakhir_gkj1 = date_create($row_posisikk_gkj1_2['selesai']);
-            } elseif ($row_posisikk_gkj1_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_gkj1_2['selesai'] == null) {
                 $waktuawal_gkj1 = date_create($row_posisikk_gkj1_1['mulai']);
                 $waktuakhir_gkj1 = date_create($row_posisikk_gkj1_1['selesai']);
             } else {
@@ -2471,11 +2512,11 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_gkj1 = $row_posisikk_gkj1_2['selesai'];
             }
             if ($waktuawal_gkj1 != null and $waktuakhir_gkj1 != null) {
-                $diff_gkj1 = date_diff($waktuawal_gkj1, $waktuakhir_gkj1);
+                $diff_gkj1 = calculateDateDiff($waktuawal_gkj1, $waktuakhir_gkj1);
             } else {
                 $diff_gkj1 = 0;
             }
-            // $diff_gkj1 = date_diff($waktuawal_gkj1, $waktuakhir_gkj1);
+            // $diff_gkj1 = calculateDateDiff($waktuawal_gkj1, $waktuakhir_gkj1);
             // GKJ1
         
             // PPC4
@@ -2506,10 +2547,10 @@ header('Cache-Control: max-age=0');
             $row_posisikk_ppc4_1 = sqlsrv_fetch_array($q_posisikk_ppc4_1);
             $row_posisikk_ppc4_2 = sqlsrv_fetch_array($q_posisikk_ppc4_2);
 
-            if ($row_posisikk_ppc4_1['mulai'] == '1900-01-01 00:00:00.000') {
+            if ($row_posisikk_ppc4_1['mulai'] == null) {
                 $waktuawal_ppc4 = date_create($row_posisikk_ppc4_2['mulai']);
                 $waktuakhir_ppc4 = date_create($row_posisikk_ppc4_2['selesai']);
-            } elseif ($row_posisikk_ppc4_2['selesai'] == '1900-01-01 00:00:00.000') {
+            } elseif ($row_posisikk_ppc4_2['selesai'] == null) {
                 $waktuawal_ppc4 = date_create($row_posisikk_ppc4_1['mulai']);
                 $waktuakhir_ppc4 = date_create($row_posisikk_ppc4_1['mulai']);
             } else {
@@ -2517,7 +2558,7 @@ header('Cache-Control: max-age=0');
                 $waktuakhir_ppc4 = $row_posisikk_ppc4_2['selesai'];
             }
             if ($waktuawal_ppc4 != NULL & $waktuakhir_ppc4 != NULL) {
-                $diff_ppc4 = date_diff($waktuawal_ppc4, $waktuakhir_ppc4);
+                $diff_ppc4 = calculateDateDiff($waktuawal_ppc4, $waktuakhir_ppc4);
             } else {
                $diff_ppc4 = 0;
             }
