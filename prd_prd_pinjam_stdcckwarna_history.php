@@ -40,6 +40,7 @@
             ini_set("error_reporting", 1);
             session_start();
             require_once "koneksi.php";
+            include "utils/helper.php";
 
             // Menangani input GET dengan aman
             $id = isset($_GET['id']) ? $_GET['id'] : '';
@@ -60,7 +61,7 @@
 
             // Menampilkan data
             while ($row_history = sqlsrv_fetch_array($q_history)) {
-                $no_absen       = ltrim($row_history['no_absen'], '0');
+                $no_absen       = ltrim($row_history['no_absen']?? '', '0');
                 $cari_nama_in   = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
                 $nama_in        = mysqli_fetch_assoc($cari_nama_in);
                 $ket            = substr($row_history['ket'], 20);
@@ -68,9 +69,9 @@
                 <tr>
                     <td></td>
                     <td><?= htmlspecialchars($row_history['no_absen'] . ' - ' . ($nama_in['nama'] ?? '')); ?></td>
-                    <td><?= !empty($row_history['tgl_in']) && $row_history['tgl_in'] != '0000-00-00' ? $row_history['tgl_in'] : ''; ?>
+                    <td><?= cek($row_history['tgl_in']); ?>
                     </td>
-                    <td><?= !empty($row_history['tgl_out']) && $row_history['tgl_out'] != '0000-00-00' ? $row_history['tgl_out'] : ''; ?>
+                    <td><?= cek($row_history['tgl_out']); ?>
                     </td>
                     <td><?= htmlspecialchars($row_history['ket']); ?></td>
                 </tr>
