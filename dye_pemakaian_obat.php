@@ -18,13 +18,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>LAB - laporan Pemakaian Obat Gd. Kimia</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="#">
-    <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
+    <meta name="keywords"
+        content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
@@ -35,13 +37,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" type="text/css" href="files\assets\css\style.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\pcoded-horizontal.min.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\extensions\buttons\css\buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="files\assets\pages\data-table\extensions\buttons\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
 </head>
 <?php require_once 'header.php'; ?>
+
 <body>
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
@@ -60,33 +66,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 <div class="col-sm-12 col-xl-2 m-b-0">
                                                     <h4 class="sub-title">Tanggal Awal</h4>
                                                     <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" required placeholder="input-group-sm" name="tgl" value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl']; } ?>" required>
-                                                        <input name="time" type="text" class="form-control" id="time" placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}$" title=" e.g 14:25" onkeyup="
+                                                        <input type="date" class="form-control" required
+                                                            placeholder="input-group-sm" name="tgl"
+                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl']; } ?>"
+                                                            required>
+                                                        <input name="time" type="text" class="form-control" id="time"
+                                                            placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}$"
+                                                            title=" e.g 14:25" onkeyup="
 																				var time = this.value;
 																				if (time.match(/^\d{2}$/) !== null) {
 																					this.value = time + ':';
 																				} else if (time.match(/^\d{2}\:\d{2}$/) !== null) {
 																					this.value = time + '';
-																				}" value="<?php if (isset($_POST['submit'])){ echo $_POST['time']; } ?>" size="5" maxlength="5" required>
+																				}" value="<?php if (isset($_POST['submit'])){ echo $_POST['time']; } ?>" size="5" maxlength="5"
+                                                            required>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-0">
                                                     <h4 class="sub-title">Tanggal Akhir</h4>
                                                     <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" required placeholder="input-group-sm" name="tgl2" value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>" required>
-                                                        <input name="time2" type="text" class="form-control" id="time2" placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}$" title=" e.g 14:25" onkeyup="
+                                                        <input type="date" class="form-control" required
+                                                            placeholder="input-group-sm" name="tgl2"
+                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>"
+                                                            required>
+                                                        <input name="time2" type="text" class="form-control" id="time2"
+                                                            placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}$"
+                                                            title=" e.g 14:25" onkeyup="
 																				var time = this.value;
 																				if (time.match(/^\d{2}$/) !== null) {
 																					this.value = time + ':';
 																				} else if (time.match(/^\d{2}\:\d{2}$/) !== null) {
 																					this.value = time + '';
-																				}" value="<?php if (isset($_POST['submit'])){ echo $_POST['time2']; } ?>" size="5" maxlength="5" required>
+																				}" value="<?php if (isset($_POST['submit'])){ echo $_POST['time2']; } ?>" size="5" maxlength="5"
+                                                            required>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-0">
                                                     <h4 class="sub-title">LOGICAL WAREHOUSE</h4>
                                                     <div class="input-group input-group-sm">
-                                                        <select name="warehouse" class="form-control" style="width: 100%;" required>
+                                                        <select name="warehouse" class="form-control"
+                                                            style="width: 100%;" required>
                                                             <option value="M510">M510</option>
                                                             <?php 
                                                                 $sqlDB  =   "SELECT  
@@ -99,48 +118,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 $stmt   =   db2_exec($conn1, $sqlDB);
                                                                 while ($rowdb = db2_fetch_assoc($stmt)) {
                                                             ?>
-                                                            <option value="<?= $rowdb['CODE']; ?>" <?php if($rowdb['CODE'] == $_POST['warehouse']){ echo "SELECTED"; } ?>>
+                                                            <option value="<?= $rowdb['CODE']; ?>"
+                                                                <?php if($rowdb['CODE'] == $_POST['warehouse']){ echo "SELECTED"; } ?>>
                                                                 <?= $rowdb['CODE']; ?> <?= $rowdb['LONGDESCRIPTION']; ?>
                                                             </option>
-                                                            <?php } ?> 
+                                                            <?php } ?>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2">
-                                                <h4 class="sub-title">&nbsp;</h4>
-                                                    <button type="submit" name="submit" class="btn btn-primary btn-sm"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
-                                                        <?php if (isset($_POST['submit'])) { ?>
-                                                            <a href="print_laporan pemakaian_obat2.php" class="btn btn-info btn-sm"><i class="icofont icofont-print"></i>Download Test</a>
-                                                        <?php } ?>
+                                                    <h4 class="sub-title">&nbsp;</h4>
+                                                    <button type="submit" name="submit"
+                                                        class="btn btn-primary btn-sm"><i
+                                                            class="icofont icofont-search-alt-1"></i> Cari data</button>
                                                 </div>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                                 <?php if (isset($_POST['submit'])) : ?>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="card">
-                                                <div class="card-header table-card-header">
-                                                    <h5>LAPORAN HARIAN PEMAKAIAN OBAT GUDANG KIMIA</h5>
-                                                </div>
-                                                <div class="card-block">
-                                                    <div class="dt-responsive table-responsive">
-                                                        <table id="basic-btn" class="table compact table-striped table-bordered nowrap">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>No. Group Line</th>
-                                                                    <th>Tanggal & Jam</th>
-                                                                    <th>Kode Obat</th>
-                                                                    <th>QTY TARGET</th>
-                                                                    <th>QTY Actual</th>
-                                                                    <th>SATUAN</th>
-                                                                    <th>KETERANGAN</th>
-                                                                    <th>NAMA OBAT</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <?php
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header table-card-header">
+                                                <h5>LAPORAN HARIAN PEMAKAIAN OBAT GUDANG KIMIA</h5>
+                                            </div>
+                                            <div class="card-block">
+                                                <div class="dt-responsive table-responsive">
+                                                    <table id="basic-btn"
+                                                        class="table compact table-striped table-bordered nowrap">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>No. Group Line</th>
+                                                                <th>Tanggal & Jam</th>
+                                                                <th>Kode Obat</th>
+                                                                <th>QTY TARGET</th>
+                                                                <th>QTY Actual</th>
+                                                                <th>SATUAN</th>
+                                                                <th>KETERANGAN</th>
+                                                                <th>NAMA OBAT</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php
                                                                     if($_POST['time'] && $_POST['time2']){
                                                                         $where_time     = "AND s.TRANSACTIONTIME BETWEEN '$_POST[time]' AND '$_POST[time2]'";
                                                                     }else{
@@ -234,36 +254,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                                                                     p.PRODRESERVATIONLINKGROUPCODE");
                                                                         $row_reservation    = db2_fetch_assoc($db_reservation);
                                                                 ?>
-                                                                <tr>
-                                                                    <td><?php if($row_reservation['NO_RESEP']){ echo $row_reservation['NO_RESEP']; } else { echo $row_stocktransaction['PRODUCTIONORDERCODE']; } ?></td>
-                                                                    <td><?= $row_stocktransaction['TGL']; ?></td>
-                                                                    <td><?= $row_stocktransaction['KODE_OBAT']; ?></td>
-                                                                    <td><?= number_format($row_reservation['USERPRIMARYQUANTITY'], 2); ?></td>
-                                                                    <td>
-                                                                        <?php if(substr(number_format($row_stocktransaction['AKTUAL_QTY'], 2), -3) == '.00') : ?>
-                                                                            <?= number_format($row_stocktransaction['AKTUAL_QTY'], 0); ?>
-                                                                        <?php else : ?>
-                                                                            <?= number_format($row_stocktransaction['AKTUAL_QTY'], 2); ?>
-                                                                        <?php endif; ?>
-                                                                    </td>
-                                                                    <td><?= $row_stocktransaction['SATUAN']; ?></td>
-                                                                    <td>
-                                                                        <?php if($row_stocktransaction['TEMPLATECODE'] == '303' OR $row_stocktransaction['TEMPLATECODE'] == '203' OR $row_stocktransaction['TEMPLATECODE'] == '201') : ?>
-                                                                            <?= $row_stocktransaction['KETERANGAN']; ?>
-                                                                        <?php else : ?>
-                                                                            <?= $row_reservation['KETERANGAN']; ?>
-                                                                        <?php endif; ?>
-                                                                    </td>
-                                                                    <td><?= $row_stocktransaction['LONGDESCRIPTION']; ?></td>
-                                                                </tr>
-                                                                <?php } ?>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
+                                                            <tr>
+                                                                <td><?php if($row_reservation['NO_RESEP']){ echo $row_reservation['NO_RESEP']; } else { echo $row_stocktransaction['PRODUCTIONORDERCODE']; } ?>
+                                                                </td>
+                                                                <td><?= $row_stocktransaction['TGL']; ?></td>
+                                                                <td><?= $row_stocktransaction['KODE_OBAT']; ?></td>
+                                                                <td><?= number_format($row_reservation['USERPRIMARYQUANTITY'], 2); ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?php if(substr(number_format($row_stocktransaction['AKTUAL_QTY'], 2), -3) == '.00') : ?>
+                                                                    <?= number_format($row_stocktransaction['AKTUAL_QTY'], 0); ?>
+                                                                    <?php else : ?>
+                                                                    <?= number_format($row_stocktransaction['AKTUAL_QTY'], 2); ?>
+                                                                    <?php endif; ?>
+                                                                </td>
+                                                                <td><?= $row_stocktransaction['SATUAN']; ?></td>
+                                                                <td>
+                                                                    <?php if($row_stocktransaction['TEMPLATECODE'] == '303' OR $row_stocktransaction['TEMPLATECODE'] == '203' OR $row_stocktransaction['TEMPLATECODE'] == '201') : ?>
+                                                                    <?= $row_stocktransaction['KETERANGAN']; ?>
+                                                                    <?php else : ?>
+                                                                    <?= $row_reservation['KETERANGAN']; ?>
+                                                                    <?php endif; ?>
+                                                                </td>
+                                                                <td><?= $row_stocktransaction['LONGDESCRIPTION']; ?>
+                                                                </td>
+                                                            </tr>
+                                                            <?php } ?>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -295,8 +318,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="files\bower_components\datatables.net-responsive\js\dataTables.responsive.min.js"></script>
     <script src="files\bower_components\datatables.net-responsive-bs4\js\responsive.bootstrap4.min.js"></script>
     <script type="text/javascript" src="files\bower_components\i18next\js\i18next.min.js"></script>
-    <script type="text/javascript" src="files\bower_components\i18next-xhr-backend\js\i18nextXHRBackend.min.js"></script>
-    <script type="text/javascript" src="files\bower_components\i18next-browser-languagedetector\js\i18nextBrowserLanguageDetector.min.js"></script>
+    <script type="text/javascript" src="files\bower_components\i18next-xhr-backend\js\i18nextXHRBackend.min.js">
+    </script>
+    <script type="text/javascript"
+        src="files\bower_components\i18next-browser-languagedetector\js\i18nextBrowserLanguageDetector.min.js"></script>
     <script type="text/javascript" src="files\bower_components\jquery-i18next\js\jquery-i18next.min.js"></script>
     <script src="files\assets\pages\data-table\extensions\buttons\js\extension-btns-custom.js"></script>
     <script src="files\assets\js\pcoded.min.js"></script>
@@ -304,4 +329,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="files\assets\js\jquery.mCustomScrollbar.concat.min.js"></script>
     <script type="text/javascript" src="files\assets\js\script.js"></script>
 </body>
+
 </html>
