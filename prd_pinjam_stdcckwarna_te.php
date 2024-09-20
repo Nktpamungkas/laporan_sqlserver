@@ -2,6 +2,7 @@
 ini_set("error_reporting", E_ALL);
 session_start();
 require_once "koneksi.php";
+include "utils/helper.php";
 
 if (isset($_POST['simpan'])) {
     $id = trim(sprintf("%'.06d\n", $_POST['id']));
@@ -240,18 +241,18 @@ if (isset($_POST['simpan'])) {
 															<td><?= $row_bukupinjam['warna']; ?></td>
 															<td>
 																<?php
-                                                                        $no_absen = ltrim($row_bukupinjam['absen_in'], '0');
+                                                                        $no_absen = ltrim($row_bukupinjam['absen_in'] ?? '', '0');
                                                                         $cari_nama_in = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
                                                                         $cari_nama_out = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
                                                                         $nama_in = mysqli_fetch_assoc($cari_nama_in);
                                                                         $nama_out = mysqli_fetch_assoc($cari_nama_out);
                                                                         if (!empty($row_bukupinjam['tgl_in'])) {
                                                                             echo "Dipinjam : $nama_in[nama] <br>";
-                                                                            echo "Waktu Pinjam :$row_bukupinjam[tgl_in] <br><br>";
+                                                                            echo "Waktu Pinjam :" . cek($row_bukupinjam['tgl_in']) ."<br><br>";
                                                                         }
                                                                         if (!empty($row_bukupinjam['tgl_out'])) {
                                                                             echo "Dikembalikan : $nama_out[nama] <br>";
-                                                                            echo "Waktu Kembali : $row_bukupinjam[tgl_out]";
+                                                                            echo "Waktu Kembali :" . cek($row_bukupinjam['tgl_out']);
                                                                         }
                                                                         ?>
 															</td>

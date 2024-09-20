@@ -1,5 +1,6 @@
 <?php
 require_once "koneksi.php";
+include "utils/helper.php";
 $date = date('Y-m-d H:i:s');
 $q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 $data_login     = sqlsrv_fetch_array($q_cek_login);
@@ -370,30 +371,28 @@ if (isset($_POST['simpan'])) {
                                                                     <td><?= $row_bukupinjam['customer']; ?></td>
                                                                     <td>
                                                                         <?php
-                                                                        $no_absen    = ltrim($row_bukupinjam['absen_in'], '0');
+                                                                        $no_absen    = ltrim($row_bukupinjam['absen_in'] ?? '', '0');
                                                                         $cari_nama_in = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
                                                                         $cari_nama_out = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
                                                                         $nama_in    = mysqli_fetch_assoc($cari_nama_in);
                                                                             $nama_out   = mysqli_fetch_assoc($cari_nama_out);
-                                                                        if ($row_bukupinjam['tgl_in'] !== null && $row_bukupinjam['tgl_in'] !== '') {
-                                                                            if ($row_bukupinjam['tgl_in'] instanceof DateTime) {
-                                                                                $formattedTglIn = $row_bukupinjam['tgl_in']->format('Y-m-d H:i:s');
+                                                                        if (!empty($row_bukupinjam['tgl_in'])) {
+                                                                                $formattedTglIn = cek($row_bukupinjam['tgl_in'],'Y-m-d H:i:s');
                                                                             } else {
                                                                                 $formattedTglIn = $row_bukupinjam['tgl_in'];
                                                                             }
                                                                             echo "Dipinjam : $nama_in[nama] <br>";
                                                                             echo "Waktu Pinjam : $formattedTglIn <br><br>";
-                                                                        }
+                                                                        
 
                                                                         if (!empty($row_bukupinjam['tgl_out'])) {
-                                                                            if ($row_bukupinjam['tgl_out'] instanceof DateTime) {
-                                                                                $formattedTglOut = $row_bukupinjam['tgl_out']->format('Y-m-d H:i:s');
+                                                                                $formattedTglOut = cek($row_bukupinjam['tgl_out'],'Y-m-d H:i:s');
                                                                             } else {
                                                                                 $formattedTglOut = $row_bukupinjam['tgl_out'];
                                                                             }
                                                                             echo "Dikembalikan : $nama_out[nama] <br>";
                                                                             echo "Waktu Kembali : $formattedTglOut";
-                                                                        }
+                                                                        
                                                                         ?>
                                                                     </td>
                                                                     <td>
