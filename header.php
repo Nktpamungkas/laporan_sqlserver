@@ -135,11 +135,11 @@
                                             Laporan pemakaian obat
                                         </a>
                                     </li>
-                                    <li class=" ">
+                                    <!-- <li class=" ">
                                         <a href="dye_Summary_pemakaian_obat.php" data-i18n="nav.animations.main">
                                             Laporan bulanan pemakaian obat
                                         </a>
-                                    </li>
+                                    </li> -->
                                 </ul>
                             </li>
                             <li class="pcoded-hasmenu">
