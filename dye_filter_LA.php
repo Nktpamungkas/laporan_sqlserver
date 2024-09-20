@@ -62,8 +62,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_
                                                     } ?>" required>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
-                                                    <button type="submit" name="submit" class="btn btn-primary"><i
-                                                            class="icofont icofont-search-alt-1"></i> <i
+                                                    <button type="submit" name="submit" class="btn btn-primary"> <i
                                                             class="icofont icofont-search-alt-1"></i> Cari data</button>
                                                 </div>
                                             </div>
