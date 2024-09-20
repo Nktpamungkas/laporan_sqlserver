@@ -273,27 +273,27 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             while ($row_itxviewmemo = db2_fetch_assoc($itxviewmemo)) {
                                                                 // var_dump(print_r($row_itxviewmemo));
                                                                 $r_itxviewmemo[] = [
-                                                                    cek(($row_itxviewmemo['ORDERDATE'])),
-                                                                    cek(($row_itxviewmemo['PELANGGAN'])),
-                                                                    cek(($row_itxviewmemo['NO_ORDER'])),
-                                                                    cek(($row_itxviewmemo['NO_PO'])),
-                                                                    cek(($row_itxviewmemo['KETERANGAN_PRODUCT'])),
-                                                                    cek(($row_itxviewmemo['JENIS_KAIN'])),
-                                                                    cek(($row_itxviewmemo['WARNA'])),
-                                                                    cek(($row_itxviewmemo['NO_WARNA'])),
-                                                                    cek(($row_itxviewmemo['DELIVERY'])),
-                                                                    cek(($row_itxviewmemo['QTY_BAGIKAIN'])),
-                                                                    cek(($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])),
-                                                                    cek(($row_itxviewmemo['NETTO'])),
-                                                                    cek(($row_itxviewmemo['DELAY'])),
-                                                                    cek(($row_itxviewmemo['NO_KK'])),
-                                                                    cek(($row_itxviewmemo['DEMAND'])),
-                                                                    cek(($row_itxviewmemo['ORDERLINE'])),
-                                                                    cek(($row_itxviewmemo['PROGRESSSTATUS'])),
-                                                                    cek(($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
-                                                                    cek(($row_itxviewmemo['KETERANGAN'])),
-                                                                    cek(($row_itxviewmemo['SURATJALAN'])),
-                                                                    cek(($row_itxviewmemo['TGL_KIRIM'])),
+                                                                    cek($row_itxviewmemo['ORDERDATE']),
+                                                                    $row_itxviewmemo['PELANGGAN'],
+                                                                    replaceString(' ', '',$row_itxviewmemo['NO_ORDER']),
+                                                                    $row_itxviewmemo['NO_PO'],
+                                                                    $row_itxviewmemo['KETERANGAN_PRODUCT'],
+                                                                    $row_itxviewmemo['JENIS_KAIN'],
+                                                                    $row_itxviewmemo['WARNA'],
+                                                                    $row_itxviewmemo['NO_WARNA'],
+                                                                    cek($row_itxviewmemo['DELIVERY']),
+                                                                    cek($row_itxviewmemo['QTY_BAGIKAIN']),
+                                                                    cek($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR']),
+                                                                    cek($row_itxviewmemo['NETTO']),
+                                                                    cek($row_itxviewmemo['DELAY']),
+                                                                    $row_itxviewmemo['NO_KK'],
+                                                                    $row_itxviewmemo['DEMAND'],
+                                                                    $row_itxviewmemo['ORDERLINE'],
+                                                                    $row_itxviewmemo['PROGRESSSTATUS'],
+                                                                    $row_itxviewmemo['PROGRESSSTATUS_DEMAND'],
+                                                                    replaceString("'",'',$row_itxviewmemo['KETERANGAN']),
+                                                                    cek($row_itxviewmemo['SURATJALAN']),
+                                                                    cek($row_itxviewmemo['TGL_KIRIM']),
                                                                     $_SERVER['REMOTE_ADDR'],
                                                                     date('Y-m-d H:i:s'),
                                                                     'PO SELESAI'
@@ -379,37 +379,38 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                                                 WHERE 
                                                                                                     $where_order $where_date $where_date_order $where_rec", array('cursor' => DB2_SCROLLABLE));
                                                             $r_itxviewmemo = [];
-                                                            // var_dump($itxviewmemo);
+                                                            var_dump($itxviewmemo);
                                                           
                                                             while ($row_itxviewmemo = db2_fetch_assoc($itxviewmemo)) {
                                                                 // var_dump(print_r($row_itxviewmemo));
                                                                 $r_itxviewmemo[] = [
-                                                                    cek(($row_itxviewmemo['ORDERDATE'])),
-                                                                    cek(($row_itxviewmemo['PELANGGAN'])),
-                                                                    cek(($row_itxviewmemo['NO_ORDER'])),
-                                                                    cek(($row_itxviewmemo['NO_PO'])),
-                                                                    cek(($row_itxviewmemo['KETERANGAN_PRODUCT'])),
-                                                                    cek(($row_itxviewmemo['JENIS_KAIN'])),
-                                                                    cek(($row_itxviewmemo['WARNA'])),
-                                                                    cek(($row_itxviewmemo['NO_WARNA'])),
-                                                                    cek(($row_itxviewmemo['DELIVERY'])),
-                                                                    cek(($row_itxviewmemo['QTY_BAGIKAIN'])),
-                                                                    cek(($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR'])),
-                                                                    cek(($row_itxviewmemo['NETTO'])),
-                                                                    cek(($row_itxviewmemo['DELAY'])),
-                                                                    cek(($row_itxviewmemo['NO_KK'])),
-                                                                    cek(($row_itxviewmemo['DEMAND'])),
-                                                                    cek(($row_itxviewmemo['ORDERLINE'])),
-                                                                    cek(($row_itxviewmemo['PROGRESSSTATUS'])),
-                                                                    cek(($row_itxviewmemo['PROGRESSSTATUS_DEMAND'])),
-                                                                    cek(($row_itxviewmemo['KETERANGAN'])),
-                                                                    cek(($row_itxviewmemo['SURATJALAN'])),
-                                                                    cek(($row_itxviewmemo['TGL_KIRIM'])),
+                                                                    cek($row_itxviewmemo['ORDERDATE']),
+                                                                    $row_itxviewmemo['PELANGGAN'],
+                                                                    replaceString(' ','',$row_itxviewmemo['NO_ORDER']),
+                                                                    $row_itxviewmemo['NO_PO'],
+                                                                    $row_itxviewmemo['KETERANGAN_PRODUCT'],
+                                                                    $row_itxviewmemo['JENIS_KAIN'],
+                                                                    $row_itxviewmemo['WARNA'],
+                                                                    $row_itxviewmemo['NO_WARNA'],
+                                                                    cek($row_itxviewmemo['DELIVERY']),
+                                                                    cek($row_itxviewmemo['QTY_BAGIKAIN']),
+                                                                    cek($row_itxviewmemo['QTY_BAGIKAIN_YD_MTR']),
+                                                                    cek($row_itxviewmemo['NETTO']),
+                                                                    cek($row_itxviewmemo['DELAY']),
+                                                                    cek($row_itxviewmemo['NO_KK']),
+                                                                    cek($row_itxviewmemo['DEMAND']),
+                                                                    $row_itxviewmemo['ORDERLINE'],
+                                                                    $row_itxviewmemo['PROGRESSSTATUS'],
+                                                                    $row_itxviewmemo['PROGRESSSTATUS_DEMAND'],
+                                                                    replaceString("'",'',$row_itxviewmemo['KETERANGAN']),
+                                                                    cek($row_itxviewmemo['SURATJALAN']),
+                                                                    cek($row_itxviewmemo['TGL_KIRIM']),
                                                                     $_SERVER['REMOTE_ADDR'],
                                                                     date('Y-m-d H:i:s'),
                                                                     'PO SELESAI'
                                                                 ];
                                                             }
+
                                                             try {
                                                                 $sql_insert_itxviewmemo = "INSERT INTO nowprd.[itxview_poselesai](
                                                                 ORDERDATE,
@@ -492,6 +493,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                             ORDER BY 
                                                                             NO_ORDER, 
                                                                             ORDERLINE ASC";
+
                                                             $stmt = sqlsrv_query($con_nowprd, $sqlDB2);
                                                             // PENCARIAN BUKAN DENGAN TANGGAL KIRIM
                                                         }
@@ -949,7 +951,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                     </td>
                                                                     <!-- TGL TERIMA ORDER -->
                                                                     <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
-                                                                    <td><?= $rowdb2['NO_ORDER'] . '-' . $rowdb2['ORDERLINE']; ?>
+                                                                    <td><?= $rowdb2['NO_ORDER'].'-'.$rowdb2['ORDERLINE']; ?>
                                                                     </td>
                                                                     <!-- NO. ORDER -->
                                                                     <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->

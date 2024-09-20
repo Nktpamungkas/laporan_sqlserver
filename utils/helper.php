@@ -42,3 +42,13 @@ function calculateDateDiff($waktuawal, $waktuakhir) {
     
     return $diff;
 }
+
+function replaceString($search, $replace, $subject) {
+    // Check if the subject is null
+    if (is_null($subject)) {
+        return null; // Return an empty string if the subject is null
+    }
+
+    // Perform the string replacement
+    return str_replace($search, $replace, $subject);
+}
