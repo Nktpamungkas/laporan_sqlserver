@@ -628,9 +628,9 @@ include_once "utils/helper.php";
                         ?>
                     </td><!-- JAM -->
                     <td></td><!-- ALUR PROSES -->
-                    <td><?= $rowdb2['LOT']; ?></td> <!-- LOT -->
-                    <td><a target="_BLANK" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>"><?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
-                    <td><?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
+                    <td>`<?= $rowdb2['LOT']; ?></td> <!-- LOT -->
+                    <td><a target="_BLANK" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
+                    <td>`<?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
                     <td>
                         <?php
                             $sql_benang_booking_new		= db2_exec($conn1, "SELECT * FROM ITXVIEW_BOOKING_NEW WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]'
