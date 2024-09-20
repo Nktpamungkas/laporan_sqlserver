@@ -171,10 +171,11 @@
                                                             while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
                                                         ?>
                                                         <tr>
-                                                            <td><?= date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'd-m-Y'); ?></td> <!-- CREATE BO -->
+                                                            <td><?= date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'Y-m-d H:i:s'); ?></td> <!-- CREATE BO -->
+                                                            
                                                             <td></td><!-- TERIMA ORDER -->
                                                             <td></td><!-- BAGI LOT -->
-                                                            <td><?= date_format($rowdb2['ORDERDATE'], 'd-m-Y'); ?></td><!-- BUKA KK -->
+                                                            <td><?= date_format($rowdb2['ORDERDATE'], 'Y-m-d H:i:s'); ?></td><!-- BUKA KK -->
                                                             <td></td><!-- HITUNG WAKTU (TERIMA ORDER s/d BUKA KK) -->
                                                             <?php
                                                                 $q_posisikk_tunggu_greige = "SELECT
@@ -242,7 +243,7 @@
                                                             <td>
                                                                 <?php
                                                                     if($KK_OKE){
-                                                                        $CREATE_PO  = new DateTime(date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'd-m-Y'));
+                                                                        $CREATE_PO  = new DateTime(date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'Y-m-d H:i:s'));
                                                                         $KKOKE      = new DateTime($KK_OKE);
                                                                         $d          = $KKOKE->diff($CREATE_PO)->days + 1;
                                                                         if($d >= 1){
@@ -271,7 +272,7 @@
                                                             <td>
                                                                 <?php
                                                                     if($KK_OKE){
-                                                                        $CREATE_PO      = new DateTime(date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'd-m-Y'));
+                                                                        $CREATE_PO      = new DateTime(date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'Y-m-d H:i:s'));
                                                                         $TGLKIRIM_SJ    = new DateTime($d_tglsuratjalan['TGL_SURATJALAN']);
                                                                         $d2          = $TGLKIRIM_SJ->diff($CREATE_PO)->days + 1;
                                                                         if($d2 >= 1){
@@ -310,7 +311,7 @@
                                                             </td> <!-- GRAMASI -->
                                                             <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                                                             <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                                                            <td><?= date_format($rowdb2['DELIVERY'], 'd-m-Y'); ?></td> <!-- DELIVERY -->
+                                                            <td><?= date_format($rowdb2['DELIVERY'], 'Y-m-d'); ?></td> <!-- DELIVERY -->
                                                             <td>
                                                                 <?php 
                                                                     $q_tglbagikain = db2_exec($conn1, "SELECT * FROM ITXVIEW_TGLBAGIKAIN WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
