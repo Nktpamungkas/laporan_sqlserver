@@ -2,6 +2,7 @@
 ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
+include "utils/helper.php";
 if (isset($_POST['simpan'])) {
     $id         = TRIM(sprintf("%'.06d\n", $_POST['id']));
     $no_absen   = $_POST['no_absen'];
@@ -378,18 +379,18 @@ if (isset($_POST['simpan'])) {
                                                                         $q_history  = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.buku_pinjam_history WHERE id_buku_pinjam = '$row_bukupinjam[id]' ORDER BY id DESC");
                                                                         $d_history  = sqlsrv_fetch_array($q_history);
                                                                         if ($d_history['no_absen'] != null or $d_history['no_absen'] != '') {
-                                                                            $no_absen    = ltrim($d_history['no_absen'], '0');
+                                                                            $no_absen    = ltrim($d_history['no_absen'] ?? '', '0');
                                                                         }
                                                                         $cari_nama   = mysqli_query($con_hrd, "SELECT * FROM tbl_makar WHERE no_scan = '$no_absen'");
                                                                         $nama        = mysqli_fetch_assoc($cari_nama);
 
-                                                                        if ($d_history['tgl_in']) {
+                                                                        if (!empty($d_history['tgl_in'])) {
                                                                             echo "Dipinjam : $nama[nama] <br>";
-                                                                            echo "Waktu Pinjam : $d_history[tgl_in] <br>";
+                                                                            echo "Waktu Pinjam :" . cek($d_history['tgl_in']) ."<br>";
                                                                             echo "Ket : $d_history[ket]";
-                                                                        } elseif ($d_history['tgl_out']) {
+                                                                        } elseif (!empty($d_history['tgl_out'])) {
                                                                             echo "Dikembalikan : $nama[nama] <br>";
-                                                                            echo "Waktu Kembali : $d_history[tgl_out]<br>";
+                                                                            echo "Waktu Kembali :". cek($d_history['tgl_out'])."<br>";
                                                                             echo "Ket : $d_history[ket]";
                                                                         }
                                                                         ?>
