@@ -214,7 +214,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_
                                                                                         WHERE 
                                                                                             Ticket_Detail_Addition.ID_NO LIKE '%$_POST[bon_resep]%'
                                                                                     ORDER BY 
-                                                                                        BARIS ASC";
+                                                                                        BARIS, ID_NO ASC";
                                                                     $stmt = sqlsrv_query($conn_sql, $sql_LA);
                                                                     $no = 1;
                                                                     while ($row_la = sqlsrv_fetch_array($stmt)) {
