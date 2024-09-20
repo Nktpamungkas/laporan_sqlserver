@@ -50,7 +50,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_
                             <div class="col-sm-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Filter Data</h5>
+                                        <h5>Filter Data</h5> <?php echo $_SERVER['REMOTE_ADDR']; ?>
                                     </div>
                                     <div class="card-block">
                                         <form action="" method="post">
@@ -78,8 +78,11 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_
                                         // itxviewresep db2
                                         $prod_order = sprintf("%08d", substr($_POST['bon_resep'], 1, 9));
                                         $itxviewresep = db2_exec($conn1, "SELECT * FROM ITXVIEWRESEP WHERE PRODUCTIONORDERCODE = '$prod_order'");
+
+                                        $r_itxviewresep = []; // Inisialisasi array di luar loop
+                                
                                         while ($row_itxviewresep = db2_fetch_assoc($itxviewresep)) {
-                                            $r_itxviewmemo[] = [
+                                            $r_itxviewresep[] = [
                                                 cek($row_itxviewresep['GROUPLINE']),
                                                 cek($row_itxviewresep['PRODRESERVATIONLINKGROUPCODE']),
                                                 cek($row_itxviewresep['SUBCODE01_RESERVATION']),
@@ -105,10 +108,11 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_
                                                 $_SERVER['REMOTE_ADDR'],
                                                 date('Y-m-d H:i:s')
                                             ];
+                                        }
 
-                                            try {
-                                                // Define the query with placeholders
-                                                $query = "INSERT INTO nowprd.itxviewresep (
+                                        try {
+                                            // Define the query with placeholders
+                                            $query = "INSERT INTO nowprd.itxviewresep (
                                                                 GROUPLINE,
                                                                 PRODRESERVATIONLINKGROUPCODE,
                                                                 SUBCODE01_RESERVATION,
@@ -137,27 +141,20 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_
                                                                     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                                                                 )
                                                             ";
-                                                // Prepare the statement
-                                                $stmt = $pdo->prepare($query);
+                                            $stmt = $pdo->prepare($query);
 
-                                                // Define the data to be inserted
-                                                $data = $r_itxviewmemo;
-
-                                                foreach ($data as $row) {
-                                                    // echo '<pre>';
-                                                    // print_r($row);
-                                                    // echo '</pre>';
-                                                    if (!$stmt->execute($row)) {
-                                                        // Handle error
-                                                        echo "Error: ";
-                                                        print_r($stmt->errorInfo());
-                                                        exit();
-                                                    }
+                                            // Insert all data after loop
+                                            foreach ($r_itxviewresep as $row) {
+                                                if (!$stmt->execute($row)) {
+                                                    // Handle error
+                                                    echo "Error: ";
+                                                    print_r($stmt->errorInfo());
+                                                    exit();
                                                 }
-                                                // echo "Data successfully inserted!";
-                                            } catch (PDOException $e) {
-                                                echo "xError: " . $e->getMessage();
                                             }
+                                            // echo "Data successfully inserted!";
+                                        } catch (PDOException $e) {
+                                            echo "xError: " . $e->getMessage();
                                         }
                                         ?>
                                     <?php endif; ?>
@@ -172,6 +169,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxviewresep WHERE IPADDRESS = '$_
                                                                 class="table table-striped table-bordered nowrap">
                                                                 <thead>
                                                                     <tr align="center">
+
                                                                         <th width='5px' hidden>NO</th>
                                                                         <th width='100px'>TRANS DATE</th>
                                                                         <th width='100px'>DESCRIPTION</th>
