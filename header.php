@@ -102,11 +102,11 @@
                                             Cetak Label
                                         </a>
                                     </li>
-                                    <li class=" ">
+                                    <!-- <li class=" ">
                                         <a href="fin_bpp.php" data-i18n="nav.animations.main">
                                             Laporan Pembelian
                                         </a>
-                                    </li>
+                                    </li> -->
                                 </ul>
                             </li>
                             <li class="pcoded-hasmenu">
