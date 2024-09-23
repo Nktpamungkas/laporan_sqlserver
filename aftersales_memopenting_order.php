@@ -1,5 +1,5 @@
 <?php 
-    ini_set("error_reporting", 1);
+    ini_set("error_reporting", 0);
     session_start();
     require_once "koneksi.php";
     sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc_aftersales WHERE CREATEDATETIME BETWEEN GETDATE() - 3 AND GETDATE() - 1");
@@ -181,7 +181,7 @@
                                                     </thead>
                                                     <tbody> 
                                                         <?php 
-                                                            ini_set("error_reporting", 1);
+                                                            ini_set("error_reporting", 0);
                                                             session_start();
                                                             require_once "koneksi.php";
                                                             $prod_order     = $_POST['prod_order'];
@@ -683,7 +683,7 @@
                                                         ?>
                                                         <?php if($cek_operation == "MUNCUL" OR $cek_operation == NULL) : ?>
                                                         <tr>
-                                                            <td><?= date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'd-m-Y'); ?></td> <!-- TGL BUKA ORDER -->
+                                                            <td><?= date_format($rowdb2['CREATIONDATETIME_SALESORDER'], 'H:i:s, d-m-Y'); ?></td> <!-- TGL BUKA ORDER -->
                                                             <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
                                                             <td><?= $rowdb2['NO_ORDER']; ?></td> <!-- NO. ORDER -->
                                                             <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->
@@ -839,7 +839,7 @@
                                     </div>
                                 <?php elseif(isset($_POST['<i class="icofont icofont-refresh"></i> Reset'])) : ?>
                                     <?php
-                                        ini_set("error_reporting", 1);
+                                        ini_set("error_reporting", 0);
                                         session_start();
                                         require_once "koneksi.php";
                                         sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc_aftersales");
