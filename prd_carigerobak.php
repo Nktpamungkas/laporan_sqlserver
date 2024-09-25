@@ -615,7 +615,7 @@
                                                         <td>
                                                             <center><?= $row_ncp['status']; ?></center>
                                                         </td>
-                                                        <td><?= $row_ncp['tgl_buat']->format('') ?></td>
+                                                        <td><?= $row_ncp['tgl_buat'] ?></td>
                                                         <td>-</td>
                                                         <td><?= $row_ncp['peninjau_awal'] ?></td>
                                                         <td><?= $row_ncp['peninjau_akhir'] ?></td>
