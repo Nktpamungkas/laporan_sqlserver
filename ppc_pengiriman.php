@@ -44,12 +44,20 @@
                                                     <input type="text" name="no_order" class="form-control" onkeyup="this.value = this.value.toUpperCase()" value="<?php if (isset($_POST['submit'])){ echo $_POST['no_order']; } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
-                                                    <h4 class="sub-title">Issue Date</h4>
+                                                    <h4 class="sub-title">Issue Date/Tgl Pengiriman</h4>
                                                     <input type="date" name="tgl1" class="form-control" id="tgl1" value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl1']; } ?>">
+                                                </div>
+                                                <div class="col-sm-12 col-xl-2 m-b-30">
+                                                    <h4 class="sub-title">Departemen</h4>
+                                                    <select class="form-control" name="dept" required>
+                                                        <option value="" selected disabled>-Dept-</option>
+                                                        <option value="GKJ" <?php if (isset($_POST['submit'])){ if($_POST['dept'] == 'GKJ'){ echo "Selected"; }} ?>>GKJ</option>
+                                                        <option value="PPC" <?php if (isset($_POST['submit'])){ if($_POST['dept'] == 'PPC'){ echo "Selected"; }} ?>>PPC</option>
+                                                    </select>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-12 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
-                                                    <?php if (isset($_POST['submit'])) : ?>
+                                                    <?php if (isset($_POST['submit']) && $_POST['dept'] == 'PPC') : ?>
                                                         <a class="btn btn-mat btn-warning" target="_blank" href="ppc_pengiriman-excel.php?tgl1=<?= $_POST['tgl1']; ?>&no_order=<?= $_POST['no_order']; ?>">CETAK EXCEL</a>
                                                     <?php endif; ?>
                                                 </div>
@@ -67,6 +75,9 @@
                                                             <th>NO</th>
                                                             <th>TANGGAL</th>
                                                             <th>NO SJ</th>
+                                                            <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                <th>NO WARNA</th>
+                                                            <?php endif; ?>
                                                             <th>WARNA</th>
                                                             <th>ROLL</th>
                                                             <th>QTY KG</th>
@@ -80,6 +91,9 @@
                                                             <th>DEMAND</th>
                                                             <th>FOC</th>
                                                             <th>TYPE</th>
+                                                            <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                <th>LOKASI</th>
+                                                            <?php endif; ?>
                                                         </tr>
                                                     </thead>
                                                     <tbody> 
@@ -115,6 +129,7 @@
                                                                             CASE
                                                                                 WHEN $codeExport THEN '' ELSE i.PO_NUMBER
                                                                             END AS PO_NUMBER,
+                                                                            i.PO_NUMBER AS PO_NUMBER_GKJ,
                                                                             i.PROJECTCODE,
                                                                             DAY(i.GOODSISSUEDATE) ||'-'|| MONTHNAME(i.GOODSISSUEDATE) ||'-'|| YEAR(i.GOODSISSUEDATE) AS GOODSISSUEDATE,
                                                                             i.ORDPRNCUSTOMERSUPPLIERCODE,
@@ -131,16 +146,21 @@
                                                                                     TRIM(i.SUBCODE01) || '-' || TRIM(i.SUBCODE02) || '-' || TRIM(i.SUBCODE03) || '-' || TRIM(i.SUBCODE04) || '-' ||
                                                                                     TRIM(i.SUBCODE05) || '-' || TRIM(i.SUBCODE06) || '-' || TRIM(i.SUBCODE07) || '-' || TRIM(i.SUBCODE08)
                                                                             END AS ITEMDESCRIPTION,
+                                                                            i.ITEMDESCRIPTION AS JENIS_KAIN,
                                                                             CASE
                                                                                 WHEN $codeExport THEN '' ELSE iasp.LOTCODE
                                                                             END AS LOTCODE,
+                                                                            iasp.LOTCODE AS LOTCODE_GKJ,
+                                                                            TRIM(i.SUBCODE05) AS NO_WARNA,
                                                                             CASE
                                                                                 WHEN $codeExport THEN '' ELSE i2.WARNA
                                                                             END AS WARNA,
+                                                                            i2.WARNA AS WARNA_GKJ,
                                                                             i.LEGALNAME1,
                                                                             CASE
                                                                                 WHEN $codeExport THEN 'EXPORT' ELSE i.CODE
-                                                                            END AS CODE
+                                                                            END AS CODE,
+                                                                            LISTAGG(DISTINCT TRIM(iasp.WAREHOUSELOCATIONCODE), ', ') AS LOKASI
                                                                         FROM 
                                                                             ITXVIEW_SURATJALAN_PPC_FOR_POSELESAI i
                                                                         LEFT JOIN ITXVIEW_ALLOCATION_SURATJALAN_PPC iasp ON iasp.CODE = i.CODE
@@ -211,8 +231,13 @@
                                                             <tr>
                                                                 <td><?= $no++; ?></td>
                                                                 <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
-                                                                <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
-                                                                <td><?= $rowdb2['WARNA']; ?></td> 
+                                                                <td><?= $rowdb2['PROVISIONALCODE']; ?></td>
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $rowdb2['NO_WARNA']; ?></td> 
+                                                                    <td><?= $rowdb2['WARNA_GKJ']; ?></td> 
+                                                                <?php elseif($_POST['dept'] == 'PPC') : ?>
+                                                                    <td><?= $rowdb2['WARNA']; ?></td> 
+                                                                <?php endif; ?> 
                                                                 <td><?= $d_ket_foc['ROLL']; ?></td> 
                                                                 <td><?= number_format($d_ket_foc['KG'], 2); ?></td> 
                                                                 <td><?= number_format($d_ket_foc['YARD_MTR'], 2); ?></td> 
@@ -244,7 +269,11 @@
                                                                         }
                                                                     ?>
                                                                 </td> 
-                                                                <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td>`<?= $rowdb2['PO_NUMBER_GKJ']; ?></td> 
+                                                                <?php elseif($_POST['dept'] == 'PPC') : ?>
+                                                                    <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
+                                                                <?php endif; ?>
                                                                 <td>
                                                                     <?php
                                                                         if($rowdb2['CODE'] == 'EXPORT'){
@@ -253,9 +282,17 @@
                                                                             echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
                                                                         }
                                                                     ?>
-                                                                </td> 
-                                                                <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
-                                                                <td>`<?= $rowdb2['LOTCODE']; ?></td> 
+                                                                </td>
+                                                                <?php if($_POST['dept'] == 'PPC') : ?>
+                                                                    <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
+                                                                <?php elseif ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $rowdb2['JENIS_KAIN']; ?></td> 
+                                                                <?php endif; ?>
+                                                                <?php if($_POST['dept'] == 'PPC') : ?>
+                                                                    <td>`<?= $rowdb2['LOTCODE']; ?></td> 
+                                                                <?php elseif ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td>`<?= $rowdb2['LOTCODE_GKJ']; ?></td> 
+                                                                <?php endif; ?>
                                                                 <td>`
                                                                     <?php
                                                                         $q_demand   = db2_exec($conn1, "SELECT 
@@ -270,13 +307,21 @@
                                                                     <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
                                                                 </td> 
                                                                 <td>FOC</td> 
-                                                                <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
+                                                                <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td>
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $rowdb2['LOKASI']; ?></td>
+                                                                <?php endif; ?>
                                                             </tr>
                                                             <tr>
                                                                 <td><?= $no++; ?></td>
                                                                 <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
                                                                 <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
-                                                                <td><?= $rowdb2['WARNA']; ?></td> 
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $rowdb2['NO_WARNA']; ?></td> 
+                                                                    <td><?= $rowdb2['WARNA_GKJ']; ?></td> 
+                                                                <?php elseif($_POST['dept'] == 'PPC') : ?>
+                                                                    <td><?= $rowdb2['WARNA']; ?></td> 
+                                                                <?php endif; ?> 
                                                                 <td>
                                                                     <?php
                                                                         if($rowdb2['CODE'] == 'EXPORT'){
@@ -340,7 +385,11 @@
                                                                         }
                                                                     ?>
                                                                 </td> 
-                                                                <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td>`<?= $rowdb2['PO_NUMBER_GKJ']; ?></td> 
+                                                                <?php elseif($_POST['dept'] == 'PPC') : ?>
+                                                                    <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
+                                                                <?php endif; ?>
                                                                 <td>
                                                                     <?php
                                                                         if($rowdb2['CODE'] == 'EXPORT'){
@@ -350,8 +399,16 @@
                                                                         }
                                                                     ?>
                                                                 </td> 
-                                                                <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
-                                                                <td>`<?= $rowdb2['LOTCODE']; ?></td> 
+                                                                <?php if($_POST['dept'] == 'PPC') : ?>
+                                                                    <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
+                                                                <?php elseif ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $rowdb2['JENIS_KAIN']; ?></td> 
+                                                                <?php endif; ?>
+                                                                <?php if($_POST['dept'] == 'PPC') : ?>
+                                                                    <td>`<?= $rowdb2['LOTCODE']; ?></td> 
+                                                                <?php elseif ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td>`<?= $rowdb2['LOTCODE_GKJ']; ?></td> 
+                                                                <?php endif; ?>
                                                                 <td>
                                                                     <?php
                                                                         $q_demand   = db2_exec($conn1, "SELECT 
@@ -367,13 +424,21 @@
                                                                 </td> 
                                                                 <td><?php if($rowdb2['PAYMENTMETHODCODE'] == 'FOC'){ echo $rowdb2['PAYMENTMETHODCODE']; } ?></td> 
                                                                 <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $rowdb2['LOKASI']; ?></td>
+                                                                <?php endif; ?>
                                                             </tr>
                                                         <?php else : ?>
                                                             <tr>
                                                                 <td><?= $no++; ?></td>
                                                                 <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
                                                                 <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
-                                                                <td><?= $rowdb2['WARNA']; ?></td> 
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $rowdb2['NO_WARNA']; ?></td> 
+                                                                    <td><?= $rowdb2['WARNA_GKJ']; ?></td> 
+                                                                <?php elseif($_POST['dept'] == 'PPC') : ?>
+                                                                    <td><?= $rowdb2['WARNA']; ?></td> 
+                                                                <?php endif; ?> 
                                                                 <td>
                                                                     <?php
                                                                         if($rowdb2['CODE'] == 'EXPORT'){
@@ -440,7 +505,11 @@
                                                                         }
                                                                     ?>
                                                                 </td> 
-                                                                <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td>`<?= $rowdb2['PO_NUMBER_GKJ']; ?></td> 
+                                                                <?php elseif($_POST['dept'] == 'PPC') : ?>
+                                                                    <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
+                                                                <?php endif; ?> 
                                                                 <td>
                                                                     <?php
                                                                         if($rowdb2['CODE'] == 'EXPORT'){
@@ -450,8 +519,16 @@
                                                                         }
                                                                     ?>
                                                                 </td> 
-                                                                <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
-                                                                <td>`<?= $rowdb2['LOTCODE']; ?></td> 
+                                                                <?php if($_POST['dept'] == 'PPC') : ?>
+                                                                    <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
+                                                                <?php elseif ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $rowdb2['JENIS_KAIN']; ?></td> 
+                                                                <?php endif; ?>
+                                                                <?php if($_POST['dept'] == 'PPC') : ?>
+                                                                    <td>`<?= $rowdb2['LOTCODE']; ?></td> 
+                                                                <?php elseif ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td>`<?= $rowdb2['LOTCODE_GKJ']; ?></td> 
+                                                                <?php endif; ?>
                                                                 <td>
                                                                     <?php
                                                                         $q_demand   = db2_exec($conn1, "SELECT 
@@ -467,6 +544,9 @@
                                                                 </td> 
                                                                 <td><?php if($rowdb2['PAYMENTMETHODCODE'] == 'FOC'){ echo $rowdb2['PAYMENTMETHODCODE']; } ?></td> 
                                                                 <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $rowdb2['LOKASI']; ?></td>
+                                                                <?php endif; ?>
                                                             </tr>
                                                         <?php endif; ?>
                                                         <?php } ?>
@@ -476,6 +556,7 @@
                                                                                                 DISTINCT
                                                                                                 i.GOODSISSUEDATE,
                                                                                                 i.PROVISIONALCODE,
+                                                                                                TRIM(i2.SUBCODE05) AS NO_WARNA,
                                                                                                 i2.WARNA,
                                                                                                 COUNT(i2.SUBCODE05) AS ROLL,
                                                                                                 SUM(iasp.BASEPRIMARYQUANTITY) AS QTY_KG,
@@ -488,7 +569,8 @@
                                                                                                     WHEN LOCATE('//', LISTAGG(DISTINCT TRIM(p.LONGDESCRIPTION), '//')) = 0 THEN LISTAGG(DISTINCT TRIM(p.LONGDESCRIPTION), '//')
                                                                                                     ELSE
                                                                                                         SUBSTR(LISTAGG(DISTINCT TRIM(p.LONGDESCRIPTION), '//'), 1, LOCATE('//', LISTAGG(DISTINCT TRIM(p.LONGDESCRIPTION), '//'))-1)
-                                                                                                END AS JENIS_KAIN   
+                                                                                                END AS JENIS_KAIN,
+                                                                                                LISTAGG(DISTINCT TRIM(iasp.WAREHOUSELOCATIONCODE), ', ') AS LOKASI
                                                                                             FROM 
                                                                                                 ITXVIEW_SURATJALAN_PPC i
                                                                                             LEFT JOIN ITXVIEW_ALLOCATION_SURATJALAN_PPC iasp ON iasp.CODE = i.CODE
@@ -510,6 +592,7 @@
                                                                                             GROUP BY 
                                                                                                 i.GOODSISSUEDATE,
                                                                                                 i.PROVISIONALCODE,
+                                                                                                i2.SUBCODE05,
                                                                                                 i2.WARNA,
                                                                                                 i.LONGDESCRIPTION,
                                                                                                 i.LEGALNAME1,
@@ -521,6 +604,9 @@
                                                                 <td><?= $nourut++; ?></td>
                                                                 <td><?= $row_stmt_cap_kff['GOODSISSUEDATE']; ?></td> 
                                                                 <td><?= $row_stmt_cap_kff['PROVISIONALCODE']; ?></td> 
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $row_stmt_cap_kff['NO_WARNA']; ?></td> 
+                                                                <?php endif; ?> 
                                                                 <td><?= $row_stmt_cap_kff['WARNA']; ?></td> 
                                                                 <td><?= $row_stmt_cap_kff['ROLL']; ?></td> 
                                                                 <td><?= $row_stmt_cap_kff['QTY_KG']; ?></td> 
@@ -534,6 +620,9 @@
                                                                 <td></td> 
                                                                 <td></td> 
                                                                 <td>KFF</td> 
+                                                                <?php if ($_POST['dept'] == 'GKJ') : ?>
+                                                                    <td><?= $row_stmt_cap_kff['LOKASI']; ?></td>
+                                                                <?php endif; ?>
                                                             </tr>
                                                         <?php } ?>
                                                     </tbody>
