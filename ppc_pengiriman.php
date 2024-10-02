@@ -138,6 +138,7 @@
                                                                                 i.DLVSALORDERLINESALESORDERCODE AS DLVSALORDERLINESALESORDERCODE,
                                                                                 i.DLVSALESORDERLINEORDERLINE AS DLVSALESORDERLINEORDERLINE,
                                                                                 LISTAGG(DISTINCT TRIM(iasp.LOTCODE), ', ' ) AS LOTCODE,
+                                                                                LISTAGG(DISTINCT ''''|| TRIM(iasp.LOTCODE) ||'''', ', ' ) AS LOTCODE2,
                                                                                 i2.WARNA AS WARNA,
                                                                                 i.LEGALNAME1,
                                                                                 i.CODE AS CODE
@@ -343,7 +344,7 @@
                                                                                                             FROM 
                                                                                                                 ITXVIEWALLOCATION0 
                                                                                                             WHERE 
-                                                                                                                CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                                                                CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])
                                                                                                             GROUP BY 
                                                                                                                 LOTCODE");
                                                                             $d_roll     = db2_fetch_assoc($q_roll);
@@ -400,7 +401,7 @@
                                                                     ?>
                                                                     <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
                                                                 </td> 
-                                                                <td><?php if($d_ket_foc['ROLL']){ echo 'FOC'; } ?></td> 
+                                                                <td><?= $rowdb2['PAYMENTMETHODCODE']; ?></td> 
                                                                 <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
                                                                 <td><?= $rowdb2['NO_WARNA'] ?></td>
                                                                 <td><?= $rowdb2['JENIS_KAIN'] ?></td>
