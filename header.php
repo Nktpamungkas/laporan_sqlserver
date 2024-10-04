@@ -327,7 +327,7 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="pcoded-hasmenu">
+                            <!-- <li class="pcoded-hasmenu">
                                 <a href="javascript:void(0)">
                                     <span class="pcoded-micon"><i class="icofont icofont-picture"></i></span>
                                     <span class="pcoded-mtext">PRT</span>
@@ -340,7 +340,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <li class="pcoded-hasmenu">
                                 <a href="javascript:void(0)">
                                     <span class="pcoded-micon"><i class="icofont icofont-support"></i></span>
