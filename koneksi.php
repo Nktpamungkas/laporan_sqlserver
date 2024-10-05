@@ -20,6 +20,7 @@ $password = "Q?o*]vdjDb#w";
 $db_name = "LA1000_Exchange";
 $connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
 $conn_sql2 = sqlsrv_connect($host, $connInfo);
+
 $host = "10.0.4.8";
 $username = "sa";
 $password = "Q?o*]vdjDb#w";
