@@ -133,7 +133,10 @@
                                                                                 LISTAGG(DISTINCT TRIM(iasp.WAREHOUSELOCATIONCODE), ', ') AS LOKASI,
                                                                                 DAY(i.GOODSISSUEDATE) || '-' || MONTHNAME(i.GOODSISSUEDATE) || '-' || YEAR(i.GOODSISSUEDATE) AS GOODSISSUEDATE,
                                                                                 i.ORDPRNCUSTOMERSUPPLIERCODE,
-                                                                                i.PAYMENTMETHODCODE,
+                                                                                CASE 
+                                                                                    WHEN i.PAYMENTMETHODCODE <> 'FOC' THEN ''
+                                                                                    ELSE i.PAYMENTMETHODCODE
+                                                                                END AS PAYMENTMETHODCODE,
                                                                                 i.ITEMTYPEAFICODE,
                                                                                 i.DLVSALORDERLINESALESORDERCODE AS DLVSALORDERLINESALESORDERCODE,
                                                                                 i.DLVSALESORDERLINEORDERLINE AS DLVSALESORDERLINEORDERLINE,
@@ -454,7 +457,7 @@
                                                                         ?>
                                                                         <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
                                                                     </td> 
-                                                                    <td><?= $rowdb2['PAYMENTMETHODCODE']; ?></td> 
+                                                                    <td><?php echo $rowdb2['PAYMENTMETHODCODE']; ?></td> 
                                                                     <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
                                                                     <td><?= $rowdb2['NO_WARNA'] ?></td>
                                                                     <td><?= $rowdb2['JENIS_KAIN'] ?></td>
@@ -550,7 +553,7 @@
                                                                         ?>
                                                                         <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
                                                                     </td> 
-                                                                    <td><?= $rowdb2['PAYMENTMETHODCODE']; ?></td> 
+                                                                    <td><?php echo $rowdb2['PAYMENTMETHODCODE']; ?></td> 
                                                                     <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
                                                                     <td><?= $rowdb2['NO_WARNA'] ?></td>
                                                                     <td><?= $rowdb2['JENIS_KAIN'] ?></td>
