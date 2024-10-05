@@ -62,50 +62,98 @@
 <script type="text/javascript" src="files\bower_components\multiselect\js\jquery.multi-select.js"></script>
 <script type="text/javascript" src="files\assets\js\jquery.quicksearch.js"></script>
 <script>
-    $.fn.editable.defaults.mode = 'inline';
-    $(document).ready(function() {
-      $('.note_edit').editable({
-          type: 'text',
-          showbuttons : false,
-          url: 'editable/editable_bukupinjam_note.php',
-      });
-      $('.kode_edit').editable({
-        type: 'select',
-        showbuttons : false,
-        url: 'editable/editable_bukupinjam_kode.php',
-        disabled : false,
-        showbuttons : false,
-        source:[{value: "", text: ""}, 
-                {value: "DL", text: "DL - Dye Lot Card"},
-                {value: "RC", text: "RC - Recipe Card"},
-                {value: "OR", text: "OR - Original"},
-                {value: "LD", text: "LD - Lab Dip"},
-                {value: "SL", text: "SL - Sample L/D"},
-                {value: "TE", text: "TE - Tempelan Sample Celup"},
-                {value: "FL", text: "FL - Frist Lot"}]
-      });
-      $('.archive_edit').editable({
-        type: 'select',
-        showbuttons : false,
-        url: 'editable/editable_archive.php',
-        disabled : false,
-        showbuttons : false,
-        source:[{value: "", text: ""}, 
-                {value: "Diarsipkan", text: "Diarsipkan"},
-                {value: "Belum_Diarsipkan", text: "Belum Diarsipkan"}]
-      });
-      $('.archive_edit_te').editable({
-        type: 'select',
-        showbuttons : false,
-        url: 'editable/editable_archive_te.php',
-        disabled : false,
-        showbuttons : false,
-        source:[{value: "", text: ""}, 
-                {value: "Diarsipkan LAB", text: "Diarsipkan LAB"},
-                {value: "Diarsipkan", text: "Diarsipkan"},
-                {value: "Belum_Diarsipkan", text: "Belum Diarsipkan"}]
-      });
-    })
+  $.fn.editable.defaults.mode = 'inline';
+  $(document).ready(function() {
+    $('.note_edit').editable({
+      type: 'text',
+      showbuttons: false,
+      url: 'editable/editable_bukupinjam_note.php',
+    });
+    $('.kode_edit').editable({
+      type: 'select',
+      showbuttons: false,
+      url: 'editable/editable_bukupinjam_kode.php',
+      disabled: false,
+      showbuttons: false,
+      source: [{
+          value: "",
+          text: ""
+        },
+        {
+          value: "DL",
+          text: "DL - Dye Lot Card"
+        },
+        {
+          value: "RC",
+          text: "RC - Recipe Card"
+        },
+        {
+          value: "OR",
+          text: "OR - Original"
+        },
+        {
+          value: "LD",
+          text: "LD - Lab Dip"
+        },
+        {
+          value: "SL",
+          text: "SL - Sample L/D"
+        },
+        {
+          value: "TE",
+          text: "TE - Tempelan Sample Celup"
+        },
+        {
+          value: "FL",
+          text: "FL - Frist Lot"
+        }
+      ]
+    });
+    $('.archive_edit').editable({
+      type: 'select',
+      showbuttons: false,
+      url: 'editable/editable_archive.php',
+      disabled: false,
+      showbuttons: false,
+      source: [{
+          value: "",
+          text: ""
+        },
+        {
+          value: "Diarsipkan",
+          text: "Diarsipkan"
+        },
+        {
+          value: "Belum_Diarsipkan",
+          text: "Belum Diarsipkan"
+        }
+      ]
+    });
+    $('.archive_edit_te').editable({
+      type: 'select',
+      showbuttons: false,
+      url: 'editable/editable_archive_te.php',
+      disabled: false,
+      showbuttons: false,
+      source: [{
+          value: "",
+          text: ""
+        },
+        {
+          value: "Diarsipkan LAB",
+          text: "Diarsipkan LAB"
+        },
+        {
+          value: "Diarsipkan",
+          text: "Diarsipkan"
+        },
+        {
+          value: "Belum_Diarsipkan",
+          text: "Belum Diarsipkan"
+        }
+      ]
+    });
+  })
 </script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -117,32 +165,32 @@
 
   gtag('config', 'UA-23581568-13');
 
-  $(document).ready(function(){
-	// Single Search Select
+  $(document).ready(function() {
+    // Single Search Select
     $(".js-example-basic-single").select2();
 
-  // Multi-select js start
+    // Multi-select js start
     $('#my-select').multiSelect();
     $('#public-methods').multiSelect();
-    $('#select-all').on('click',function() {
+    $('#select-all').on('click', function() {
       $('#public-methods').multiSelect('select_all');
       return false;
     });
-    $('#deselect-all').on('click',function() {
+    $('#deselect-all').on('click', function() {
       $('#public-methods').multiSelect('deselect_all');
       return false;
     });
 
     $('#public-methods2').multiSelect();
-    $('#select-all2').on('click',function() {
+    $('#select-all2').on('click', function() {
       $('#public-methods2').multiSelect('select_all');
       return false;
     });
-    $('#deselect-all2').on('click',function() {
+    $('#deselect-all2').on('click', function() {
       $('#public-methods2').multiSelect('deselect_all');
       return false;
     });
-    
+
   });
 </script>
 </body>

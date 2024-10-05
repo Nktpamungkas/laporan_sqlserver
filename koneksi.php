@@ -41,8 +41,8 @@ $connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password
 $conn_cams = sqlsrv_connect($host, $connInfo);
 
 $hostname = "10.0.0.21";
-// $database = "NOWTEST"; // SERVER NOW 20
-$database = "NOWPRD"; // SERVER NOW 22
+$database = "NOWTEST"; // SERVER NOW 20
+// $database = "NOWPRD"; // SERVER NOW 22
 $user = "db2admin";
 $passworddb2 = "Sunkam@24809";
 $port = "25000";
