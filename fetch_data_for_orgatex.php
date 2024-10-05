@@ -108,27 +108,39 @@ if (isset($_POST['production_number'])) {
                         ITXVIEWRESEP1.RECIPENUMBERID,
                         ITXVIEWRESEP1.GROUPNUMBER,
                         ITXVIEWRESEP1.CONSUMPTION,
-                        'g' AS CONSUMPTIONTYPEQTY,
+                        ITXVIEWRESEP1.CONSUMPTIONTYPE,
                         ITXVIEWRESEP1.SUBCODE01,
                         ITXVIEWRESEP1.SUBCODE02,
-                        ITXVIEWRESEP1.SUBCODE03,
-                        1 AS QTY
+                        ITXVIEWRESEP1.SUBCODE03,	
+                        CASE
+                            WHEN RECIPE.RECIPETYPE = '1' THEN 
+                                (CAST(RECIPE.PICKUPPERCENTAGE AS DECIMAL(18,2))/100 * $recipe[WEIGHT] + CAST(RECIPE.RESIDUALBATHVOLUME AS DECIMAL(18,2)) * ITXVIEWRESEP1.CONSUMPTION) / 1000
+                            ELSE 
+                                CASE
+                                    WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '1' THEN $recipe[WEIGHT] * $recipe[LIQUORATIO] * CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 1000
+                                    WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN ($recipe[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000
+                                END
+                        END AS QTY,
+                        CASE 
+                            WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '1' THEN 'Kg'
+                            WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '2' THEN 'g'
+                        END AS UOM	           
                     FROM
                         RECIPE RECIPE
                     LEFT JOIN ITXVIEWRESEP1 ITXVIEWRESEP1 ON RECIPE.NUMBERID = ITXVIEWRESEP1.RECIPENUMBERID
                     WHERE 
-                        ITXVIEWRESEP1.RECIPENUMBERID = '{$recipe['RECIPENUMBERID']}'
-                        AND ITXVIEWRESEP1.SUBCODE01 = '{$recipe['SUBCODE01']}'
-                        AND ITXVIEWRESEP1.SUBCODE02 = '{$recipe['SUBCODE02']}'
-                        AND ITXVIEWRESEP1.SUBCODE03 = '{$recipe['SUBCODE03']}'
-                        AND ITXVIEWRESEP1.GROUPNUMBER = '{$recipe['GROUPNUMBER']}'";
+                        ITXVIEWRESEP1.RECIPENUMBERID = '$STRINGLUAPA[RECIPENUMBERID]'
+                        AND ITXVIEWRESEP1.SUBCODE01 = '$STRINGLUAPA[SUBCODE01]'
+                        AND ITXVIEWRESEP1.SUBCODE02 = '$STRINGLUAPA[SUBCODE02]'
+                        AND ITXVIEWRESEP1.SUBCODE03 = '$STRINGLUAPA[SUBCODE03]'
+                        AND ITXVIEWRESEP1.GROUPNUMBER = '$STRINGLUAPA[GROUPNUMBER]'";
 
             $resultQty = db2_exec($conn1, $sqlQty);
             $quantityData = db2_fetch_assoc($resultQty);
 
             // Add quantity to the recipe data
             $recipe['QUANTITY'] = $quantityData ? $quantityData['QTY'] : 0; // Default to 0 if no quantity found
-            $recipe['CONSUMPTIONTYPEQTY'] = $quantityData ? $quantityData['CONSUMPTIONTYPEQTY'] : ""; // Default to 0 if no quantity found
+            $recipe['CONSUMPTIONTYPEQTY'] = $quantityData ? $quantityData['UOM'] : ""; // Default to 0 if no quantity found
             $recipes[] = $recipe;
         }
 

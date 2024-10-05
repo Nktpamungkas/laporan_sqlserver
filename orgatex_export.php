@@ -272,6 +272,7 @@ require_once "koneksi.php";
                     formData.recipes.push({
                         Dyelot: $('#dyelot').val(),
                         ReDye: $('#redye').val(), // or get it from somewhere if needed
+                        CorrectionNumber: 1, // or get it from somewhere if needed
                         CallOff: 1, // or get it from somewhere if needed
                         Counter: formData.recipes.length + 1, // Increment counter
                         ProductName: productName,
