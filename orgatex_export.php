@@ -155,6 +155,13 @@ require_once "koneksi.php";
                                             </div>
                                         </div>
                                     </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-12 text-right ">
+                                            <button type="button" id="submit_button" class="btn btn-primary mx-4">Export</button>
+                                        </div>
+                                    </div>
+                                    <br>
                                 </div>
                             </div>
                         </div>
@@ -217,7 +224,7 @@ require_once "koneksi.php";
                                         <td>${recipe.SUBCODE || ""}</td>
                                         <td>${recipe.COMMENTLINE || ""}</td>
                                         <td>${recipe.LONGDESCRIPTION || ""}</td>
-                                        <td>${(recipe.CONSUMPTION === '0.00000' || recipe.CONSUMPTION === 0) ? "" : recipe.CONSUMPTION || ''}}</td>
+                                        <td>${(recipe.CONSUMPTION === '0.00000' || recipe.CONSUMPTION === 0) ? "" : recipe.CONSUMPTION || ''}</td>
                                         <td>${recipe.CONSUMPTIONTYPE || ''}</td>  
                                         <td>${recipe.QUANTITY || ""}</td>
                                         <td>${recipe.CONSUMPTIONTYPEQTY || ""}</td>
@@ -269,24 +276,23 @@ require_once "koneksi.php";
                     const qty = $(this).find('td:nth-child(7)').text(); // Adjust based on your table structure
                     const qtyType = $(this).find('td:nth-child(8)').text(); // Adjust based on your table structure
 
-                    formData.recipes.push({
-                        Dyelot: $('#dyelot').val(),
-                        ReDye: $('#redye').val(), // or get it from somewhere if needed
-                        CorrectionNumber: 1, // or get it from somewhere if needed
-                        CallOff: 1, // or get it from somewhere if needed
-                        Counter: formData.recipes.length + 1, // Increment counter
-                        ProductName: productName,
-                        Amount: consum,
-                        Unit: consumType,
-                        KindOfStation: 5, // or get it from somewhere if needed
-                        NoOfStation: 5, // or get it from somewhere if needed
-                        SpecificWeight: 1, // or get it from somewhere if needed
-                        ProductCode: productName,
-                        ProductShortName: productName, // or adjust accordingly
-                        KindOfProduct: 2, // or get it from somewhere if needed
-                        RecipeUnit: "g/L" // or adjust accordingly
+                    formData.recipes.push({ // or get it from somewhere if needed
+                        'CorrectionNumber': 0, // or get it from somewhere if needed
+                        'CallOff': 1, // or get it from somewhere if needed
+                        'Counter': formData.recipes.length + 1, // Increment counter
+                        'ProductName': productName,
+                        'Amount': qty != '' ? qty : 0,
+                        'Unit': qtyType,
+                        'KindOfStation': 5, // or get it from somewhere if needed
+                        'NoOfStation': 5, // or get it from somewhere if needed
+                        'SpecificWeight': 1, // or get it from somewhere if needed
+                        'ProductCode': subcode,
+                        'ProductShortName': productName, // or adjust accordingly
+                        'KindOfProduct': consumType == "%" ? 1 : 2, // or get it from somewhere if needed
+                        'RecipeUnit': consumType // or adjust accordingly
                     });
                 });
+
 
                 // Make an AJAX call to your PHP script that calls the stored procedure
                 $.ajax({
@@ -294,12 +300,20 @@ require_once "koneksi.php";
                     type: 'POST',
                     data: formData,
                     success: function(response) {
-                        alert('Data successfully inserted!');
+                        console.log(response);
+                        // if (response.success) {
+                        //     alert('Data successfully inserted!');
+                        //     console.log(response.data); // Log the received data
+                        // } else {
+                        //     alert('Error inserting data.');
+                        //     console.log(response);
+                        // }
                     },
                     error: function() {
-                        alert('Error inserting data.');
+                        alert('Something when wrong,please try again.');
                     }
                 });
+
             });
         });
     </script>

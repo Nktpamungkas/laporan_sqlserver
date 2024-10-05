@@ -1,9 +1,8 @@
 <?php
-session_start();
-require_once 'koneksi.php';
+// Koneksi ke database
+require_once "koneksi.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Collecting data from the AJAX request
     $dyelot = $_POST['dyelot'];
     $redye = $_POST['redye'];
     $machine = $_POST['machine'];
@@ -22,63 +21,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pumpSpeed = $_POST['pumpSpeed'];
     $reelSpeed = $_POST['reelSpeed'];
     $absorption = $_POST['absorption'];
+    $jsonRecipe = $_POST['recipes'];
 
-    // Create JSON for recipes
-    $jsonRecipe = json_encode($_POST['recipes']);
+    echo $jsonRecipe;
 
-    // Prepare the SQL statement for testintegration_insert
-    $stmt = $conn->prepare("EXEC testintegration_insert 
-        @Dyelot = ?, 
-        @Redye = ?, 
-        @Machine = ?, 
-        @TypeOfProcedure = ?, 
-        @ProcedureNo = ?, 
-        @Color = ?, 
-        @RecipeNo = ?, 
-        @OrderNo = ?, 
-        @Customer = ?, 
-        @Article = ?, 
-        @ColorNo = ?, 
-        @Weight = ?, 
-        @Length = ?, 
-        @LiquorRatio = ?, 
-        @LiquorQuantity = ?, 
-        @PumpSpeed = ?, 
-        @ReelSpeed = ?, 
-        @Absorption = ?, 
-        @jsonRecipe = ?");
+    // Persiapkan statement untuk memanggil stored procedure
+    $stmt = $pdo_orgatex->prepare("EXEC testintegration_insert 
+        @Dyelot = :dyelot,
+        @Redye = :redye,
+        @Machine = :machine,
+        @TypeOfProcedure = :procedureType,
+        @ProcedureNo = :procedureNo,
+        @Color = :color,
+        @RecipeNo = :recipeNo,
+        @OrderNo = :orderNo,
+        @Customer = :customer,
+        @Article = :article,
+        @ColorNo = :colorNo,
+        @Weight = :weight,
+        @Length = :length,
+        @LiquorRatio = :liquorRatio,
+        @LiquorQuantity = :liquorQuantity,
+        @PumpSpeed = :pumpSpeed,
+        @ReelSpeed = :reelSpeed,
+        @Absorption = :absorption,
+        @jsonRecipe = :jsonRecipe");
 
     // Bind parameters
-    $stmt->bind_param(
-        "siissisiisiiddds",
-        $dyelot,
-        $redye,
-        $machine,
-        $procedureType,
-        $procedureNo,
-        $color,
-        $recipeNo,
-        $orderNo,
-        $customer,
-        $article,
-        $colorNo,
-        $weight,
-        $length,
-        $liquorRatio,
-        $liquorQuantity,
-        $pumpSpeed,
-        $reelSpeed,
-        $absorption,
-        $jsonRecipe
-    );
+    $stmt->bindParam(':dyelot', $dyelot);
+    $stmt->bindParam(':redye', $redye);
+    $stmt->bindParam(':machine', $machine);
+    $stmt->bindParam(':procedureType', $procedureType);
+    $stmt->bindParam(':procedureNo', $procedureNo);
+    $stmt->bindParam(':color', $color);
+    $stmt->bindParam(':recipeNo', $recipeNo);
+    $stmt->bindParam(':orderNo', $orderNo);
+    $stmt->bindParam(':customer', $customer);
+    $stmt->bindParam(':article', $article);
+    $stmt->bindParam(':colorNo', $colorNo);
+    $stmt->bindParam(':weight', $weight);
+    $stmt->bindParam(':length', $length);
+    $stmt->bindParam(':liquorRatio', $liquorRatio);
+    $stmt->bindParam(':liquorQuantity', $liquorQuantity);
+    $stmt->bindParam(':pumpSpeed', $pumpSpeed);
+    $stmt->bindParam(':reelSpeed', $reelSpeed);
+    $stmt->bindParam(':absorption', $absorption);
+    $stmt->bindParam(':jsonRecipe', $jsonRecipe);
 
-    // Execute the statement
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'error' => $stmt->error]);
-    }
-
-    $stmt->close();
-    $conn->close();
+    // Eksekusi stored procedure
+    // if ($stmt->execute()) {
+    //     echo json_encode(['success' => true, 'data' => 'Inserted successfully']);
+    // } else {
+    //     echo json_encode(['success' => true, 'data' => $stmt->errorInfo()]);
+    // }
 }

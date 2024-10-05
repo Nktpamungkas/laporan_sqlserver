@@ -41,7 +41,7 @@ $db_name = "TAICHEN_CAMS_LIVE";
 $connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
 $conn_cams = sqlsrv_connect($host, $connInfo);
 
-$hostname = "10.0.0.21";
+$hostname = "10.0.0.25";
 $database = "NOWTEST"; // SERVER NOW 20
 // $database = "NOWPRD"; // SERVER NOW 22
 $user = "db2admin";
@@ -130,7 +130,13 @@ if ($con_dbnow_mkt) {
     exit("SQLSVR19 Connection failed to con_finishing");
 }
 
-
+// orgatex
+try {
+    $pdo_orgatex = new PDO("sqlsrv:server=10.0.18.2;Database=ORGATEX-INTEG", "orgatex", "kYrgEP6@");
+    $pdo_orgatex->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
 
 // online pdo
 try {
