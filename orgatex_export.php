@@ -58,7 +58,7 @@ require_once "koneksi.php";
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Machine Number</h5>
-                                                <input type="text" id="machine_number" class="form-control" readonly>
+                                                <input type="text" id="machine_number" class="form-control">
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Type Of Procedure</h5>
@@ -130,30 +130,45 @@ require_once "koneksi.php";
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-header">
-                                        <h5>Preview Recipe</h5>
-                                    </div>
                                     <div class="card-block">
                                         <div class="row">
                                             <div class="col-12">
-                                                <table class="table table-sm table-bordered" id="recipe_table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Code</th>
-                                                            <th>Subcode</th>
-                                                            <th>Commentline</th>
-                                                            <th>Description</th>
-                                                            <th>Consumption</th>
-                                                            <th>UoM</th>
-                                                            <th>Qty</th>
-                                                            <th>UoM</th>
-                                                    </thead>
-                                                    <tbody>
-                                                        <!-- Rows will be added here dynamically -->
-                                                    </tbody>
-                                                </table>
+                                                <div class="row">
+                                                    <div class="col-9">
+                                                        <h6>Recipe Preview</h6>
+                                                        <table class="table table-sm table-bordered" id="recipe_table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Code</th>
+                                                                    <th>Subcode</th>
+                                                                    <th>Commentline</th>
+                                                                    <th>Description</th>
+                                                                    <th>Consumption</th>
+                                                                    <th>UoM</th>
+                                                                    <th>Qty</th>
+                                                                    <th>UoM</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <!-- Rows will be added here dynamically -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                        <h6>Treatment Preview</h6>
+                                        <table class="table table-sm table-bordered" id="treatment_table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Treatment Code</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Rows will be added here dynamically -->
+                                            </tbody>
+                                        </table>
                                     </div>
                                     <br>
                                     <div class="row">
@@ -231,6 +246,36 @@ require_once "koneksi.php";
                                     </tr>
                                 `);
                                 });
+
+                                // Populate the recipe table
+                                const tableBodyTreatment = $('#treatment_table tbody');
+                                tableBodyTreatment.empty(); // Clear existing rows
+
+                                console.log(data.treatments);
+
+                                tableBodyTreatment.append(`
+                                    <tr>
+                                        <td>-</td>
+                                        <td>9990</td>
+                                    </tr>
+                                `);
+
+                                data.treatments.forEach(treatment => {
+                                    tableBodyTreatment.append(`
+                                    <tr>
+                                        <td>${treatment.SUBCODE01 || ""}</td>
+                                        <td>${treatment.MAINPROGRAM || ""}</td>
+                                    </tr>
+                                `);
+                                });
+
+                                tableBodyTreatment.append(`
+                                    <tr>
+                                        <td>-</td>
+                                        <td>9991</td>
+                                    </tr>
+                                `);
+
                             } else {
                                 alert('No data found.');
                             }
@@ -263,7 +308,8 @@ require_once "koneksi.php";
                     pumpSpeed: parseFloat($('#pumpSpeed').val()), // Ensure numeric values
                     reelSpeed: parseFloat($('#reelSpeed').val()), // Ensure numeric values
                     absorption: parseFloat($('#absorption').val()), // Ensure numeric values
-                    recipes: [] // Collect recipe data
+                    recipes: [], // Collect recipe data
+                    treatments: [] // Collect recipe data
                 };
 
                 $('#recipe_table tbody tr').each(function() {
@@ -276,23 +322,47 @@ require_once "koneksi.php";
                     const qty = $(this).find('td:nth-child(7)').text(); // Adjust based on your table structure
                     const qtyType = $(this).find('td:nth-child(8)').text(); // Adjust based on your table structure
 
-                    formData.recipes.push({ // or get it from somewhere if needed
-                        'CorrectionNumber': 0, // or get it from somewhere if needed
-                        'CallOff': 1, // or get it from somewhere if needed
-                        'Counter': formData.recipes.length + 1, // Increment counter
-                        'ProductName': productName,
-                        'Amount': qty != '' ? qty : 0,
-                        'Unit': qtyType,
-                        'KindOfStation': 5, // or get it from somewhere if needed
-                        'NoOfStation': 5, // or get it from somewhere if needed
-                        'SpecificWeight': 1, // or get it from somewhere if needed
-                        'ProductCode': subcode,
-                        'ProductShortName': productName, // or adjust accordingly
-                        'KindOfProduct': consumType == "%" ? 1 : 2, // or get it from somewhere if needed
-                        'RecipeUnit': consumType // or adjust accordingly
+                    if (productName) {
+                        formData.recipes.push({
+                            CorrectionNumber: 0,
+                            CallOff: 1,
+                            Counter: formData.recipes.length + 1,
+                            ProductName: productName,
+                            Amount: qty != '' ? Number(qty) : 0,
+                            Unit: qtyType,
+                            KindOfStation: 5,
+                            NoOfStation: 5,
+                            SpecificWeight: 1,
+                            ProductCode: subcode,
+                            ProductShortName: subcode,
+                            KindOfProduct: consumType == "%" ? 1 : 2,
+                            RecipeUnit: consumType
+                        });
+                    }
+                });
+
+                $('#treatment_table tbody tr').each(function() {
+                    const code = $(this).find('td:nth-child(2)').text();
+                    formData.treatments.push({
+                        TreatmentCnt: formData.treatments.length + 1,
+                        TreatmentNo: code
                     });
                 });
 
+                // Insert new treatment at the beginning
+                // formData.treatments.unshift({
+                //     TreatmentCnt: 1,
+                //     TreatmentNo: 9990
+                // });
+
+                // // Insert new treatment at the end
+                // formData.treatments.push({
+                //     TreatmentCnt: formData.treatments.length + 2,
+                //     TreatmentNo: 9991
+                // })
+
+                formData.recipes = JSON.stringify(formData.recipes);
+                formData.treatments = JSON.stringify(formData.treatments);
 
                 // Make an AJAX call to your PHP script that calls the stored procedure
                 $.ajax({
@@ -300,14 +370,13 @@ require_once "koneksi.php";
                     type: 'POST',
                     data: formData,
                     success: function(response) {
-                        console.log(response);
-                        // if (response.success) {
-                        //     alert('Data successfully inserted!');
-                        //     console.log(response.data); // Log the received data
-                        // } else {
-                        //     alert('Error inserting data.');
-                        //     console.log(response);
-                        // }
+                        if (response.success) {
+                            alert('Data successfully inserted!');
+                            console.log(response); // Log the received data
+                        } else {
+                            alert('Error inserting data.');
+                            console.log(response);
+                        }
                     },
                     error: function() {
                         alert('Something when wrong,please try again.');

@@ -89,7 +89,7 @@ if (isset($_POST['production_number'])) {
                         END
                 END AS QTY,
                 CASE 
-                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN 'Kg'
+                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN 'kg'
                     WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN 'g'
                 END AS UOM 
             FROM
@@ -130,12 +130,13 @@ if (isset($_POST['production_number'])) {
                         ELSE 
                             CASE
                                 WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '1' THEN CAST( $dataMain[WEIGHT] * $dataMain[LIQUORATIO] * CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 1000 AS DECIMAL(18, 4))
-                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( ($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 AS DECIMAL(18, 4))
+                                -- WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( ($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 AS DECIMAL(18, 4))
+                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( (($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 )/ 1000 AS DECIMAL(18, 4))
                             END
                     END AS QTY,
                     CASE 
-                        WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '1' THEN 'Kg'
-                        WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '2' THEN 'g'
+                        WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '1' THEN 'kg'
+                        WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '2' THEN 'kg'
                     END AS UOM		           
                     FROM
                         RECIPE RECIPE
@@ -155,6 +156,59 @@ if (isset($_POST['production_number'])) {
             $recipe['QUANTITY'] = $recipe['QTY'] ? $recipe['QTY'] :  $quantityData['QTY']; // Default to 0 if no quantity found
             $recipe['CONSUMPTIONTYPEQTY'] = $recipe['UOM'] ? $recipe['UOM']  : $quantityData['UOM']; // Default to 0 if no quantity found
             $recipes[] = $recipe;
+        }
+
+        $sqlTreatment = "SELECT 
+                    ITXVIEWRESEP.SUBCODE01,
+                    ITXVIEWRESEP.SUFFIXCODE
+                FROM
+                    VIEWPRODUCTIONRESERVATION
+                LEFT JOIN ITXVIEWRESEP ON VIEWPRODUCTIONRESERVATION.SUFFIXCODE = ITXVIEWRESEP.SUFFIXCODE_RESERVATION
+                    AND VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = ITXVIEWRESEP.PRODUCTIONORDERCODE
+                    AND VIEWPRODUCTIONRESERVATION.SUBCODE01 = ITXVIEWRESEP.SUBCODE01_RESERVATION
+                    AND VIEWPRODUCTIONRESERVATION.COMPANYCODE = ITXVIEWRESEP.COMPANYCODE
+                WHERE 
+                    VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
+                    AND VIEWPRODUCTIONRESERVATION.GROUPLINE = '$groupLine'
+                    AND ITXVIEWRESEP.SUFFIXCODE IS NOT NULL
+                GROUP BY 
+                    ITXVIEWRESEP.SUBCODE01,
+                    ITXVIEWRESEP.SUFFIXCODE,
+                    ITXVIEWRESEP.GROUPNUMBER
+                ORDER BY
+                    ITXVIEWRESEP.GROUPNUMBER";
+
+        $resultTreatment = db2_exec($conn1, $sqlTreatment);
+        $treatments = [];
+
+        while ($treatment = db2_fetch_assoc($resultTreatment)) {
+            $sqlTreatmentDetail = "SELECT
+                                        CAST(a.VALUEDECIMAL AS DECIMAL(4)) AS MAINPROGRAM
+                                    FROM
+                                        RECIPE r 
+                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = r.ABSUNIQUEID AND a.FIELDNAME = 'DyeMainProgram2'
+                                    WHERE
+                                        r.SUBCODE01 = '{$treatment['SUBCODE01']}' AND r.SUFFIXCODE = '{$treatment['SUFFIXCODE']}'
+                                        AND NOT a.VALUEDECIMAL IS NULL
+                                    UNION ALL 
+                                    SELECT
+                                        CAST(a2.VALUEDECIMAL AS DECIMAL(4)) AS MAINPROGRAM
+                                    FROM
+                                        RECIPE r 
+                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = r.ABSUNIQUEID AND a2.FIELDNAME = 'DyeCoolProgram2'
+                                    WHERE
+                                        r.SUBCODE01 = '{$treatment['SUBCODE01']}' AND r.SUFFIXCODE = '{$treatment['SUFFIXCODE']}'
+                                        AND NOT a2.VALUEDECIMAL IS NULL";
+
+            $resultArray = db2_exec($conn1, $sqlTreatmentDetail);
+
+            while ($treatmentArray = db2_fetch_assoc($resultArray)) {
+                $treatments[] = [
+                    'SUBCODE01' => $treatment['SUBCODE01'],
+                    'SUFFIXCODE' => $treatment['SUFFIXCODE'],
+                    'MAINPROGRAM' => $treatmentArray['MAINPROGRAM'] // Only MAINPROGRAM
+                ];
+            }
         }
 
         echo json_encode([
@@ -177,7 +231,8 @@ if (isset($_POST['production_number'])) {
             'pumpSpeed' => $dataMain['PUMPSPEED'],
             'reelSpeed' => $dataMain['REELSPEED'],
             'absorption' => $dataMain['ABSORPTION'],
-            'recipes' => $recipes
+            'recipes' => $recipes,
+            'treatments' => $treatments
         ]);
     } else {
         echo json_encode(['success' => false]);

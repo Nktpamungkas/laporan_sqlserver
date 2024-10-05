@@ -22,8 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reelSpeed = $_POST['reelSpeed'];
     $absorption = $_POST['absorption'];
     $jsonRecipe = $_POST['recipes'];
+    $jsonTreatment = $_POST['treatments'];
 
-    echo $jsonRecipe;
+    // echo $jsonRecipe;
 
     // Persiapkan statement untuk memanggil stored procedure
     $stmt = $pdo_orgatex->prepare("EXEC testintegration_insert 
@@ -45,7 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         @PumpSpeed = :pumpSpeed,
         @ReelSpeed = :reelSpeed,
         @Absorption = :absorption,
-        @jsonRecipe = :jsonRecipe");
+        @jsonRecipe = :jsonRecipe,
+        @jsonTreatment = :jsonTreatment");
 
     // Bind parameters
     $stmt->bindParam(':dyelot', $dyelot);
@@ -67,11 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindParam(':reelSpeed', $reelSpeed);
     $stmt->bindParam(':absorption', $absorption);
     $stmt->bindParam(':jsonRecipe', $jsonRecipe);
+    $stmt->bindParam(':jsonTreatment', $jsonTreatment);
 
     // Eksekusi stored procedure
-    // if ($stmt->execute()) {
-    //     echo json_encode(['success' => true, 'data' => 'Inserted successfully']);
-    // } else {
-    //     echo json_encode(['success' => true, 'data' => $stmt->errorInfo()]);
-    // }
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'data' => 'Inserted successfully']);
+    } else {
+        echo json_encode(['success' => true, 'data' => $stmt->errorInfo()]);
+    }
 }
