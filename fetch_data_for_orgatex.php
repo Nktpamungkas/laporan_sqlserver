@@ -50,7 +50,7 @@ if (isset($_POST['production_number'])) {
                         ITXVIEWRESEP.SUBCODE03,
                         COALESCE(ITXVIEWRESEP2.GROUPNUMBER, ITXVIEWRESEP.GROUPNUMBER) AS GROUPNUMBER,
                         CASE
-                            WHEN ITXVIEWRESEP.CODE = '' THEN ITXVIEWRESEP2.CODE
+                            WHEN ITXVIEWRESEP.CODE = '' THEN COALESCE(ITXVIEWRESEP2.CODE, ITXVIEWRESEP.SUBCODE01_RESERVATION)
                             ELSE ITXVIEWRESEP.CODE
                         END	AS CODE,
                         CASE
