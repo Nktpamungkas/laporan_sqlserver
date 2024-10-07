@@ -252,19 +252,40 @@
 
               console.log(data.recipes);
 
+              let currentGroup = null; // Track the current group number
+              let callOff = 0; // Start with a call off of 1
+              let counter = 1; // Start counter from 1
+
               data.recipes.forEach(recipe => {
+                const groupNumber = recipe.GROUPNUMBER;
+
+
+                // Append the row to the table
+                // if (recipe.LONGDESCRIPTION) {
+                // If the group number changes, increment callOff and reset counter
+                if (currentGroup !== groupNumber) {
+                  callOff++;
+                  counter = 1; // Reset counter to 1
+                  currentGroup = groupNumber; // Update current group
+                } else {
+                  counter++; // Increment counter if the group number is the same
+                }
                 tableBody.append(`
-                                    <tr>
-                                        <td>${recipe.CODE || ""}</td>
-                                        <td>${recipe.SUBCODE || ""}</td>
-                                        <td>${recipe.COMMENTLINE || ""}</td>
-                                        <td>${recipe.LONGDESCRIPTION || ""}</td>
-                                        <td>${(recipe.CONSUMPTION === '0.00000' || recipe.CONSUMPTION === 0) ? "" : recipe.CONSUMPTION || ''}</td>
-                                        <td>${recipe.CONSUMPTIONTYPE || ''}</td>  
-                                        <td>${recipe.QUANTITY || ""}</td>
-                                        <td>${recipe.CONSUMPTIONTYPEQTY || ""}</td>
-                                    </tr>
-                                `);
+                        <tr>
+                            <td>${recipe.CODE || ""}</td>
+                            <td>${recipe.SUBCODE || ""}</td>
+                            <td>${recipe.COMMENTLINE || ""}</td>
+                            <td>${recipe.LONGDESCRIPTION || ""}</td>
+                            <td>${(recipe.CONSUMPTION === '0.00000' || recipe.CONSUMPTION === 0) ? "" : recipe.CONSUMPTION || ''}</td>
+                            <td>${recipe.CONSUMPTIONTYPE || ''}</td>  
+                            <td>${recipe.QUANTITY || ""}</td>
+                            <td>${recipe.CONSUMPTIONTYPEQTY || ""}</td>
+                            <td>${groupNumber || ""}</td>
+                            <td>${callOff}</td>
+                            <td>${counter}</td>
+                        </tr>
+                    `);
+                // }
               });
 
               // Populate the recipe table
@@ -375,12 +396,14 @@
         const consumType = $(this).find('td:nth-child(6)').text(); // Adjust based on your table structure
         const qty = $(this).find('td:nth-child(7)').text(); // Adjust based on your table structure
         const qtyType = $(this).find('td:nth-child(8)').text(); // Adjust based on your table structure
+        const callOff = $(this).find('td:nth-child(10)').text(); // Adjust based on your table structure
+        const counter = $(this).find('td:nth-child(11)').text(); // Adjust based on your table structure
 
         if (productName) {
           formData.recipes.push({
             CorrectionNumber: 0,
-            CallOff: 1,
-            Counter: formData.recipes.length + 1,
+            CallOff: callOff,
+            Counter: counter,
             ProductName: productName,
             Amount: qty != '' ? Number(qty) : 0,
             Unit: qtyType,
@@ -454,6 +477,123 @@
               "hideMethod": "fadeOut"
             });
             console.log(response);
+          }
+        },
+        error: function() {
+          hideLoading();
+          toastr.error('Something when wrong, please try again', 'Error', {
+            "timeOut": 0,
+            "debug": false,
+            "progressBar": true,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "positionClass": "toast-top-right",
+            "closeButton": true,
+            "extendedTimeOut": 0,
+            "preventDuplicates": false,
+            "disableTimeOut": true,
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+          });
+        }
+      });
+
+    });
+
+    $.ajax({
+      url: 'fetch_data_dyelots.php',
+      type: 'GET',
+      success: function(response) {
+        const data = JSON.parse(response);
+
+        console.log(data);
+
+        if (data.success) {
+          // Populate the recipe table
+          const tableBody = $('#dyelot_table tbody');
+          tableBody.empty(); // Clear existing rows
+
+          console.log(data.dyelots);
+
+          data.dyelots.forEach(dyelot => {
+            tableBody.append(`
+                                    <tr>
+                                        <td>${dyelot.Dyelot || ""}</td>
+                                        <td>${dyelot.ReDye || ""}</td>
+                                        <td>${dyelot.Machine || ""}</td>
+                                        <td>${dyelot.Color || ""}</td>
+                                        <td>${dyelot.ImportState || ""}</td>
+                                        <td>
+                                            <button class="btn btn-success" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Set to 30</button>
+                                            <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="40">Set to 40</button>
+                                        </td>
+                                    </tr>
+                                `);
+          });
+        } else {
+          console.log("Failed get data");
+        }
+
+      },
+      error: function() {
+        console.log("Something when wrong");
+      }
+    });
+
+    // Event delegation for dynamically created buttons
+    $('#dyelot_table').on('click', '#update-btn', function() {
+      console.log('Button clicked');
+      showLoading();
+      const dyelot = $(this).data('dyelot');
+      const redye = $(this).data('redye');
+      const importState = $(this).data('importstate');
+
+      // Make AJAX request to update ImportState
+      $.ajax({
+        url: 'update_dyelot.php', // Adjust this to your PHP script path
+        type: 'POST',
+        data: {
+          DyelotToDelete: dyelot,
+          RedyeToDelete: redye,
+          ImportState: importState
+        },
+        success: function(response) {
+          const data = JSON.parse(response);
+          if (data.success) {
+            hideLoading();
+            toastr.success('Update dyelot success', 'Success', {
+              "debug": false,
+              "progressBar": true,
+              "showDuration": "300",
+              "hideDuration": "1000",
+              "positionClass": "toast-top-right",
+              "closeButton": true,
+              "preventDuplicates": false,
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            });
+          } else {
+            hideLoading();
+            toastr.error('Failed update dyelot', 'Error', {
+              "timeOut": 0,
+              "debug": false,
+              "progressBar": true,
+              "showDuration": "300",
+              "hideDuration": "1000",
+              "positionClass": "toast-top-right",
+              "closeButton": true,
+              "extendedTimeOut": 0,
+              "preventDuplicates": false,
+              "disableTimeOut": true,
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            });
           }
         },
         error: function() {

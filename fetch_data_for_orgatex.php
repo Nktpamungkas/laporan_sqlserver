@@ -12,7 +12,7 @@ if (isset($_POST['production_number'])) {
                     DISTINCT 
                     VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE AS DYELOT,
                     VIEWPRODUCTIONRESERVATION.GROUPLINE AS REDYE,
-                    '1410' AS MACHINE,
+                    '1409' AS MACHINE,
                     0 AS TYPEOFPROCEDURE,
                     0 AS PROCEDURENO,
                     0 AS COLOR,
@@ -47,7 +47,7 @@ if (isset($_POST['production_number'])) {
                 ITXVIEWRESEP.SUBCODE01,
                 ITXVIEWRESEP.SUBCODE02,
                 ITXVIEWRESEP.SUBCODE03,
-                ITXVIEWRESEP.GROUPNUMBER,
+                COALESCE(ITXVIEWRESEP2.GROUPNUMBER, ITXVIEWRESEP.GROUPNUMBER) AS GROUPNUMBER,
                 CASE
                     WHEN ITXVIEWRESEP.CODE = '' THEN ITXVIEWRESEP2.CODE
                     ELSE ITXVIEWRESEP.CODE
@@ -102,6 +102,19 @@ if (isset($_POST['production_number'])) {
             WHERE 
                 VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
                 AND VIEWPRODUCTIONRESERVATION.GROUPLINE = '$groupLine'
+                AND NOT 
+                    CASE
+                        WHEN 
+                            CASE
+                                WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                                ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                            END = '1' THEN 'g/l'
+                        WHEN
+                            CASE
+                                WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                                ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                            END = '2' THEN '%'
+                    END IS NULL
             ORDER BY
                 ITXVIEWRESEP.GROUPNUMBER,
                 ITXVIEWRESEP.SEQUENCE,
@@ -159,24 +172,46 @@ if (isset($_POST['production_number'])) {
         }
 
         $sqlTreatment = "SELECT 
-                    ITXVIEWRESEP.SUBCODE01,
-                    ITXVIEWRESEP.SUFFIXCODE
-                FROM
-                    VIEWPRODUCTIONRESERVATION
-                LEFT JOIN ITXVIEWRESEP ON VIEWPRODUCTIONRESERVATION.SUFFIXCODE = ITXVIEWRESEP.SUFFIXCODE_RESERVATION
-                    AND VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = ITXVIEWRESEP.PRODUCTIONORDERCODE
-                    AND VIEWPRODUCTIONRESERVATION.SUBCODE01 = ITXVIEWRESEP.SUBCODE01_RESERVATION
-                    AND VIEWPRODUCTIONRESERVATION.COMPANYCODE = ITXVIEWRESEP.COMPANYCODE
-                WHERE 
-                    VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
-                    AND VIEWPRODUCTIONRESERVATION.GROUPLINE = '$groupLine'
-                    AND ITXVIEWRESEP.SUFFIXCODE IS NOT NULL
-                GROUP BY 
-                    ITXVIEWRESEP.SUBCODE01,
-                    ITXVIEWRESEP.SUFFIXCODE,
-                    ITXVIEWRESEP.GROUPNUMBER
-                ORDER BY
-                    ITXVIEWRESEP.GROUPNUMBER";
+                            CASE
+                                WHEN CAST( LENGTH(ITXVIEWRESEP.SUBCODE01) AS VARCHAR(5)) = '1' THEN ITXVIEWRESEP.SUBCODE01_RESERVATION
+                                ELSE ITXVIEWRESEP.SUBCODE01
+                            END AS SUBCODE01,
+                            CASE
+                                WHEN CAST( LENGTH(ITXVIEWRESEP.SUBCODE01) AS VARCHAR(5)) = '1' THEN ITXVIEWRESEP.SUFFIXCODE_RESERVATION
+                                ELSE ITXVIEWRESEP.SUFFIXCODE
+                            END AS SUFFIXCODE
+                        FROM
+                            VIEWPRODUCTIONRESERVATION
+                        LEFT JOIN ITXVIEWRESEP ON VIEWPRODUCTIONRESERVATION.SUFFIXCODE = ITXVIEWRESEP.SUFFIXCODE_RESERVATION
+                            AND VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = ITXVIEWRESEP.PRODUCTIONORDERCODE
+                            AND VIEWPRODUCTIONRESERVATION.SUBCODE01 = ITXVIEWRESEP.SUBCODE01_RESERVATION
+                            AND VIEWPRODUCTIONRESERVATION.COMPANYCODE = ITXVIEWRESEP.COMPANYCODE
+                        LEFT JOIN ITXVIEWRESEP2 ITXVIEWRESEP2 ON ITXVIEWRESEP2.RECIPESUBCODE01 = ITXVIEWRESEP.CODE AND ITXVIEWRESEP2.RECIPESUFFIXCODE = ITXVIEWRESEP.SUFFIXCODE
+                        WHERE 
+                            VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
+                            AND VIEWPRODUCTIONRESERVATION.GROUPLINE = '$groupLine'
+                            AND NOT 
+                                CASE
+                                    WHEN 
+                                        CASE
+                                            WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                                            ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                                        END = '1' THEN 'g/l'
+                                    WHEN
+                                        CASE
+                                            WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                                            ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                                        END = '2' THEN '%'
+                                END IS NULL 
+                        GROUP BY 
+                            ITXVIEWRESEP.SUBCODE01,
+                            ITXVIEWRESEP.SUFFIXCODE,
+                            ITXVIEWRESEP.GROUPNUMBER,
+                            ITXVIEWRESEP.SUBCODE01_RESERVATION,
+                            ITXVIEWRESEP.SUFFIXCODE_RESERVATION 
+                        ORDER BY
+                            ITXVIEWRESEP.GROUPNUMBER
+                        ";
 
         $resultTreatment = db2_exec($conn1, $sqlTreatment);
         $treatments = [];

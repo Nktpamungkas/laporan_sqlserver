@@ -368,13 +368,19 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li> <li class="pcoded-hasmenu">
+                            </li>
+                            <li class="pcoded-hasmenu">
                                 <a href="javascript:void(0)">
                                     <span class="pcoded-micon"><i class="icofont icofont-upload-alt"></i></span>
                                     <span class="pcoded-mtext">ORGATEX</span>
                                     <span class="pcoded-mcaret"></span>
                                 </a>
                                 <ul class="pcoded-submenu">
+                                    <li class=" ">
+                                        <a href="orgatex_dyelot_view.php" data-i18n="nav.animations.main">
+                                            List batch Export
+                                        </a>
+                                    </li>
                                     <li class=" ">
                                         <a href="orgatex_export.php" data-i18n="nav.animations.main">
                                             Export to Orgatex

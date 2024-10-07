@@ -183,6 +183,9 @@ require_once "koneksi.php";
                                                             <th>UoM</th>
                                                             <th>Qty</th>
                                                             <th>UoM</th>
+                                                            <th>Group Number</th>
+                                                            <th>Callof</th>
+                                                            <th>Counter</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
