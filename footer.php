@@ -460,7 +460,8 @@
             toastr.options = {
               "timeOut": "0",
             };
-            toastr.error('Error export data, please try again', 'Error', {
+            // toastr.error('Error export data, please try again', 'Success', {
+            toastr.error('Success export data, please check in program orgatex', 'Success', {
               "timeOut": 0,
               "debug": false,
               "progressBar": true,
