@@ -27,10 +27,46 @@ require_once "koneksi.php";
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+    <style>
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            /* White background with some transparency */
+            z-index: 9999;
+            /* Ensure it's on top of everything */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            border: 8px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3498db;
+            /* Customize the spinner color */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 <?php require_once 'header.php'; ?>
 
 <body>
+    <div id="loadingOverlay" style="display:none;">
+        <div class="spinner"></div>
+    </div>
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
             <div class="main-body">
@@ -133,42 +169,46 @@ require_once "koneksi.php";
                                     <div class="card-block">
                                         <div class="row">
                                             <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-9">
-                                                        <h6>Recipe Preview</h6>
-                                                        <table class="table table-sm table-bordered" id="recipe_table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Code</th>
-                                                                    <th>Subcode</th>
-                                                                    <th>Commentline</th>
-                                                                    <th>Description</th>
-                                                                    <th>Consumption</th>
-                                                                    <th>UoM</th>
-                                                                    <th>Qty</th>
-                                                                    <th>UoM</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <!-- Rows will be added here dynamically -->
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
+                                                <div class="card-header">
+                                                    <h5>Recipe Preview</h5>
                                                 </div>
+                                                <table class="table table-sm table-bordered" id="recipe_table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Code</th>
+                                                            <th>Subcode</th>
+                                                            <th>Commentline</th>
+                                                            <th>Description</th>
+                                                            <th>Consumption</th>
+                                                            <th>UoM</th>
+                                                            <th>Qty</th>
+                                                            <th>UoM</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!-- Rows will be added here dynamically -->
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
-                                        <h6>Treatment Preview</h6>
-                                        <table class="table table-sm table-bordered" id="treatment_table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Item</th>
-                                                    <th>Treatment Code</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- Rows will be added here dynamically -->
-                                            </tbody>
-                                        </table>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="card-header">
+                                                    <h5>Treatment Preview</h5>
+                                                </div>
+                                                <table class="table table-sm table-bordered" id="treatment_table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Item</th>
+                                                            <th>Treatment Code</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!-- Rows will be added here dynamically -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                     <br>
                                     <div class="row">
@@ -185,205 +225,6 @@ require_once "koneksi.php";
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        $(document).ready(function() {
-            $('#production_number').on('change', function() {
-                const productionNumber = $(this).val();
-
-                if (productionNumber) {
-                    $.ajax({
-                        url: 'fetch_data_for_orgatex.php',
-                        type: 'POST',
-                        data: {
-                            production_number: productionNumber
-                        },
-                        success: function(response) {
-                            const data = JSON.parse(response);
-
-                            console.log(data);
-
-                            if (data.success) {
-                                // Populate input fields
-                                $('#dyelot').val(data.dyelot).prop('disabled', false);
-                                $('#redye').val(data.redye).prop('disabled', false);
-                                $('#machine_number').val(data.machine).prop('disabled', false);
-                                $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
-                                $('#procedure_number').val(data.procedure_no).prop('disabled', false);
-                                $('#color').val(data.color).prop('disabled', false);
-
-                                $('#recipe_number').val(data.recipe_number).prop('disabled', false);
-                                $('#order_number').val(data.order_number).prop('disabled', false);
-                                $('#customer_name').val(data.customer_name).prop('disabled', false);
-                                $('#article').val(data.article).prop('disabled', false);
-                                $('#color_number').val(data.color_number).prop('disabled', false);
-                                $('#weight').val(data.weight).prop('disabled', false);
-
-                                $('#length').val(data.length).prop('disabled', false);
-                                $('#liquorRatio').val(data.liquorRatio).prop('disabled', false);
-                                $('#liquorQuantity').val(data.liquorQuantity).prop('disabled', false);
-                                $('#pumpSpeed').val(data.pumpSpeed).prop('disabled', false);
-                                $('#reelSpeed').val(data.reelSpeed).prop('disabled', false);
-                                $('#absorption').val(data.absorption).prop('disabled', false);
-
-                                // Populate the recipe table
-                                const tableBody = $('#recipe_table tbody');
-                                tableBody.empty(); // Clear existing rows
-
-                                console.log(data.recipes);
-
-                                data.recipes.forEach(recipe => {
-                                    tableBody.append(`
-                                    <tr>
-                                        <td>${recipe.CODE || ""}</td>
-                                        <td>${recipe.SUBCODE || ""}</td>
-                                        <td>${recipe.COMMENTLINE || ""}</td>
-                                        <td>${recipe.LONGDESCRIPTION || ""}</td>
-                                        <td>${(recipe.CONSUMPTION === '0.00000' || recipe.CONSUMPTION === 0) ? "" : recipe.CONSUMPTION || ''}</td>
-                                        <td>${recipe.CONSUMPTIONTYPE || ''}</td>  
-                                        <td>${recipe.QUANTITY || ""}</td>
-                                        <td>${recipe.CONSUMPTIONTYPEQTY || ""}</td>
-                                    </tr>
-                                `);
-                                });
-
-                                // Populate the recipe table
-                                const tableBodyTreatment = $('#treatment_table tbody');
-                                tableBodyTreatment.empty(); // Clear existing rows
-
-                                console.log(data.treatments);
-
-                                tableBodyTreatment.append(`
-                                    <tr>
-                                        <td>-</td>
-                                        <td>9990</td>
-                                    </tr>
-                                `);
-
-                                data.treatments.forEach(treatment => {
-                                    tableBodyTreatment.append(`
-                                    <tr>
-                                        <td>${treatment.SUBCODE01 || ""}</td>
-                                        <td>${treatment.MAINPROGRAM || ""}</td>
-                                    </tr>
-                                `);
-                                });
-
-                                tableBodyTreatment.append(`
-                                    <tr>
-                                        <td>-</td>
-                                        <td>9991</td>
-                                    </tr>
-                                `);
-
-                            } else {
-                                alert('No data found.');
-                            }
-                        },
-                        error: function() {
-                            alert('Error fetching data.');
-                        }
-                    });
-                }
-            });
-
-            // Add event listener for a submit button to send data to the stored procedure
-            $('#submit_button').on('click', function() {
-                const formData = {
-                    dyelot: $('#dyelot').val(),
-                    redye: $('#redye').val(),
-                    machine: $('#machine_number').val(),
-                    procedureType: $('#procedure_type').val(),
-                    procedureNo: $('#procedure_number').val(),
-                    color: $('#color').val(),
-                    recipeNo: $('#recipe_number').val(),
-                    orderNo: $('#order_number').val(),
-                    customer: $('#customer_name').val(),
-                    article: $('#article').val(),
-                    colorNo: $('#color_number').val(),
-                    weight: parseFloat($('#weight').val()), // Ensure numeric values
-                    length: parseFloat($('#length').val()), // Ensure numeric values
-                    liquorRatio: parseFloat($('#liquorRatio').val()), // Ensure numeric values
-                    liquorQuantity: parseFloat($('#liquorQuantity').val()), // Ensure numeric values
-                    pumpSpeed: parseFloat($('#pumpSpeed').val()), // Ensure numeric values
-                    reelSpeed: parseFloat($('#reelSpeed').val()), // Ensure numeric values
-                    absorption: parseFloat($('#absorption').val()), // Ensure numeric values
-                    recipes: [], // Collect recipe data
-                    treatments: [] // Collect recipe data
-                };
-
-                $('#recipe_table tbody tr').each(function() {
-                    const code = $(this).find('td:nth-child(1)').text();
-                    const subcode = $(this).find('td:nth-child(2)').text();
-                    const consumption = parseFloat($(this).find('td:nth-child(3)').text()); // Ensure numeric value
-                    const productName = $(this).find('td:nth-child(4)').text(); // Add additional fields as needed
-                    const consum = parseFloat($(this).find('td:nth-child(5)').text()); // Adjust based on your table structure
-                    const consumType = $(this).find('td:nth-child(6)').text(); // Adjust based on your table structure
-                    const qty = $(this).find('td:nth-child(7)').text(); // Adjust based on your table structure
-                    const qtyType = $(this).find('td:nth-child(8)').text(); // Adjust based on your table structure
-
-                    if (productName) {
-                        formData.recipes.push({
-                            CorrectionNumber: 0,
-                            CallOff: 1,
-                            Counter: formData.recipes.length + 1,
-                            ProductName: productName,
-                            Amount: qty != '' ? Number(qty) : 0,
-                            Unit: qtyType,
-                            KindOfStation: 5,
-                            NoOfStation: 5,
-                            SpecificWeight: 1,
-                            ProductCode: subcode,
-                            ProductShortName: subcode,
-                            KindOfProduct: consumType == "%" ? 1 : 2,
-                            RecipeUnit: consumType
-                        });
-                    }
-                });
-
-                $('#treatment_table tbody tr').each(function() {
-                    const code = $(this).find('td:nth-child(2)').text();
-                    formData.treatments.push({
-                        TreatmentCnt: formData.treatments.length + 1,
-                        TreatmentNo: code
-                    });
-                });
-
-                // Insert new treatment at the beginning
-                // formData.treatments.unshift({
-                //     TreatmentCnt: 1,
-                //     TreatmentNo: 9990
-                // });
-
-                // // Insert new treatment at the end
-                // formData.treatments.push({
-                //     TreatmentCnt: formData.treatments.length + 2,
-                //     TreatmentNo: 9991
-                // })
-
-                formData.recipes = JSON.stringify(formData.recipes);
-                formData.treatments = JSON.stringify(formData.treatments);
-
-                // Make an AJAX call to your PHP script that calls the stored procedure
-                $.ajax({
-                    url: 'insert_data_to_orgatex.php',
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Data successfully inserted!');
-                            console.log(response); // Log the received data
-                        } else {
-                            alert('Error inserting data.');
-                            console.log(response);
-                        }
-                    },
-                    error: function() {
-                        alert('Something when wrong,please try again.');
-                    }
-                });
-
-            });
-        });
-    </script>
 </body>
+
+<?php require_once 'footer.php'; ?>
