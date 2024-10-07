@@ -101,8 +101,8 @@ if (isset($_POST['production_number'])) {
                         AND VIEWPRODUCTIONRESERVATION.COMPANYCODE = ITXVIEWRESEP.COMPANYCODE
                     LEFT JOIN ITXVIEWRESEP2 ITXVIEWRESEP2 ON ITXVIEWRESEP2.RECIPESUBCODE01 = ITXVIEWRESEP.CODE AND ITXVIEWRESEP2.RECIPESUFFIXCODE = ITXVIEWRESEP.SUFFIXCODE
                     WHERE 
-                        VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '00173537'
-                        AND VIEWPRODUCTIONRESERVATION.GROUPLINE = '403'
+                        VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
+                        AND VIEWPRODUCTIONRESERVATION.GROUPLINE = '$groupLine'
                         AND NOT 
                             CASE
                                 WHEN 
@@ -222,7 +222,7 @@ if (isset($_POST['production_number'])) {
                                         CAST(a.VALUEDECIMAL AS DECIMAL(4)) AS MAINPROGRAM
                                     FROM
                                         RECIPE r 
-                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = r.ABSUNIQUEID AND a.FIELDNAME = 'DyeMainProgram2'
+                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = r.ABSUNIQUEID AND a.FIELDNAME = 'MainProgram1'
                                     WHERE
                                         r.SUBCODE01 = '{$treatment['SUBCODE01']}' AND r.SUFFIXCODE = '{$treatment['SUFFIXCODE']}'
                                         AND NOT a.VALUEDECIMAL IS NULL
@@ -231,7 +231,7 @@ if (isset($_POST['production_number'])) {
                                         CAST(a2.VALUEDECIMAL AS DECIMAL(4)) AS MAINPROGRAM
                                     FROM
                                         RECIPE r 
-                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = r.ABSUNIQUEID AND a2.FIELDNAME = 'DyeCoolProgram2'
+                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = r.ABSUNIQUEID AND a2.FIELDNAME = 'CoolingProgram1'
                                     WHERE
                                         r.SUBCODE01 = '{$treatment['SUBCODE01']}' AND r.SUFFIXCODE = '{$treatment['SUFFIXCODE']}'
                                         AND NOT a2.VALUEDECIMAL IS NULL";
