@@ -526,8 +526,7 @@
                                         <td>${dyelot.Color || ""}</td>
                                         <td>${dyelot.ImportState || ""}</td>
                                         <td>
-                                            <button class="btn btn-success" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Set to 30</button>
-                                            <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="40">Set to 40</button>
+                                            <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>
                                         </td>
                                     </tr>
                                 `);
@@ -561,40 +560,43 @@
         },
         success: function(response) {
           const data = JSON.parse(response);
-          if (data.success) {
-            hideLoading();
-            toastr.success('Update dyelot success', 'Success', {
-              "debug": false,
-              "progressBar": true,
-              "showDuration": "300",
-              "hideDuration": "1000",
-              "positionClass": "toast-top-right",
-              "closeButton": true,
-              "preventDuplicates": false,
-              "showEasing": "swing",
-              "hideEasing": "linear",
-              "showMethod": "fadeIn",
-              "hideMethod": "fadeOut"
-            });
-          } else {
-            hideLoading();
-            toastr.error('Failed update dyelot', 'Error', {
-              "timeOut": 0,
-              "debug": false,
-              "progressBar": true,
-              "showDuration": "300",
-              "hideDuration": "1000",
-              "positionClass": "toast-top-right",
-              "closeButton": true,
-              "extendedTimeOut": 0,
-              "preventDuplicates": false,
-              "disableTimeOut": true,
-              "showEasing": "swing",
-              "hideEasing": "linear",
-              "showMethod": "fadeIn",
-              "hideMethod": "fadeOut"
-            });
-          }
+          setTimeout(() => {
+            hideLoading(); // Hide loading indicator after 15 seconds
+
+            if (data.success) {
+              toastr.success('Update dyelot success', 'Success', {
+                "debug": false,
+                "progressBar": true,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "positionClass": "toast-top-right",
+                "closeButton": true,
+                "preventDuplicates": false,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+              });
+            } else {
+              toastr.error('Failed update dyelot', 'Error', {
+                "timeOut": 0,
+                "debug": false,
+                "progressBar": true,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "positionClass": "toast-top-right",
+                "closeButton": true,
+                "extendedTimeOut": 0,
+                "preventDuplicates": false,
+                "disableTimeOut": true,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+              });
+            }
+            window.location.reload();
+          }, 15000); // Wait for 15 seconds before hiding the loading indicator
         },
         error: function() {
           hideLoading();
