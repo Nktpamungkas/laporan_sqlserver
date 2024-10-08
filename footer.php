@@ -553,6 +553,7 @@
                         <td>${dyelot.ImportState || ""} ${badge}</td>
                         <td>
                             <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>
+                            <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="40">Delete Batch</button>
                         </td>
                     </tr>
                 `);
