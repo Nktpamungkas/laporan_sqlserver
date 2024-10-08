@@ -82,15 +82,15 @@ if (isset($_POST['production_number'])) {
                                 END = '2' THEN '%'
                         END	AS CONSUMPTIONTYPE,
                         CASE
-                            WHEN ITXVIEWRESEP.RECIPETYPE = '1' THEN CAST( ((ITXVIEWRESEP.PICKUPPERCENTAGE/100 * 1000) + ITXVIEWRESEP.RESIDUALBATHVOLUME) * ITXVIEWRESEP2.CONSUMPTION AS DECIMAL(18, 4))
+                            WHEN ITXVIEWRESEP.RECIPETYPE = '1' THEN CAST( ((ITXVIEWRESEP.PICKUPPERCENTAGE/100 * 1000) + ITXVIEWRESEP.RESIDUALBATHVOLUME) * ITXVIEWRESEP2.CONSUMPTION AS DECIMAL(18, 7))
                             ELSE 
                                 CASE
-                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN CAST( ((1000 * VIEWPRODUCTIONRESERVATION.PICKUPQUANTITY) * ITXVIEWRESEP2.CONSUMPTION) / 1000 AS DECIMAL(18, 4))
-                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN CAST( (1000 * (ITXVIEWRESEP2.CONSUMPTION/100)) * 1000 AS DECIMAL(18, 4))
+                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN CAST( ((1000 * VIEWPRODUCTIONRESERVATION.PICKUPQUANTITY) * ITXVIEWRESEP2.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
+                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN CAST( (1000 * (ITXVIEWRESEP2.CONSUMPTION/100)) * 1000 AS DECIMAL(18, 7))
                                 END
                         END AS QTY,
                         CASE 
-                            WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN 'Kg'
+                            WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN 'kg'
                             WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN 'g'
                         END AS UOM 
                     FROM
@@ -140,12 +140,12 @@ if (isset($_POST['production_number'])) {
                         ITXVIEWRESEP1.SUBCODE03,	
                         CASE
                         WHEN RECIPE.RECIPETYPE = '1' THEN 
-                            CAST( (CAST(RECIPE.PICKUPPERCENTAGE AS DECIMAL(18,2))/100 * $dataMain[WEIGHT] + CAST(RECIPE.RESIDUALBATHVOLUME AS DECIMAL(18,2)) * ITXVIEWRESEP1.CONSUMPTION) / 1000 AS DECIMAL(18, 4))
+                            CAST( (CAST(RECIPE.PICKUPPERCENTAGE AS DECIMAL(18,2))/100 * $dataMain[WEIGHT] + CAST(RECIPE.RESIDUALBATHVOLUME AS DECIMAL(18,2)) * ITXVIEWRESEP1.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
                         ELSE 
                             CASE
-                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '1' THEN CAST( $dataMain[WEIGHT] * $dataMain[LIQUORATIO] * CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 1000 AS DECIMAL(18, 4))
-                                -- WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( ($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 AS DECIMAL(18, 4))
-                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( (($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 )/ 1000 AS DECIMAL(18, 4))
+                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '1' THEN CAST( $dataMain[WEIGHT] * $dataMain[LIQUORATIO] * CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 1000 AS DECIMAL(18, 7))
+                                -- WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( ($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 AS DECIMAL(18, 7))
+                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( (($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 )/ 1000 AS DECIMAL(18, 7))
                             END
                     END AS QTY,
                     CASE 
@@ -247,18 +247,23 @@ if (isset($_POST['production_number'])) {
             }
         }
 
+        // SCHEDULE DYEING
+        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE no_resep = '$productionNumber'";
+        $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
+        $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
+
         echo json_encode([
             'success' => true,
             'dyelot' => $dataMain['DYELOT'],
             'redye' => $dataMain['REDYE'],
-            'machine' => $dataMain['MACHINE'],
+            'machine' => $dataSchedule['no_mesin'],
             'type_of_procedure' => $dataMain['TYPEOFPROCEDURE'],
             'procedure_no' => $dataMain['PROCEDURENO'],
             'color' => $dataMain['COLOR'],
             'recipe_number' => $dataMain['RECIPENO'],
             'order_number' => $dataMain['ORDERNO'],
-            'customer_name' => $dataMain['CUSTOMER'],
-            'article' => $dataMain['ARTICLE'],
+            'customer_name' => $dataSchedule['langganan'],
+            'article' => $dataSchedule['no_hanger'],
             'color_number' => $dataMain['COLORNO'],
             'weight' => $dataMain['WEIGHT'],
             'length' => $dataMain['LENGTH'],
