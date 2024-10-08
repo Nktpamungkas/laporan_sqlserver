@@ -26,8 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // echo $jsonRecipe;
 
-    // Persiapkan statement untuk memanggil stored procedure
-    $stmt = $pdo_orgatex->prepare("EXEC testintegration_insert 
+    // Eksekusi stored procedure
+    try {
+        // Persiapkan statement untuk memanggil stored procedure
+        $stmt = $pdo_orgatex->prepare("EXEC testintegration_insert 
         @Dyelot = :dyelot,
         @Redye = :redye,
         @Machine = :machine,
@@ -49,32 +51,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         @jsonRecipe = :jsonRecipe,
         @jsonTreatment = :jsonTreatment");
 
-    // Bind parameters
-    $stmt->bindParam(':dyelot', $dyelot);
-    $stmt->bindParam(':redye', $redye);
-    $stmt->bindParam(':machine', $machine);
-    $stmt->bindParam(':procedureType', $procedureType);
-    $stmt->bindParam(':procedureNo', $procedureNo);
-    $stmt->bindParam(':color', $color);
-    $stmt->bindParam(':recipeNo', $recipeNo);
-    $stmt->bindParam(':orderNo', $orderNo);
-    $stmt->bindParam(':customer', $customer);
-    $stmt->bindParam(':article', $article);
-    $stmt->bindParam(':colorNo', $colorNo);
-    $stmt->bindParam(':weight', $weight);
-    $stmt->bindParam(':length', $length);
-    $stmt->bindParam(':liquorRatio', $liquorRatio);
-    $stmt->bindParam(':liquorQuantity', $liquorQuantity);
-    $stmt->bindParam(':pumpSpeed', $pumpSpeed);
-    $stmt->bindParam(':reelSpeed', $reelSpeed);
-    $stmt->bindParam(':absorption', $absorption);
-    $stmt->bindParam(':jsonRecipe', $jsonRecipe);
-    $stmt->bindParam(':jsonTreatment', $jsonTreatment);
+        // Bind parameters
+        $stmt->bindParam(':dyelot', $dyelot);
+        $stmt->bindParam(':redye', $redye);
+        $stmt->bindParam(':machine', $machine);
+        $stmt->bindParam(':procedureType', $procedureType);
+        $stmt->bindParam(':procedureNo', $procedureNo);
+        $stmt->bindParam(':color', $color);
+        $stmt->bindParam(':recipeNo', $recipeNo);
+        $stmt->bindParam(':orderNo', $orderNo);
+        $stmt->bindParam(':customer', $customer);
+        $stmt->bindParam(':article', $article);
+        $stmt->bindParam(':colorNo', $colorNo);
+        $stmt->bindParam(':weight', $weight);
+        $stmt->bindParam(':length', $length);
+        $stmt->bindParam(':liquorRatio', $liquorRatio);
+        $stmt->bindParam(':liquorQuantity', $liquorQuantity);
+        $stmt->bindParam(':pumpSpeed', $pumpSpeed);
+        $stmt->bindParam(':reelSpeed', $reelSpeed);
+        $stmt->bindParam(':absorption', $absorption);
+        $stmt->bindParam(':jsonRecipe', $jsonRecipe);
+        $stmt->bindParam(':jsonTreatment', $jsonTreatment);
 
-    // Eksekusi stored procedure
-    if ($stmt->execute()) {
+        // Eksekusi stored procedure
+        $stmt->execute();
         echo json_encode(['success' => true, 'data' => 'Inserted successfully']);
-    } else {
-        echo json_encode(['success' => true, 'data' => $stmt->errorInfo()]);
+    } catch (PDOException $e) {
+        // Tangkap dan log error
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    } catch (Exception $e) {
+        // Tangkap error lainnya
+        echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
     }
 }

@@ -16,7 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo json_encode(['success' => true]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    } catch (Exception $e) {
+        // Tangkap error lainnya
+        echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);

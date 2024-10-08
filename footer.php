@@ -446,6 +446,7 @@
         type: 'POST',
         data: formData,
         success: function(response) {
+          console.log(response.success);
           if (response.success) {
             hideLoading();
             toastr.options = {
