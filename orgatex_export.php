@@ -82,7 +82,7 @@ require_once "koneksi.php";
                                         <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Bon Resep</h5>
-                                                <input type="text" id="production_number" class="form-control">
+                                                <input type="text" id="production_number" value="<?= $_GET['bonresep']; ?>" class="form-control">
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Dyelot</h5>

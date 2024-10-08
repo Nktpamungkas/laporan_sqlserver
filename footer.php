@@ -206,10 +206,20 @@
       $('#loadingOverlay').hide();
     }
 
+    
+    var urlParams = new URLSearchParams(window.location.search);
+    var productionNumber = urlParams.get('bonresep');  // ganti dengan nama parameter
 
-    $('#production_number').on('change', function() {
-      const productionNumber = $(this).val();
+    if (productionNumber) {
+      jalankanFungsi(productionNumber);
+    } else {
+      $('#production_number').on('change', function() {
+        const productionNumber = $(this).val();
+        jalankanFungsi(productionNumber);
+      });
+    }
 
+    function jalankanFungsi(productionNumber){
       if (productionNumber) {
         showLoading();
         $.ajax({
@@ -359,7 +369,7 @@
           }
         });
       }
-    });
+    }
 
     // Add event listener for a submit button to send data to the stored procedure
     $('#submit_button').on('click', function() {
