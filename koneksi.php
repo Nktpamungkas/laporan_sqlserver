@@ -138,6 +138,14 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
+// orgatex
+try {
+    $pdo_orgatex_main = new PDO("sqlsrv:server=10.0.18.2;Database=ORGATEX", "orgatex", "kYrgEP6@");
+    $pdo_orgatex_main->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
+
 // online pdo
 try {
     $pdo = new PDO("sqlsrv:server=10.0.0.221;Database=nowprd", "sa", "Ind@taichen2024");

@@ -386,6 +386,11 @@
                                             Export to Orgatex
                                         </a>
                                     </li>
+                                    <li class=" ">
+                                        <a href="batch_report_orgatex.php" data-i18n="nav.animations.main">
+                                            List Batch Report
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
