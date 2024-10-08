@@ -308,6 +308,7 @@
                                     <tr>
                                         <td>-</td>
                                         <td>9990</td>
+                                        <td>Progarm Start</td>
                                     </tr>
                                 `);
 
@@ -316,6 +317,7 @@
                                     <tr>
                                         <td>${treatment.SUBCODE01 || ""}</td>
                                         <td>${treatment.MAINPROGRAM || ""}</td>
+                                        <td>${treatment.TREATMENTNAME || ""}</td>
                                     </tr>
                                 `);
               });
@@ -324,6 +326,7 @@
                                     <tr>
                                         <td>-</td>
                                         <td>9991</td>
+                                        <td>Program End</td>
                                     </tr>
                                 `);
               hideLoading();
@@ -445,6 +448,7 @@
         url: 'insert_data_to_orgatex.php',
         type: 'POST',
         data: formData,
+        dataType: 'json',
         success: function(response) {
           console.log(response.success);
           if (response.success) {
@@ -553,7 +557,6 @@
                         <td>${dyelot.ImportState || ""} ${badge}</td>
                         <td>
                             <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>
-                            <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="40">Delete Batch</button>
                         </td>
                     </tr>
                 `);
