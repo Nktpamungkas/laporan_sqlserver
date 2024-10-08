@@ -206,9 +206,9 @@
       $('#loadingOverlay').hide();
     }
 
-    
+
     var urlParams = new URLSearchParams(window.location.search);
-    var productionNumber = urlParams.get('bonresep');  // ganti dengan nama parameter
+    var productionNumber = urlParams.get('bonresep'); // ganti dengan nama parameter
 
     if (productionNumber) {
       jalankanFungsi(productionNumber);
@@ -219,7 +219,7 @@
       });
     }
 
-    function jalankanFungsi(productionNumber){
+    function jalankanFungsi(productionNumber) {
       if (productionNumber) {
         showLoading();
         $.ajax({
@@ -512,44 +512,62 @@
 
     });
 
-    $.ajax({
-      url: 'fetch_data_dyelots.php',
-      type: 'GET',
-      success: function(response) {
-        const data = JSON.parse(response);
 
-        console.log(data);
+    function fetchDyelot() {
+      $.ajax({
+        url: 'fetch_data_dyelots.php',
+        type: 'GET',
+        success: function(response) {
+          const data = JSON.parse(response);
 
-        if (data.success) {
-          // Populate the recipe table
-          const tableBody = $('#dyelot_table tbody');
-          tableBody.empty(); // Clear existing rows
+          console.log(data);
 
-          console.log(data.dyelots);
+          if (data.success) {
+            // Populate the recipe table
+            const tableBody = $('#dyelot_table tbody');
+            tableBody.empty();
 
-          data.dyelots.forEach(dyelot => {
-            tableBody.append(`
-                                    <tr>
-                                        <td>${dyelot.Dyelot || ""}</td>
-                                        <td>${dyelot.ReDye || ""}</td>
-                                        <td>${dyelot.Machine || ""}</td>
-                                        <td>${dyelot.Color || ""}</td>
-                                        <td>${dyelot.ImportState || ""}</td>
-                                        <td>
-                                            <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>
-                                        </td>
-                                    </tr>
-                                `);
-          });
-        } else {
-          console.log("Failed get data");
+            console.log(data.dyelots);
+
+            data.dyelots.forEach(dyelot => {
+              let badge = '';
+
+              // Determine the badge based on ImportState
+              if (dyelot.ImportState == 10) {
+                badge = '<span class="badge badge-pill badge-primary p-2">Success Import</span>';
+              } else if (dyelot.ImportState == 30) {
+                badge = '<span class="badge badge-pill badge-warning p-2">Waiting Delete</span>';
+              } else if (dyelot.ImportState == 40) {
+                badge = '<span class="badge badge-pill badge-danger p-2">Deleted</span>';
+              } else if (dyelot.ImportState == 50) {
+                badge = '<span class="badge badge-pill badge-danger p-2">Error Delete</span>';
+              }
+
+              tableBody.append(`
+                    <tr>
+                        <td>${dyelot.Dyelot || ""}</td>
+                        <td>${dyelot.ReDye || ""}</td>
+                        <td>${dyelot.Machine || ""}</td>
+                        <td>${dyelot.Color || ""}</td>
+                        <td>${dyelot.ImportState || ""} ${badge}</td>
+                        <td>
+                            <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>
+                        </td>
+                    </tr>
+                `);
+            });
+          } else {
+            console.log("Failed get data");
+          }
+
+        },
+        error: function() {
+          console.log("Something when wrong");
         }
+      });
+    }
 
-      },
-      error: function() {
-        console.log("Something when wrong");
-      }
-    });
+    fetchDyelot();
 
     // Event delegation for dynamically created buttons
     $('#dyelot_table').on('click', '#update-btn', function() {
@@ -570,43 +588,41 @@
         },
         success: function(response) {
           const data = JSON.parse(response);
-          setTimeout(() => {
-            hideLoading(); // Hide loading indicator after 15 seconds
-
-            if (data.success) {
-              toastr.success('Update dyelot success', 'Success', {
-                "debug": false,
-                "progressBar": true,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "positionClass": "toast-top-right",
-                "closeButton": true,
-                "preventDuplicates": false,
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-              });
-            } else {
-              toastr.error('Failed update dyelot', 'Error', {
-                "timeOut": 0,
-                "debug": false,
-                "progressBar": true,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "positionClass": "toast-top-right",
-                "closeButton": true,
-                "extendedTimeOut": 0,
-                "preventDuplicates": false,
-                "disableTimeOut": true,
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-              });
-            }
-            window.location.reload();
-          }, 15000); // Wait for 15 seconds before hiding the loading indicator
+          hideLoading(); // Hide loading indicator after 15 seconds
+          if (data.success) {
+            fetchDyelot();
+            toastr.success('Update dyelot success', 'Success', {
+              "debug": false,
+              "progressBar": true,
+              "showDuration": "300",
+              "hideDuration": "1000",
+              "positionClass": "toast-top-right",
+              "closeButton": true,
+              "preventDuplicates": false,
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            });
+          } else {
+            fetchDyelot();
+            toastr.error('Failed update dyelot', 'Error', {
+              "timeOut": 0,
+              "debug": false,
+              "progressBar": true,
+              "showDuration": "300",
+              "hideDuration": "1000",
+              "positionClass": "toast-top-right",
+              "closeButton": true,
+              "extendedTimeOut": 0,
+              "preventDuplicates": false,
+              "disableTimeOut": true,
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            });
+          }
         },
         error: function() {
           hideLoading();
