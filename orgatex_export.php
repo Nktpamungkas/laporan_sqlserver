@@ -214,11 +214,13 @@ require_once "koneksi.php";
                                         </div>
                                     </div>
                                     <br>
-                                    <div class="row">
-                                        <div class="col-12 text-right ">
-                                            <button type="button" id="submit_button" class="btn btn-primary mx-4">Export</button>
+                                    <?php if (empty($_GET['bonresep'])) : ?>
+                                        <div class="row">
+                                            <div class="col-12 text-right ">
+                                                <button type="button" id="submit_button" class="btn btn-primary mx-4">Export</button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php endif; ?>
                                     <br>
                                 </div>
                             </div>
