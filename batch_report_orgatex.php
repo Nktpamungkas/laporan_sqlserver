@@ -133,8 +133,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 <td>no data</td>
                                                                 <td>no data</td>
 
-                                                                <td>no data</td>
-                                                                <td>no data</td>
+                                                                <td><?php echo $row_data_orgatex['started'] ?></td>
+                                                                <td><?php echo $row_data_orgatex['terminated'] ?></td>
                                                                 <td>no data</td>
                                                                 <td>no data</td>
                                                                 <td>no data</td>
