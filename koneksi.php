@@ -132,7 +132,7 @@ if ($con_dbnow_mkt) {
 
 // orgatex
 try {
-    $pdo_orgatex = new PDO("sqlsrv:server=10.0.18.2;Database=ORGATEX-INTEG", "orgatex", "kYrgEP6@");
+    $pdo_orgatex = new PDO("sqlsrv:server=10.0.0.183;Database=ORGATEX-INTEG", "orgatex", "kYrgEP6@");
     $pdo_orgatex->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
@@ -140,7 +140,7 @@ try {
 
 // orgatex
 try {
-    $pdo_orgatex_main = new PDO("sqlsrv:server=10.0.18.2;Database=ORGATEX", "orgatex", "kYrgEP6@");
+    $pdo_orgatex_main = new PDO("sqlsrv:server=10.0.0.183;Database=ORGATEX", "orgatex", "kYrgEP6@");
     $pdo_orgatex_main->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
