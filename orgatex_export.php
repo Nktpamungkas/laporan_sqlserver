@@ -204,6 +204,7 @@ require_once "koneksi.php";
                                                         <tr>
                                                             <th>Item</th>
                                                             <th>Treatment Code</th>
+                                                            <th>Description</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>

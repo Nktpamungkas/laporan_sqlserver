@@ -222,7 +222,7 @@ if (isset($_POST['production_number'])) {
                                         CAST(a.VALUEDECIMAL AS DECIMAL(4)) AS MAINPROGRAM
                                     FROM
                                         RECIPE r 
-                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = r.ABSUNIQUEID AND a.FIELDNAME = 'MainProgram1'
+                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = r.ABSUNIQUEID AND a.FIELDNAME = 'CoolingProgram1'
                                     WHERE
                                         r.SUBCODE01 = '{$treatment['SUBCODE01']}' AND r.SUFFIXCODE = '{$treatment['SUFFIXCODE']}'
                                         AND NOT a.VALUEDECIMAL IS NULL
@@ -231,18 +231,22 @@ if (isset($_POST['production_number'])) {
                                         CAST(a2.VALUEDECIMAL AS DECIMAL(4)) AS MAINPROGRAM
                                     FROM
                                         RECIPE r 
-                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = r.ABSUNIQUEID AND a2.FIELDNAME = 'CoolingProgram1'
+                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = r.ABSUNIQUEID AND a2.FIELDNAME = 'MainProgram1'
                                     WHERE
                                         r.SUBCODE01 = '{$treatment['SUBCODE01']}' AND r.SUFFIXCODE = '{$treatment['SUFFIXCODE']}'
                                         AND NOT a2.VALUEDECIMAL IS NULL";
 
             $resultArray = db2_exec($conn1, $sqlTreatmentDetail);
-
             while ($treatmentArray = db2_fetch_assoc($resultArray)) {
+                $sqlDescTreatment = $pdo_orgatex->prepare("SELECT TOP 1 * FROM dbo.Treatments WHERE TreatmentNo = $treatmentArray[MAINPROGRAM]");
+                $sqlDescTreatment->execute();
+                $mainDesc = $sqlDescTreatment->fetch(PDO::FETCH_ASSOC);
+
                 $treatments[] = [
                     'SUBCODE01' => $treatment['SUBCODE01'],
                     'SUFFIXCODE' => $treatment['SUFFIXCODE'],
-                    'MAINPROGRAM' => $treatmentArray['MAINPROGRAM'] // Only MAINPROGRAM
+                    'MAINPROGRAM' => $treatmentArray['MAINPROGRAM'], // Only MAINPROGRAM
+                    'TREATMENTNAME' => $mainDesc['TreatmentName']
                 ];
             }
         }

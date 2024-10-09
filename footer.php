@@ -308,6 +308,7 @@
                                     <tr>
                                         <td>-</td>
                                         <td>9990</td>
+                                        <td>Progarm Start</td>
                                     </tr>
                                 `);
 
@@ -316,6 +317,7 @@
                                     <tr>
                                         <td>${treatment.SUBCODE01 || ""}</td>
                                         <td>${treatment.MAINPROGRAM || ""}</td>
+                                        <td>${treatment.TREATMENTNAME || ""}</td>
                                     </tr>
                                 `);
               });
@@ -324,6 +326,7 @@
                                     <tr>
                                         <td>-</td>
                                         <td>9991</td>
+                                        <td>Program End</td>
                                     </tr>
                                 `);
               hideLoading();
@@ -445,6 +448,7 @@
         url: 'insert_data_to_orgatex.php',
         type: 'POST',
         data: formData,
+        dataType: 'json',
         success: function(response) {
           console.log(response.success);
           if (response.success) {
