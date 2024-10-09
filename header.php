@@ -388,7 +388,7 @@
                                     </li>
                                     <li class=" ">
                                         <a href="batch_report_orgatex.php" data-i18n="nav.animations.main">
-                                            List Batch Report
+                                            Report Batch 
                                         </a>
                                     </li>
                                 </ul>
