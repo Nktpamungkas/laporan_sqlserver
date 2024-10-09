@@ -61,7 +61,7 @@
 </script>
 <script type="text/javascript" src="files\bower_components\multiselect\js\jquery.multi-select.js"></script>
 <script type="text/javascript" src="files\assets\js\jquery.quicksearch.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+<script src="alert/toastr.js"></script>
 <script>
   $.fn.editable.defaults.mode = 'inline';
   $(document).ready(function() {
@@ -206,19 +206,23 @@
       $('#loadingOverlay').hide();
     }
 
-
-    var urlParams = new URLSearchParams(window.location.search);
-    var productionNumber = urlParams.get('bonresep'); // ganti dengan nama parameter
-
-    if (productionNumber) {
-      jalankanFungsi(productionNumber);
-    } else {
-      $('#production_number').on('change', function() {
-        const productionNumber = $(this).val();
-        jalankanFungsi(productionNumber);
+    // Show toast error
+    function showToastError(message) {
+      toastr.error(message, 'Error', {
+        closeButton: true,
+        progressBar: true,
       });
     }
 
+    // Show toast success
+    function showToastSuccess(message) {
+      toastr.success(message, 'Success', {
+        closeButton: true,
+        progressBar: true,
+      });
+    }
+
+    // fungsi fetch data dari production number
     function jalankanFungsi(productionNumber) {
       if (productionNumber) {
         showLoading();
@@ -269,9 +273,6 @@
               data.recipes.forEach(recipe => {
                 const groupNumber = recipe.GROUPNUMBER;
 
-
-                // Append the row to the table
-                // if (recipe.LONGDESCRIPTION) {
                 // If the group number changes, increment callOff and reset counter
                 if (currentGroup !== groupNumber) {
                   callOff++;
@@ -332,46 +333,31 @@
               hideLoading();
             } else {
               hideLoading();
-              toastr.error('Data not found, please check your production number', 'Error', {
-                "timeOut": 0,
-                "debug": false,
-                "progressBar": true,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "positionClass": "toast-top-right",
-                "closeButton": true,
-                "extendedTimeOut": 0,
-                "preventDuplicates": false,
-                "disableTimeOut": true,
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-              });
+              showToastError('Data not found, please check your production number');
             }
 
           },
           error: function() {
             hideLoading();
-            toastr.error('Something when wrong, please try again', 'Error', {
-              "timeOut": 0,
-              "debug": false,
-              "progressBar": true,
-              "showDuration": "300",
-              "hideDuration": "1000",
-              "positionClass": "toast-top-right",
-              "closeButton": true,
-              "extendedTimeOut": 0,
-              "preventDuplicates": false,
-              "disableTimeOut": true,
-              "showEasing": "swing",
-              "hideEasing": "linear",
-              "showMethod": "fadeIn",
-              "hideMethod": "fadeOut"
-            });
+            showToastError('Something when wrong, please try again');
           }
         });
       }
+    }
+
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var productionNumber = urlParams.get('bonresep'); // ganti dengan nama parameter
+
+    if (productionNumber) {
+      jalankanFungsi(productionNumber);
+    } else {
+      $('#production_number').on('change keydown', function() {
+        if (event.type === 'keydown' && (event.key === 'Enter' || event.key === 'Tab')) {
+          const productionNumber = $(this).val();
+          jalankanFungsi(productionNumber);
+        }
+      });
     }
 
     // Add event listener for a submit button to send data to the stored procedure
@@ -450,68 +436,19 @@
         data: formData,
         dataType: 'json',
         success: function(response) {
-          console.log(response.success);
           if (response.success) {
             hideLoading();
-            toastr.options = {
-              "timeOut": "2",
-            };
-            toastr.success('Success export data, please check in program orgatex', 'Success', {
-              "debug": false,
-              "progressBar": true,
-              "showDuration": "300",
-              "hideDuration": "1000",
-              "positionClass": "toast-top-right",
-              "closeButton": true,
-              "preventDuplicates": false,
-              "showEasing": "swing",
-              "hideEasing": "linear",
-              "showMethod": "fadeIn",
-              "hideMethod": "fadeOut"
-            });
+            showToastSuccess('Success export data, please check in program orgatex');
             console.log(response); // Log the received data
           } else {
             hideLoading();
-            toastr.options = {
-              "timeOut": "0",
-            };
-            toastr.error('Error export data, please try again', 'Error', {
-              "timeOut": 0,
-              "debug": false,
-              "progressBar": true,
-              "showDuration": "300",
-              "hideDuration": "1000",
-              "positionClass": "toast-top-right",
-              "closeButton": true,
-              "extendedTimeOut": 0,
-              "preventDuplicates": false,
-              "disableTimeOut": true,
-              "showEasing": "swing",
-              "hideEasing": "linear",
-              "showMethod": "fadeIn",
-              "hideMethod": "fadeOut"
-            });
+            showToastError('Error export data, please try again');
             console.log(response);
           }
         },
         error: function() {
           hideLoading();
-          toastr.error('Something when wrong, please try again', 'Error', {
-            "timeOut": 0,
-            "debug": false,
-            "progressBar": true,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "positionClass": "toast-top-right",
-            "closeButton": true,
-            "extendedTimeOut": 0,
-            "preventDuplicates": false,
-            "disableTimeOut": true,
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-          });
+          showToastError('Something when wrong, please try again');
         }
       });
 
@@ -562,12 +499,12 @@
                 `);
             });
           } else {
-            console.log("Failed get data");
+            showToastError('Failed get data');
           }
 
         },
         error: function() {
-          console.log("Something when wrong");
+          showToastError('Something when wrong, please try again');
         }
       });
     }
@@ -596,57 +533,15 @@
           hideLoading(); // Hide loading indicator after 15 seconds
           if (data.success) {
             fetchDyelot();
-            toastr.success('Update dyelot success', 'Success', {
-              "debug": false,
-              "progressBar": true,
-              "showDuration": "300",
-              "hideDuration": "1000",
-              "positionClass": "toast-top-right",
-              "closeButton": true,
-              "preventDuplicates": false,
-              "showEasing": "swing",
-              "hideEasing": "linear",
-              "showMethod": "fadeIn",
-              "hideMethod": "fadeOut"
-            });
+            showToastSuccess('Update dyelot success');
           } else {
             fetchDyelot();
-            toastr.error('Failed update dyelot', 'Error', {
-              "timeOut": 0,
-              "debug": false,
-              "progressBar": true,
-              "showDuration": "300",
-              "hideDuration": "1000",
-              "positionClass": "toast-top-right",
-              "closeButton": true,
-              "extendedTimeOut": 0,
-              "preventDuplicates": false,
-              "disableTimeOut": true,
-              "showEasing": "swing",
-              "hideEasing": "linear",
-              "showMethod": "fadeIn",
-              "hideMethod": "fadeOut"
-            });
+            showToastError('Failed update dyelot');
           }
         },
         error: function() {
           hideLoading();
-          toastr.error('Something when wrong, please try again', 'Error', {
-            "timeOut": 0,
-            "debug": false,
-            "progressBar": true,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "positionClass": "toast-top-right",
-            "closeButton": true,
-            "extendedTimeOut": 0,
-            "preventDuplicates": false,
-            "disableTimeOut": true,
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-          });
+          showToastError('Something when wrong, please try again');
         }
       });
 
