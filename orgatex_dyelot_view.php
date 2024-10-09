@@ -28,6 +28,7 @@ require_once "koneksi.php";
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link href="alert/toastr.css" rel="stylesheet" />
+    <link href="alert/sweetalert2.min.css" rel="stylesheet" />
     <style>
         #loadingOverlay {
             position: fixed;
@@ -81,7 +82,7 @@ require_once "koneksi.php";
                                     <div class="card-block">
                                         <div class="row">
                                             <div class="col-12">
-                                                <table class="table table-sm table-bordered" id="dyelot_table">
+                                                <table class="table table-sm table-bordered w-100" id="dyelot_table">
                                                     <thead>
                                                         <tr>
                                                             <th>Dyelot</th>

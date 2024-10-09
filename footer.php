@@ -62,6 +62,7 @@
 <script type="text/javascript" src="files\bower_components\multiselect\js\jquery.multi-select.js"></script>
 <script type="text/javascript" src="files\assets\js\jquery.quicksearch.js"></script>
 <script src="alert/toastr.js"></script>
+<script src="alert/sweetalert2.all.min.js"></script>
 <script>
   $.fn.editable.defaults.mode = 'inline';
   $(document).ready(function() {
@@ -340,8 +341,18 @@
           error: function() {
             hideLoading();
             showToastError('Something when wrong, please try again');
+
           }
         });
+      } else {
+        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption').val('');
+        // Populate the recipe table
+        const tableBody = $('#recipe_table tbody');
+        tableBody.empty(); // Clear existing rows
+
+        // Populate the recipe table
+        const tableBodyTreatment = $('#treatment_table tbody');
+        tableBodyTreatment.empty(); // Clear existing rows
       }
     }
 
@@ -438,6 +449,7 @@
         success: function(response) {
           if (response.success) {
             hideLoading();
+            jalankanFungsi("");
             showToastSuccess('Success export data, please check in program orgatex');
             console.log(response); // Log the received data
           } else {
@@ -461,17 +473,11 @@
         type: 'GET',
         success: function(response) {
           const data = JSON.parse(response);
-
           console.log(data);
 
           if (data.success) {
-            // Populate the recipe table
-            const tableBody = $('#dyelot_table tbody');
-            tableBody.empty();
-
-            console.log(data.dyelots);
-
-            data.dyelots.forEach(dyelot => {
+            // Prepare data for DataTable
+            const tableData = data.dyelots.map(dyelot => {
               let badge = '';
 
               // Determine the badge based on ImportState
@@ -485,63 +491,96 @@
                 badge = '<span class="badge badge-pill badge-danger p-2">Error Delete</span>';
               }
 
-              tableBody.append(`
-                    <tr>
-                        <td>${dyelot.Dyelot || ""}</td>
-                        <td>${dyelot.ReDye || ""}</td>
-                        <td>${dyelot.Machine || ""}</td>
-                        <td>${dyelot.Color || ""}</td>
-                        <td>${dyelot.ImportState || ""} ${badge}</td>
-                        <td>
-                            <button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>
-                        </td>
-                    </tr>
-                `);
+              return [
+                dyelot.Dyelot || "",
+                dyelot.ReDye || "",
+                dyelot.Machine || "",
+                dyelot.Color || "",
+                `${dyelot.ImportState || ""} ${badge}`,
+                `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>`
+              ];
+            });
+
+            // Initialize DataTable with search enabled
+            $('#dyelot_table').DataTable({
+              data: tableData,
+              columns: [{
+                  title: "Dyelot"
+                },
+                {
+                  title: "ReDye"
+                },
+                {
+                  title: "Machine"
+                },
+                {
+                  title: "Color"
+                },
+                {
+                  title: "Import State"
+                },
+                {
+                  title: "Actions"
+                }
+              ],
+              destroy: true,
+              searching: true,
             });
           } else {
-            showToastError('Failed get data');
+            showToastError('Failed to get data');
           }
-
         },
         error: function() {
-          showToastError('Something when wrong, please try again');
+          showToastError('Something went wrong, please try again');
         }
       });
     }
 
+    // Call the function to fetch data
     fetchDyelot();
 
     // Event delegation for dynamically created buttons
     $('#dyelot_table').on('click', '#update-btn', function() {
-      console.log('Button clicked');
-      showLoading();
       const dyelot = $(this).data('dyelot');
       const redye = $(this).data('redye');
       const importState = $(this).data('importstate');
 
-      // Make AJAX request to update ImportState
-      $.ajax({
-        url: 'update_dyelot.php', // Adjust this to your PHP script path
-        type: 'POST',
-        data: {
-          DyelotToDelete: dyelot,
-          RedyeToDelete: redye,
-          ImportState: importState
-        },
-        success: function(response) {
-          const data = JSON.parse(response);
-          hideLoading(); // Hide loading indicator after 15 seconds
-          if (data.success) {
-            fetchDyelot();
-            showToastSuccess('Update dyelot success');
-          } else {
-            fetchDyelot();
-            showToastError('Failed update dyelot');
-          }
-        },
-        error: function() {
-          hideLoading();
-          showToastError('Something when wrong, please try again');
+      // SweetAlert confirmation
+      Swal.fire({
+        title: 'Are you sure?',
+        text: `You are about to delete batch: ${dyelot}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          showLoading();
+          $.ajax({
+            url: 'update_dyelot.php', // Adjust this to your PHP script path
+            type: 'POST',
+            data: {
+              DyelotToDelete: dyelot,
+              RedyeToDelete: redye,
+              ImportState: importState
+            },
+            success: function(response) {
+              const data = JSON.parse(response);
+              hideLoading();
+              if (data.success) {
+                fetchDyelot();
+                showToastSuccess('Update dyelot success');
+              } else {
+                fetchDyelot();
+                showToastError('Failed update dyelot');
+              }
+            },
+            error: function() {
+              hideLoading();
+              showToastError('Something when wrong, please try again');
+            }
+          });
         }
       });
 
