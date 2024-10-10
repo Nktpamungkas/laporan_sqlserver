@@ -255,7 +255,7 @@ if (isset($_POST['production_number'])) {
         }
 
         // SCHEDULE DYEING
-        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE no_resep = '$productionNumber'";
+        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE no_resep = '$orderCode-$groupLine'";
         $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
         $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
 
