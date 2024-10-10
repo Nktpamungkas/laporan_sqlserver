@@ -238,7 +238,12 @@
 
           if (response.success) {
             let groupLine = response.groupLine;
-            let formattedString = groupLine.map(num => `'${num}'`).join(',');
+            let formattedString = '';
+            if(groupLine.length > 1){
+              formattedString = groupLine.map(num => `'${num}'`).join(',');
+            }else{
+              formattedString = groupLine[0];
+            }
             jalankanFungsi(productionNumber, formattedString, groupLine[0]);
           } else {
             hideLoading();
@@ -539,6 +544,7 @@
                 dyelot.Color || "",
                 `${dyelot.ImportState || ""} ${badge}`,
                 dyelot.ImportState == 10 ? `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>` :
+                dyelot.ImportState == 10 ? `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="40">Delete Batch</button>` :
                 ''
               ];
             });
