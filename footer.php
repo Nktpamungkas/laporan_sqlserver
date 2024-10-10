@@ -481,15 +481,20 @@
               let badge = '';
 
               // Determine the badge based on ImportState
-              if (dyelot.ImportState == 10) {
-                badge = '<span class="badge badge-pill badge-primary p-2">Success Import</span>';
+              if (dyelot.ImportState == 1) {
+                badge = '<span class="badge badge-pill badge-primary p-2">Waiting Checking</span>';
+              } else if (dyelot.ImportState == 10) {
+                badge = '<span class="badge badge-pill badge-success p-2">Success Import</span>';
               } else if (dyelot.ImportState == 30) {
                 badge = '<span class="badge badge-pill badge-warning p-2">Waiting Delete</span>';
               } else if (dyelot.ImportState == 40) {
-                badge = '<span class="badge badge-pill badge-danger p-2">Deleted</span>';
+                badge = '<span class="badge badge-pill badge-danger p-2">Success Delete</span>';
               } else if (dyelot.ImportState == 50) {
                 badge = '<span class="badge badge-pill badge-danger p-2">Error Delete</span>';
+              } else if (dyelot.ImportState == 20) {
+                badge = '<span class="badge badge-pill badge-danger p-2">Error Import</span>';
               }
+
 
               return [
                 dyelot.Dyelot || "",
@@ -497,7 +502,7 @@
                 dyelot.Machine || "",
                 dyelot.Color || "",
                 `${dyelot.ImportState || ""} ${badge}`,
-                `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>`
+                dyelot.ImportState == 10 ? `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>` : ''
               ];
             });
 
