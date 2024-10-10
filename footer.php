@@ -502,7 +502,8 @@
                 dyelot.Machine || "",
                 dyelot.Color || "",
                 `${dyelot.ImportState || ""} ${badge}`,
-                dyelot.ImportState == 10 ? `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>` : ''
+                dyelot.ImportState == 10 ? `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>` :
+                ''
               ];
             });
 

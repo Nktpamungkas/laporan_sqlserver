@@ -94,7 +94,7 @@ require_once "koneksi.php";
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Machine Number</h5>
-                                                <input type="text" id="machine_number" class="form-control">
+                                                <input type="text" id="machine_number" class="form-control" require>
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Type Of Procedure</h5>
