@@ -223,15 +223,47 @@
       });
     }
 
+    function getGroupLine(productionNumber) {
+      showLoading();
+      $.ajax({
+        url: 'fetch_cheking_groupline.php',
+        type: 'POST',
+        dataType: "json",
+        data: {
+          production_number: productionNumber
+        },
+        success: function(response) {
+
+          console.log(response);
+
+          if (response.success) {
+            let groupLine = response.groupLine;
+            let formattedString = groupLine.map(num => `'${num}'`).join(',');
+            jalankanFungsi(productionNumber, formattedString, groupLine[0]);
+          } else {
+            hideLoading();
+            showToastError('Data not found, please check your production number');
+          }
+
+        },
+        error: function() {
+          hideLoading();
+          showToastError('Something when wrong, please try again');
+
+        }
+      });
+    }
+
     // fungsi fetch data dari production number
-    function jalankanFungsi(productionNumber) {
+    function jalankanFungsi(productionNumber, groupLineArray, groupLine) {
       if (productionNumber) {
-        showLoading();
         $.ajax({
           url: 'fetch_data_for_orgatex.php',
           type: 'POST',
           data: {
-            production_number: productionNumber
+            production_number: productionNumber,
+            groupLineArray: groupLineArray,
+            groupLine: groupLine
           },
           success: function(response) {
             const data = JSON.parse(response);
@@ -246,6 +278,7 @@
               $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
               $('#procedure_number').val(data.procedure_no).prop('disabled', false);
               $('#color').val(data.color).prop('disabled', false);
+              $('#warna').val(data.warna).prop('disabled', false);
 
               $('#recipe_number').val(data.recipe_number).prop('disabled', false);
               $('#order_number').val(data.order_number).prop('disabled', false);
@@ -345,7 +378,7 @@
           }
         });
       } else {
-        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption').val('');
+        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption').val('');
         // Populate the recipe table
         const tableBody = $('#recipe_table tbody');
         tableBody.empty(); // Clear existing rows
@@ -361,12 +394,14 @@
     var productionNumber = urlParams.get('bonresep'); // ganti dengan nama parameter
 
     if (productionNumber) {
-      jalankanFungsi(productionNumber);
+      // jalankanFungsi(productionNumber);
+      getGroupLine(productionNumber);
     } else {
       $('#production_number').on('change keydown', function() {
         if (event.type === 'keydown' && (event.key === 'Enter' || event.key === 'Tab')) {
           const productionNumber = $(this).val();
-          jalankanFungsi(productionNumber);
+          // jalankanFungsi(productionNumber);
+          getGroupLine(productionNumber);
         }
       });
     }
@@ -381,6 +416,7 @@
         procedureType: $('#procedure_type').val(),
         procedureNo: $('#procedure_number').val(),
         color: $('#color').val(),
+        warna: $('#warna').val(),
         recipeNo: $('#recipe_number').val(),
         orderNo: $('#order_number').val(),
         customer: $('#customer_name').val(),

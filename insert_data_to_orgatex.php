@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $customer = $_POST['customer'];
     $article = $_POST['article'];
     $colorNo = $_POST['colorNo'];
+    $warna = $_POST['warna'];
     $weight = $_POST['weight'];
     $length = $_POST['length'];
     $liquorRatio = $_POST['liquorRatio'];
@@ -41,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         @Customer = :customer,
         @Article = :article,
         @ColorNo = :colorNo,
+        @ColourDescript = :warna,
         @Weight = :weight,
         @Length = :length,
         @LiquorRatio = :liquorRatio,
@@ -63,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':customer', $customer);
         $stmt->bindParam(':article', $article);
         $stmt->bindParam(':colorNo', $colorNo);
+        $stmt->bindParam(':warna', $warna);
         $stmt->bindParam(':weight', $weight);
         $stmt->bindParam(':length', $length);
         $stmt->bindParam(':liquorRatio', $liquorRatio);

@@ -94,7 +94,7 @@ require_once "koneksi.php";
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Machine Number</h5>
-                                                <input type="text" id="machine_number" class="form-control" require>
+                                                <input type="text" id="machine_number" class="form-control" required>
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Type Of Procedure</h5>
@@ -112,6 +112,10 @@ require_once "koneksi.php";
                                                 <input type="text" id="color" class="form-control" readonly>
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-30">
+                                                <h5 class="sub-title">Color Desc</h5>
+                                                <input type="text" id="warna" class="form-control" readonly>
+                                            </div>
+                                            <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Recipe Number</h5>
                                                 <input type="text" id="recipe_number" class="form-control" readonly>
                                             </div>
@@ -127,13 +131,13 @@ require_once "koneksi.php";
                                                 <h5 class="sub-title">Article</h5>
                                                 <input type="text" id="article" class="form-control" readonly>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Color Number</h5>
                                                 <input type="text" id="color_number" class="form-control" readonly>
                                             </div>
 
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Length</h5>
                                                 <input type="text" id="length" class="form-control" readonly>
@@ -154,12 +158,12 @@ require_once "koneksi.php";
                                                 <h5 class="sub-title">ReelSpeed</h5>
                                                 <input type="text" id="reelSpeed" class="form-control" readonly>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Absorption</h5>
                                                 <input type="text" id="absorption" class="form-control" readonly>
                                             </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Weight</h5>
                                                 <input type="text" id="weight" class="form-control" readonly>
