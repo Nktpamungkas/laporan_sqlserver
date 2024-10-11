@@ -9,7 +9,7 @@ if (isset($_POST['production_number'])) {
     // Query to fetch the main data based on production number
     $sqlMain = "SELECT
                     DISTINCT 
-                    VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE AS DYELOT,
+                    TRIM(VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE) AS DYELOT,
                     VIEWPRODUCTIONRESERVATION.GROUPLINE AS REDYE,
                     '1409' AS MACHINE,
                     0 AS TYPEOFPROCEDURE,
