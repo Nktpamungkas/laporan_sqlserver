@@ -197,6 +197,7 @@
 </script>
 <script>
   $(document).ready(function() {
+
     // Show loading overlay
     function showLoading() {
       $('#loadingOverlay').show();
@@ -239,9 +240,9 @@
           if (response.success) {
             let groupLine = response.groupLine;
             let formattedString = '';
-            if(groupLine.length > 1){
+            if (groupLine.length > 1) {
               formattedString = groupLine.map(num => `'${num}'`).join(',');
-            }else{
+            } else {
               formattedString = groupLine[0];
             }
             jalankanFungsi(productionNumber, formattedString, groupLine[0]);
@@ -543,9 +544,11 @@
                 dyelot.Machine || "",
                 dyelot.Color || "",
                 `${dyelot.ImportState || ""} ${badge}`,
+                allowedIPs.includes(currentIP) ?
+                `<button class="btn btn-warning" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>
+                 <button class="btn btn-danger" id="update-btn-40" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="40">Hard Delete</button>` :
                 dyelot.ImportState == 10 ? `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>` :
-                // dyelot.ImportState == 10 ? `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="40">Delete Batch</button>` :
-                ''
+                ``,
               ];
             });
 
@@ -596,7 +599,11 @@
       // SweetAlert confirmation
       Swal.fire({
         title: 'Are you sure?',
-        text: `You are about to delete batch: ${dyelot}`,
+        text: `
+                                You are about to delete batch : $ {
+                                  dyelot
+                                }
+                                `,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
