@@ -2,15 +2,14 @@
 require_once "koneksi.php";
 
 if (isset($_POST['production_number'])) {
-    $productionNumber = $_POST['production_number'];
-
-    // Split the production number into order code and group line
-    list($orderCode, $groupLine) = explode('-', $productionNumber);
+    $orderCode = $_POST['production_number'];
+    $groupLineArray = $_POST['groupLineArray'];
+    $groupLine = $_POST['groupLine'];
 
     // Query to fetch the main data based on production number
     $sqlMain = "SELECT
                     DISTINCT 
-                    VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE AS DYELOT,
+                    TRIM(VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE) AS DYELOT,
                     VIEWPRODUCTIONRESERVATION.GROUPLINE AS REDYE,
                     '1409' AS MACHINE,
                     0 AS TYPEOFPROCEDURE,
@@ -20,7 +19,8 @@ if (isset($_POST['production_number'])) {
                     i.PROJECTCODE AS ORDERNO,
                     i.ORDPRNCUSTOMERSUPPLIERCODE AS CUSTOMER,
                     '' AS ARTICLE,
-                    SUBSTR(TRIM(VIEWPRODUCTIONRESERVATION.SUBCODE01), 7, 7) AS COLORNO,
+                    TRIM(i.SUBCODE05) AS COLORNO,
+                    SUBSTR(TRIM(i.WARNA),1,20) AS WARNA,
                     ir.INITIALUSERPRIMARYQUANTITY AS WEIGHT,
                     0 AS LENGTH,
                     VIEWPRODUCTIONRESERVATION.PICKUPQUANTITY AS LIQUORATIO,
@@ -102,7 +102,7 @@ if (isset($_POST['production_number'])) {
                     LEFT JOIN ITXVIEWRESEP2 ITXVIEWRESEP2 ON ITXVIEWRESEP2.RECIPESUBCODE01 = ITXVIEWRESEP.CODE AND ITXVIEWRESEP2.RECIPESUFFIXCODE = ITXVIEWRESEP.SUFFIXCODE
                     WHERE 
                         VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
-                        AND VIEWPRODUCTIONRESERVATION.GROUPLINE = '$groupLine'
+                        AND VIEWPRODUCTIONRESERVATION.GROUPLINE IN ($groupLineArray) 
                         AND NOT 
                             CASE
                                 WHEN 
@@ -194,7 +194,7 @@ if (isset($_POST['production_number'])) {
                                 LEFT JOIN ITXVIEWRESEP2 ITXVIEWRESEP2 ON ITXVIEWRESEP2.RECIPESUBCODE01 = ITXVIEWRESEP.CODE AND ITXVIEWRESEP2.RECIPESUFFIXCODE = ITXVIEWRESEP.SUFFIXCODE
                                 WHERE 
                                     VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
-                                    AND VIEWPRODUCTIONRESERVATION.GROUPLINE = '$groupLine'
+                                    AND VIEWPRODUCTIONRESERVATION.GROUPLINE IN ($groupLineArray) 
                                     AND NOT 
                                         CASE
                                             WHEN 
@@ -255,7 +255,7 @@ if (isset($_POST['production_number'])) {
         }
 
         // SCHEDULE DYEING
-        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE no_resep = '$productionNumber'";
+        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE no_resep = '$orderCode-$groupLine'";
         $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
         $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
 
@@ -272,6 +272,7 @@ if (isset($_POST['production_number'])) {
             'customer_name' => $dataSchedule['langganan'],
             'article' => $dataSchedule['no_hanger'],
             'color_number' => $dataMain['COLORNO'],
+            'warna' => $dataMain['WARNA'],
             'weight' => $dataMain['WEIGHT'],
             'length' => $dataMain['LENGTH'],
             'liquorRatio' => $dataMain['LIQUORATIO'],
