@@ -391,6 +391,11 @@
                                             Report Batch 
                                         </a>
                                     </li>
+                                    <li class=" ">
+                                        <a href="stop_machine_efficency.php" data-i18n="nav.animations.main">
+                                            Stop Machine Efficency
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>

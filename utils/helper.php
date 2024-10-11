@@ -52,3 +52,17 @@ function replaceString($search, $replace, $subject) {
     // Perform the string replacement
     return str_replace($search, $replace, $subject);
 }
+
+function convertDateTime($value){
+    if ($value instanceof DateTime) {
+        if ($value->format('H:i:s') === '00:00:00') {
+            $value = $value->format('Y-m-d');
+        } else {
+            $value = $value->format('Y-m-d H:i:s');
+        }
+    }else{
+        $value=NULL;
+    }
+
+    return $value;
+}
