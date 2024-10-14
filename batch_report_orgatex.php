@@ -98,10 +98,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         <tbody>
                                                             <?php
                                                                 $sql_query = $pdo_orgatex_main->prepare("
-                                                                SELECT [batch_ref_no], [batch_text_01],[machine_no], 
-                                                                [batch_parameter_01], [started], [terminated], [times_02], 
-                                                                [times_01], [consumption_01], [batch_parameter_03], 
-                                                                [batch_parameter_09], [batch_parameter_07], [batch_parameter_08] 
+                                                                SELECT [batch_ref_no], 
+                                                                [batch_text_01],
+                                                                [machine_no], 
+                                                                [batch_parameter_01], 
+                                                                [started], 
+                                                                [terminated], 
+                                                                [times_02], 
+                                                                [times_01], 
+                                                                [consumption_01], 
+                                                                [batch_parameter_03], 
+                                                                [batch_parameter_09], 
+                                                                [batch_parameter_07], 
+                                                                [batch_parameter_08] 
                                                                 FROM BatchDetail WHERE (([machine_no] IN (N'1401', N'1402', N'1406', 
                                                                 N'1409', N'1410', N'1411', N'1412', N'1413', N'1419', N'1420', N'1421', 
                                                                 N'1444', N'1445', N'1449', N'1450', N'1451', N'1452', N'1453', N'1454', 
@@ -135,7 +144,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                                                 <td><?php echo $row_data_orgatex['started'] ?></td>
                                                                 <td><?php echo $row_data_orgatex['terminated'] ?></td>
-                                                                <td>no data</td>
+                                                                <td>
+                                                                    <?php
+                                                                     if($row_data_orgatex['started']!=null && $row_data_orgatex['terminated']!=null){
+                                                                        $start_date = new DateTime($row_data_orgatex['started']);
+                                                                        $end_date = new DateTime($row_data_orgatex['terminated']);
+
+                                                                        $interval = $start_date->diff($end_date);
+
+                                                                        echo $interval->format('%h hour %i minute %s second');
+                                                                     }else{
+                                                                        echo '';
+                                                                     }
+
+                                                                    ?>
+                                                                </td>
                                                                 <td>no data</td>
                                                                 <td>no data</td>
 
