@@ -280,6 +280,7 @@ if (isset($_POST['production_number'])) {
             'pumpSpeed' => $dataMain['PUMPSPEED'],
             'reelSpeed' => $dataMain['REELSPEED'],
             'absorption' => $dataMain['ABSORPTION'],
+            'group_line' => (!empty($groupLineArray) || count($groupLineArray) > 1) ? $groupLineArray  :  $groupLine,
             'recipes' => $recipes,
             'treatments' => $treatments
         ]);

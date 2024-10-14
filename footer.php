@@ -1,3 +1,14 @@
+<?php
+
+$currentIP = $_SERVER['REMOTE_ADDR'];
+$allowedIPs = ['10.0.5.132', '10.0.6.247', '10.0.5.91'];
+
+echo '<script>';
+echo 'var currentIP = "' . $currentIP . '";';
+echo 'var allowedIPs = ' . json_encode($allowedIPs) . ';';
+echo '</script>';
+
+?>
 <script type="text/javascript" src="files\bower_components\jquery\js\jquery.min.js"></script>
 <script src="dist/js/adminlte.min.js"></script>
 <script src="files\bower_components/jquery_validation/jquery.validate.min.js"></script>
@@ -279,6 +290,7 @@
             if (data.success) {
               // Populate input fields
               $('#dyelot').val(data.dyelot).prop('disabled', false);
+              $('#group_line').val(data.group_line).prop('disabled', false);
               $('#redye').val(data.redye).prop('disabled', false);
               $('#machine_number').val(data.machine).prop('disabled', false);
               $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
@@ -399,22 +411,27 @@
     var urlParams = new URLSearchParams(window.location.search);
     var productionNumber = urlParams.get('bonresep'); // ganti dengan nama parameter
 
+    // Check kondisi apakah ada get di url
     if (productionNumber) {
-      // jalankanFungsi(productionNumber);
+      // Ini jika ada url get
+      // jalankan query untuk mencari berdasarkan no kk
       getGroupLine(productionNumber);
     } else {
+      // ini jika dari change input no kk
       $('#production_number').on('change keydown', function() {
         if (event.type === 'keydown' && (event.key === 'Enter' || event.key === 'Tab')) {
           const productionNumber = $(this).val();
-          // jalankanFungsi(productionNumber);
+          // jalankan query untuk mencari berdasarkan no kk
           getGroupLine(productionNumber);
         }
       });
     }
 
-    // Add event listener for a submit button to send data to the stored procedure
+    // Trigger button ketika klik untuk export
     $('#submit_button').on('click', function() {
+      // munculin loading
       showLoading();
+      // ini data untuk menyiapkan data sesuai store prosedure
       const formData = {
         dyelot: $('#dyelot').val(),
         redye: $('#redye').val(),
@@ -436,10 +453,12 @@
         reelSpeed: parseFloat($('#reelSpeed').val()), // Ensure numeric values
         absorption: parseFloat($('#absorption').val()), // Ensure numeric values
         recipes: [], // Collect recipe data
-        treatments: [] // Collect recipe data
+        treatments: [], // Collect recipe data
+        currentIP: currentIP,
       };
-
+      // Validasi bahwa nomor mesin tidak boleh kosong
       if (formData.machine) {
+        // ambil data dari table dan input
         $('#recipe_table tbody tr').each(function() {
           const code = $(this).find('td:nth-child(1)').text();
           const subcode = $(this).find('td:nth-child(2)').text();
@@ -452,7 +471,9 @@
           const callOff = $(this).find('td:nth-child(10)').text(); // Adjust based on your table structure
           const counter = $(this).find('td:nth-child(11)').text(); // Adjust based on your table structure
 
+          // pillih selain treatment
           if (productName) {
+            // masukan ke variable formData dari data table dan input sebelumnya
             formData.recipes.push({
               CorrectionNumber: 0,
               CallOff: callOff,
@@ -470,7 +491,7 @@
             });
           }
         });
-
+        // ini untuk ambil data dari table treatment
         $('#treatment_table tbody tr').each(function() {
           const code = $(this).find('td:nth-child(2)').text();
           formData.treatments.push({
@@ -479,11 +500,11 @@
           });
         });
 
-
+        // ubah formdata terutama recipes dan treatments lalu parse ke bentuk json sebelum di export
         formData.recipes = JSON.stringify(formData.recipes);
         formData.treatments = JSON.stringify(formData.treatments);
 
-        // Make an AJAX call to your PHP script that calls the stored procedure
+        // panggil ajax insert untuk meng export
         $.ajax({
           url: 'insert_data_to_orgatex.php',
           type: 'POST',
@@ -513,159 +534,6 @@
 
     });
 
-
-    function fetchDyelot() {
-      $.ajax({
-        url: 'fetch_data_dyelots.php',
-        type: 'GET',
-        success: function(response) {
-          const data = JSON.parse(response);
-          console.log(data);
-
-          if (data.success) {
-            // Prepare data for DataTable
-            const tableData = data.dyelots.map(dyelot => {
-              let badge = '';
-
-              // Determine the badge based on ImportState
-              if (dyelot.ImportState == 1) {
-                badge = '<span class="badge badge-pill badge-primary p-2">Waiting Checking</span>';
-              } else if (dyelot.ImportState == 10) {
-                badge = '<span class="badge badge-pill badge-success p-2">Success Import</span>';
-              } else if (dyelot.ImportState == 30) {
-                badge = '<span class="badge badge-pill badge-warning p-2">Waiting Delete</span>';
-              } else if (dyelot.ImportState == 40) {
-                badge = '<span class="badge badge-pill badge-danger p-2">Success Delete</span>';
-              } else if (dyelot.ImportState == 50) {
-                badge = '<span class="badge badge-pill badge-danger p-2">Error Delete</span>';
-              } else if (dyelot.ImportState == 20) {
-                badge = '<span class="badge badge-pill badge-danger p-2">Error Import</span>';
-              }
-
-
-              return [
-                dyelot.Dyelot || "",
-                dyelot.DyelotRefNo || "",
-                dyelot.ReDye || "",
-                dyelot.Machine || "",
-                dyelot.Color || "",
-                `${dyelot.ImportState || ""} ${badge}`,
-                dyelot.QueueTime || "",
-                dyelot.Desc || "",
-                allowedIPs.includes(currentIP) ?
-                `<button class="btn btn-warning" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>
-                 <button class="btn btn-danger" id="update-btn-40" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="40">Hard Delete</button>` :
-                dyelot.ImportState == 10 ? `<button class="btn btn-danger" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>` :
-                ``,
-              ];
-            });
-
-            // Initialize DataTable with search enabled
-            $('#dyelot_table').DataTable({
-              data: tableData,
-              scrollCollapse: true,
-              scroller: true,
-              scrollX: true,
-              destroy: true,
-              searching: true,
-              columns: [{
-                  title: "Dyelot"
-                },
-                {
-                  title: "Dyelot Ref No"
-                },
-                {
-                  title: "ReDye"
-                },
-                {
-                  title: "Machine"
-                },
-                {
-                  title: "Color"
-                },
-                {
-                  title: "Import State"
-                },
-                {
-                  title: "Date"
-                },
-                {
-                  title: "Desc"
-                },
-                {
-                  title: "Actions"
-                }
-              ],
-              columnDefs: [{
-                render: function(data, type, full, meta) {
-                  return "<div class='text-wrap width-300'>" + data + "</div>";
-                },
-                targets: 7
-              }]
-            });
-          } else {
-            showToastError('Failed to get data');
-          }
-        },
-        error: function() {
-          showToastError('Something went wrong, please try again');
-        }
-      });
-    }
-
-    // Call the function to fetch data
-    fetchDyelot();
-
-    // Event delegation for dynamically created buttons
-    $('#dyelot_table').on('click', '#update-btn', function() {
-      const dyelot = $(this).data('dyelot');
-      const redye = $(this).data('redye');
-      const importState = $(this).data('importstate');
-
-      // SweetAlert confirmation
-      Swal.fire({
-        title: 'Are you sure?',
-        text: `
-                                You are about to delete batch : $ {
-                                  dyelot
-                                }
-                                `,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          showLoading();
-          $.ajax({
-            url: 'update_dyelot.php', // Adjust this to your PHP script path
-            type: 'POST',
-            data: {
-              DyelotToDelete: dyelot,
-              RedyeToDelete: redye,
-              ImportState: importState
-            },
-            success: function(response) {
-              const data = JSON.parse(response);
-              hideLoading();
-              if (data.success) {
-                fetchDyelot();
-                showToastSuccess('Update dyelot success');
-              } else {
-                fetchDyelot();
-                showToastError('Failed update dyelot');
-              }
-            },
-            error: function() {
-              hideLoading();
-              showToastError('Something when wrong, please try again');
-            }
-          });
-        }
-      });
-
-    });
   });
 </script>
 </body>

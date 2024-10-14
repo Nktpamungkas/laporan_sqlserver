@@ -89,6 +89,10 @@ require_once "koneksi.php";
                                                 <input type="text" id="dyelot" class="form-control" readonly>
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-30">
+                                                <h5 class="sub-title">Group Line</h5>
+                                                <input type="text" id="group_line" class="form-control" readonly>
+                                            </div>
+                                            <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Redye</h5>
                                                 <input type="text" id="redye" class="form-control" readonly>
                                             </div>
@@ -100,13 +104,12 @@ require_once "koneksi.php";
                                                 <h5 class="sub-title">Type Of Procedure</h5>
                                                 <input type="text" id="procedure_type" class="form-control" readonly>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Procedure Number</h5>
                                                 <input type="text" id="procedure_number" class="form-control" readonly>
                                             </div>
-
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Color</h5>
                                                 <input type="text" id="color" class="form-control" readonly>
@@ -127,12 +130,12 @@ require_once "koneksi.php";
                                                 <h5 class="sub-title">Customer Name</h5>
                                                 <input type="text" id="customer_name" class="form-control" readonly>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Article</h5>
                                                 <input type="text" id="article" class="form-control" readonly>
                                             </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Color Number</h5>
                                                 <input type="text" id="color_number" class="form-control" readonly>
@@ -154,12 +157,13 @@ require_once "koneksi.php";
                                                 <h5 class="sub-title">PumpSpeed</h5>
                                                 <input type="text" id="pumpSpeed" class="form-control" readonly>
                                             </div>
+
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">ReelSpeed</h5>
                                                 <input type="text" id="reelSpeed" class="form-control" readonly>
                                             </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-30">
                                                 <h5 class="sub-title">Absorption</h5>
                                                 <input type="text" id="absorption" class="form-control" readonly>
