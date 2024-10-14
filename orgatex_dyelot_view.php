@@ -40,6 +40,14 @@ echo '</script>';
     <link href="alert/toastr.css" rel="stylesheet" />
     <link href="alert/sweetalert2.min.css" rel="stylesheet" />
     <style>
+        .text-wrap {
+            white-space: normal;
+        }
+
+        .width-200 {
+            width: 200px;
+        }
+
         #loadingOverlay {
             position: fixed;
             top: 0;

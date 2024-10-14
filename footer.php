@@ -563,7 +563,11 @@
             // Initialize DataTable with search enabled
             $('#dyelot_table').DataTable({
               data: tableData,
+              scrollCollapse: true,
+              scroller: true,
               scrollX: true,
+              destroy: true,
+              searching: true,
               columns: [{
                   title: "Dyelot"
                 },
@@ -592,8 +596,12 @@
                   title: "Actions"
                 }
               ],
-              destroy: true,
-              searching: true,
+              columnDefs: [{
+                render: function(data, type, full, meta) {
+                  return "<div class='text-wrap width-300'>" + data + "</div>";
+                },
+                targets: 7
+              }]
             });
           } else {
             showToastError('Failed to get data');
