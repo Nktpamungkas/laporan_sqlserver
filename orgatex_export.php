@@ -176,26 +176,28 @@ require_once "koneksi.php";
                                                 <div class="card-header">
                                                     <h5>Recipe Preview</h5>
                                                 </div>
-                                                <table class="table table-sm table-bordered" id="recipe_table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Code</th>
-                                                            <th>Subcode</th>
-                                                            <th>Commentline</th>
-                                                            <th>Description</th>
-                                                            <th>Consumption</th>
-                                                            <th>UoM</th>
-                                                            <th>Qty</th>
-                                                            <th>UoM</th>
-                                                            <th>Group Number</th>
-                                                            <th>Callof</th>
-                                                            <th>Counter</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <!-- Rows will be added here dynamically -->
-                                                    </tbody>
-                                                </table>
+                                                <div class="table-responsive">
+                                                    <table class="table compact table-striped table-bordered w-100" id="recipe_table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Code</th>
+                                                                <th>Subcode</th>
+                                                                <th>Commentline</th>
+                                                                <th>Description</th>
+                                                                <th>Consumption</th>
+                                                                <th>UoM</th>
+                                                                <th>Qty</th>
+                                                                <th>UoM</th>
+                                                                <th>Group Number</th>
+                                                                <th>Callof</th>
+                                                                <th>Counter</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- Rows will be added here dynamically -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -203,18 +205,20 @@ require_once "koneksi.php";
                                                 <div class="card-header">
                                                     <h5>Treatment Preview</h5>
                                                 </div>
-                                                <table class="table table-sm table-bordered" id="treatment_table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Item</th>
-                                                            <th>Treatment Code</th>
-                                                            <th>Description</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <!-- Rows will be added here dynamically -->
-                                                    </tbody>
-                                                </table>
+                                                <div class="table-responsive">
+                                                    <table class="table compact table-striped table-bordered w-100" id="treatment_table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Item</th>
+                                                                <th>Treatment Code</th>
+                                                                <th>Description</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- Rows will be added here dynamically -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
