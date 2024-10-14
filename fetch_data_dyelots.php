@@ -3,7 +3,10 @@ require_once "koneksi.php"; // Make sure this file establishes the PDO connectio
 
 try {
     // Prepare the SQL query
-    $sql_query = $pdo_orgatex->prepare("SELECT * FROM dbo.Dyelots ORDER BY AutoKey DESC");
+    $sql_query = $pdo_orgatex->prepare("SELECT *
+                                        FROM dbo.Dyelots AS a
+                                        LEFT JOIN dbo.Error_codes_ImportError AS b ON b.code = a.ImportError
+                                        ORDER BY a.AutoKey DESC");
 
     // Execute the query
     $sql_query->execute();

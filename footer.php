@@ -549,6 +549,8 @@
                 dyelot.Machine || "",
                 dyelot.Color || "",
                 `${dyelot.ImportState || ""} ${badge}`,
+                dyelot.QueueTime || "",
+                dyelot.Desc || "",
                 allowedIPs.includes(currentIP) ?
                 `<button class="btn btn-warning" id="update-btn" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="30">Delete Batch</button>
                  <button class="btn btn-danger" id="update-btn-40" data-dyelot="${dyelot.Dyelot}" data-redye="${dyelot.ReDye}" data-importstate="40">Hard Delete</button>` :
@@ -560,6 +562,7 @@
             // Initialize DataTable with search enabled
             $('#dyelot_table').DataTable({
               data: tableData,
+              scrollX: true,
               columns: [{
                   title: "Dyelot"
                 },
@@ -574,6 +577,12 @@
                 },
                 {
                   title: "Import State"
+                },
+                {
+                  title: "Date"
+                },
+                {
+                  title: "Desc"
                 },
                 {
                   title: "Actions"
