@@ -113,6 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 <th>Total Stop Minutes</th>
                                                                 <th>Total Stop Hour</th>
                                                                 <th>Total Stop Percentage</th>
+                                                                <th>Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -193,7 +194,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "total_hour" => $totalStopHour,
             "total_percentage" => round($totalPercentage, 2)
         ];
-
     }
 
 ?>
@@ -204,6 +204,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 <td><?php echo htmlspecialchars($item['total_minutes']); ?></td>
                                                                 <td><?php echo htmlspecialchars($item['total_hour']); ?></td>
                                                                 <td><?php echo htmlspecialchars($item['total_percentage']); ?>%</td>
+                                                                <td>
+                                                                    <!-- Button to open the modal -->
+                                                                    <button class="btn btn-info btn-sm view-details" data-machine-id="<?php echo htmlspecialchars($item['machine_number']); ?>" data-toggle="modal" data-target="#machineDetailsModal">View Details</button>
+                                                                </td>
                                                             </tr>
                                                             <?php endforeach; ?>
                                                         </tbody>
@@ -221,6 +225,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
     </div>
+
+    <!-- Modal to show machine details -->
+    <div class="modal fade" id="machineDetailsModal" tabindex="-1" role="dialog" aria-labelledby="machineDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-fullscreen" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="machineDetailsModalLabel">Machine Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="machineDetailsTable">
+                            <thead>
+                                <tr>
+                                    <th>Machine Number</th>
+                                    <th>Time</th>
+                                    <th>Total Stop Second</th>
+                                    <th>Total Stop Minutes</th>
+                                    <th>Total Stop Hour</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        #machineDetailsModal .modal-dialog {
+            max-width: 80%; 
+            width: auto;   
+        }
+    </style>
+
     <script type="text/javascript" src="files\bower_components\jquery\js\jquery.min.js"></script>
     <script type="text/javascript" src="files\bower_components\jquery-ui\js\jquery-ui.min.js"></script>
     <script type="text/javascript" src="files\bower_components\popper.js\js\popper.min.js"></script>
@@ -254,6 +302,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="files\assets\js\menu\menu-hori-fixed.js"></script>
     <script src="files\assets\js\jquery.mCustomScrollbar.concat.min.js"></script>
     <script type="text/javascript" src="files\assets\js\script.js"></script>
-</body>
 
+<script>
+    $(document).ready(function() {
+        var dataTable;
+
+        $('.view-details').on('click', function() {
+            var machineID = $(this).data('machine-id');
+
+            var postData = {
+                tgl: "<?php echo isset($_SESSION['tgl']) ? $_SESSION['tgl'] : ''; ?>",
+                time: "<?php echo isset($_SESSION['time']) ? $_SESSION['time'] : ''; ?>",
+                tgl2: "<?php echo isset($_SESSION['tgl2']) ? $_SESSION['tgl2'] : ''; ?>",
+                time2: "<?php echo isset($_SESSION['time2']) ? $_SESSION['time2'] : ''; ?>",
+                machine_id: machineID
+            };
+
+            $.ajax({
+                url: 'stop_machine_efficency_detail.php',
+                type: 'POST',
+                data: postData,
+                dataType: 'json',
+                success: function(data) {
+                    var tableBody = $('#machineDetailsTable tbody');
+                    tableBody.empty(); 
+
+                    $.each(data, function(index, item) {
+                        var row = '<tr>' +
+                            '<td>' + item.machine_number + '</td>' +
+                            '<td>' + item.log_timestamp + '</td>' +
+                            '<td>' + item.total_seconds + '</td>' +
+                            '<td>' + item.total_minutes + '</td>' +
+                            '<td>' + item.total_hour + '</td>' +
+                            '<td>' + item.reason + '</td>' +
+                            '</tr>';
+                        tableBody.append(row);
+                    });
+
+                    if ($.fn.DataTable.isDataTable('#machineDetailsTable')) {
+                        $('#machineDetailsTable').DataTable().destroy(); // Destroy previous instance
+                    }
+
+                    dataTable = $('#machineDetailsTable').DataTable({
+                        paging: true,
+                        searching: true,
+                        ordering: true
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error: ' + error);
+                }
+            });
+        });
+
+        // Reset modal when closed
+        $('#machineDetailsModal').on('hidden.bs.modal', function() {
+            var tableBody = $('#machineDetailsTable tbody');
+            tableBody.empty(); // Clear the table content
+
+            if ($.fn.DataTable.isDataTable('#machineDetailsTable')) {
+                $('#machineDetailsTable').DataTable().destroy(); // Destroy DataTable instance
+            }
+        });
+    });
+</script>
+
+
+
+</body>
 </html>
