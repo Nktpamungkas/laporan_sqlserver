@@ -3,15 +3,6 @@ ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
 
-
-$currentIP = $_SERVER['REMOTE_ADDR'];
-$allowedIPs = ['10.0.5.132', '10.0.6.247', '10.0.5.91'];
-
-echo '<script>';
-echo 'var currentIP = "' . $currentIP . '";';
-echo 'var allowedIPs = ' . json_encode($allowedIPs) . ';';
-echo '</script>';
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

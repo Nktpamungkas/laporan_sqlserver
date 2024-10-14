@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $absorption = $_POST['absorption'];
     $jsonRecipe = $_POST['recipes'];
     $jsonTreatment = $_POST['treatments'];
+    $currentIP = $_POST['currentIP'];
 
     // echo $jsonRecipe;
 
@@ -51,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         @ReelSpeed = :reelSpeed,
         @Absorption = :absorption,
         @jsonRecipe = :jsonRecipe,
-        @jsonTreatment = :jsonTreatment");
+        @jsonTreatment = :jsonTreatment,
+        @IPADDRESS = :currentIP");
 
         // Bind parameters
         $stmt->bindParam(':dyelot', $dyelot);
@@ -75,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':absorption', $absorption);
         $stmt->bindParam(':jsonRecipe', $jsonRecipe);
         $stmt->bindParam(':jsonTreatment', $jsonTreatment);
+        $stmt->bindParam(':currentIP', $currentIP);
 
         // Eksekusi stored procedure
         $stmt->execute();
