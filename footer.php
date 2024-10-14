@@ -545,6 +545,7 @@
 
               return [
                 dyelot.Dyelot || "",
+                dyelot.DyelotRefNo || "",
                 dyelot.ReDye || "",
                 dyelot.Machine || "",
                 dyelot.Color || "",
@@ -565,6 +566,9 @@
               scrollX: true,
               columns: [{
                   title: "Dyelot"
+                },
+                {
+                  title: "Dyelot Ref No"
                 },
                 {
                   title: "ReDye"

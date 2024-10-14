@@ -91,18 +91,6 @@ echo '</script>';
                                     </div>
                                     <div class="card-block">
                                         <table class="table compact table-striped table-bordered w-100" id="dyelot_table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Dyelot</th>
-                                                    <th>Redye</th>
-                                                    <th>Machine</th>
-                                                    <th>Color</th>
-                                                    <th>Import State</th>
-                                                    <th>Date</th>
-                                                    <th>Desc</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
                                             <tbody>
                                                 <!-- Rows will be added here dynamically -->
                                             </tbody>
