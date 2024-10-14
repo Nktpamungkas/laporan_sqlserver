@@ -290,6 +290,7 @@ echo '</script>';
             if (data.success) {
               // Populate input fields
               $('#dyelot').val(data.dyelot).prop('disabled', false);
+              $('#group_line').val(data.group_line).prop('disabled', false);
               $('#redye').val(data.redye).prop('disabled', false);
               $('#machine_number').val(data.machine).prop('disabled', false);
               $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
