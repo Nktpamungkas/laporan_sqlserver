@@ -346,13 +346,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     });
 
                     if ($.fn.DataTable.isDataTable('#machineDetailsTable')) {
-                        $('#machineDetailsTable').DataTable().destroy(); // Destroy previous instance
+                        $('#machineDetailsTable').DataTable().destroy();
                     }
 
                     dataTable = $('#machineDetailsTable').DataTable({
                         paging: true,
                         searching: true,
-                        ordering: true
+                        ordering: true,
+                        dom: 'Bfrtip',
+                        buttons: [
+                            'copy', 'csv', 'excel', 'pdf', 'print'
+                        ]
                     });
                 },
                 error: function(xhr, status, error) {
