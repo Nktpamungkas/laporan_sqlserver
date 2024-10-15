@@ -141,11 +141,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $machineID = $machine['MachineNo'];
 
         $sqlLogs = "SELECT LogTimeStamp as logTimeStamp, 
-                    AlarmNo as value
-                    FROM MachineProtocol
-                    WHERE Machine = :machineID
-                    AND LogTimeStamp BETWEEN :startDate AND :endDate
-                    ORDER BY LogTimeStamp";
+            MachineProtocol.AlarmNo as value, 
+            AlarmList.AlarmText as reason 
+            FROM MachineProtocol 
+            LEFT JOIN AlarmList ON AlarmList.AlarmNo = MachineProtocol.AlarmNo 
+            WHERE MachineProtocol.Machine = :machineID AND 
+            MachineProtocol.LogTimeStamp BETWEEN :startDate AND :endDate
+            ORDER BY MachineProtocol.LogTimeStamp";
         
         $stmtLogs = $pdo_orgatex->prepare($sqlLogs);
         $stmtLogs->bindParam(':machineID', $machineID);
@@ -153,9 +155,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmtLogs->bindParam(':endDate', $endDate);
         $stmtLogs->execute();
 
-        $totalSeconds = 0;
         $rows = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
 
+        $totalSeconds = 0;
         foreach ($rows as $key => $row) {
             if ($row['value'] > 500 && isset($rows[$key + 1]) && $rows[$key + 1]['value'] == 0) {
                 $date1 = new DateTime($row['logTimeStamp']);
@@ -242,8 +244,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <thead>
                                 <tr>
                                     <th>Machine Number</th>
-                                    <th>Time</th>
-                                    <th>Total Stop Second</th>
+                                    <th>Start Stop</th>
+                                    <th>End Stop</th>
+                                    <th>Total Stop Seconds</th>
                                     <th>Total Stop Minutes</th>
                                     <th>Total Stop Hour</th>
                                     <th>Reason</th>
@@ -328,14 +331,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     tableBody.empty(); 
 
                     $.each(data, function(index, item) {
+
                         var row = '<tr>' +
                             '<td>' + item.machine_number + '</td>' +
-                            '<td>' + item.log_timestamp + '</td>' +
+                            '<td>' + item.log_timestamp_start + '</td>' +
+                            '<td>' + item.log_timestamp_stop + '</td>' +
                             '<td>' + item.total_seconds + '</td>' +
                             '<td>' + item.total_minutes + '</td>' +
                             '<td>' + item.total_hour + '</td>' +
                             '<td>' + item.reason + '</td>' +
                             '</tr>';
+
                         tableBody.append(row);
                     });
 
@@ -366,8 +372,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
     });
 </script>
-
-
 
 </body>
 </html>
