@@ -103,20 +103,21 @@ if (isset($_POST['production_number'])) {
                     WHERE 
                         VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
                         AND VIEWPRODUCTIONRESERVATION.GROUPLINE IN ($groupLineArray) 
-                        AND NOT 
-                            CASE
-                                WHEN 
-                                    CASE
-                                        WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
-                                        ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
-                                    END = '1' THEN 'g/l'
-                                WHEN
-                                    CASE
-                                        WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
-                                        ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
-                                    END = '2' THEN '%'
-                            END IS NULL 
+                        -- AND NOT 
+                        --     CASE
+                        --         WHEN 
+                        --             CASE
+                        --                 WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                        --                 ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                        --             END = '1' THEN 'g/l'
+                        --         WHEN
+                        --             CASE
+                        --                 WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                        --                 ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                        --             END = '2' THEN '%'
+                        --     END IS NULL 
                     ORDER BY
+                        ITXVIEWRESEP.RECIPENUMBERID,
                         ITXVIEWRESEP.GROUPNUMBER,
                         ITXVIEWRESEP.SEQUENCE,
                         ITXVIEWRESEP2.GROUPNUMBER,
@@ -176,6 +177,7 @@ if (isset($_POST['production_number'])) {
                             DISTINCT 
                             * 
                             FROM (SELECT
+                                    ITXVIEWRESEP.RECIPENUMBERID, 
                                     ITXVIEWRESEP.GROUPNUMBER, 
                                     CASE
                                         WHEN CAST( LENGTH(ITXVIEWRESEP.SUBCODE01) AS VARCHAR(5)) = '1' THEN ITXVIEWRESEP.SUBCODE01_RESERVATION
@@ -195,26 +197,28 @@ if (isset($_POST['production_number'])) {
                                 WHERE 
                                     VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
                                     AND VIEWPRODUCTIONRESERVATION.GROUPLINE IN ($groupLineArray) 
-                                    AND NOT 
-                                        CASE
-                                            WHEN 
-                                                CASE
-                                                    WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
-                                                    ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
-                                                END = '1' THEN 'g/l'
-                                            WHEN
-                                                CASE
-                                                    WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
-                                                    ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
-                                                END = '2' THEN '%'
-                                        END IS NULL 
+                                    -- AND NOT 
+                                    --     CASE
+                                    --         WHEN 
+                                    --             CASE
+                                    --                 WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                                    --                 ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                                    --             END = '1' THEN 'g/l'
+                                    --         WHEN
+                                    --             CASE
+                                    --                 WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                                    --                 ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                                    --             END = '2' THEN '%'
+                                    --     END IS NULL 
                                 GROUP BY 
+                                    ITXVIEWRESEP.RECIPENUMBERID,
                                     ITXVIEWRESEP.SUBCODE01,
                                     ITXVIEWRESEP.SUFFIXCODE,
                                     ITXVIEWRESEP.GROUPNUMBER,
                                     ITXVIEWRESEP.SUBCODE01_RESERVATION,
                                     ITXVIEWRESEP.SUFFIXCODE_RESERVATION 
                                 ORDER BY
+                                    ITXVIEWRESEP.RECIPENUMBERID,
                                     ITXVIEWRESEP.GROUPNUMBER)";
 
         $resultTreatment = db2_exec($conn1, $sqlTreatment);
