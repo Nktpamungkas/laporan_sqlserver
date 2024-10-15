@@ -326,12 +326,15 @@ echo '</script>';
                 const groupNumber = recipe.GROUPNUMBER;
 
                 // If the group number changes, increment callOff and reset counter
-                if (currentGroup !== groupNumber) {
-                  callOff++;
-                  counter = 1; // Reset counter to 1
-                  currentGroup = groupNumber; // Update current group
-                } else {
-                  counter++; // Increment counter if the group number is the same
+                // pengecekan SUBCODE (untuk comment SUBCODEnya tidak ada / null), tidak perlu menghitung callof dan counter
+                if(recipe.SUBCODE){
+                  if (currentGroup !== groupNumber) {
+                    callOff++;
+                    counter = 1; // Reset counter to 1
+                    currentGroup = groupNumber; // Update current group
+                  } else {
+                    counter++; // Increment counter if the group number is the same
+                  }
                 }
                 tableBody.append(`
                         <tr>
@@ -344,8 +347,8 @@ echo '</script>';
                             <td>${recipe.QUANTITY || ""}</td>
                             <td>${recipe.CONSUMPTIONTYPEQTY || ""}</td>
                             <td>${groupNumber || ""}</td>
-                            <td>${callOff}</td>
-                            <td>${counter}</td>
+                            <td>${recipe.SUBCODE ? callOff : ''}</td>
+                            <td>${recipe.SUBCODE ? counter : ''}</td>
                         </tr>
                     `);
                 // }
