@@ -320,7 +320,8 @@
                                                                     <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
                                                                     <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
                                                                     <td><?= $rowdb2['WARNA']; ?></td> 
-                                                                    <td><?= $d_ket_foc['ROLL']; ?></td> 
+                                                                    <td><?php echo $d_ket_foc['ROLL']; 
+                                                                    //echo 'test 1';?></td> 
                                                                     <td><?= number_format($d_ket_foc['KG'], 2); ?></td> 
                                                                     <td><?= number_format($d_ket_foc['YARD_MTR'], 2); ?></td> 
                                                                     <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td> 
@@ -376,7 +377,7 @@
                                                                     <td>
                                                                         <?php
                                                                             if (in_array($rowdb2['DEFINITIVECOUNTERCODE'], array('CESDEF', 'DREDEF', 'DSEDEF', 'EXDPROV', 'EXPPROV', 'GSEPROV', 'CESPROV', 'DREPROV', 'EXDDEF', 'EXPDEF', 'GSEDEF', 'PSEPROV'))) {
-                                                                                $q_roll     = db2_exec($conn1, "SELECT
+                                                                            $q_roll = db2_exec($conn1, "SELECT
                                                                                                                     COUNT(ise.COUNTROLL) AS ROLL,
                                                                                                                     SUM(ise.QTY_KG) AS QTY_SJ_KG,
                                                                                                                     SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
@@ -390,10 +391,31 @@
                                                                                                                 WHERE 
                                                                                                                     ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
                                                                                                                     AND ise.ALLOCATIONCODE = '$rowdb2[CODE]'
+                                                                                                                    -- AND (ise.QUALITYREASONCODE <> 'FOC' OR ise.QUALITYREASONCODE IS NULL)
                                                                                                                 GROUP BY 
-                                                                                                                    inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE");
-                                                                                $d_roll     = db2_fetch_assoc($q_roll);
-                                                                                echo $d_roll['ROLL']; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
+                                                                                                                    inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE
+                                                                                                                    ");
+                                                                            $d_roll = db2_fetch_assoc($q_roll);
+                                                                            $q_rollfoc = db2_exec($conn1, "SELECT
+                                                                                                                    COUNT(ise.COUNTROLL) AS ROLL,
+                                                                                                                    SUM(ise.QTY_KG) AS QTY_SJ_KG,
+                                                                                                                    SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
+                                                                                                                    inpe.PROJECT,
+                                                                                                                    ise.ADDRESSEE,
+                                                                                                                    ise.BRAND_NM,
+                                                                                                                    ise.ALLOCATIONCODE
+                                                                                                                FROM
+                                                                                                                    ITXVIEW_SURATJALAN_EXIM2A ise 
+                                                                                                                LEFT JOIN ITXVIEW_NO_PROJECTS_EXIM inpe ON inpe.PROVISIONALCODE = ise.PROVISIONALCODE 
+                                                                                                                WHERE 
+                                                                                                                    ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                                                    AND ise.ALLOCATIONCODE = '$rowdb2[CODE]'
+                                                                                                                    AND ise.QUALITYREASONCODE = 'FOC' 
+                                                                                                                GROUP BY 
+                                                                                                                    inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE
+                                                                                                                    ");
+                                                                            $d_rollfoc = db2_fetch_assoc($q_rollfoc);
+                                                                            echo $d_roll['ROLL'] - $d_rollfoc['ROLL']; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
                                                                             }else{
                                                                                 $q_roll     = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
                                                                                                                         SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
