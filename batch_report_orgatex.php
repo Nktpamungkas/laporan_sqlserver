@@ -131,16 +131,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                             <?php foreach ($db_orgatex as $row_data_orgatex): ?>
                                                             <tr>
                                                                 <td><?php echo $row_data_orgatex['batch_ref_no'] ?></td>
-                                                                <td>no data</td>
-                                                                <td>no data</td>
-                                                                <td>no data</td>
+                                                                <td>NOW</td>
+                                                                <td>NOW</td>
+                                                                <td>NOW</td>
                                                                 <td><?php echo $row_data_orgatex['batch_text_01'] ?></td>
 
                                                                 <td><?php echo $row_data_orgatex['machine_no'] ?></td>
-                                                                <td>no data</td>
-                                                                <td>no data</td>
-                                                                <td>no data</td>
-                                                                <td>no data</td>
+                                                                <td>ORGATEX</td>
+                                                                <td>ORGATEX</td>
+                                                                <td>ORGATEX</td>
+                                                                <td>ORGATEX</td>
 
                                                                 <td><?php echo $row_data_orgatex['started'] ?></td>
                                                                 <td><?php echo $row_data_orgatex['terminated'] ?></td>
@@ -159,17 +159,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                                                     ?>
                                                                 </td>
-                                                                <td>no data</td>
-                                                                <td>no data</td>
+                                                                <td>ORGATEX</td>
+                                                                <td>ORGATEX</td>
 
-                                                                <td>no data</td>
-                                                                <td>no data</td>
-                                                                <td>no data</td>
-                                                                <td>no data</td>
-                                                                <td>no data</td>
+                                                                <td>ORGATEX</td>
+                                                                <td>ONLINE</td>
+                                                                <td>ONLINE</td>
+                                                                <td>ORGATEX</td>
+                                                                <td>ORGATEX</td>
 
-                                                                <td>no data</td>
-                                                                <td>no data</td>
+                                                                <td>ONLINE</td>
+                                                                <td>NOW</td>
 
                                                             </tr>
                                                             <?php endforeach; ?>
