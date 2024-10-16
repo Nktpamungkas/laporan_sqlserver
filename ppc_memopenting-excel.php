@@ -684,23 +684,23 @@
                     </td> <!-- QTY SALINAN -->
                     <td>
                         <?php
-                            // $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
-                            // $d_qtypacking = db2_fetch_assoc($q_qtypacking);
-                            // echo $d_qtypacking['QTY_PACKING'];
+                            $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
+                            $d_qtypacking = db2_fetch_assoc($q_qtypacking);
+                            echo $d_qtypacking['QTY_PACKING'];
 
-                            $q_qtypacking = mysqli_query($con_db_qc, "SELECT
-                                                                        nodemand,
-                                                                        sum( jml_mutasi ) AS roll,
-                                                                        sum( mutasi ) AS mutasi 
-                                                                    FROM
-                                                                        tbl_lap_inspeksi 
-                                                                    WHERE
-                                                                        trim( nodemand ) = '$rowdb2[DEMAND]' 
-                                                                        AND dept = 'PACKING' 
-                                                                    GROUP BY
-                                                                        trim(nodemand)");
-                            $d_qtypacking = mysqli_fetch_assoc($q_qtypacking);
-                            echo $d_qtypacking['mutasi'];
+                            // $q_qtypacking = mysqli_query($con_db_qc, "SELECT
+                            //                                             nodemand,
+                            //                                             sum( jml_mutasi ) AS roll,
+                            //                                             sum( mutasi ) AS mutasi 
+                            //                                         FROM
+                            //                                             tbl_lap_inspeksi 
+                            //                                         WHERE
+                            //                                             trim( nodemand ) = '$rowdb2[DEMAND]' 
+                            //                                             AND dept = 'PACKING' 
+                            //                                         GROUP BY
+                            //                                             trim(nodemand)");
+                            // $d_qtypacking = mysqli_fetch_assoc($q_qtypacking);
+                            // echo $d_qtypacking['mutasi'];
                         ?>
                     </td> <!-- QTY PACKING -->
                     <td><?= number_format($rowdb2['NETTO'], 0); ?></td> <!-- NETTO -->
