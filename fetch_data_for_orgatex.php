@@ -272,7 +272,7 @@ if (isset($_POST['production_number'])) {
                     $mainValidation         = '<span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available';
                     $mainValidationNumber   = 1;
                 }else{
-                    $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please Add your Treatment in Machines';
+                    $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please add your treatment to the machines.';
                     $mainValidationNumber   = 0;
                 }
 
