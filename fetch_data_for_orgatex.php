@@ -224,7 +224,7 @@ if (isset($_POST['production_number'])) {
         $treatments = [];
 
         // SCHEDULE DYEING
-        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE (no_resep = '$orderCode-$groupLine' OR no_resep2 = '$orderCode-$groupLine') OR (no_resep2 = '$orderCode-$groupLine' OR no_resep2 = '$orderCode-$groupLine')";
+        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE (no_resep = '$orderCode-$groupLine' OR no_resep = '$orderCode-$groupLine') OR (no_resep2 = '$orderCode-$groupLine' OR no_resep2 = '$orderCode-$groupLine')";
         $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
         $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
 
