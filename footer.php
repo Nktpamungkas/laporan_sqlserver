@@ -464,7 +464,7 @@ echo '</script>';
       };
       // Validasi bahwa nomor mesin tidak boleh kosong
       if (formData.machine) {
-        if(formData.treatments.MAINPROGRAM == 1){
+        if(formData.treatments.MAINPROGRAM = 1){
           // ambil data dari table dan input
           $('#recipe_table tbody tr').each(function() {
             const code = $(this).find('td:nth-child(1)').text();
