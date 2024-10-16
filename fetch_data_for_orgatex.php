@@ -223,6 +223,11 @@ if (isset($_POST['production_number'])) {
         $resultTreatment = db2_exec($conn1, $sqlTreatment);
         $treatments = [];
 
+        // SCHEDULE DYEING
+        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE no_resep = '$orderCode-$groupLine'";
+        $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
+        $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
+
         while ($treatment = db2_fetch_assoc($resultTreatment)) {
             $sqlTreatmentDetail = "SELECT
                                         CAST(a.VALUEDECIMAL AS DECIMAL(4)) AS MAINPROGRAM
@@ -247,20 +252,40 @@ if (isset($_POST['production_number'])) {
                 $sqlDescTreatment = $pdo_orgatex->prepare("SELECT TOP 1 * FROM dbo.Treatments WHERE TreatmentNo = $treatmentArray[MAINPROGRAM]");
                 $sqlDescTreatment->execute();
                 $mainDesc = $sqlDescTreatment->fetch(PDO::FETCH_ASSOC);
+                
+                $sqlValidationTreatment = $pdo_orgatex->prepare("SELECT
+                                                                        Machines.MachineNo,
+                                                                        Machines.MachineName,
+                                                                        Machines.MGroupNo,
+                                                                        Treatment_MGroups.TreatmentNo,
+                                                                        Treatments.TreatmentName
+                                                                    FROM
+                                                                        dbo.Machines Machines
+                                                                    LEFT JOIN dbo.Treatment_MGroups Treatment_MGroups ON Treatment_MGroups.MGroupNo = Machines.MGroupNo
+                                                                    LEFT JOIN dbo.Treatments Treatments ON Treatments.TreatmentNo = Treatment_MGroups.TreatmentNo
+                                                                    WHERE
+                                                                        Machines.MachineNo = $dataSchedule[no_mesin]
+                                                                        AND Treatment_MGroups.TreatmentNo = $treatmentArray[MAINPROGRAM]");
+                $sqlValidationTreatment->execute();
+                $ValidationTreatment = $sqlValidationTreatment->fetch(PDO::FETCH_ASSOC);
+                if($ValidationTreatment['TreatmentNo']){
+                    $mainValidation         = '<span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available';
+                    $mainValidationNumber   = 1;
+                }else{
+                    $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please Add your Treatment in Machines';
+                    $mainValidationNumber   = 0;
+                }
 
                 $treatments[] = [
                     'SUBCODE01' => $treatment['SUBCODE01'],
                     'SUFFIXCODE' => $treatment['SUFFIXCODE'],
-                    'MAINPROGRAM' => $treatmentArray['MAINPROGRAM'], // Only MAINPROGRAM
-                    'TREATMENTNAME' => $mainDesc['TreatmentName']
+                    'MAINPROGRAM' => $treatmentArray['MAINPROGRAM'], // No Treatment
+                    'TREATMENTNAME' => $mainDesc['TreatmentName'], // Desc Treatment
+                    'VALIDATION' =>  $mainValidation, // Validasi jika ada treatmentnya
+                    'VALIDATIONNUMBER' =>  $mainValidationNumber // Validasi jika ada treatmentnya
                 ];
             }
         }
-
-        // SCHEDULE DYEING
-        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE no_resep = '$orderCode-$groupLine'";
-        $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
-        $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
 
         echo json_encode([
             'success' => true,

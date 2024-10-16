@@ -28,6 +28,9 @@ require_once "koneksi.php";
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link href="alert/toastr.css" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="files\assets\icon\font-awesome\css\font-awesome.min.css">
+
     <style>
         #loadingOverlay {
             position: fixed;
@@ -98,7 +101,7 @@ require_once "koneksi.php";
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Machine Number</h6>
-                                                <input type="text" id="machine_number" class="form-control" required>
+                                                <input type="text" id="machine_number" class="form-control" readonly>
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Type Of Procedure</h6>
@@ -215,6 +218,7 @@ require_once "koneksi.php";
                                                                 <th>Item</th>
                                                                 <th>Treatment Code</th>
                                                                 <th>Description</th>
+                                                                <th>Check Available Treatment</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>

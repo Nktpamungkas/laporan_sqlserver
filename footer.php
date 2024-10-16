@@ -362,18 +362,20 @@ echo '</script>';
 
               tableBodyTreatment.append(`
                                     <tr>
-                                        <td>-</td>
+                                        <td></td>
                                         <td>9990</td>
                                         <td>Progarm Start</td>
+                                        <td><span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available</td>
                                     </tr>
                                 `);
 
               data.treatments.forEach(treatment => {
                 tableBodyTreatment.append(`
                                     <tr>
-                                        <td>${treatment.SUBCODE01 || ""}</td>
+                                        <td>${treatment.SUBCODE01} - ${treatment.SUFFIXCODE}</td>
                                         <td>${treatment.MAINPROGRAM || ""}</td>
                                         <td>${treatment.TREATMENTNAME || ""}</td>
+                                        <td>${treatment.VALIDATION || ""}</td>
                                     </tr>
                                 `);
               });
@@ -383,6 +385,7 @@ echo '</script>';
                                         <td>-</td>
                                         <td>9991</td>
                                         <td>Program End</td>
+                                        <td><span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available</td>
                                     </tr>
                                 `);
               hideLoading();
@@ -461,75 +464,80 @@ echo '</script>';
       };
       // Validasi bahwa nomor mesin tidak boleh kosong
       if (formData.machine) {
-        // ambil data dari table dan input
-        $('#recipe_table tbody tr').each(function() {
-          const code = $(this).find('td:nth-child(1)').text();
-          const subcode = $(this).find('td:nth-child(2)').text();
-          const consumption = parseFloat($(this).find('td:nth-child(3)').text()); // Ensure numeric value
-          const productName = $(this).find('td:nth-child(4)').text(); // Add additional fields as needed
-          const consum = parseFloat($(this).find('td:nth-child(5)').text()); // Adjust based on your table structure
-          const consumType = $(this).find('td:nth-child(6)').text(); // Adjust based on your table structure
-          const qty = $(this).find('td:nth-child(7)').text(); // Adjust based on your table structure
-          const qtyType = $(this).find('td:nth-child(8)').text(); // Adjust based on your table structure
-          const callOff = $(this).find('td:nth-child(10)').text(); // Adjust based on your table structure
-          const counter = $(this).find('td:nth-child(11)').text(); // Adjust based on your table structure
+        if(formData.treatments.MAINPROGRAM == 1){
+          // ambil data dari table dan input
+          $('#recipe_table tbody tr').each(function() {
+            const code = $(this).find('td:nth-child(1)').text();
+            const subcode = $(this).find('td:nth-child(2)').text();
+            const consumption = parseFloat($(this).find('td:nth-child(3)').text()); // Ensure numeric value
+            const productName = $(this).find('td:nth-child(4)').text(); // Add additional fields as needed
+            const consum = parseFloat($(this).find('td:nth-child(5)').text()); // Adjust based on your table structure
+            const consumType = $(this).find('td:nth-child(6)').text(); // Adjust based on your table structure
+            const qty = $(this).find('td:nth-child(7)').text(); // Adjust based on your table structure
+            const qtyType = $(this).find('td:nth-child(8)').text(); // Adjust based on your table structure
+            const callOff = $(this).find('td:nth-child(10)').text(); // Adjust based on your table structure
+            const counter = $(this).find('td:nth-child(11)').text(); // Adjust based on your table structure
 
-          // pillih selain treatment
-          if (productName) {
-            // masukan ke variable formData dari data table dan input sebelumnya
-            formData.recipes.push({
-              CorrectionNumber: 0,
-              CallOff: callOff,
-              Counter: counter,
-              ProductName: productName,
-              Amount: qty != '' ? Number(qty) : 0,
-              Unit: qtyType,
-              KindOfStation: 5,
-              NoOfStation: 5,
-              SpecificWeight: 1,
-              ProductCode: subcode,
-              ProductShortName: subcode,
-              KindOfProduct: consumType == "%" ? 1 : 2,
-              RecipeUnit: consumType
-            });
-          }
-        });
-        // ini untuk ambil data dari table treatment
-        $('#treatment_table tbody tr').each(function() {
-          const code = $(this).find('td:nth-child(2)').text();
-          formData.treatments.push({
-            TreatmentCnt: formData.treatments.length + 1,
-            TreatmentNo: code
-          });
-        });
-
-        // ubah formdata terutama recipes dan treatments lalu parse ke bentuk json sebelum di export
-        formData.recipes = JSON.stringify(formData.recipes);
-        formData.treatments = JSON.stringify(formData.treatments);
-
-        // panggil ajax insert untuk meng export
-        $.ajax({
-          url: 'insert_data_to_orgatex.php',
-          type: 'POST',
-          data: formData,
-          dataType: 'json',
-          success: function(response) {
-            if (response.success) {
-              hideLoading();
-              jalankanFungsi("");
-              showToastSuccess('Success export data, please check in program orgatex');
-              console.log(response); // Log the received data
-            } else {
-              hideLoading();
-              showToastError('Error export data, please try again');
-              console.log(response);
+            // pilih selain treatment
+            if (productName) {
+              // masukan ke variable formData dari data table dan input sebelumnya
+              formData.recipes.push({
+                CorrectionNumber: 0,
+                CallOff: callOff,
+                Counter: counter,
+                ProductName: productName,
+                Amount: qty != '' ? Number(qty) : 0,
+                Unit: qtyType,
+                KindOfStation: 5,
+                NoOfStation: 5,
+                SpecificWeight: 1,
+                ProductCode: subcode,
+                ProductShortName: subcode,
+                KindOfProduct: consumType == "%" ? 1 : 2,
+                RecipeUnit: consumType
+              });
             }
-          },
-          error: function() {
-            hideLoading();
-            showToastError('Something when wrong, please try again');
-          }
-        });
+          });
+          // ini untuk ambil data dari table treatment
+          $('#treatment_table tbody tr').each(function() {
+            const code = $(this).find('td:nth-child(2)').text();
+            formData.treatments.push({
+              TreatmentCnt: formData.treatments.length + 1,
+              TreatmentNo: code
+            });
+          });
+
+          // ubah formdata terutama recipes dan treatments lalu parse ke bentuk json sebelum di export
+          formData.recipes = JSON.stringify(formData.recipes);
+          formData.treatments = JSON.stringify(formData.treatments);
+
+          // panggil ajax insert untuk meng export
+          $.ajax({
+            url: 'insert_data_to_orgatex.php',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+              if (response.success) {
+                hideLoading();
+                jalankanFungsi("");
+                showToastSuccess('Success export data, please check in program orgatex');
+                console.log(response); // Log the received data
+              } else {
+                hideLoading();
+                showToastError('Error export data, please try again');
+                console.log(response);
+              }
+            },
+            error: function() {
+              hideLoading();
+              showToastError('Something when wrong, please try again');
+            }
+          });
+        }else{
+          hideLoading();
+          showToastError('Error export data, Silahkan periksa Nomor Treatment anda.');
+        }
       } else {
         hideLoading();
         showToastError('Error export data, nomor mesin tidak boleh kosong, periksa apakah schedule sudah dibuat atau belum.');

@@ -1,7 +1,8 @@
 <head>
     <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\icon\feather\css\feather.css" </head>
+    <link rel="stylesheet" type="text/css" href="files\assets\icon\feather\css\feather.css">
+</head>
 
 <body>
     <div class="">
