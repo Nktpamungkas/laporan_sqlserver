@@ -224,7 +224,7 @@ if (isset($_POST['production_number'])) {
         $treatments = [];
 
         // SCHEDULE DYEING
-        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE no_resep = '$orderCode-$groupLine'";
+        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE (no_resep = '$orderCode-$groupLine' OR no_resep2 = '$orderCode-$groupLine') OR (no_resep2 = '$orderCode-$groupLine' OR no_resep2 = '$orderCode-$groupLine')";
         $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
         $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
 
@@ -252,8 +252,9 @@ if (isset($_POST['production_number'])) {
                 $sqlDescTreatment = $pdo_orgatex->prepare("SELECT TOP 1 * FROM dbo.Treatments WHERE TreatmentNo = $treatmentArray[MAINPROGRAM]");
                 $sqlDescTreatment->execute();
                 $mainDesc = $sqlDescTreatment->fetch(PDO::FETCH_ASSOC);
-                
-                $sqlValidationTreatment = $pdo_orgatex->prepare("SELECT
+
+                if($treatmentArray['MAINPROGRAM']){
+                    $sqlValidationTreatment = $pdo_orgatex->prepare("SELECT
                                                                         Machines.MachineNo,
                                                                         Machines.MachineName,
                                                                         Machines.MGroupNo,
@@ -264,16 +265,20 @@ if (isset($_POST['production_number'])) {
                                                                     LEFT JOIN dbo.Treatment_MGroups Treatment_MGroups ON Treatment_MGroups.MGroupNo = Machines.MGroupNo
                                                                     LEFT JOIN dbo.Treatments Treatments ON Treatments.TreatmentNo = Treatment_MGroups.TreatmentNo
                                                                     WHERE
-                                                                        Machines.MachineNo = $dataSchedule[no_mesin]
-                                                                        AND Treatment_MGroups.TreatmentNo = $treatmentArray[MAINPROGRAM]");
-                $sqlValidationTreatment->execute();
-                $ValidationTreatment = $sqlValidationTreatment->fetch(PDO::FETCH_ASSOC);
-                if($ValidationTreatment['TreatmentNo']){
-                    $mainValidation         = '<span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available';
-                    $mainValidationNumber   = 1;
+                                                                        Machines.MachineNo = '$dataSchedule[no_mesin]'
+                                                                        AND Treatment_MGroups.TreatmentNo = '$treatmentArray[MAINPROGRAM]'");
+                    $sqlValidationTreatment->execute();
+                    $ValidationTreatment = $sqlValidationTreatment->fetch(PDO::FETCH_ASSOC);
+                    if($ValidationTreatment['TreatmentNo']){
+                        $mainValidation         = '<span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available';
+                        $mainValidationNumber   = 1;
+                    }else{
+                        $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please add your treatment to the machines.';
+                        $mainValidationNumber   = 0;
+                    }
                 }else{
                     $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please add your treatment to the machines.';
-                    $mainValidationNumber   = 0;
+                    $mainValidationNumber   = 2;
                 }
 
                 $treatments[] = [
