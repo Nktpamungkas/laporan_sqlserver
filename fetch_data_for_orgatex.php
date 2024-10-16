@@ -82,11 +82,11 @@ if (isset($_POST['production_number'])) {
                                 END = '2' THEN '%'
                         END	AS CONSUMPTIONTYPE,
                         CASE
-                            WHEN ITXVIEWRESEP.RECIPETYPE = '1' THEN CAST( ((ITXVIEWRESEP.PICKUPPERCENTAGE/100 * 1000) + ITXVIEWRESEP.RESIDUALBATHVOLUME) * ITXVIEWRESEP2.CONSUMPTION AS DECIMAL(18, 7))
+                            WHEN ITXVIEWRESEP.RECIPETYPE = '1' THEN CAST( ((ITXVIEWRESEP.PICKUPPERCENTAGE/100 * $dataMain[WEIGHT]) + ITXVIEWRESEP.RESIDUALBATHVOLUME) * ITXVIEWRESEP2.CONSUMPTION AS DECIMAL(18, 7))
                             ELSE 
                                 CASE
-                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN CAST( ((1000 * VIEWPRODUCTIONRESERVATION.PICKUPQUANTITY) * ITXVIEWRESEP2.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
-                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN CAST( (1000 * (ITXVIEWRESEP2.CONSUMPTION/100)) * 1000 AS DECIMAL(18, 7))
+                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN CAST( (($dataMain[WEIGHT] * VIEWPRODUCTIONRESERVATION.PICKUPQUANTITY) * ITXVIEWRESEP2.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
+                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN CAST( ($dataMain[WEIGHT] * (ITXVIEWRESEP2.CONSUMPTION/100)) * 1000 AS DECIMAL(18, 7))
                                 END
                         END AS QTY,
                         CASE 
@@ -140,28 +140,27 @@ if (isset($_POST['production_number'])) {
                         ITXVIEWRESEP1.SUBCODE02,
                         ITXVIEWRESEP1.SUBCODE03,	
                         CASE
-                        WHEN RECIPE.RECIPETYPE = '1' THEN 
-                            CAST( (CAST(RECIPE.PICKUPPERCENTAGE AS DECIMAL(18,2))/100 * $dataMain[WEIGHT] + CAST(RECIPE.RESIDUALBATHVOLUME AS DECIMAL(18,2)) * ITXVIEWRESEP1.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
-                        ELSE 
-                            CASE
-                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '1' THEN CAST( $dataMain[WEIGHT] * $dataMain[LIQUORATIO] * CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 1000 AS DECIMAL(18, 7))
-                                -- WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( ($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 AS DECIMAL(18, 7))
-                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( (($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 )/ 1000 AS DECIMAL(18, 7))
-                            END
-                    END AS QTY,
-                    CASE 
-                        WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '1' THEN 'kg'
-                        WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '2' THEN 'kg'
-                    END AS UOM		           
-                    FROM
-                        RECIPE RECIPE
-                    LEFT JOIN ITXVIEWRESEP1 ITXVIEWRESEP1 ON RECIPE.NUMBERID = ITXVIEWRESEP1.RECIPENUMBERID
-                    WHERE 
-                        ITXVIEWRESEP1.RECIPENUMBERID = '$recipe[RECIPENUMBERID]'
-                        AND ITXVIEWRESEP1.SUBCODE01 = '$recipe[SUBCODE01]'
-                        AND ITXVIEWRESEP1.SUBCODE02 = '$recipe[SUBCODE02]'
-                        AND ITXVIEWRESEP1.SUBCODE03 = '$recipe[SUBCODE03]'
-                        AND ITXVIEWRESEP1.GROUPNUMBER = '$recipe[GROUPNUMBER]'";
+                            WHEN RECIPE.RECIPETYPE = '1' THEN 
+                                CAST( (CAST(RECIPE.PICKUPPERCENTAGE AS DECIMAL(18,2))/100 * $dataMain[WEIGHT] + CAST(RECIPE.RESIDUALBATHVOLUME AS DECIMAL(18,2)) * ITXVIEWRESEP1.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
+                            ELSE 
+                                CASE
+                                    WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '1' THEN CAST( $dataMain[WEIGHT] * $dataMain[LIQUORATIO] * CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 1000 AS DECIMAL(18, 7))
+                                    WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( (($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 )/ 1000 AS DECIMAL(18, 7))
+                                END
+                        END AS QTY,
+                        CASE 
+                            WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '1' THEN 'kg'
+                            WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '2' THEN 'kg'
+                        END AS UOM		           
+                        FROM
+                            RECIPE RECIPE
+                        LEFT JOIN ITXVIEWRESEP1 ITXVIEWRESEP1 ON RECIPE.NUMBERID = ITXVIEWRESEP1.RECIPENUMBERID
+                        WHERE 
+                            ITXVIEWRESEP1.RECIPENUMBERID = '$recipe[RECIPENUMBERID]'
+                            AND ITXVIEWRESEP1.SUBCODE01 = '$recipe[SUBCODE01]'
+                            AND ITXVIEWRESEP1.SUBCODE02 = '$recipe[SUBCODE02]'
+                            AND ITXVIEWRESEP1.SUBCODE03 = '$recipe[SUBCODE03]'
+                            AND ITXVIEWRESEP1.GROUPNUMBER = '$recipe[GROUPNUMBER]'";
 
             $resultQty = db2_exec($conn1, $sqlQty);
 
