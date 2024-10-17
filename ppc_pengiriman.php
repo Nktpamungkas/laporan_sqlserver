@@ -57,9 +57,15 @@
                                                 </div>
                                                 <div class="col-sm-12 col-xl-12 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
-                                                    <?php if (isset($_POST['submit']) AND $_POST['dept'] == 'PPC') : ?>
-                                                        <a class="btn btn-mat btn-warning" target="_blank" href="ppc_pengiriman-excel.php?tgl1=<?= $_POST['tgl1']; ?>&no_order=<?= $_POST['no_order']; ?>">CETAK EXCEL</a>
-                                                    <?php endif; ?>
+                                                        <?php if (isset($_POST['submit'])): ?>
+                                                            <?php if ($_POST['dept'] == 'PPC'): ?>
+                                                                <a class="btn btn-mat btn-warning" target="_blank"
+                                                                    href="ppc_pengiriman-excel.php?tgl1=<?= $_POST['tgl1']; ?>&no_order=<?= $_POST['no_order']; ?>">CETAK EXCEL</a>
+                                                            <?php elseif ($_POST['dept'] == 'GKJ'): ?>
+                                                                <a class="btn btn-mat btn-warning" target="_blank"
+                                                                    href="ppc_pengiriman-GKJ-excel.php?tgl1=<?= $_POST['tgl1']; ?>&no_order=<?= $_POST['no_order']; ?>">CETAK EXCEL</a>
+                                                            <?php endif; ?>
+                                                        <?php endif; ?>
                                                 </div>
                                             </div>
                                         </form>
