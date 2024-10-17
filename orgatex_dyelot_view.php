@@ -137,9 +137,9 @@ require_once "koneksi.php";
                                                         } else if ($dyelot['ImportState'] == 40) {
                                                             $badge = '<span class="badge badge-pill badge-danger p-2">Success Delete</span>';
                                                         } else if ($dyelot['ImportState'] == 50) {
-                                                            $badge = '<span class="badge badge-pill badge-danger p-2">Error Delete</span>';
+                                                            $badge = '<span class="badge badge-pill badge-info p-2">Error Delete</span>';
                                                         } else if ($dyelot['ImportState'] == 20) {
-                                                            $badge = '<span class="badge badge-pill badge-danger p-2">Error Import</span>';
+                                                            $badge = '<span class="badge badge-pill badge-dark p-2">Error Import</span>';
                                                         } else {
                                                             $badge = '';
                                                         }

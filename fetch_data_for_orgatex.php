@@ -82,11 +82,11 @@ if (isset($_POST['production_number'])) {
                                 END = '2' THEN '%'
                         END	AS CONSUMPTIONTYPE,
                         CASE
-                            WHEN ITXVIEWRESEP.RECIPETYPE = '1' THEN CAST( ((ITXVIEWRESEP.PICKUPPERCENTAGE/100 * 1000) + ITXVIEWRESEP.RESIDUALBATHVOLUME) * ITXVIEWRESEP2.CONSUMPTION AS DECIMAL(18, 7))
+                            WHEN ITXVIEWRESEP.RECIPETYPE = '1' THEN CAST( ((ITXVIEWRESEP.PICKUPPERCENTAGE/100 * $dataMain[WEIGHT]) + ITXVIEWRESEP.RESIDUALBATHVOLUME) * ITXVIEWRESEP2.CONSUMPTION AS DECIMAL(18, 7))
                             ELSE 
                                 CASE
-                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN CAST( ((1000 * VIEWPRODUCTIONRESERVATION.PICKUPQUANTITY) * ITXVIEWRESEP2.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
-                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN CAST( (1000 * (ITXVIEWRESEP2.CONSUMPTION/100)) * 1000 AS DECIMAL(18, 7))
+                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN CAST( (($dataMain[WEIGHT] * VIEWPRODUCTIONRESERVATION.PICKUPQUANTITY) * ITXVIEWRESEP2.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
+                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN CAST( ($dataMain[WEIGHT] * (ITXVIEWRESEP2.CONSUMPTION/100)) * 1000 AS DECIMAL(18, 7))
                                 END
                         END AS QTY,
                         CASE 
@@ -103,20 +103,21 @@ if (isset($_POST['production_number'])) {
                     WHERE 
                         VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
                         AND VIEWPRODUCTIONRESERVATION.GROUPLINE IN ($groupLineArray) 
-                        AND NOT 
-                            CASE
-                                WHEN 
-                                    CASE
-                                        WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
-                                        ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
-                                    END = '1' THEN 'g/l'
-                                WHEN
-                                    CASE
-                                        WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
-                                        ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
-                                    END = '2' THEN '%'
-                            END IS NULL 
+                        -- AND NOT 
+                        --     CASE
+                        --         WHEN 
+                        --             CASE
+                        --                 WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                        --                 ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                        --             END = '1' THEN 'g/l'
+                        --         WHEN
+                        --             CASE
+                        --                 WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                        --                 ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                        --             END = '2' THEN '%'
+                        --     END IS NULL 
                     ORDER BY
+                        ITXVIEWRESEP.RECIPENUMBERID,
                         ITXVIEWRESEP.GROUPNUMBER,
                         ITXVIEWRESEP.SEQUENCE,
                         ITXVIEWRESEP2.GROUPNUMBER,
@@ -139,28 +140,27 @@ if (isset($_POST['production_number'])) {
                         ITXVIEWRESEP1.SUBCODE02,
                         ITXVIEWRESEP1.SUBCODE03,	
                         CASE
-                        WHEN RECIPE.RECIPETYPE = '1' THEN 
-                            CAST( (CAST(RECIPE.PICKUPPERCENTAGE AS DECIMAL(18,2))/100 * $dataMain[WEIGHT] + CAST(RECIPE.RESIDUALBATHVOLUME AS DECIMAL(18,2)) * ITXVIEWRESEP1.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
-                        ELSE 
-                            CASE
-                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '1' THEN CAST( $dataMain[WEIGHT] * $dataMain[LIQUORATIO] * CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 1000 AS DECIMAL(18, 7))
-                                -- WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( ($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 AS DECIMAL(18, 7))
-                                WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( (($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 )/ 1000 AS DECIMAL(18, 7))
-                            END
-                    END AS QTY,
-                    CASE 
-                        WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '1' THEN 'kg'
-                        WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '2' THEN 'kg'
-                    END AS UOM		           
-                    FROM
-                        RECIPE RECIPE
-                    LEFT JOIN ITXVIEWRESEP1 ITXVIEWRESEP1 ON RECIPE.NUMBERID = ITXVIEWRESEP1.RECIPENUMBERID
-                    WHERE 
-                        ITXVIEWRESEP1.RECIPENUMBERID = '$recipe[RECIPENUMBERID]'
-                        AND ITXVIEWRESEP1.SUBCODE01 = '$recipe[SUBCODE01]'
-                        AND ITXVIEWRESEP1.SUBCODE02 = '$recipe[SUBCODE02]'
-                        AND ITXVIEWRESEP1.SUBCODE03 = '$recipe[SUBCODE03]'
-                        AND ITXVIEWRESEP1.GROUPNUMBER = '$recipe[GROUPNUMBER]'";
+                            WHEN RECIPE.RECIPETYPE = '1' THEN 
+                                CAST( (CAST(RECIPE.PICKUPPERCENTAGE AS DECIMAL(18,2))/100 * $dataMain[WEIGHT] + CAST(RECIPE.RESIDUALBATHVOLUME AS DECIMAL(18,2)) * ITXVIEWRESEP1.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
+                            ELSE 
+                                CASE
+                                    WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '1' THEN CAST( $dataMain[WEIGHT] * $dataMain[LIQUORATIO] * CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 1000 AS DECIMAL(18, 7))
+                                    WHEN TRIM(ITXVIEWRESEP1.CONSUMPTIONTYPE) = '2' THEN CAST( (($dataMain[WEIGHT] * (CAST(ITXVIEWRESEP1.CONSUMPTION AS DECIMAL(18,4)) / 100)) * 1000 )/ 1000 AS DECIMAL(18, 7))
+                                END
+                        END AS QTY,
+                        CASE 
+                            WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '1' THEN 'kg'
+                            WHEN ITXVIEWRESEP1.CONSUMPTIONTYPE = '2' THEN 'kg'
+                        END AS UOM		           
+                        FROM
+                            RECIPE RECIPE
+                        LEFT JOIN ITXVIEWRESEP1 ITXVIEWRESEP1 ON RECIPE.NUMBERID = ITXVIEWRESEP1.RECIPENUMBERID
+                        WHERE 
+                            ITXVIEWRESEP1.RECIPENUMBERID = '$recipe[RECIPENUMBERID]'
+                            AND ITXVIEWRESEP1.SUBCODE01 = '$recipe[SUBCODE01]'
+                            AND ITXVIEWRESEP1.SUBCODE02 = '$recipe[SUBCODE02]'
+                            AND ITXVIEWRESEP1.SUBCODE03 = '$recipe[SUBCODE03]'
+                            AND ITXVIEWRESEP1.GROUPNUMBER = '$recipe[GROUPNUMBER]'";
 
             $resultQty = db2_exec($conn1, $sqlQty);
 
@@ -176,6 +176,7 @@ if (isset($_POST['production_number'])) {
                             DISTINCT 
                             * 
                             FROM (SELECT
+                                    ITXVIEWRESEP.RECIPENUMBERID, 
                                     ITXVIEWRESEP.GROUPNUMBER, 
                                     CASE
                                         WHEN CAST( LENGTH(ITXVIEWRESEP.SUBCODE01) AS VARCHAR(5)) = '1' THEN ITXVIEWRESEP.SUBCODE01_RESERVATION
@@ -195,30 +196,37 @@ if (isset($_POST['production_number'])) {
                                 WHERE 
                                     VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$orderCode'
                                     AND VIEWPRODUCTIONRESERVATION.GROUPLINE IN ($groupLineArray) 
-                                    AND NOT 
-                                        CASE
-                                            WHEN 
-                                                CASE
-                                                    WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
-                                                    ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
-                                                END = '1' THEN 'g/l'
-                                            WHEN
-                                                CASE
-                                                    WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
-                                                    ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
-                                                END = '2' THEN '%'
-                                        END IS NULL 
+                                    -- AND NOT 
+                                    --     CASE
+                                    --         WHEN 
+                                    --             CASE
+                                    --                 WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                                    --                 ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                                    --             END = '1' THEN 'g/l'
+                                    --         WHEN
+                                    --             CASE
+                                    --                 WHEN ITXVIEWRESEP.CONSUMPTIONTYPE IS NULL OR ITXVIEWRESEP.CONSUMPTIONTYPE = '' THEN ITXVIEWRESEP2.CONSUMPTIONTYPE
+                                    --                 ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
+                                    --             END = '2' THEN '%'
+                                    --     END IS NULL 
                                 GROUP BY 
+                                    ITXVIEWRESEP.RECIPENUMBERID,
                                     ITXVIEWRESEP.SUBCODE01,
                                     ITXVIEWRESEP.SUFFIXCODE,
                                     ITXVIEWRESEP.GROUPNUMBER,
                                     ITXVIEWRESEP.SUBCODE01_RESERVATION,
                                     ITXVIEWRESEP.SUFFIXCODE_RESERVATION 
                                 ORDER BY
+                                    ITXVIEWRESEP.RECIPENUMBERID,
                                     ITXVIEWRESEP.GROUPNUMBER)";
 
         $resultTreatment = db2_exec($conn1, $sqlTreatment);
         $treatments = [];
+
+        // SCHEDULE DYEING
+        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE (no_resep = '$orderCode-$groupLine' OR no_resep = '$orderCode-$groupLine') OR (no_resep2 = '$orderCode-$groupLine' OR no_resep2 = '$orderCode-$groupLine')";
+        $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
+        $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
 
         while ($treatment = db2_fetch_assoc($resultTreatment)) {
             $sqlTreatmentDetail = "SELECT
@@ -245,19 +253,44 @@ if (isset($_POST['production_number'])) {
                 $sqlDescTreatment->execute();
                 $mainDesc = $sqlDescTreatment->fetch(PDO::FETCH_ASSOC);
 
+                if($treatmentArray['MAINPROGRAM']){
+                    $sqlValidationTreatment = $pdo_orgatex->prepare("SELECT
+                                                                        Machines.MachineNo,
+                                                                        Machines.MachineName,
+                                                                        Machines.MGroupNo,
+                                                                        Treatment_MGroups.TreatmentNo,
+                                                                        Treatments.TreatmentName
+                                                                    FROM
+                                                                        dbo.Machines Machines
+                                                                    LEFT JOIN dbo.Treatment_MGroups Treatment_MGroups ON Treatment_MGroups.MGroupNo = Machines.MGroupNo
+                                                                    LEFT JOIN dbo.Treatments Treatments ON Treatments.TreatmentNo = Treatment_MGroups.TreatmentNo
+                                                                    WHERE
+                                                                        Machines.MachineNo = '$dataSchedule[no_mesin]'
+                                                                        AND Treatment_MGroups.TreatmentNo = '$treatmentArray[MAINPROGRAM]'");
+                    $sqlValidationTreatment->execute();
+                    $ValidationTreatment = $sqlValidationTreatment->fetch(PDO::FETCH_ASSOC);
+                    if($ValidationTreatment['TreatmentNo']){
+                        $mainValidation         = '<span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available';
+                        $mainValidationNumber   = 1;
+                    }else{
+                        $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please add your treatment to the machines.';
+                        $mainValidationNumber   = 0;
+                    }
+                }else{
+                    $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please add your treatment to the machines.';
+                    $mainValidationNumber   = 2;
+                }
+
                 $treatments[] = [
                     'SUBCODE01' => $treatment['SUBCODE01'],
                     'SUFFIXCODE' => $treatment['SUFFIXCODE'],
-                    'MAINPROGRAM' => $treatmentArray['MAINPROGRAM'], // Only MAINPROGRAM
-                    'TREATMENTNAME' => $mainDesc['TreatmentName']
+                    'MAINPROGRAM' => $treatmentArray['MAINPROGRAM'], // No Treatment
+                    'TREATMENTNAME' => $mainDesc['TreatmentName'], // Desc Treatment
+                    'VALIDATION' =>  $mainValidation, // Validasi jika ada treatmentnya
+                    'VALIDATIONNUMBER' =>  $mainValidationNumber // Validasi jika ada treatmentnya
                 ];
             }
         }
-
-        // SCHEDULE DYEING
-        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE no_resep = '$orderCode-$groupLine'";
-        $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
-        $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
 
         echo json_encode([
             'success' => true,

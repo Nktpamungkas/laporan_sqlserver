@@ -762,7 +762,7 @@
             <th colspan="1" align="center">
                 <?= number_format($fetch_roll_harian_local['QTY_SJ_YARD'] + $fetch_roll_harian_export['QTY_SJ_YARD'], 2); ?>
             </th>
-            <th colspan="3" align="center">SINGGIH</th>
+            <th colspan="3" align="center">ARIS</th>
             <th colspan="6" align="center">
                 <?php
                     if($_GET['tgl1'] < '2024-01-01'){

@@ -28,6 +28,9 @@ require_once "koneksi.php";
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link href="alert/toastr.css" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="files\assets\icon\font-awesome\css\font-awesome.min.css">
+
     <style>
         #loadingOverlay {
             position: fixed;
@@ -80,101 +83,100 @@ require_once "koneksi.php";
                                     </div>
                                     <div class="card-block">
                                         <div class="row">
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Bon Resep</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Bon Resep</h6>
                                                 <input type="text" id="production_number" value="<?= $_GET['bonresep']; ?>" class="form-control">
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Dyelot</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Dyelot</h6>
                                                 <input type="text" id="dyelot" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Group Line</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Group Line</h6>
                                                 <input type="text" id="group_line" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Redye</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Redye</h6>
                                                 <input type="text" id="redye" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Machine Number</h5>
-                                                <input type="text" id="machine_number" class="form-control" required>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Machine Number</h6>
+                                                <input type="text" id="machine_number" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Type Of Procedure</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Type Of Procedure</h6>
                                                 <input type="text" id="procedure_type" class="form-control" readonly>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Procedure Number</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Procedure Number</h6>
                                                 <input type="text" id="procedure_number" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Color</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Color</h6>
                                                 <input type="text" id="color" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Color Desc</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Color Desc</h6>
                                                 <input type="text" id="warna" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Recipe Number</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Recipe Number</h6>
                                                 <input type="text" id="recipe_number" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Order Number</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Order Number</h6>
                                                 <input type="text" id="order_number" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Customer Name</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Customer Name</h6>
                                                 <input type="text" id="customer_name" class="form-control" readonly>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Article</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Article</h6>
                                                 <input type="text" id="article" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Color Number</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Color Number</h6>
                                                 <input type="text" id="color_number" class="form-control" readonly>
                                             </div>
 
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Length</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Length</h6>
                                                 <input type="text" id="length" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">LiquorRatio</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">LiquorRatio</h6>
                                                 <input type="text" id="liquorRatio" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">LiquorQuantity</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">LiquorQuantity</h6>
                                                 <input type="text" id="liquorQuantity" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">PumpSpeed</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">PumpSpeed</h6>
                                                 <input type="text" id="pumpSpeed" class="form-control" readonly>
                                             </div>
 
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">ReelSpeed</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">ReelSpeed</h6>
                                                 <input type="text" id="reelSpeed" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Absorption</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Absorption</h6>
                                                 <input type="text" id="absorption" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-30">
-                                                <h5 class="sub-title">Weight</h5>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Weight</h6>
                                                 <input type="text" id="weight" class="form-control" readonly>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="card-block">
+
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="card-header">
@@ -216,6 +218,7 @@ require_once "koneksi.php";
                                                                 <th>Item</th>
                                                                 <th>Treatment Code</th>
                                                                 <th>Description</th>
+                                                                <th>Check Available Treatment</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
