@@ -9,7 +9,7 @@ header('Cache-Control: max-age=0');
         $dateformat = date_create($_GET['tgl1']);
         ?>
         <tr align="center">
-            <th rowspan="3"> <img src="img/logo.png" alt="Logo" style="max-width: 2.5cm; height: auto;"></th>
+            <th rowspan="3"> <img src="img\logo.png" alt="logo" style="max-width: 2.5cm; height: auto;"></th>
             <th style='border-bottom: 0' colspan="11">LAPORAN HARIAN PENGIRIMAN KAIN JADI</th>
         </tr>
         <tr>
@@ -45,10 +45,10 @@ header('Cache-Control: max-age=0');
         session_start();
         require_once "koneksi.php";
         $tgl1     = $_GET['tgl1'];
-        // $tgl1 = '';
+        // $tgl1 = '2024-10-07';
         // $tgl1 = '2024-10-09';
         $no_order = $_GET['no_order'];
-        // $no_order = 'DOM2401442';
+        // $no_order = 'EXP2400511';
 
         if ($tgl1) {
             $where_date = "i.GOODSISSUEDATE = '$tgl1'";
@@ -461,13 +461,29 @@ header('Cache-Control: max-age=0');
         
         <!-- Query untuk total Roll -->
         <?php 
+        
+        if($tgl1){
+            $where_datefilter = "i.ISSUE_DATE = '$tgl1'";
+        } else {
+            $where_datefilter = '';
+        }
 
+        $query_total="SELECT COUNT(i.COUNTROLL) AS ROLL,
+	SUM(i.QTY_KG) AS QTY
+	FROM ITXVIEW_SURATJALAN_EXIM2A i
+	WHERE
+    $where_no_order $where_datefilter
+    ";
+
+    $exec = db2_exec($conn1, $query_total);
+    $data_total = db2_fetch_assoc($exec);
         ?>
         <!-- End Total Roll -->
+
         <tr>
             <td colspan="7" align='center'> TOTAL </td>
-            <td align='center'> <?php echo '-';?> </td>
-            <td align='center'> <?php echo '-';?> </td>
+            <td align='center'> <?php echo $data_total['ROLL'];?> </td>
+            <td align='center'> <?php echo number_format($data_total['QTY'], 2); ?> </td>
             <td align='center'> - </td>
             <td align='center'> - </td>
             <td align='center'> - </td>
