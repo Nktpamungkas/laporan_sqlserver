@@ -44,12 +44,12 @@ header('Cache-Control: max-age=0');
         ini_set("error_reporting", 1);
         session_start();
         require_once "koneksi.php";
-        $tgl1     = $_GET['tgl1'];
+        $tgl1 = $_GET['tgl1'];
         // $tgl1 = '2024-10-07';
         // $tgl1 = '2024-10-09';
         $no_order = $_GET['no_order'];
         // $no_order = 'EXP2400511';
-
+        
         if ($tgl1) {
             $where_date = "i.GOODSISSUEDATE = '$tgl1'";
         } else {
@@ -278,7 +278,7 @@ header('Cache-Control: max-age=0');
                                                                                                                     inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE
                                                                                                                     ");
                         $d_rollfoc = db2_fetch_assoc($q_rollfoc);
-                        $roll1= $d_roll['ROLL'] - $d_rollfoc['ROLL'];
+                        $roll1 = $d_roll['ROLL'] - $d_rollfoc['ROLL'];
                         echo $roll1; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
                     } else {
                         $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
@@ -290,14 +290,15 @@ header('Cache-Control: max-age=0');
                                                                                                                 WHERE 
                                                                                                                     CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
                         $d_roll = db2_fetch_assoc($q_roll);
-                        $roll1= $d_roll['ROLL'];
+                        $roll1 = $d_roll['ROLL'];
                         echo $roll1;
-                    };
-                   
+                    }
+                    ;
+
                     ?></td>
                     <td>
-                        <?php $qty1= number_format($d_roll['QTY_SJ_KG'], 2); 
-                        echo $qty1;?>
+                        <?php $qty1 = number_format($d_roll['QTY_SJ_KG'], 2);
+                        echo $qty1; ?>
                     </td>
                     <td><?= $rowdb2['LOKASI'] ?></td>
                     <td>
@@ -356,7 +357,7 @@ header('Cache-Control: max-age=0');
                                                                                                                 GROUP BY 
                                                                                                                     inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE");
                             $d_roll = db2_fetch_assoc($q_roll);
-                            $roll2= $d_roll['ROLL'];
+                            $roll2 = $d_roll['ROLL'];
                             echo $roll2; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
                         } else {
                             $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
@@ -368,13 +369,13 @@ header('Cache-Control: max-age=0');
                                                                                                                 WHERE 
                                                                                                                     CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
                             $d_roll = db2_fetch_assoc($q_roll);
-                            $roll2= $d_roll['ROLL'];
+                            $roll2 = $d_roll['ROLL'];
                             echo $roll2;
                         }
                         ?>
                     </td>
                     <td>
-                        <?php $qty2= number_format($d_roll['QTY_SJ_KG'], 2); 
+                        <?php $qty2 = number_format($d_roll['QTY_SJ_KG'], 2);
                         echo $qty2;
                         ?>
                     </td>
@@ -458,37 +459,39 @@ header('Cache-Control: max-age=0');
                 <td>KFF</td>
             </tr>
         <?php } ?>
-        
+
         <!-- Query untuk total Roll -->
-        <?php 
-        
-        if($tgl1){
+        <?php
+
+        if ($tgl1) {
             $where_datefilter = "i.ISSUE_DATE = '$tgl1'";
         } else {
             $where_datefilter = '';
         }
 
-        $query_total="SELECT COUNT(i.COUNTROLL) AS ROLL,
-	SUM(i.QTY_KG) AS QTY
-	FROM ITXVIEW_SURATJALAN_EXIM2A i
+        $query_total = "SELECT COUNT(i.COUNTROLL) AS ROLL,
+	SUM(i.QTY_KG) + SUM(i.FOC_KG) AS QTY
+   	FROM ITXVIEW_SURATJALAN_EXIM2A i
 	WHERE
     $where_no_order $where_datefilter
     ";
 
-    $exec = db2_exec($conn1, $query_total);
-    $data_total = db2_fetch_assoc($exec);
+        $exec = db2_exec($conn1, $query_total);
+        $data_total = db2_fetch_assoc($exec);
         ?>
         <!-- End Total Roll -->
 
         <tr>
             <td colspan="7" align='center'> TOTAL </td>
-            <td align='center'> <?php echo $data_total['ROLL'];?> </td>
+            <td align='center'> <?php echo $data_total['ROLL']; ?> </td>
             <td align='center'> <?php echo number_format($data_total['QTY'], 2); ?> </td>
             <td align='center'> - </td>
             <td align='center'> - </td>
             <td align='center'> - </td>
         </tr>
-        <tr> <td colspan="12" style="border:0"></td></tr>
+        <tr>
+            <td colspan="12" style="border:0"></td>
+        </tr>
     </tbody>
     <tfoot>
         <?php
@@ -678,9 +681,9 @@ header('Cache-Control: max-age=0');
         $db2_roll_harian_local_hariH = db2_exec($conn1, $q_roll_harian_hariH);
         $db2_roll_harian_export_hariH = db2_exec($conn1, $q_roll_harian_hariH);
 
-       
+
         ?>
-        
+
         <tr>
             <th colspan="4" align="left"> </th>
             <th colspan="2" align="center">Dibuat Oleh</th>
