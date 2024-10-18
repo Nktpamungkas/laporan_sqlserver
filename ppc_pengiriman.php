@@ -89,7 +89,9 @@
                                                             <th>CUSTOMER</th>
                                                             <th>NO PO</th>
                                                             <th>NO ORDER</th>
-                                                            <th>JENIS KAIN</th>
+                                                            <?php if($_POST['dept'] != 'GKJ') : ?>
+                                                                <th>JENIS KAIN</th>
+                                                            <?php endif;?>
                                                             <th>LOTCODE</th>
                                                             <th>DEMAND</th>
                                                             <th>FOC</th>
@@ -354,7 +356,7 @@
                                                                             }
                                                                         ?>
                                                                     </td> 
-                                                                    <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
+                                                                    <!-- <td><?php // $rowdb2['ITEMDESCRIPTION']; ?></td>  -->
                                                                     <td>`<?= $rowdb2['LOTCODE']; ?></td> 
                                                                     <td>
                                                                         <?php
@@ -470,7 +472,7 @@
                                                                             }
                                                                         ?>
                                                                     </td> 
-                                                                    <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
+                                                                    <!-- <td><?php // $rowdb2['ITEMDESCRIPTION']; ?></td>  -->
                                                                     <td>`<?= $rowdb2['LOTCODE']; ?></td> 
                                                                     <td>
                                                                         <?php
@@ -566,7 +568,7 @@
                                                                             }
                                                                         ?>
                                                                     </td> 
-                                                                    <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
+                                                                    <!-- <td><?php // $rowdb2['ITEMDESCRIPTION']; ?></td>  -->
                                                                     <td>`<?= $rowdb2['LOTCODE']; ?></td> 
                                                                     <td>
                                                                         <?php
