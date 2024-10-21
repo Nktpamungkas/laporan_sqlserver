@@ -44,6 +44,7 @@ header('Cache-Control: max-age=0');
         ini_set("error_reporting", 1);
         session_start();
         require_once "koneksi.php";
+        set_time_limit(300);
         $tgl1 = $_GET['tgl1'];
         // $tgl1 = '2024-10-07';
         // $tgl1 = '2024-10-09';
@@ -470,7 +471,7 @@ header('Cache-Control: max-age=0');
         }
 
         $query_total = "SELECT COUNT(i.COUNTROLL) AS ROLL,
-	SUM(i.QTY_KG) + SUM(i.FOC_KG_GUDANG) AS QTY
+	SUM(i.QTY_KG) + SUM(i.FOC_KG) + SUM(i.FOC_KG_Gudang) AS QTY
    	FROM ITXVIEW_SURATJALAN_EXIM2A i
 	WHERE
     $where_no_order $where_datefilter
