@@ -96,6 +96,7 @@ require_once "koneksi.php";
                                             <table id="dyelot-table" class="table compact table-striped table-bordered nowrap">
                                                 <thead>
                                                     <tr>
+                                                        <th class="text-center">AutoKey</th>
                                                         <th class="text-center">Dyelot</th>
                                                         <th class="text-center">Redye</th>
                                                         <th class="text-center">Machine</th>
@@ -111,7 +112,8 @@ require_once "koneksi.php";
                                                 <tbody>
                                                     <?php
                                                     // Prepare the SQL query
-                                                    $dyelots = $pdo_orgatex->query("SELECT 
+                                                    $dyelots = $pdo_orgatex->query("SELECT
+                                                    a.AutoKey, 
                                                     a.Dyelot,
                                                     a.ReDye,
                                                     a.Machine,
@@ -169,6 +171,7 @@ require_once "koneksi.php";
                                                         }
                                                         ?>
                                                         <tr>
+                                                            <td class="text-center"><?= $dyelot['AutoKey']; ?></td>
                                                             <td class="text-center"><?= $dyelot['Dyelot']; ?></td>
                                                             <td class="text-center"><?= $dyelot['ReDye']; ?></td>
                                                             <td class="text-center"><?= $dyelot['Machine']; ?></td>
@@ -243,6 +246,7 @@ require_once "koneksi.php";
         $('#dyelot-table').DataTable({
             lengthMenu: [15, 30, 50, 75, 100],
             pageLength: 15,
+            order: [[0, 'desc']]
         });
 
         // Event delegation for dynamically created buttons
