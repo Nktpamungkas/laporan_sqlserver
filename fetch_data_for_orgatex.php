@@ -309,7 +309,7 @@ if (isset($_POST['production_number'])) {
         $resultColor = db2_exec($conn1, $sqlColor);
         $dataColor = db2_fetch_assoc($resultColor);
 
-        $formulaColor = 256*256*$dataColor['RED'] + 256*$dataColor['GREEN'] + $dataColor['BLUE'];
+        $formulaColor = 256*256*$dataColor['BLUE'] + 256*$dataColor['GREEN'] + $dataColor['RED'];
 
         echo json_encode([
             'success' => true,
