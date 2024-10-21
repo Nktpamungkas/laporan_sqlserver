@@ -27,257 +27,58 @@
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\pcoded-horizontal.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\css\component.css">
-    <?php if($pinjambuku = 'pinjam_buku') : ?>
+    <?php if ($pinjambuku = 'pinjam_buku') : ?>
         <script src="xeditable/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
     <?php endif; ?>
 </head>
 <?php require_once 'header.php'; ?>
-<?php
-    // SALESORDER
-    // ini_set("error_reporting", 1);
-    // session_start();
-    // require_once "koneksi.php";
-    // $delete_salesorder      = mysqli_query($con_nowprd, "TRUNCATE TABLE salesorder");
-    
-    // $salesorder             = db2_exec($conn1, "SELECT * FROM SALESORDER");
-    // while ($row_salesorder  = db2_fetch_assoc($salesorder)) {
-    //     $insert_salesorder  = mysqli_query($con_nowprd, "INSERT INTO salesorder (DIVISIONCODE,
-    //                                                                             ALLOWEDDIVISIONS,
-    //                                                                             COMPANYCODE,
-    //                                                                             TEMPLATECODE,
-    //                                                                             ORDERTYPE,
-    //                                                                             DOCUMENTTYPETYPE,
-    //                                                                             INTERCOMPANYREQUIRED,
-    //                                                                             INTERCOMPANYCODE,
-    //                                                                             COUNTERCOMPANYCODE,
-    //                                                                             COUNTERCODE,
-    //                                                                             CODE,
-    //                                                                             ORDERDATE,
-    //                                                                             PURORDPRNCUSTOMERSUPPLIERTYPE,
-    //                                                                             PURORDPRNCUSTOMERSUPPLIERCODE,
-    //                                                                             ORDPRNCUSTOMERSUPPLIERCODE,
-    //                                                                             ORDERPARTNERBRANDCODE,
-    //                                                                             LIFECYCLECODE,
-    //                                                                             DELIVERYPOINTTYPE,
-    //                                                                             DELIVERYPOINTUNIQUEID,
-    //                                                                             DELIVERYPOINTCODE,
-    //                                                                             `DESCRIPTION`,
-    //                                                                             INITIALDATE,
-    //                                                                             FINALDATE,
-    //                                                                             EXTERNALREFERENCE,
-    //                                                                             EXTERNALREFERENCEDATE,
-    //                                                                             INTERNALREFERENCE,
-    //                                                                             INTERNALREFERENCEDATE,
-    //                                                                             STATISTICALGROUPCOMPANYCODE,
-    //                                                                             STATISTICALGROUPCODE,
-    //                                                                             COLLECTIONGROUPCOMPANYCODE,
-    //                                                                             COLLECTIONGROUPCODE,
-    //                                                                             PROJECTCODE,
-    //                                                                             LANGUAGECODE,
-    //                                                                             MARKETCODE,
-    //                                                                             GROUPORDERSONSHIPPING,
-    //                                                                             TERMSOFDELIVERYCOMPANYCODE,
-    //                                                                             TERMSOFDELIVERYCODE,
-    //                                                                             TERMSOFSHIPPINGCOMPANYCODE,
-    //                                                                             TERMSOFSHIPPINGCODE,
-    //                                                                             TRANSPORTREASONCOMPANYCODE,
-    //                                                                             TRANSPORTREASONCODE,
-    //                                                                             AREACOMPANYCODE,
-    //                                                                             AREACODE,
-    //                                                                             FIRSTCARRIERTYPE,
-    //                                                                             FIRSTCARRIERCODE,
-    //                                                                             SECONDCARRIERTYPE,
-    //                                                                             SECONDCARRIERCODE,
-    //                                                                             THIRDCARRIERTYPE,
-    //                                                                             THIRDCARRIERCODE,
-    //                                                                             WAREHOUSECOMPANYCODE,
-    //                                                                             WAREHOUSECODE,
-    //                                                                             REQUIREDDUEDATE,
-    //                                                                             CONFIRMEDDUEDATE,
-    //                                                                             RELEASETYPE,
-    //                                                                             RELEASEPRIORITY,
-    //                                                                             FNCORDPRNCUSTOMERSUPPLIERCODE,
-    //                                                                             ORDERCATEGORYCODE,
-    //                                                                             CURRENCYCODE,
-    //                                                                             KEEPENTRYEXCHANGERATE,
-    //                                                                             ENTRYEXCHANGERATE,
-    //                                                                             CONDITIONRETRIEVINGDATE,
-    //                                                                             PRICEANDDISCOUNTDOCUMENTTYPE,
-    //                                                                             PAYMENTMETHODCOMPANYCODE,
-    //                                                                             PAYMENTMETHODCODE,
-    //                                                                             PRICELISTCODE,
-    //                                                                             DISCOUNTCATEGORYCODE,
-    //                                                                             TAXCODE,
-    //                                                                             ONORDERTOTALAMOUNT,
-    //                                                                             PAYMENTCUSTOMERUNIQUEID,
-    //                                                                             PAYMENTCUSTOMERCODE,
-    //                                                                             MINAMOUNTACHIEVEMENTINVOICE,
-    //                                                                             BANKBANKCOUNTRYCODE,
-    //                                                                             BANKCODE,
-    //                                                                             BANKBRANCHCODE,
-    //                                                                             BANKEXTERNALCODE,
-    //                                                                             ORDERPARTNERBANKIDENTIFIER,
-    //                                                                             COMPANYBANKBANKCOUNTRYCODE,
-    //                                                                             COMPANYBANKCODE,
-    //                                                                             COMPANYBANKBRANCHCODE,
-    //                                                                             COMPANYBANKEXTERNALCODE,
-    //                                                                             COMPANYBANKIDIDENTIFIER,
-    //                                                                             THIRDPARTYBILLING,
-    //                                                                             COMMISSIONDOCUMENTTYPE,
-    //                                                                             AGENT1CODE,
-    //                                                                             COMMISSIONLIQUIDATIONTYPE1,
-    //                                                                             AGENTCREATIONTYPE1,
-    //                                                                             AGENT2CODE,
-    //                                                                             COMMISSIONLIQUIDATIONTYPE2,
-    //                                                                             AGENTCREATIONTYPE2,
-    //                                                                             AGENT3CODE,
-    //                                                                             COMMISSIONLIQUIDATIONTYPE3,
-    //                                                                             AGENTCREATIONTYPE3,
-    //                                                                             AGENT4CODE,
-    //                                                                             COMMISSIONLIQUIDATIONTYPE4,
-    //                                                                             AGENTCREATIONTYPE4,
-    //                                                                             AGENT5CODE,
-    //                                                                             COMMISSIONLIQUIDATIONTYPE5,
-    //                                                                             AGENTCREATIONTYPE5,
-    //                                                                             CURRENTSTATUS,
-    //                                                                             LINESUSPENDED,
-    //                                                                             PROGRESSSTATUS,
-    //                                                                             ORDERSOURCE,
-    //                                                                             PREVIOUSTEMPLATECODE,
-    //                                                                             PREVIOUSCOUNTERCOMPANYCODE,
-    //                                                                             PREVIOUSCOUNTERCODE,
-    //                                                                             PREVIOUSCODE,
-    //                                                                             PRINTEDCONFIRMATION,
-    //                                                                             LINESUNMATCHEDWITHBOX,
-    //                                                                             TERMSOFLOGCODE,
-    //                                                                             LOGREASONCODE,
-    //                                                                             CREATIONDATETIME,
-    //                                                                             CREATIONUSER,
-    //                                                                             LASTUPDATEDATETIME,
-    //                                                                             LASTUPDATEUSER,
-    //                                                                             CREATIONDATETIMEUTC,
-    //                                                                             LASTUPDATEDATETIMEUTC,
-    //                                                                             ABSUNIQUEID,
-    //                                                                             RFORDPRNCUSTOMERSUPPLIERCODE)
-    //                                                                         VALUES('$row_salesorder[DIVISIONCODE]',
-    //                                                                             '$row_salesorder[ALLOWEDDIVISIONS]',
-    //                                                                             '$row_salesorder[COMPANYCODE]',
-    //                                                                             '$row_salesorder[TEMPLATECODE]',
-    //                                                                             '$row_salesorder[ORDERTYPE]',
-    //                                                                             '$row_salesorder[DOCUMENTTYPETYPE]',
-    //                                                                             '$row_salesorder[INTERCOMPANYREQUIRED]',
-    //                                                                             '$row_salesorder[INTERCOMPANYCODE]',
-    //                                                                             '$row_salesorder[COUNTERCOMPANYCODE]',
-    //                                                                             '$row_salesorder[COUNTERCODE]',
-    //                                                                             '$row_salesorder[CODE]',
-    //                                                                             '$row_salesorder[ORDERDATE]',
-    //                                                                             '$row_salesorder[PURORDPRNCUSTOMERSUPPLIERTYPE]',
-    //                                                                             '$row_salesorder[PURORDPRNCUSTOMERSUPPLIERCODE]',
-    //                                                                             '$row_salesorder[ORDPRNCUSTOMERSUPPLIERCODE]',
-    //                                                                             '$row_salesorder[ORDERPARTNERBRANDCODE]',
-    //                                                                             '$row_salesorder[LIFECYCLECODE]',
-    //                                                                             '$row_salesorder[DELIVERYPOINTTYPE]',
-    //                                                                             '$row_salesorder[DELIVERYPOINTUNIQUEID]',
-    //                                                                             '$row_salesorder[DELIVERYPOINTCODE]',
-    //                                                                             '$row_salesorder[DESCRIPTION]',
-    //                                                                             '$row_salesorder[INITIALDATE]',
-    //                                                                             '$row_salesorder[FINALDATE]',
-    //                                                                             '$row_salesorder[EXTERNALREFERENCE]',
-    //                                                                             '$row_salesorder[EXTERNALREFERENCEDATE]',
-    //                                                                             '$row_salesorder[INTERNALREFERENCE]',
-    //                                                                             '$row_salesorder[INTERNALREFERENCEDATE]',
-    //                                                                             '$row_salesorder[STATISTICALGROUPCOMPANYCODE]',
-    //                                                                             '$row_salesorder[STATISTICALGROUPCODE]',
-    //                                                                             '$row_salesorder[COLLECTIONGROUPCOMPANYCODE]',
-    //                                                                             '$row_salesorder[COLLECTIONGROUPCODE]',
-    //                                                                             '$row_salesorder[PROJECTCODE]',
-    //                                                                             '$row_salesorder[LANGUAGECODE]',
-    //                                                                             '$row_salesorder[MARKETCODE]',
-    //                                                                             '$row_salesorder[GROUPORDERSONSHIPPING]',
-    //                                                                             '$row_salesorder[TERMSOFDELIVERYCOMPANYCODE]',
-    //                                                                             '$row_salesorder[TERMSOFDELIVERYCODE]',
-    //                                                                             '$row_salesorder[TERMSOFSHIPPINGCOMPANYCODE]',
-    //                                                                             '$row_salesorder[TERMSOFSHIPPINGCODE]',
-    //                                                                             '$row_salesorder[TRANSPORTREASONCOMPANYCODE]',
-    //                                                                             '$row_salesorder[TRANSPORTREASONCODE]',
-    //                                                                             '$row_salesorder[AREACOMPANYCODE]',
-    //                                                                             '$row_salesorder[AREACODE]',
-    //                                                                             '$row_salesorder[FIRSTCARRIERTYPE]',
-    //                                                                             '$row_salesorder[FIRSTCARRIERCODE]',
-    //                                                                             '$row_salesorder[SECONDCARRIERTYPE]',
-    //                                                                             '$row_salesorder[SECONDCARRIERCODE]',
-    //                                                                             '$row_salesorder[THIRDCARRIERTYPE]',
-    //                                                                             '$row_salesorder[THIRDCARRIERCODE]',
-    //                                                                             '$row_salesorder[WAREHOUSECOMPANYCODE]',
-    //                                                                             '$row_salesorder[WAREHOUSECODE]',
-    //                                                                             '$row_salesorder[REQUIREDDUEDATE]',
-    //                                                                             '$row_salesorder[CONFIRMEDDUEDATE]',
-    //                                                                             '$row_salesorder[RELEASETYPE]',
-    //                                                                             '$row_salesorder[RELEASEPRIORITY]',
-    //                                                                             '$row_salesorder[FNCORDPRNCUSTOMERSUPPLIERCODE]',
-    //                                                                             '$row_salesorder[ORDERCATEGORYCODE]',
-    //                                                                             '$row_salesorder[CURRENCYCODE]',
-    //                                                                             '$row_salesorder[KEEPENTRYEXCHANGERATE]',
-    //                                                                             '$row_salesorder[ENTRYEXCHANGERATE]',
-    //                                                                             '$row_salesorder[CONDITIONRETRIEVINGDATE]',
-    //                                                                             '$row_salesorder[PRICEANDDISCOUNTDOCUMENTTYPE]',
-    //                                                                             '$row_salesorder[PAYMENTMETHODCOMPANYCODE]',
-    //                                                                             '$row_salesorder[PAYMENTMETHODCODE]',
-    //                                                                             '$row_salesorder[PRICELISTCODE]',
-    //                                                                             '$row_salesorder[DISCOUNTCATEGORYCODE]',
-    //                                                                             '$row_salesorder[TAXCODE]',
-    //                                                                             '$row_salesorder[ONORDERTOTALAMOUNT]',
-    //                                                                             '$row_salesorder[PAYMENTCUSTOMERUNIQUEID]',
-    //                                                                             '$row_salesorder[PAYMENTCUSTOMERCODE]',
-    //                                                                             '$row_salesorder[MINAMOUNTACHIEVEMENTINVOICE]',
-    //                                                                             '$row_salesorder[BANKBANKCOUNTRYCODE]',
-    //                                                                             '$row_salesorder[BANKCODE]',
-    //                                                                             '$row_salesorder[BANKBRANCHCODE]',
-    //                                                                             '$row_salesorder[BANKEXTERNALCODE]',
-    //                                                                             '$row_salesorder[ORDERPARTNERBANKIDENTIFIER]',
-    //                                                                             '$row_salesorder[COMPANYBANKBANKCOUNTRYCODE]',
-    //                                                                             '$row_salesorder[COMPANYBANKCODE]',
-    //                                                                             '$row_salesorder[COMPANYBANKBRANCHCODE]',
-    //                                                                             '$row_salesorder[COMPANYBANKEXTERNALCODE]',
-    //                                                                             '$row_salesorder[COMPANYBANKIDIDENTIFIER]',
-    //                                                                             '$row_salesorder[THIRDPARTYBILLING]',
-    //                                                                             '$row_salesorder[COMMISSIONDOCUMENTTYPE]',
-    //                                                                             '$row_salesorder[AGENT1CODE]',
-    //                                                                             '$row_salesorder[COMMISSIONLIQUIDATIONTYPE1]',
-    //                                                                             '$row_salesorder[AGENTCREATIONTYPE1]',
-    //                                                                             '$row_salesorder[AGENT2CODE]',
-    //                                                                             '$row_salesorder[COMMISSIONLIQUIDATIONTYPE2]',
-    //                                                                             '$row_salesorder[AGENTCREATIONTYPE2]',
-    //                                                                             '$row_salesorder[AGENT3CODE]',
-    //                                                                             '$row_salesorder[COMMISSIONLIQUIDATIONTYPE3]',
-    //                                                                             '$row_salesorder[AGENTCREATIONTYPE3]',
-    //                                                                             '$row_salesorder[AGENT4CODE]',
-    //                                                                             '$row_salesorder[COMMISSIONLIQUIDATIONTYPE4]',
-    //                                                                             '$row_salesorder[AGENTCREATIONTYPE4]',
-    //                                                                             '$row_salesorder[AGENT5CODE]',
-    //                                                                             '$row_salesorder[COMMISSIONLIQUIDATIONTYPE5]',
-    //                                                                             '$row_salesorder[AGENTCREATIONTYPE5]',
-    //                                                                             '$row_salesorder[CURRENTSTATUS]',
-    //                                                                             '$row_salesorder[LINESUSPENDED]',
-    //                                                                             '$row_salesorder[PROGRESSSTATUS]',
-    //                                                                             '$row_salesorder[ORDERSOURCE]',
-    //                                                                             '$row_salesorder[PREVIOUSTEMPLATECODE]',
-    //                                                                             '$row_salesorder[PREVIOUSCOUNTERCOMPANYCODE]',
-    //                                                                             '$row_salesorder[PREVIOUSCOUNTERCODE]',
-    //                                                                             '$row_salesorder[PREVIOUSCODE]',
-    //                                                                             '$row_salesorder[PRINTEDCONFIRMATION]',
-    //                                                                             '$row_salesorder[LINESUNMATCHEDWITHBOX]',
-    //                                                                             '$row_salesorder[TERMSOFLOGCODE]',
-    //                                                                             '$row_salesorder[LOGREASONCODE]',
-    //                                                                             '$row_salesorder[CREATIONDATETIME]',
-    //                                                                             '$row_salesorder[CREATIONUSER]',
-    //                                                                             '$row_salesorder[LASTUPDATEDATETIME]',
-    //                                                                             '$row_salesorder[LASTUPDATEUSER]',
-    //                                                                             '$row_salesorder[CREATIONDATETIMEUTC]',
-    //                                                                             '$row_salesorder[LASTUPDATEDATETIMEUTC]',
-    //                                                                             '$row_salesorder[ABSUNIQUEID]',
-    //                                                                             '$row_salesorder[RFORDPRNCUSTOMERSUPPLIERCODE]')");
-    // }
 
-?>
+<body>
+    <div class="pcoded-content">
+        <div class="pcoded-inner-content">
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <div class="page-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <?php
+                                            // $client_ip = $_SERVER['REMOTE_ADDR'];
+                                            
+                                            // // Perform reverse DNS lookup
+                                            // $hostname = gethostbyaddr($client_ip);
+                                            
+                                            // echo "IP Address: " . $client_ip . "<br>";
+                                            // echo "Hostname: " . $hostname;
+
+                                            // if (isset($_SERVER['REMOTE_USER'])) {
+                                            //     $username = $_SERVER['REMOTE_USER'];
+                                            //     echo "User login: " . $username;
+                                            // } else {
+                                            //     echo "User not authenticated.";
+                                            // }
+
+                                            // echo "<pre>";
+                                            //     print_r($_SERVER);
+                                            //     print_r($_COOKIE);
+                                            // echo "</pre>";
+
+                                            // setcookie('username', $username, time() + (86400 * 30), "/"); // 1 day expiration
+
+                                            // // Retrieve cookie
+                                            // if(isset($_COOKIE['username'])) {
+                                            //     echo "Username: " . $_COOKIE['username'];
+                                            // }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 <?php require_once 'footer.php'; ?>

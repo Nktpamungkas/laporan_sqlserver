@@ -292,6 +292,25 @@ if (isset($_POST['production_number'])) {
             }
         }
 
+        $sqlColor = "SELECT
+                        u.CODE,
+                        a.VALUEDECIMAL AS RED,
+                        a2.VALUEDECIMAL AS GREEN,
+                        a3.VALUEDECIMAL AS BLUE
+                    FROM
+                        USERGENERICGROUP u 
+                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = u.ABSUNIQUEID AND a.FIELDNAME = 'RGBvalueR'
+                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = u.ABSUNIQUEID AND a2.FIELDNAME = 'RGBvalueG'
+                    LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = u.ABSUNIQUEID AND a3.FIELDNAME = 'RGBvalueB'
+                    WHERE
+                        u.USERGENERICGROUPTYPECODE = 'CL1'
+                        AND u.CODE = '$dataMain[COLORNO]'";
+    
+        $resultColor = db2_exec($conn1, $sqlColor);
+        $dataColor = db2_fetch_assoc($resultColor);
+
+        $formulaColor = 256*256*$dataColor['RED'] + 256*$dataColor['GREEN'] + $dataColor['BLUE'];
+
         echo json_encode([
             'success' => true,
             'dyelot' => $dataMain['DYELOT'],
@@ -299,7 +318,7 @@ if (isset($_POST['production_number'])) {
             'machine' => $dataSchedule['no_mesin'],
             'type_of_procedure' => $dataMain['TYPEOFPROCEDURE'],
             'procedure_no' => $dataMain['PROCEDURENO'],
-            'color' => $dataMain['COLOR'],
+            'color' => $formulaColor,
             'recipe_number' => $dataMain['RECIPENO'],
             'order_number' => $dataMain['ORDERNO'],
             'customer_name' => $dataSchedule['langganan'],
