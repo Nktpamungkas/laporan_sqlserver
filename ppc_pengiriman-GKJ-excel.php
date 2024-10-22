@@ -6,7 +6,7 @@ header('Cache-Control: max-age=0');
 <table border='1'>
     <thead>
         <?php
-            $dateformat = date_create($_GET['tgl1']);
+        $dateformat = date_create($_GET['tgl1']);
         ?>
         <tr align="center">
             <th rowspan="3"> <img src="img\logo.png" alt="logo" style="max-width: 2.5cm; height: auto;"></th>
@@ -41,26 +41,27 @@ header('Cache-Control: max-age=0');
     </thead>
     <tbody>
         <?php
-            ini_set("error_reporting", 1);
-            session_start();
-            require_once "koneksi.php";
-            $tgl1 = $_GET['tgl1'];
-            // $tgl1 = '2024-10-07';
-            // $tgl1 = '2024-10-09';
-            $no_order = $_GET['no_order'];
-            // $no_order = 'EXP2400511';
-            
-            if ($tgl1) {
-                $where_date = "i.GOODSISSUEDATE = '$tgl1'";
-            } else {
-                $where_date = "";
-            }
-            if ($no_order) {
-                $where_no_order = "i.DLVSALORDERLINESALESORDERCODE = '$no_order'";
-            } else {
-                $where_no_order = "";
-            }
-            $sqlDB2 = "SELECT
+        ini_set("error_reporting", 1);
+        session_start();
+        set_time_limit(0);
+        require_once "koneksi.php";
+        $tgl1 = $_GET['tgl1'];
+        // $tgl1 = '2024-10-07';
+        // $tgl1 = '2024-10-09';
+        $no_order = $_GET['no_order'];
+        // $no_order = 'EXP2400511';
+        
+        if ($tgl1) {
+            $where_date = "i.GOODSISSUEDATE = '$tgl1'";
+        } else {
+            $where_date = "";
+        }
+        if ($no_order) {
+            $where_no_order = "i.DLVSALORDERLINESALESORDERCODE = '$no_order'";
+        } else {
+            $where_no_order = "";
+        }
+        $sqlDB2 = "SELECT
                         DISTINCT 
                         LISTAGG(DISTINCT TRIM(i.SUBCODE05), ', ') AS NO_WARNA,
                         i.PROVISIONALCODE,
@@ -129,12 +130,12 @@ header('Cache-Control: max-age=0');
                         i.CODE
                     ORDER BY
                         i.PROVISIONALCODE ASC";
-            $stmt = db2_exec($conn1, $sqlDB2);
-            $no = 1;
+        $stmt = db2_exec($conn1, $sqlDB2);
+        $no = 1;
         ?>
-        <?php while ($rowdb2 = db2_fetch_assoc($stmt)) : ?>
+        <?php while ($rowdb2 = db2_fetch_assoc($stmt)): ?>
             <?php
-                $q_ket_foc = db2_exec($conn1, "SELECT 
+            $q_ket_foc = db2_exec($conn1, "SELECT 
                                                     COUNT(QUALITYREASONCODE) AS ROLL,
                                                     SUM(FOC_KG) AS KG,
                                                     SUM(FOC_YARDMETER) AS YARD_MTR,
@@ -149,23 +150,23 @@ header('Cache-Control: max-age=0');
                                                 GROUP BY 
                                                     KET_YARDMETER,
                                                     ALLOCATIONCODE");
-                $d_ket_foc = db2_fetch_assoc($q_ket_foc);
+            $d_ket_foc = db2_fetch_assoc($q_ket_foc);
             ?>
             <?php if ($d_ket_foc['ROLL'] > 0 and $d_ket_foc['KG'] > 0 and $d_ket_foc['YARD_MTR'] > 0): ?>
                 <tr>
                     <!-- Untuk Pelanggan -->
                     <td>
                         <?php
-                                $q_pelanggan = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
+                        $q_pelanggan = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
                                                                                                                                                         AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
-                                $r_pelanggan = db2_fetch_assoc($q_pelanggan);
-                                if ($rowdb2['CODE'] == 'EXPORT') {
-                                    echo $d_roll['ADDRESSEE'] . ' - ' . $d_roll['BRAND_NM'];
-                                } else {
-                                    echo $r_pelanggan['LANGGANAN'];
+                        $r_pelanggan = db2_fetch_assoc($q_pelanggan);
+                        if ($rowdb2['CODE'] == 'EXPORT') {
+                            echo $d_roll['ADDRESSEE'] . ' - ' . $d_roll['BRAND_NM'];
+                        } else {
+                            echo $r_pelanggan['LANGGANAN'];
 
-                                }
-                                ?>
+                        }
+                        ?>
                     </td>
                     <!-- End Pelanggan -->
 
@@ -178,12 +179,12 @@ header('Cache-Control: max-age=0');
                     <!-- No Order -->
                     <td>
                         <?php
-                                if ($rowdb2['CODE'] == 'EXPORT') {
-                                    echo $d_roll['PROJECT'];
-                                } else {
-                                    echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
-                                }
-                                ?>
+                        if ($rowdb2['CODE'] == 'EXPORT') {
+                            echo $d_roll['PROJECT'];
+                        } else {
+                            echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
+                        }
+                        ?>
                     </td>
                     <!-- End No Order -->
 
@@ -209,26 +210,26 @@ header('Cache-Control: max-age=0');
                 </tr>
                 <tr>
                     <td><?php
-                            $q_pelanggan = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
+                    $q_pelanggan = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
                                                                                                                                                         AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
-                            $r_pelanggan = db2_fetch_assoc($q_pelanggan);
-                            if ($rowdb2['CODE'] == 'EXPORT') {
-                                echo $d_roll['ADDRESSEE'] . ' - ' . $d_roll['BRAND_NM'];
-                            } else {
-                                echo $r_pelanggan['LANGGANAN'];
+                    $r_pelanggan = db2_fetch_assoc($q_pelanggan);
+                    if ($rowdb2['CODE'] == 'EXPORT') {
+                        echo $d_roll['ADDRESSEE'] . ' - ' . $d_roll['BRAND_NM'];
+                    } else {
+                        echo $r_pelanggan['LANGGANAN'];
 
-                            }
-                            ?>
+                    }
+                    ?>
                     </td>
                     <td>`<?= $rowdb2['PO_NUMBER']; ?></td>
                     <td>
                         <?php
-                                if ($rowdb2['CODE'] == 'EXPORT') {
-                                    echo $d_roll['PROJECT'];
-                                } else {
-                                    echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
-                                }
-                                ?>
+                        if ($rowdb2['CODE'] == 'EXPORT') {
+                            echo $d_roll['PROJECT'];
+                        } else {
+                            echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
+                        }
+                        ?>
                     </td>
                     <td><?= $rowdb2['JENIS_KAIN'] ?></td>
                     <td>
@@ -239,8 +240,8 @@ header('Cache-Control: max-age=0');
                         `<?= $rowdb2['LOTCODE']; ?>
                     </td>
                     <td><?php
-                            if (in_array($rowdb2['DEFINITIVECOUNTERCODE'], array('CESDEF', 'DREDEF', 'DSEDEF', 'EXDPROV', 'EXPPROV', 'GSEPROV', 'CESPROV', 'DREPROV', 'EXDDEF', 'EXPDEF', 'GSEDEF', 'PSEPROV'))) {
-                                $q_roll = db2_exec($conn1, "SELECT
+                    if (in_array($rowdb2['DEFINITIVECOUNTERCODE'], array('CESDEF', 'DREDEF', 'DSEDEF', 'EXDPROV', 'EXPPROV', 'GSEPROV', 'CESPROV', 'DREPROV', 'EXDDEF', 'EXPDEF', 'GSEDEF', 'PSEPROV'))) {
+                        $q_roll = db2_exec($conn1, "SELECT
                                                                                                                             COUNT(ise.COUNTROLL) AS ROLL,
                                                                                                                             SUM(ise.QTY_KG) AS QTY_SJ_KG,
                                                                                                                             SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
@@ -258,8 +259,8 @@ header('Cache-Control: max-age=0');
                                                                                                                         GROUP BY 
                                                                                                                             inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE
                                                                                                                             ");
-                                $d_roll = db2_fetch_assoc($q_roll);
-                                $q_rollfoc = db2_exec($conn1, "SELECT
+                        $d_roll = db2_fetch_assoc($q_roll);
+                        $q_rollfoc = db2_exec($conn1, "SELECT
                                                                                                                             COUNT(ise.COUNTROLL) AS ROLL,
                                                                                                                             SUM(ise.QTY_KG) AS QTY_SJ_KG,
                                                                                                                             SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
@@ -277,11 +278,11 @@ header('Cache-Control: max-age=0');
                                                                                                                         GROUP BY 
                                                                                                                             inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE
                                                                                                                             ");
-                                $d_rollfoc = db2_fetch_assoc($q_rollfoc);
-                                $roll1 = $d_roll['ROLL'] - $d_rollfoc['ROLL'];
-                                echo $roll1; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
-                            } else {
-                                $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                        $d_rollfoc = db2_fetch_assoc($q_rollfoc);
+                        $roll1 = $d_roll['ROLL'] - $d_rollfoc['ROLL'];
+                        echo $roll1; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
+                    } else {
+                        $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
                                                                                                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
                                                                                                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
                                                                                                                                 LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
@@ -289,16 +290,16 @@ header('Cache-Control: max-age=0');
                                                                                                                             ITXVIEWALLOCATION0 
                                                                                                                         WHERE 
                                                                                                                             CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
-                                $d_roll = db2_fetch_assoc($q_roll);
-                                $roll1 = $d_roll['ROLL'];
-                                echo $roll1;
-                            }
-                            ;
+                        $d_roll = db2_fetch_assoc($q_roll);
+                        $roll1 = $d_roll['ROLL'];
+                        echo $roll1;
+                    }
+                    ;
 
-                            ?></td>
+                    ?></td>
                     <td>
                         <?php $qty1 = number_format($d_roll['QTY_SJ_KG'], 2);
-                                echo $qty1; ?>
+                        echo $qty1; ?>
                     </td>
                     <td><?= $rowdb2['LOKASI'] ?></td>
                     <td>
@@ -309,25 +310,25 @@ header('Cache-Control: max-age=0');
             <?php else: ?>
                 <tr>
                     <td><?php
-                            $q_pelanggan = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
+                    $q_pelanggan = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
                                                                                                                                                         AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
-                            $r_pelanggan = db2_fetch_assoc($q_pelanggan);
-                            if ($rowdb2['CODE'] == 'EXPORT') {
-                                echo $d_roll['ADDRESSEE'] . ' - ' . $d_roll['BRAND_NM'];
-                            } else {
-                                echo $r_pelanggan['LANGGANAN'];
+                    $r_pelanggan = db2_fetch_assoc($q_pelanggan);
+                    if ($rowdb2['CODE'] == 'EXPORT') {
+                        echo $d_roll['ADDRESSEE'] . ' - ' . $d_roll['BRAND_NM'];
+                    } else {
+                        echo $r_pelanggan['LANGGANAN'];
 
-                            }
-                            ?></td>
+                    }
+                    ?></td>
                     <td>`<?= $rowdb2['PO_NUMBER']; ?></td>
                     <td>
                         <?php
-                                if ($rowdb2['CODE'] == 'EXPORT') {
-                                    echo $d_roll['PROJECT'];
-                                } else {
-                                    echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
-                                }
-                                ?>
+                        if ($rowdb2['CODE'] == 'EXPORT') {
+                            echo $d_roll['PROJECT'];
+                        } else {
+                            echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
+                        }
+                        ?>
                     </td>
                     <td><?= $rowdb2['JENIS_KAIN'] ?></td>
                     <td>
@@ -339,8 +340,8 @@ header('Cache-Control: max-age=0');
                     </td>
                     <td>
                         <?php
-                                if (in_array($rowdb2['DEFINITIVECOUNTERCODE'], array('CESDEF', 'DREDEF', 'DSEDEF', 'EXDPROV', 'EXPPROV', 'GSEPROV', 'CESPROV', 'DREPROV', 'EXDDEF', 'EXPDEF', 'GSEDEF', 'PSEPROV'))) {
-                                    $q_roll = db2_exec($conn1, "SELECT
+                        if (in_array($rowdb2['DEFINITIVECOUNTERCODE'], array('CESDEF', 'DREDEF', 'DSEDEF', 'EXDPROV', 'EXPPROV', 'GSEPROV', 'CESPROV', 'DREPROV', 'EXDDEF', 'EXPDEF', 'GSEDEF', 'PSEPROV'))) {
+                            $q_roll = db2_exec($conn1, "SELECT
                                                                                                                             COUNT(ise.COUNTROLL) AS ROLL,
                                                                                                                             SUM(ise.QTY_KG) AS QTY_SJ_KG,
                                                                                                                             SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
@@ -356,11 +357,11 @@ header('Cache-Control: max-age=0');
                                                                                                                             AND ise.ALLOCATIONCODE = '$rowdb2[CODE]'
                                                                                                                         GROUP BY 
                                                                                                                             inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE");
-                                    $d_roll = db2_fetch_assoc($q_roll);
-                                    $roll2 = $d_roll['ROLL'];
-                                    echo $roll2; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
-                                } else {
-                                    $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                            $d_roll = db2_fetch_assoc($q_roll);
+                            $roll2 = $d_roll['ROLL'];
+                            echo $roll2; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
+                        } else {
+                            $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
                                                                                                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
                                                                                                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
                                                                                                                                 LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
@@ -368,16 +369,16 @@ header('Cache-Control: max-age=0');
                                                                                                                             ITXVIEWALLOCATION0 
                                                                                                                         WHERE 
                                                                                                                             CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
-                                    $d_roll = db2_fetch_assoc($q_roll);
-                                    $roll2 = $d_roll['ROLL'];
-                                    echo $roll2;
-                                }
-                                ?>
+                            $d_roll = db2_fetch_assoc($q_roll);
+                            $roll2 = $d_roll['ROLL'];
+                            echo $roll2;
+                        }
+                        ?>
                     </td>
                     <td>
                         <?php $qty2 = number_format($d_roll['QTY_SJ_KG'], 2);
-                                echo $qty2;
-                                ?>
+                        echo $qty2;
+                        ?>
                     </td>
                     <td><?= $rowdb2['LOKASI'] ?></td>
                     <td>
@@ -385,15 +386,15 @@ header('Cache-Control: max-age=0');
                     </td>
                     <td>
                         <?php if ($rowdb2['PAYMENTMETHODCODE'] == 'FOC') {
-                                    echo $rowdb2['PAYMENTMETHODCODE'];
-                                } ?>
+                            echo $rowdb2['PAYMENTMETHODCODE'];
+                        } ?>
                     </td>
                 </tr>
             <?php endif; ?>
         <?php endwhile; ?>
         <!-- CAPITAL KFF & KGF -->
         <?php
-            $stmt_cap_kff = db2_exec($conn1, "SELECT 
+        $stmt_cap_kff = db2_exec($conn1, "SELECT 
                                                 DISTINCT
                                                 i.GOODSISSUEDATE,
                                                 i.PROVISIONALCODE,
@@ -438,7 +439,8 @@ header('Cache-Control: max-age=0');
                                                 i.PO_NUMBER,
                                                 i.DLVSALORDERLINESALESORDERCODE");
         ?>
-        <?php $nourut = 1; while ($row_stmt_cap_kff = db2_fetch_assoc($stmt_cap_kff)) { ?>
+        <?php $nourut = 1;
+        while ($row_stmt_cap_kff = db2_fetch_assoc($stmt_cap_kff)) { ?>
             <tr>
                 <td><?= $row_stmt_cap_kff['CUSTOMER']; ?></td>
                 <td>`<?= $row_stmt_cap_kff['PO_NUMBER']; ?></td>
@@ -461,22 +463,22 @@ header('Cache-Control: max-age=0');
 
         <!-- Query untuk total Roll -->
         <?php
-            if ($tgl1) {
-                $where_datefilter = "i.ISSUE_DATE = '$tgl1'";
-            } else {
-                $where_datefilter = '';
-            }
+        if ($tgl1) {
+            $where_datefilter = "i.ISSUE_DATE = '$tgl1'";
+        } else {
+            $where_datefilter = '';
+        }
 
-            $query_total = "SELECT 
+        $query_total = "SELECT 
                                 COUNT(i.COUNTROLL) AS ROLL,
-                                SUM(i.QTY_KG) + SUM(i.FOC_KG_GUDANG) AS QTY
+                                SUM(i.QTY_KG) + SUM(i.FOC_KG) + SUM(i.FOC_KG_GUDANG) AS QTY
                             FROM 
                                 ITXVIEW_SURATJALAN_EXIM2A i
                             WHERE
                                 $where_no_order $where_datefilter";
 
-            $exec = db2_exec($conn1, $query_total);
-            $data_total = db2_fetch_assoc($exec);
+        $exec = db2_exec($conn1, $query_total);
+        $data_total = db2_fetch_assoc($exec);
         ?>
         <!-- End Total Roll -->
         <tr>
