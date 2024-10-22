@@ -208,105 +208,102 @@ header('Cache-Control: max-age=0');
                     </td>
                     <td>FOC</td>
                 </tr>
-                <tr>
-                    <td><?php
-                    $q_pelanggan = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
-                                                                                                                                                        AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
-                    $r_pelanggan = db2_fetch_assoc($q_pelanggan);
-                    if ($rowdb2['CODE'] == 'EXPORT') {
-                        echo $d_roll['ADDRESSEE'] . ' - ' . $d_roll['BRAND_NM'];
-                    } else {
-                        echo $r_pelanggan['LANGGANAN'];
-
-                    }
-                    ?>
-                    </td>
-                    <td>`<?= $rowdb2['PO_NUMBER']; ?></td>
-                    <td>
-                        <?php
-                        if ($rowdb2['CODE'] == 'EXPORT') {
-                            echo $d_roll['PROJECT'];
-                        } else {
-                            echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
-                        }
-                        ?>
-                    </td>
-                    <td><?= $rowdb2['JENIS_KAIN'] ?></td>
-                    <td>
-                        <?= $rowdb2['NO_WARNA'] ?>
-                    </td>
-                    <td><?= $rowdb2['WARNA']; ?></td>
-                    <td>
-                        `<?= $rowdb2['LOTCODE']; ?>
-                    </td>
-                    <td><?php
+                <?php
                     if (in_array($rowdb2['DEFINITIVECOUNTERCODE'], array('CESDEF', 'DREDEF', 'DSEDEF', 'EXDPROV', 'EXPPROV', 'GSEPROV', 'CESPROV', 'DREPROV', 'EXDDEF', 'EXPDEF', 'GSEDEF', 'PSEPROV'))) {
                         $q_roll = db2_exec($conn1, "SELECT
-                                                                                                                            COUNT(ise.COUNTROLL) AS ROLL,
-                                                                                                                            SUM(ise.QTY_KG) AS QTY_SJ_KG,
-                                                                                                                            SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
-                                                                                                                            inpe.PROJECT,
-                                                                                                                            ise.ADDRESSEE,
-                                                                                                                            ise.BRAND_NM,
-                                                                                                                            ise.ALLOCATIONCODE
-                                                                                                                        FROM
-                                                                                                                            ITXVIEW_SURATJALAN_EXIM2A ise 
-                                                                                                                        LEFT JOIN ITXVIEW_NO_PROJECTS_EXIM inpe ON inpe.PROVISIONALCODE = ise.PROVISIONALCODE 
-                                                                                                                        WHERE 
-                                                                                                                            ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
-                                                                                                                            AND ise.ALLOCATIONCODE = '$rowdb2[CODE]'
-                                                                                                                            -- AND (ise.QUALITYREASONCODE <> 'FOC' OR ise.QUALITYREASONCODE IS NULL)
-                                                                                                                        GROUP BY 
-                                                                                                                            inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE
-                                                                                                                            ");
+                                                        COUNT(ise.COUNTROLL) AS ROLL,
+                                                        SUM(ise.QTY_KG) AS QTY_SJ_KG,
+                                                        SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
+                                                        inpe.PROJECT,
+                                                        ise.ADDRESSEE,
+                                                        ise.BRAND_NM,
+                                                        ise.ALLOCATIONCODE
+                                                    FROM
+                                                        ITXVIEW_SURATJALAN_EXIM2A ise 
+                                                    LEFT JOIN ITXVIEW_NO_PROJECTS_EXIM inpe ON inpe.PROVISIONALCODE = ise.PROVISIONALCODE 
+                                                    WHERE 
+                                                        ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
+                                                        AND ise.ALLOCATIONCODE = '$rowdb2[CODE]'
+                                                        -- AND (ise.QUALITYREASONCODE <> 'FOC' OR ise.QUALITYREASONCODE IS NULL)
+                                                    GROUP BY 
+                                                        inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE
+                                                        ");
                         $d_roll = db2_fetch_assoc($q_roll);
                         $q_rollfoc = db2_exec($conn1, "SELECT
-                                                                                                                            COUNT(ise.COUNTROLL) AS ROLL,
-                                                                                                                            SUM(ise.QTY_KG) AS QTY_SJ_KG,
-                                                                                                                            SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
-                                                                                                                            inpe.PROJECT,
-                                                                                                                            ise.ADDRESSEE,
-                                                                                                                            ise.BRAND_NM,
-                                                                                                                            ise.ALLOCATIONCODE
-                                                                                                                        FROM
-                                                                                                                            ITXVIEW_SURATJALAN_EXIM2A ise 
-                                                                                                                        LEFT JOIN ITXVIEW_NO_PROJECTS_EXIM inpe ON inpe.PROVISIONALCODE = ise.PROVISIONALCODE 
-                                                                                                                        WHERE 
-                                                                                                                            ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
-                                                                                                                            AND ise.ALLOCATIONCODE = '$rowdb2[CODE]'
-                                                                                                                            AND ise.QUALITYREASONCODE = 'FOC' 
-                                                                                                                        GROUP BY 
-                                                                                                                            inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE
-                                                                                                                            ");
+                                                            COUNT(ise.COUNTROLL) AS ROLL,
+                                                            SUM(ise.QTY_KG) AS QTY_SJ_KG,
+                                                            SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
+                                                            inpe.PROJECT,
+                                                            ise.ADDRESSEE,
+                                                            ise.BRAND_NM,
+                                                            ise.ALLOCATIONCODE
+                                                        FROM
+                                                            ITXVIEW_SURATJALAN_EXIM2A ise 
+                                                        LEFT JOIN ITXVIEW_NO_PROJECTS_EXIM inpe ON inpe.PROVISIONALCODE = ise.PROVISIONALCODE 
+                                                        WHERE 
+                                                            ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
+                                                            AND ise.ALLOCATIONCODE = '$rowdb2[CODE]'
+                                                            AND ise.QUALITYREASONCODE = 'FOC' 
+                                                        GROUP BY 
+                                                            inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM,ise.ALLOCATIONCODE
+                                                            ");
                         $d_rollfoc = db2_fetch_assoc($q_rollfoc);
-                        $roll1 = $d_roll['ROLL'] - $d_rollfoc['ROLL'];
-                        echo $roll1; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
+                        $roll1 = $d_roll['ROLL'] - $d_rollfoc['ROLL'];  // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
                     } else {
                         $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
-                                                                                                                                SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                                                                                LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
-                                                                                                                        FROM 
-                                                                                                                            ITXVIEWALLOCATION0 
-                                                                                                                        WHERE 
-                                                                                                                            CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
+                                                            SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                            SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                            LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
+                                                    FROM 
+                                                        ITXVIEWALLOCATION0 
+                                                    WHERE 
+                                                        CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
                         $d_roll = db2_fetch_assoc($q_roll);
                         $roll1 = $d_roll['ROLL'];
-                        echo $roll1;
                     }
-                    ;
+                ?>
+                <?php if($roll1 > 0) : ?>
+                    <tr>
+                        <td>
+                            <?php
+                                $q_pelanggan = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
+                                $r_pelanggan = db2_fetch_assoc($q_pelanggan);
+                                if ($rowdb2['CODE'] == 'EXPORT') {
+                                    echo $d_roll['ADDRESSEE'] . ' - ' . $d_roll['BRAND_NM'];
+                                } else {
+                                    echo $r_pelanggan['LANGGANAN'];
 
-                    ?></td>
-                    <td>
-                        <?php $qty1 = number_format($d_roll['QTY_SJ_KG'], 2);
-                        echo $qty1; ?>
-                    </td>
-                    <td><?= $rowdb2['LOKASI'] ?></td>
-                    <td>
-                        <?= $rowdb2['PROVISIONALCODE']; ?>
-                    </td>
-                    <td><?php echo $rowdb2['PAYMENTMETHODCODE']; ?></td>
-                </tr>
+                                }
+                            ?>
+                        </td>
+                        <td>`<?= $rowdb2['PO_NUMBER']; ?></td>
+                        <td>
+                            <?php
+                            if ($rowdb2['CODE'] == 'EXPORT') {
+                                echo $d_roll['PROJECT'];
+                            } else {
+                                echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
+                            }
+                            ?>
+                        </td>
+                        <td><?= $rowdb2['JENIS_KAIN'] ?></td>
+                        <td><?= $rowdb2['NO_WARNA'] ?></td>
+                        <td><?= $rowdb2['WARNA']; ?></td>
+                        <td>`<?= $rowdb2['LOTCODE']; ?></td>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <?php $qty1 = number_format($d_roll['QTY_SJ_KG'], 2);
+                            echo $qty1; ?>
+                        </td>
+                        <td><?= $rowdb2['LOKASI'] ?></td>
+                        <td>
+                            <?= $rowdb2['PROVISIONALCODE']; ?>
+                        </td>
+                        <td><?php echo $rowdb2['PAYMENTMETHODCODE']; ?></td>
+                    </tr>
+                <?php endif; ?>
             <?php else: ?>
                 <tr>
                     <td><?php
