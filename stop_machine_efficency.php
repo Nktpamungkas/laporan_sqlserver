@@ -236,10 +236,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $runningPercentage = 0; // or some default value
         }
 
+        $resultDataMachine = mysqli_query($con_db_dyeing, "SELECT kapasitas as machine_capacity,
+        ket as machine_description FROM tbl_mesin WHERE no_mesin = '$machineID'");
+
+        if (mysqli_num_rows($resultDataMachine) > 0) {
+            $row = mysqli_fetch_assoc($resultDataMachine);
+            $machine_capacity=$row["machine_capacity"];
+            $machine_description=$row["machine_description"];
+        } else {
+            $machine_capacity=null;
+            $machine_description=null;
+        }
+
         $data[] = [
             "machine_number" => $machineID,
-            "machine_capacity"=>100,
-            "machine_description"=>"machine description detail",
+            "machine_capacity"=>$machine_capacity,
+            "machine_description"=>$machine_description,
             "total_stop"=>$totalStop,
             "total_percentage_running"=>round($runningPercentage, 2)
         ];
@@ -249,8 +261,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                             <?php foreach ($data as $item): ?>
                                                             <tr>
                                                                 <td><?php echo htmlspecialchars($item['machine_number']); ?></td>
-                                                                <td><?php echo htmlspecialchars($item['machine_capacity']); ?></td>
-                                                                <td><?php echo htmlspecialchars($item['machine_description']); ?></td>
+                                                                <td><?php echo $item['machine_capacity']; ?></td>
+                                                                <td><?php echo $item['machine_description']; ?></td>
                                                                 <td><?php echo htmlspecialchars($item['total_stop']); ?></td>
                                                                 <td><?php echo htmlspecialchars($item['total_percentage_running']); ?>%</td>
 
