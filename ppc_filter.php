@@ -910,8 +910,8 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                     $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
                                                                     $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
                                                                 ?>
-                                                                <td><?= number_format($fetchDataQtyKurang['NETTO']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM']-$dataQtyReady['QTY_READY'], 2); ?></td> <!-- QTY KURANG (KG) -->
-                                                                <td><?= number_format(number_format($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'], 2) / $fetchDataQtyKurang['KONVERSI'], 2); ?></td> <!-- QTY KURANG (YD/MTR) -->
+                                                                <td><?= number_format(number_format($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'], 2) / $fetchDataQtyKurang['KONVERSI'], 2); ?></td> <!-- QTY KURANG (KG) -->
+                                                                <td><?= number_format($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'], 2); ?></td> <!-- QTY KURANG (YD/MTR) -->
 
                                                                 <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
                                                                 <td></td> <!-- TARGET SELESAI -->
