@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['time'] = $_POST['time'];
     $_SESSION['tgl2'] = $_POST['tgl2'];
     $_SESSION['time2'] = $_POST['time2'];
+    $_SESSION['time_range'] = $_POST['time_range'];
 }
 ?>
 <!DOCTYPE html>
@@ -66,30 +67,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 <div class="col-sm-12 col-xl-2 m-b-0">
                                                     <h4 class="sub-title">Tanggal Awal</h4>
                                                     <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" required
-                                                            placeholder="input-group-sm" name="tgl"
-                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl']; } ?>"
-                                                            required>
-                                                        <input name="time" type="text" class="form-control" id="time"
-                                                        value="07:00" size="5" maxlength="5" required readonly>
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" 
+                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl']; } ?>">
+                                                        <input name="time" type="text" class="form-control" id="time" value="07:00" size="5" maxlength="5" required readonly>
                                                     </div>
                                                 </div>
+                                                
                                                 <div class="col-sm-12 col-xl-2 m-b-0">
                                                     <h4 class="sub-title">Tanggal Akhir</h4>
                                                     <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" required
-                                                            placeholder="input-group-sm" name="tgl2"
-                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>"
-                                                            required>
-                                                        <input name="time2" type="text" class="form-control" id="time"
-                                                            value="07:00" size="5" maxlength="5" required readonly>
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl2"
+                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>">
+                                                        <input name="time2" type="text" class="form-control" id="time2" value="07:00" size="5" maxlength="5" required readonly>
                                                     </div>
                                                 </div>
+                                                
+                                                <div class="col-sm-12 col-xl-2">
+                                                    <h4 class="sub-title">Select Time Range</h4>
+                                                    <div class="input-group input-group-sm">
+                                                        <select name="time_range" class="form-control" required>
+                                                            <option value="custom" <?php if (isset($_POST['submit']) && $_POST['time_range'] == 'custom') echo 'selected'; ?>>Custom Range</option>
+                                                            <option value="24_hours" <?php if (isset($_POST['submit']) && $_POST['time_range'] == '24_hours') echo 'selected'; ?>>Last 24 Hours</option>
+                                                            <option value="week" <?php if (isset($_POST['submit']) && $_POST['time_range'] == 'week') echo 'selected'; ?>>Last Week</option>
+                                                            <option value="month" <?php if (isset($_POST['submit']) && $_POST['time_range'] == 'month') echo 'selected'; ?>>Last Month</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-sm-12 col-xl-2">
                                                     <h4 class="sub-title">&nbsp;</h4>
-                                                    <button type="submit" name="submit"
-                                                        class="btn btn-primary btn-sm"><i
-                                                            class="icofont icofont-search-alt-1"></i> Cari data</button>
+                                                    <button type="submit" name="submit" class="btn btn-primary btn-sm">
+                                                        <i class="icofont icofont-search-alt-1"></i> Cari data
+                                                    </button>
                                                 </div>
                                             </div>
                                         </form>
@@ -121,19 +130,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sqlMachine = "SELECT * FROM Machines";
     $stmtMachine = $pdo_orgatex->prepare($sqlMachine);
     $stmtMachine->execute();
-
     $machines = $stmtMachine->fetchAll(PDO::FETCH_ASSOC);
+    $now = new DateTime();
     
-    // $startDate = '2024-10-07 07:00:00';
-    // $endDate = '2024-10-08 07:00:00';
+    $startDate = $now;
+    $endDate = $now;
 
-    if($_POST['tgl']&&$_POST['time']){
-        $startDate = $_POST['tgl'].' '.$_POST['time'];
+    if(isset($_POST['tgl'])&&isset($_POST['time'])&&isset($_POST['tgl2'])&&isset($_POST['time2'])){
+        if($_POST['tgl']&&$_POST['time']){
+            $startDate = $_POST['tgl'].' '.$_POST['time'];
+        }
+
+        if($_POST['tgl2']&&$_POST['time2']){
+            $endDate = $_POST['tgl2'].' '.$_POST['time2'];
+        }
     }
 
-    if($_POST['tgl2']&&$_POST['time2']){
-        $endDate = $_POST['tgl2'].' '.$_POST['time2'];
+    if(isset($_POST['time_range'])){
+        $time_range = $_POST['time_range'];
+
+        if ($time_range != 'custom') {
+            switch ($time_range) {
+                case '24_hours':
+                    $start_date = clone $now;
+                    $start_date->modify('-24 hours');
+                    $end_date = $now;
+                    $startDate = $start_date->format('Y-m-d H:i:s');
+                    $endDate = $end_date->format('Y-m-d H:i:s');
+                    break;
+
+                case 'week':
+                    $start_date = clone $now;
+                    $start_date->modify('-1 week');
+                    $end_date = $now;
+                    $startDate = $start_date->format('Y-m-d H:i:s');
+                    $endDate = $end_date->format('Y-m-d H:i:s');
+                    break;
+
+                case 'month':
+                    $start_date = clone $now;
+                    $start_date->modify('-1 month');
+                    $end_date = $now;
+                    $startDate = $start_date->format('Y-m-d H:i:s');
+                    $endDate = $end_date->format('Y-m-d H:i:s');
+                    break;
+
+                default:
+                    echo "Please select a valid option.";
+            }
+        }
     }
+
 
     $data = [];
 
@@ -317,6 +364,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 time: "<?php echo isset($_SESSION['time']) ? $_SESSION['time'] : ''; ?>",
                 tgl2: "<?php echo isset($_SESSION['tgl2']) ? $_SESSION['tgl2'] : ''; ?>",
                 time2: "<?php echo isset($_SESSION['time2']) ? $_SESSION['time2'] : ''; ?>",
+                time_range: "<?php echo isset($_SESSION['time_range']) ? $_SESSION['time_range'] : ''; ?>",
                 machine_id: machineID
             };
 

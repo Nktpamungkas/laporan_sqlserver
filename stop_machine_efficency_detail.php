@@ -4,12 +4,54 @@
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    if($_POST['tgl']&&$_POST['time']){
-        $startDate = $_POST['tgl'].' '.$_POST['time'];
+    $now = new DateTime();
+    
+    $startDate = $now;
+    $endDate = $now;
+
+    if(isset($_POST['tgl'])&&isset($_POST['time'])&&isset($_POST['tgl2'])&&isset($_POST['time2'])){
+        if($_POST['tgl']&&$_POST['time']){
+            $startDate = $_POST['tgl'].' '.$_POST['time'];
+        }
+
+        if($_POST['tgl2']&&$_POST['time2']){
+            $endDate = $_POST['tgl2'].' '.$_POST['time2'];
+        }
     }
 
-    if($_POST['tgl2']&&$_POST['time2']){
-        $endDate = $_POST['tgl2'].' '.$_POST['time2'];
+    if(isset($_POST['time_range'])){
+        $time_range = $_POST['time_range'];
+
+        if ($time_range != 'custom') {
+            switch ($time_range) {
+                case '24_hours':
+                    $start_date = clone $now;
+                    $start_date->modify('-24 hours');
+                    $end_date = $now;
+                    $startDate = $start_date->format('Y-m-d H:i:s');
+                    $endDate = $end_date->format('Y-m-d H:i:s');
+                    break;
+
+                case 'week':
+                    $start_date = clone $now;
+                    $start_date->modify('-1 week');
+                    $end_date = $now;
+                    $startDate = $start_date->format('Y-m-d H:i:s');
+                    $endDate = $end_date->format('Y-m-d H:i:s');
+                    break;
+
+                case 'month':
+                    $start_date = clone $now;
+                    $start_date->modify('-1 month');
+                    $end_date = $now;
+                    $startDate = $start_date->format('Y-m-d H:i:s');
+                    $endDate = $end_date->format('Y-m-d H:i:s');
+                    break;
+
+                default:
+                    echo "Please select a valid option.";
+            }
+        }
     }
 
     $data = [];
