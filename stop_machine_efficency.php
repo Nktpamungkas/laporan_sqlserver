@@ -109,10 +109,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         <thead>
                                                             <tr>
                                                                 <th>Machine Number</th>
-                                                                <th>Total Stop Second</th>
-                                                                <th>Total Stop Minutes</th>
-                                                                <th>Total Stop Hour</th>
-                                                                <th>Total Stop Percentage</th>
+                                                                <th>Machine Capacity</th>
+                                                                <th>Machine Description</th>
+                                                                <th>Total Stop</th>
+                                                                <th>Total Percentage Running</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
@@ -173,28 +173,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        $totalMinutes = floor($totalSeconds / 60);
-        $remainingSeconds = $totalSeconds % 60;
-        $totalHours = floor($totalMinutes / 60);
-        $remainingMinutes = $totalMinutes % 60;
-
-        $totalStopTime = sprintf("%d minutes %d seconds", $totalMinutes, $remainingSeconds);
-        $totalStopHour = sprintf("%d hours %d minutes", $totalHours, $remainingMinutes);
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+        $totalStop = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
 
         $startDateTime = new DateTime($startDate);
         $endDateTime = new DateTime($endDate);
         $timeSpanInterval = $startDateTime->diff($endDateTime);
 
-        $totalHoursInTimeSpan = ($timeSpanInterval->days * 24) + $timeSpanInterval->h + ($timeSpanInterval->i / 60);
-
-        $totalPercentage = ($totalHours / $totalHoursInTimeSpan) * 100;
+        if ($totalHoursInTimeSpan > 0) {
+            $runningHours = $totalHoursInTimeSpan - $totalHours;
+            $runningPercentage = ($runningHours / $totalHoursInTimeSpan) * 100;
+        } else {
+            $runningPercentage = 0; // or some default value
+        }
 
         $data[] = [
             "machine_number" => $machineID,
-            "total_second" => $totalSeconds,
-            "total_minutes" => $totalStopTime,
-            "total_hour" => $totalStopHour,
-            "total_percentage" => round($totalPercentage, 2)
+            "machine_capacity"=>100,
+            "machine_description"=>"machine description detail",
+            "total_stop"=>$totalStop,
+            "total_percentage_running"=>round($runningPercentage, 2)
         ];
     }
 
@@ -202,10 +202,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                             <?php foreach ($data as $item): ?>
                                                             <tr>
                                                                 <td><?php echo htmlspecialchars($item['machine_number']); ?></td>
-                                                                <td><?php echo htmlspecialchars($item['total_second']); ?></td>
-                                                                <td><?php echo htmlspecialchars($item['total_minutes']); ?></td>
-                                                                <td><?php echo htmlspecialchars($item['total_hour']); ?></td>
-                                                                <td><?php echo htmlspecialchars($item['total_percentage']); ?>%</td>
+                                                                <td><?php echo htmlspecialchars($item['machine_capacity']); ?></td>
+                                                                <td><?php echo htmlspecialchars($item['machine_description']); ?></td>
+                                                                <td><?php echo htmlspecialchars($item['total_stop']); ?></td>
+                                                                <td><?php echo htmlspecialchars($item['total_percentage_running']); ?>%</td>
+
                                                                 <td>
                                                                     <!-- Button to open the modal -->
                                                                     <button class="btn btn-info btn-sm view-details" data-machine-id="<?php echo htmlspecialchars($item['machine_number']); ?>" data-toggle="modal" data-target="#machineDetailsModal">View Details</button>
@@ -246,9 +247,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <th>Machine Number</th>
                                     <th>Start Stop</th>
                                     <th>End Stop</th>
-                                    <th>Total Stop Seconds</th>
-                                    <th>Total Stop Minutes</th>
-                                    <th>Total Stop Hour</th>
+                                    <th>Total Stop</th>
                                     <th>Reason</th>
                                 </tr>
                             </thead>
@@ -336,9 +335,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             '<td>' + item.machine_number + '</td>' +
                             '<td>' + item.log_timestamp_start + '</td>' +
                             '<td>' + item.log_timestamp_stop + '</td>' +
-                            '<td>' + item.total_seconds + '</td>' +
-                            '<td>' + item.total_minutes + '</td>' +
-                            '<td>' + item.total_hour + '</td>' +
+                            '<td>' + item.total_stop + '</td>' +
                             '<td>' + item.reason + '</td>' +
                             '</tr>';
 

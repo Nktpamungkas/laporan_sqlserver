@@ -54,32 +54,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $reason=$row['reason'];
                 $log_timestamp= $row['logTimeStamp'];
 
-                $totalMinutes = floor($totalSeconds / 60);
-                $remainingSeconds = $totalSeconds % 60;
-                $totalHours = floor($totalMinutes / 60);
-                $remainingMinutes = $totalMinutes % 60;
-
-                $totalStopTime = sprintf("%d minutes %d seconds", $totalMinutes, $remainingSeconds);
-                $totalStopHour = sprintf("%d hours %d minutes", $totalHours, $remainingMinutes);
-
-                $startDateTime = new DateTime($startDate);
-                $endDateTime = new DateTime($endDate);
-                $timeSpanInterval = $startDateTime->diff($endDateTime);
-
-                $totalHoursInTimeSpan = ($timeSpanInterval->days * 24) + $timeSpanInterval->h + ($timeSpanInterval->i / 60);
-
-                $totalPercentage = ($totalHours / $totalHoursInTimeSpan) * 100;
+                $hours = floor($totalSeconds / 3600);
+                $minutes = floor(($totalSeconds % 3600) / 60);
+                $seconds = $totalSeconds % 60;
+                $totalStop = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
 
                 $data[] = [
                     "machine_number" => $machineID,
                     "log_timestamp"=> $log_timestamp,
                     "log_timestamp_start"=> $log_timestamp_start,
                     "log_timestamp_stop"=> $log_timestamp_stop,
-                    "total_seconds" => $totalSeconds,
-                    "total_minutes" => $totalStopTime,
-                    "total_hour" => $totalStopHour,
-                    "total_percentage" => round($totalPercentage, 2),
-                    "reason"=>$reason
+                    "reason"=>$reason,
+                    "total_stop"=>$totalStop
                 ];
             }
         }
