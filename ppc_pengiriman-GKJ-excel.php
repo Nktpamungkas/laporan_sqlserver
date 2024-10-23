@@ -424,8 +424,8 @@ header('Cache-Control: max-age=0');
                                                                     AND p.SUBCODE07 = i.SUBCODE07 AND p.SUBCODE08 = i.SUBCODE08
                                                                     AND p.SUBCODE09 = i.SUBCODE09 AND p.SUBCODE10 = i.SUBCODE10
                                             WHERE 
-                                                $where_no_order $where_date 
-                                                -- i.PROVISIONALCODE = 'POD2407534'
+                                                 $where_no_order $where_date 
+                                                --i.PROVISIONALCODE = 'POD2407534'
                                                 AND (SUBSTR(i.DLVSALORDERLINESALESORDERCODE, 1,3) = 'CAP' AND (i.ITEMTYPEAFICODE = 'KFF' OR i.ITEMTYPEAFICODE = 'KGF'))
                                             GROUP BY 
                                                 i.GOODSISSUEDATE,
