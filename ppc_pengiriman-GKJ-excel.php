@@ -105,7 +105,7 @@ header('Cache-Control: max-age=0');
                     WHERE
                         $where_no_order $where_date 
                         -- i.PROVISIONALCODE = 'POD2407534'
-                        AND NOT (SUBSTR(i.DLVSALORDERLINESALESORDERCODE, 1,3) = 'CAP' AND (i.ITEMTYPEAFICODE = 'KFF' OR i.ITEMTYPEAFICODE = 'KGF'))
+                        AND NOT (SUBSTR(i.DLVSALORDERLINESALESORDERCODE, 1,3) = 'CAP' AND (i.ITEMTYPEAFICODE = 'KFF' OR i.ITEMTYPEAFICODE = 'KGF'OR i.ITEMTYPEAFICODE = 'CAP'))
                         AND i.DOCUMENTTYPETYPE = 05 
                         AND NOT i.CODE IS NULL 
                         AND i.PROGRESSSTATUS_SALDOC = 2
@@ -472,7 +472,8 @@ header('Cache-Control: max-age=0');
                             FROM 
                                 ITXVIEW_SURATJALAN_EXIM2A i
                             WHERE
-                                $where_no_order $where_datefilter";
+                                $where_no_order $where_datefilter
+                                AND NOT (SUBSTR(i.PROJECTCODE, 1,3) = 'CAP' AND i.ITEMTYPEAFICODE = 'CAP')";
 
         $exec = db2_exec($conn1, $query_total);
         $data_total = db2_fetch_assoc($exec);
