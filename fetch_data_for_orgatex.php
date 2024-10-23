@@ -86,12 +86,12 @@ if (isset($_POST['production_number'])) {
                             ELSE 
                                 CASE
                                     WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN CAST( (($dataMain[WEIGHT] * VIEWPRODUCTIONRESERVATION.PICKUPQUANTITY) * ITXVIEWRESEP2.CONSUMPTION) / 1000 AS DECIMAL(18, 7))
-                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN CAST( ($dataMain[WEIGHT] * (ITXVIEWRESEP2.CONSUMPTION/100)) * 1000 AS DECIMAL(18, 7))
+                                    WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN CAST( (($dataMain[WEIGHT] * (ITXVIEWRESEP2.CONSUMPTION/100)) * 1000) / 1000 AS DECIMAL(18, 7))
                                 END
                         END AS QTY,
                         CASE 
                             WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '1' THEN 'kg'
-                            WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN 'g'
+                            WHEN ITXVIEWRESEP2.CONSUMPTIONTYPE = '2' THEN 'kg'
                         END AS UOM 
                     FROM
                         VIEWPRODUCTIONRESERVATION VIEWPRODUCTIONRESERVATION
