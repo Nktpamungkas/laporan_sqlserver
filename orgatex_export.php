@@ -154,22 +154,22 @@ require_once "koneksi.php";
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">LiquorQuantity</h6>
-                                                <input type="text" id="liquorQuantity" class="form-control" readonly>
+                                                <input type="number" id="liquorQuantity" class="form-control">
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">PumpSpeed</h6>
-                                                <input type="text" id="pumpSpeed" class="form-control" readonly>
+                                                <input type="number" id="pumpSpeed" class="form-control">
                                             </div>
 
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">ReelSpeed</h6>
-                                                <input type="text" id="reelSpeed" class="form-control" readonly>
+                                                <input type="number" id="reelSpeed" class="form-control">
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Absorption</h6>
-                                                <input type="text" id="absorption" class="form-control" readonly>
+                                                <input type="number" id="absorption" class="form-control">
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Weight</h6>
