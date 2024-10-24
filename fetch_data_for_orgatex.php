@@ -119,6 +119,7 @@ if (isset($_POST['production_number'])) {
                         --             END = '2' THEN '%'
                         --     END IS NULL 
                     ORDER BY
+                        VIEWPRODUCTIONRESERVATION.GROUPLINE,
                         ITXVIEWRESEP.RECIPENUMBERID,
                         ITXVIEWRESEP.GROUPNUMBER,
                         ITXVIEWRESEP.SEQUENCE,
@@ -178,6 +179,7 @@ if (isset($_POST['production_number'])) {
                             DISTINCT 
                             * 
                             FROM (SELECT
+                                    VIEWPRODUCTIONRESERVATION.GROUPLINE,
                                     ITXVIEWRESEP.RECIPENUMBERID, 
                                     ITXVIEWRESEP.GROUPNUMBER, 
                                     CASE
@@ -211,7 +213,8 @@ if (isset($_POST['production_number'])) {
                                     --                 ELSE ITXVIEWRESEP.CONSUMPTIONTYPE
                                     --             END = '2' THEN '%'
                                     --     END IS NULL 
-                                GROUP BY 
+                                GROUP BY
+                                    VIEWPRODUCTIONRESERVATION.GROUPLINE,
                                     ITXVIEWRESEP.RECIPENUMBERID,
                                     ITXVIEWRESEP.SUBCODE01,
                                     ITXVIEWRESEP.SUFFIXCODE,
@@ -219,6 +222,7 @@ if (isset($_POST['production_number'])) {
                                     ITXVIEWRESEP.SUBCODE01_RESERVATION,
                                     ITXVIEWRESEP.SUFFIXCODE_RESERVATION 
                                 ORDER BY
+                                    VIEWPRODUCTIONRESERVATION.GROUPLINE,
                                     ITXVIEWRESEP.RECIPENUMBERID,
                                     ITXVIEWRESEP.GROUPNUMBER)";
 
