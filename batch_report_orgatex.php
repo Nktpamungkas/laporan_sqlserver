@@ -172,6 +172,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                             $db2_data = db2_fetch_assoc($db2exec1); ?>
                                                                     <!-- End Query Db2 -->
 
+                                                                    <!-- Query Mysql untuk online dye -->
+                                                                    <?php $resep = $row_integ['Dyelot'].'-'.$row_integ['ReDye'] ;
+                                                                    $query_dye="SELECT 
+                                                                                        m.rol,
+                                                                                        m.nozzle,
+                                                                                        m.rpm,
+                                                                                        m.cycle_time,
+                                                                                        m.plaiter,
+                                                                                        m.pakai_air 
+                                                                                        from tbl_schedule s 
+                                                                                        left join tbl_montemp m on m.id_schedule = s.id 
+                                                                                        where no_resep ='$resep'";
+                                                                                        $sql_exec = mysqli_query($con_db_dyeing,$query_dye);
+                                                                                        $data_dye = mysqli_fetch_assoc($sql_exec);
+                                                                                        ?>
+                                                                    
+                                                                    <!-- End query -->
                                                                     <tr>
                                                                         <td><?php echo $row_data_orgatex['batch_ref_no'] ?></td>
                                                                         <td><?php echo $db2_data['LONGDESCRIPTION'] ?></td>
@@ -181,7 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                         </td>
 
                                                                         <td><?php echo $row_data_orgatex['machine_no'] ?></td>
-                                                                        <td>ORGATEX</td>
+                                                                        <td><?php echo $data_dye['rol']?></td>
                                                                         <td>ORGATEX</td>
                                                                         <td>ORGATEX</td>
                                                                         <td>ORGATEX</td>
@@ -204,15 +221,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                             ?>
                                                                         </td>
                                                                         <td><?php echo $row_integ['LiquorRatio']?></td>
-                                                                        <td>ORGATEX</td>
+                                                                        <td><?php echo $data_dye['pakai_air']?></td>
 
-                                                                        <td>ORGATEX</td>
-                                                                        <td>ONLINE</td>
-                                                                        <td>ONLINE</td>
+                                                                        <td><?php echo $data_dye['rpm']?></td>
+                                                                        <td><?php echo $data_dye['cycle_time'] ?></td>
+                                                                        <td><?php echo $data_dye['nozzle'] ?></td>
                                                                         <td><?php echo $row_integ['Parameter8']?></td>
                                                                         <td><?php echo $row_integ['Parameter9']?></td>
 
-                                                                        <td>ONLINE</td>
+                                                                        <td><?php echo $data_dye['plaiter'] ?></td>
                                                                         <td>NOW</td>
 
                                                                     </tr>
