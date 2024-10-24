@@ -136,36 +136,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                                                     <!-- Querry DB2 Untuk Row 1 -->
                                                                     <?php $query_db2 = "SELECT 
-                                                                                        p.ITEMTYPEAFICODE,
-                                                                                        p.SUBCODE01,
-                                                                                        p.SUBCODE02,
-                                                                                        p.SUBCODE03,
-                                                                                        p.SUBCODE04, 
-                                                                                        p.SUBCODE05,
-                                                                                        p.SUBCODE06,
-                                                                                        p.SUBCODE07,
-                                                                                        p.SUBCODE08,
-                                                                                        TRIM(p.SUBCODE02) ||'-'||TRIM(p.SUBCODE03) AS no_hanger,
-                                                                                        p2.LONGDESCRIPTION,
-                                                                                        DECIMAL(a.VALUEDECIMAL,10,0)||'x'||DECIMAL(a2.VALUEDECIMAL,10,0) AS LxG
-                                                                                    FROM ITXVIEWKK p
-                                                                                    LEFT JOIN PRODUCT p2 ON p2.ITEMTYPECODE = p.ITEMTYPEAFICODE 
-                                                                                    AND p2.SUBCODE01 = p.SUBCODE01
-                                                                                    AND p2.SUBCODE02 = p.SUBCODE02
-                                                                                    AND p2.SUBCODE03 = p.SUBCODE03
-                                                                                    AND p2.SUBCODE04 = p.SUBCODE04
-                                                                                    AND p2.SUBCODE05 = p.SUBCODE05
-                                                                                    AND p2.SUBCODE06 = p.SUBCODE06
-                                                                                    AND p2.SUBCODE07 = p.SUBCODE07
-                                                                                    AND p2.SUBCODE08 = p.SUBCODE08
-                                                                                    LEFT JOIN 
-                                                                                    ADSTORAGE a ON a.UNIQUEID = p2.ABSUNIQUEID
-                                                                                    AND a.FIELDNAME ='Width'
-                                                                                    LEFT JOIN 
-                                                                                    ADSTORAGE a2 ON a2.UNIQUEID = p2.ABSUNIQUEID
-                                                                                    AND a2.FIELDNAME ='GSM'
-                                                                                    WHERE p.CODE ='$row_integ[Dyelot]'";
-                                                                                    
+                                                                                            i.DEAMAND AS DEMAND,
+                                                                                            TRIM(i.SUBCODE02)||'-'||TRIM(i.SUBCODE03) AS NO_HANGER,
+                                                                                            i.SUBCODE01,
+                                                                                            i.SUBCODE02,
+                                                                                            i.SUBCODE03,
+                                                                                            i.SUBCODE04,
+                                                                                            i.SUBCODE05,
+                                                                                            i.SUBCODE06,
+                                                                                            i.SUBCODE07,
+                                                                                            i.SUBCODE08,
+                                                                                            i.PRODUCTIONORDERCODE,
+                                                                                            DECIMAL(a.VALUEDECIMAL, 10,0)||' x '||DECIMAL(a2.VALUEDECIMAL, 10,0) AS LxG,
+                                                                                            p2.LONGDESCRIPTION
+                                                                                            FROM ITXVIEWKK i 
+                                                                                            LEFT JOIN PRODUCT p ON p.ITEMTYPECODE  = i.ITEMTYPEAFICODE 
+                                                                                            AND p.SUBCODE01 = i.SUBCODE01 
+                                                                                            AND p.SUBCODE02 = i.SUBCODE02 
+                                                                                            AND p.SUBCODE03 = i.SUBCODE03 
+                                                                                            AND p.SUBCODE04 = i.SUBCODE04 
+                                                                                            AND p.SUBCODE05 = i.SUBCODE05 
+                                                                                            AND p.SUBCODE06 = i.SUBCODE06 
+                                                                                            AND p.SUBCODE07 = i.SUBCODE07
+                                                                                            LEFT JOIN PRODUCT p2 ON p2.ITEMTYPECODE  = 'KGF' 
+                                                                                            AND p2.SUBCODE01 = i.SUBCODE01 
+                                                                                            AND p2.SUBCODE02 = i.SUBCODE02 
+                                                                                            AND p2.SUBCODE03 = i.SUBCODE03 
+                                                                                            AND p2.SUBCODE04 = i.SUBCODE04
+                                                                                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID 
+                                                                                            AND a.FIELDNAME = 'Width'
+                                                                                            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID 
+                                                                                            AND a2.FIELDNAME = 'GSM'
+                                                                                            WHERE i.PRODUCTIONORDERCODE ='$row_integ[Dyelot]'";
                                                                             $db2exec1 = db2_exec($conn1, $query_db2);
                                                                             $db2_data = db2_fetch_assoc($db2exec1); ?>
                                                                     <!-- End Query Db2 -->
@@ -201,21 +203,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                                                             ?>
                                                                         </td>
-                                                                        <td>ORGATEX</td>
+                                                                        <td><?php echo $row_integ['LiquorRatio']?></td>
                                                                         <td>ORGATEX</td>
 
                                                                         <td>ORGATEX</td>
                                                                         <td>ONLINE</td>
                                                                         <td>ONLINE</td>
-                                                                        <td>ORGATEX</td>
-                                                                        <td>ORGATEX</td>
+                                                                        <td><?php echo $row_integ['Parameter8']?></td>
+                                                                        <td><?php echo $row_integ['Parameter9']?></td>
 
                                                                         <td>ONLINE</td>
                                                                         <td>NOW</td>
 
                                                                     </tr>
+                                                                    <?php endforeach; ?>
                                                                 <?php endforeach; ?>
-                                                            <?php endforeach; ?>
                                                         </tbody>
                                                     </table>
                                                 </div>

@@ -333,6 +333,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div id="loadingSpinner" class="text-center" style="display:none;">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p>Loading data, please wait...</p>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="machineDetailsTable">
                             <thead>
@@ -399,7 +405,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script type="text/javascript" src="files\assets\js\script.js"></script>
 
 <script>
-     function toggleDateInputs() {
+    function toggleDateInputs() {
         var timeRange = document.getElementById('timeRange').value;
         var tglAwal = document.getElementById('tglAwal');
         var tglAkhir = document.getElementById('tglAkhir');
@@ -423,72 +429,80 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     window.onload = toggleDateInputs;
 
-    $(document).ready(function() {
-        var dataTable;
+    var dataTable;
 
-        $('.view-details').on('click', function() {
-            var machineID = $(this).data('machine-id');
+    $('.view-details').on('click', function() {
+        var machineID = $(this).data('machine-id');
 
-            var postData = {
-                tgl: "<?php echo isset($_SESSION['tgl']) ? $_SESSION['tgl'] : ''; ?>",
-                time: "<?php echo isset($_SESSION['time']) ? $_SESSION['time'] : ''; ?>",
-                tgl2: "<?php echo isset($_SESSION['tgl2']) ? $_SESSION['tgl2'] : ''; ?>",
-                time2: "<?php echo isset($_SESSION['time2']) ? $_SESSION['time2'] : ''; ?>",
-                time_range: "<?php echo isset($_SESSION['time_range']) ? $_SESSION['time_range'] : ''; ?>",
-                machine_id: machineID
-            };
+        var postData = {
+            tgl: "<?php echo isset($_SESSION['tgl']) ? $_SESSION['tgl'] : ''; ?>",
+            time: "<?php echo isset($_SESSION['time']) ? $_SESSION['time'] : ''; ?>",
+            tgl2: "<?php echo isset($_SESSION['tgl2']) ? $_SESSION['tgl2'] : ''; ?>",
+            time2: "<?php echo isset($_SESSION['time2']) ? $_SESSION['time2'] : ''; ?>",
+            time_range: "<?php echo isset($_SESSION['time_range']) ? $_SESSION['time_range'] : ''; ?>",
+            machine_id: machineID
+        };
 
-            $.ajax({
-                url: 'stop_machine_efficency_detail.php',
-                type: 'POST',
-                data: postData,
-                dataType: 'json',
-                success: function(data) {
-                    var tableBody = $('#machineDetailsTable tbody');
-                    tableBody.empty(); 
+        $('#loadingSpinner').show();
+        $('#machineDetailsTable').hide();
 
-                    $.each(data, function(index, item) {
+        $.ajax({
+            url: 'stop_machine_efficency_detail.php',
+            type: 'POST',
+            data: postData,
+            dataType: 'json',
+            success: function(data) {
+                var tableBody = $('#machineDetailsTable tbody');
+                tableBody.empty(); 
 
-                        var row = '<tr>' +
-                            '<td>' + item.machine_number + '</td>' +
-                            '<td>' + item.log_timestamp_start + '</td>' +
-                            '<td>' + item.log_timestamp_stop + '</td>' +
-                            '<td>' + item.total_stop + '</td>' +
-                            '<td>' + item.reason + '</td>' +
-                            '</tr>';
+                $.each(data, function(index, item) {
 
-                        tableBody.append(row);
-                    });
+                    var row = '<tr>' +
+                        '<td>' + item.machine_number + '</td>' +
+                        '<td>' + item.log_timestamp_start + '</td>' +
+                        '<td>' + item.log_timestamp_stop + '</td>' +
+                        '<td>' + item.total_stop + '</td>' +
+                        '<td>' + item.reason + '</td>' +
+                        '</tr>';
 
-                    if ($.fn.DataTable.isDataTable('#machineDetailsTable')) {
-                        $('#machineDetailsTable').DataTable().destroy();
-                    }
+                    tableBody.append(row);
+                });
 
-                    dataTable = $('#machineDetailsTable').DataTable({
-                        paging: true,
-                        searching: true,
-                        ordering: true,
-                        dom: 'Bfrtip',
-                        buttons: [
-                            'copy', 'csv', 'excel', 'pdf', 'print'
-                        ]
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error: ' + error);
+                if ($.fn.DataTable.isDataTable('#machineDetailsTable')) {
+                    $('#machineDetailsTable').DataTable().destroy();
                 }
-            });
-        });
 
-        // Reset modal when closed
-        $('#machineDetailsModal').on('hidden.bs.modal', function() {
-            var tableBody = $('#machineDetailsTable tbody');
-            tableBody.empty(); // Clear the table content
+                dataTable = $('#machineDetailsTable').DataTable({
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ]
+                });
 
-            if ($.fn.DataTable.isDataTable('#machineDetailsTable')) {
-                $('#machineDetailsTable').DataTable().destroy(); // Destroy DataTable instance
+                $('#loadingSpinner').hide();
+                $('#machineDetailsTable').show();
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error: ' + error);
+                $('#loadingSpinner').hide();
+                $('#machineDetailsTable').show();
             }
         });
+    });
+
+    $('#machineDetailsModal').on('hidden.bs.modal', function() {
+        var tableBody = $('#machineDetailsTable tbody');
+        tableBody.empty();
+
+        if ($.fn.DataTable.isDataTable('#machineDetailsTable')) {
+            $('#machineDetailsTable').DataTable().destroy();
+        }
+
+        $('#loadingSpinner').hide();
+        $('#machineDetailsTable').hide();
     });
 </script>
 
