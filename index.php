@@ -30,6 +30,7 @@
     <?php if ($pinjambuku = 'pinjam_buku') : ?>
         <script src="xeditable/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
     <?php endif; ?>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <?php require_once 'header.php'; ?>
 
@@ -43,34 +44,56 @@
                             <div class="col-sm-12">
                                 <div class="card">
                                     <div class="card-header">
+                                        <div id="curve_chart" style="width: 900px; height: 500px"></div>
                                         <?php
-                                            // $client_ip = $_SERVER['REMOTE_ADDR'];
+                                            require_once "koneksi.php";
+                                            $sql = "SELECT TOP 5 IPADDRESS, COUNT(*) AS jumlah_data
+                                                    FROM [nowprd].[itxview_memopentingppc]
+                                                    WHERE CAST(CREATEDATETIME AS DATE) = CAST(GETDATE() AS DATE)
+                                                    GROUP BY IPADDRESS
+                                                    HAVING COUNT(*) > 10
+                                                    ORDER BY MAX(CREATEDATETIME) DESC;";
                                             
-                                            // // Perform reverse DNS lookup
-                                            // $hostname = gethostbyaddr($client_ip);
+                                            $result = sqlsrv_query($con_nowprd, $sql);
                                             
-                                            // echo "IP Address: " . $client_ip . "<br>";
-                                            // echo "Hostname: " . $hostname;
-
-                                            // if (isset($_SERVER['REMOTE_USER'])) {
-                                            //     $username = $_SERVER['REMOTE_USER'];
-                                            //     echo "User login: " . $username;
-                                            // } else {
-                                            //     echo "User not authenticated.";
-                                            // }
-
-                                            // echo "<pre>";
-                                            //     print_r($_SERVER);
-                                            //     print_r($_COOKIE);
-                                            // echo "</pre>";
-
-                                            // setcookie('username', $username, time() + (86400 * 30), "/"); // 1 day expiration
-
-                                            // // Retrieve cookie
-                                            // if(isset($_COOKIE['username'])) {
-                                            //     echo "Username: " . $_COOKIE['username'];
-                                            // }
+                                            // Create arrays to hold the data
+                                            $ipAddresses = [];
+                                            $jumlahData = [];
+                                            
+                                            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                                $ipAddresses[] = $row['IPADDRESS'];
+                                                $jumlahData[] = $row['jumlah_data'];
+                                            }
                                         ?>
+                                        <script type="text/javascript">
+                                            var ipAddresses = <?php echo json_encode($ipAddresses); ?>;
+                                            var jumlahData = <?php echo json_encode($jumlahData); ?>;
+
+                                            google.charts.load('current', {'packages':['corechart']});
+                                            google.charts.setOnLoadCallback(drawChart);
+
+                                            function drawChart() {
+                                                // Prepare the data for Google Charts
+                                                var data = new google.visualization.DataTable();
+                                                data.addColumn('string', 'IP Address');
+                                                data.addColumn('number', 'Jumlah Data');
+
+                                                // Populate the DataTable with the PHP arrays
+                                                for (var i = 0; i < ipAddresses.length; i++) {
+                                                    data.addRow([ipAddresses[i], jumlahData[i]]);
+                                                }
+
+                                                var options = {
+                                                    title: 'Jumlah Data per IP Address',
+                                                    curveType: 'function',
+                                                    legend: { position: 'bottom' }
+                                                };
+
+                                                var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                                                chart.draw(data, options);
+                                            }
+
+                                        </script>
                                     </div>
                                 </div>
                             </div>
