@@ -2,8 +2,6 @@
     require_once 'koneksi.php';
     require_once "utils/helper.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $now = new DateTime();
     
     $startDate = $now;
@@ -91,7 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $interval->s;
             
             $totalSeconds = $seconds;
-
+            $totalStop = '00:00:00';
+            
             if(!empty($totalSeconds)){
                 $reason=$row['reason'];
                 $log_timestamp= $row['logTimeStamp'];
@@ -114,5 +113,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     echo json_encode($data);
-}
+
 ?>
