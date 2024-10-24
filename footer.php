@@ -452,6 +452,7 @@ echo '</script>';
         article: $('#article').val(),
         colorNo: $('#color_number').val(),
         weight: parseFloat($('#weight').val()), // Ensure numeric values
+        blower_speed: parseFloat($('#blower_speed').val()), // Ensure numeric values
         length: parseFloat($('#length').val()), // Ensure numeric values
         liquorRatio: parseFloat($('#liquorRatio').val()), // Ensure numeric values
         liquorQuantity: parseFloat($('#liquorQuantity').val()), // Ensure numeric values
