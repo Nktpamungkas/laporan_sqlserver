@@ -64,28 +64,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <div class="card-block">
                                         <form action="" method="post">
                                             <div class="row">
-                                                <div class="col-sm-12 col-xl-2 m-b-0">
-                                                    <h4 class="sub-title">Tanggal Awal</h4>
-                                                    <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" 
-                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl']; } ?>">
-                                                        <input name="time" type="text" class="form-control" id="time" value="07:00" size="5" maxlength="5" required readonly>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="col-sm-12 col-xl-2 m-b-0">
-                                                    <h4 class="sub-title">Tanggal Akhir</h4>
-                                                    <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl2"
-                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>">
-                                                        <input name="time2" type="text" class="form-control" id="time2" value="07:00" size="5" maxlength="5" required readonly>
-                                                    </div>
-                                                </div>
-                                                
                                                 <div class="col-sm-12 col-xl-2">
                                                     <h4 class="sub-title">Select Time Range</h4>
                                                     <div class="input-group input-group-sm">
-                                                        <select name="time_range" class="form-control" required>
+                                                        <select id="timeRange" name="time_range" class="form-control" required onchange="toggleDateInputs()">
                                                             <option value="custom" <?php if (isset($_POST['submit']) && $_POST['time_range'] == 'custom') echo 'selected'; ?>>Custom Range</option>
                                                             <option value="24_hours" <?php if (isset($_POST['submit']) && $_POST['time_range'] == '24_hours') echo 'selected'; ?>>Last 24 Hours</option>
                                                             <option value="week" <?php if (isset($_POST['submit']) && $_POST['time_range'] == 'week') echo 'selected'; ?>>Last Week</option>
@@ -93,7 +75,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         </select>
                                                     </div>
                                                 </div>
-
+                                                <div class="col-sm-12 col-xl-2 m-b-0">
+                                                    <h4 class="sub-title">Tanggal Awal</h4>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" id="tglAwal"
+                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl']; } ?>">
+                                                        <input name="time" id="time" type="text" class="form-control" id="time" value="07:00" size="5" maxlength="5" required readonly>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-sm-12 col-xl-2 m-b-0">
+                                                    <h4 class="sub-title">Tanggal Akhir</h4>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl2" id="tglAkhir"
+                                                            value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>">
+                                                        <input name="time2" id="time2" type="text" class="form-control" id="time2" value="07:00" size="5" maxlength="5" required readonly>
+                                                    </div>
+                                                </div>
+                                            
                                                 <div class="col-sm-12 col-xl-2">
                                                     <h4 class="sub-title">&nbsp;</h4>
                                                     <button type="submit" name="submit" class="btn btn-primary btn-sm">
@@ -369,6 +368,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script type="text/javascript" src="files\assets\js\script.js"></script>
 
 <script>
+     function toggleDateInputs() {
+        var timeRange = document.getElementById('timeRange').value;
+        var tglAwal = document.getElementById('tglAwal');
+        var tglAkhir = document.getElementById('tglAkhir');
+        var time = document.getElementById('time');
+        var time2 = document.getElementById('time2');
+
+        if (timeRange === 'custom') {
+            tglAwal.disabled = false;
+            tglAkhir.disabled = false;
+            time.value = '07:00';
+            time2.value = '07:00';
+        } else {
+            tglAwal.disabled = true;
+            tglAkhir.disabled = true;
+            tglAwal.value = '';
+            tglAkhir.value = '';
+            time.value = '';
+            time2.value = '';
+        }
+    }
+
+    window.onload = toggleDateInputs;
+
     $(document).ready(function() {
         var dataTable;
 
