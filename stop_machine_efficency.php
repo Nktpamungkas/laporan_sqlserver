@@ -235,8 +235,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if($totalSeconds>0&&$totalSecondsCalculate>0){
             $totalPercentage=(($totalSecondsCalculate-$totalSeconds)/$totalSecondsCalculate)*100;
+            $statusMachine=true;
         }else{
             $totalPercentage=0;
+            $statusMachine=false;
         }
 
         $resultDataMachine = mysqli_query($con_db_dyeing, "SELECT kapasitas as machine_capacity,
@@ -256,7 +258,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "machine_capacity"=>$machine_capacity,
             "machine_description"=>$machine_description,
             "total_stop"=>$totalStop,
-            "total_percentage_running"=>round($totalPercentage, 2)
+            "total_percentage_running"=>round($totalPercentage, 2),
+            "status_machine"=>$statusMachine
         ];
     }
 
@@ -266,12 +269,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 <td><?php echo htmlspecialchars($item['machine_number']); ?></td>
                                                                 <td><?php echo $item['machine_capacity']; ?></td>
                                                                 <td><?php echo $item['machine_description']; ?></td>
-                                                                <td><?php echo htmlspecialchars($item['total_stop']); ?></td>
-                                                                <td><?php echo htmlspecialchars($item['total_percentage_running']); ?>%</td>
 
                                                                 <td>
-                                                                    <!-- Button to open the modal -->
-                                                                    <button class="btn btn-info btn-sm view-details" data-machine-id="<?php echo htmlspecialchars($item['machine_number']); ?>" data-toggle="modal" data-target="#machineDetailsModal">View Details</button>
+                                                                    <?php 
+                                                                    if (!$item['status_machine']) { 
+                                                                        echo '<span style="color:red;">OFFLINE</span>'; 
+                                                                    } else { 
+                                                                        echo $item['total_stop'];
+                                                                    } 
+                                                                    ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?php 
+                                                                    if (!$item['status_machine']) { 
+                                                                        echo '<span style="color:red;">OFFLINE</span>'; 
+                                                                    } else { 
+                                                                        echo htmlspecialchars($item['total_percentage_running']) . '%'; 
+                                                                    } 
+                                                                    ?>
+                                                                </td>
+
+                                                                <td>
+                                                                    <?php if ($item['status_machine']): ?>
+                                                                        <!-- Button to open the modal (enabled and blue when status_machine is true) -->
+                                                                        <button class="btn btn-info btn-sm view-details" 
+                                                                                data-machine-id="<?php echo htmlspecialchars($item['machine_number']); ?>" 
+                                                                                data-toggle="modal" 
+                                                                                data-target="#machineDetailsModal">
+                                                                            View Details
+                                                                        </button>
+                                                                    <?php else: ?>
+                                                                        <button class="btn btn-danger btn-sm" disabled>
+                                                                            OFFLINE
+                                                                        </button>
+                                                                    <?php endif; ?>
                                                                 </td>
                                                             </tr>
                                                             <?php endforeach; ?>

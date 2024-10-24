@@ -175,6 +175,10 @@ require_once "koneksi.php";
                                                 <h6 style="font-weight: bold;">Weight</h6>
                                                 <input type="text" id="weight" class="form-control" readonly>
                                             </div>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Blower Speed</h6>
+                                                <input type="number" id="blower_speed" class="form-control">
+                                            </div>
                                         </div>
 
                                         <div class="row">
