@@ -121,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 <th>Machine Capacity</th>
                                                                 <th>Machine Description</th>
                                                                 <th>Total Stop</th>
-                                                                <th>Total Percentage Running</th>
+                                                                <th>Persentase Efficiency Machine</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
@@ -229,11 +229,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $endDateTime = new DateTime($endDate);
         $timeSpanInterval = $startDateTime->diff($endDateTime);
 
-        if ($totalHoursInTimeSpan > 0) {
-            $runningHours = $totalHoursInTimeSpan - $totalHours;
-            $runningPercentage = ($runningHours / $totalHoursInTimeSpan) * 100;
-        } else {
-            $runningPercentage = 0; // or some default value
+        $totalSecondsCalculate = ($timeSpanInterval->days * 24 * 60 * 60) +
+                ($timeSpanInterval->h * 60 * 60) +
+                ($timeSpanInterval->i * 60) +
+                $timeSpanInterval->s;
+
+        if($totalSeconds>0&&$totalSecondsCalculate>0){
+            $totalPercentage=(($totalSecondsCalculate-$totalSeconds)/$totalSecondsCalculate)*100;
+        }else{
+            $totalPercentage=0;
         }
 
         $resultDataMachine = mysqli_query($con_db_dyeing, "SELECT kapasitas as machine_capacity,
@@ -253,7 +257,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "machine_capacity"=>$machine_capacity,
             "machine_description"=>$machine_description,
             "total_stop"=>$totalStop,
-            "total_percentage_running"=>round($runningPercentage, 2)
+            "total_percentage_running"=>round($totalPercentage, 2)
         ];
     }
 
