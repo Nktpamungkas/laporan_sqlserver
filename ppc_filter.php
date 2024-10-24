@@ -212,6 +212,8 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                             <th title="Sumber data: &#013; 1. Production Demand &#013; 2. Bagian group Entered quantity &#013; 3. User Primary Quantity">QTY PACKING</th>
                                                             <th>NETTO(kg)</th>
                                                             <th>NETTO(yd)</th>
+                                                            <th>QTY KURANG (KG)</th>
+                                                            <th>QTY KURANG (YD/MTR)</th>
                                                             <th>DELAY</th>
                                                             <th>TARGET SELESAI</th>
                                                             <th>KODE DEPT</th>
@@ -235,422 +237,422 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                     </thead>
                                                     <tbody>
                                                         <?php
-                                                        $prod_order     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
-                                                        $prod_demand    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
-                                                        $no_order       = $_POST['no_order'] ?? '';
-                                                        $tgl1           = $_POST['tgl1'] ?? '';
-                                                        $tgl2           = $_POST['tgl2'] ?? '';
-                                                        $no_po          = $_POST['no_po'] ?? '';
-                                                        $article_group  = $_POST['article_group'] ?? '';
-                                                        $article_code   = $_POST['article_code'] ?? '';
-                                                        $nama_warna     = $_POST['nama_warna'] ?? '';
-                                                        $kkoke          = $_POST['kkoke'] ?? '';
-                                                        
-                                                        $conditions = [];
-                                                        $conditions2 = [];
-                                                        
-                                                        // Menambahkan kondisi berdasarkan filter yang diisi
-                                                        if ($nama_warna) {
-                                                            $conditions[] = "WARNA LIKE '%$nama_warna%'";
-                                                        }
-                                                        if ($prod_order) {
-                                                            $conditions[] = "NO_KK = '$prod_order'";
-                                                        }
-                                                        if ($prod_demand) {
-                                                            $conditions[] = "DEMAND = '$prod_demand'";
-                                                        }
-                                                        if ($no_order) {
-                                                            $conditions[] = "NO_ORDER = '$no_order'";
-                                                        }
-                                                        if ($tgl1 && $tgl2) {
-                                                            $conditions[] = "DELIVERY BETWEEN '$tgl1' AND '$tgl2'";
-                                                        }
-                                                        if ($no_po) {
-                                                            $conditions[] = "NO_PO = '$no_po'";
-                                                        }
-                                                        if ($article_group && $article_code) {
-                                                            $conditions[] = "SUBCODE02 = '$article_group' AND SUBCODE03 = '$article_code'";
-                                                        }
-                                                        if ($kkoke === 'tidak') {
-                                                            $conditions2[] = "NOT PROGRESSSTATUS = '6' AND NOT PROGRESSSTATUS_DEMAND = '6'";
-                                                        }
-                                                        
-                                                        // Menyusun string kondisi
-                                                        $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
-                                                        
-                                                        // Menyusun query
-                                                        $query = "SELECT * FROM (SELECT * FROM ITXVIEW_MEMOPENTINGPPC WHERE $conditionsString)";
-                                                        
-                                                        if (count($conditions2) > 0) {
-                                                            $query .= " WHERE " . implode(" AND ", $conditions2);
-                                                        }
-
-                                                        // ITXVIEW_MEMOPENTINGPPC
-                                                        $itxviewmemo              = db2_exec($conn1, $query, array('cursor'=>DB2_SCROLLABLE));
-                                                        $r_itxviewmemo = [];
-                                                        while ($row_itxviewmemo   = db2_fetch_assoc($itxviewmemo)) {
-                                                            $r_itxviewmemo[] = [
-                                                                cek(addslashes($row_itxviewmemo['ORDERDATE'])),
-                                                                cek($row_itxviewmemo['PELANGGAN']),
-                                                                cek($row_itxviewmemo['NO_ORDER']),
-                                                                cek($row_itxviewmemo['NO_PO']),
-                                                                cek($row_itxviewmemo['SUBCODE02']),
-                                                                cek($row_itxviewmemo['SUBCODE03']),
-                                                                cek($row_itxviewmemo['KETERANGAN_PRODUCT']),
-                                                                cek($row_itxviewmemo['WARNA']),
-                                                                cek($row_itxviewmemo['NO_WARNA']),
-                                                                cek(addslashes($row_itxviewmemo['DELIVERY'])),
-                                                                cek($row_itxviewmemo['QTY_BAGIKAIN']),
-                                                                cek($row_itxviewmemo['NETTO']),
-                                                                cek($row_itxviewmemo['DELAY']),
-                                                                cek($row_itxviewmemo['NO_KK']),
-                                                                cek($row_itxviewmemo['DEMAND']),
-                                                                substr(cek($row_itxviewmemo['LOT']) ?? '', 0, 7), // di database length nya 7
-                                                                cek($row_itxviewmemo['ORDERLINE']),
-                                                                cek($row_itxviewmemo['PROGRESSSTATUS']),
-                                                                cek($row_itxviewmemo['PROGRESSSTATUS_DEMAND']),
-                                                                cek($row_itxviewmemo['KETERANGAN']),
-                                                                $_SERVER['REMOTE_ADDR'],
-                                                                date('Y-m-d H:i:s'),
-                                                                'MEMO'
-                                                            ];
-                                                        }
-
-                                                        try {
-                                                            // Define the query with placeholders
-                                                            $query = "
-                                                                INSERT INTO nowprd.itxview_memopentingppc (
-                                                                    ORDERDATE, PELANGGAN, NO_ORDER, NO_PO, ARTICLE_GROUP, ARTICLE_CODE,
-                                                                    KETERANGAN_PRODUCT, WARNA, NO_WARNA, DELIVERY, QTY_BAGIKAIN, NETTO,
-                                                                    DELAY, NO_KK, DEMAND, LOT, ORDERLINE, PROGRESSSTATUS, PROGRESSSTATUS_DEMAND,
-                                                                    KETERANGAN, IPADDRESS, CREATEDATETIME, ACCESS_TO
-                                                                ) VALUES (
-                                                                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-                                                                )
-                                                            ";
-                                                        
-                                                            // Prepare the statement
-                                                            $stmt = $pdo->prepare($query);
-                                                        
-                                                            // Define the data to be inserted
-                                                            foreach ($r_itxviewmemo as $row) {
-                                                                // Ensure data is properly encoded and does not contain problematic characters
-                                                                $row = array_map(function($value) {
-                                                                    // Check if the value is not null before converting encoding
-                                                                    return $value !== null ? mb_convert_encoding($value, 'UTF-8', 'auto') : $value;
-                                                                }, $row);
-                                                        
-                                                                // Execute the statement with the data
-                                                                if (!$stmt->execute($row)) {
-                                                                    // Handle error
-                                                                    echo "Error: ";
-                                                                    print_r($stmt->errorInfo());
-                                                                    exit();
-                                                                }
+                                                            $prod_order     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
+                                                            $prod_demand    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
+                                                            $no_order       = $_POST['no_order'] ?? '';
+                                                            $tgl1           = $_POST['tgl1'] ?? '';
+                                                            $tgl2           = $_POST['tgl2'] ?? '';
+                                                            $no_po          = $_POST['no_po'] ?? '';
+                                                            $article_group  = $_POST['article_group'] ?? '';
+                                                            $article_code   = $_POST['article_code'] ?? '';
+                                                            $nama_warna     = $_POST['nama_warna'] ?? '';
+                                                            $kkoke          = $_POST['kkoke'] ?? '';
+                                                            
+                                                            $conditions = [];
+                                                            $conditions2 = [];
+                                                            
+                                                            // Menambahkan kondisi berdasarkan filter yang diisi
+                                                            if ($nama_warna) {
+                                                                $conditions[] = "WARNA LIKE '%$nama_warna%'";
                                                             }
-                                                            echo " ";
-                                                        } catch (PDOException $e) {
-                                                            echo "xError: " . $e->getMessage();
-                                                        }
-                                                        
+                                                            if ($prod_order) {
+                                                                $conditions[] = "NO_KK = '$prod_order'";
+                                                            }
+                                                            if ($prod_demand) {
+                                                                $conditions[] = "DEMAND = '$prod_demand'";
+                                                            }
+                                                            if ($no_order) {
+                                                                $conditions[] = "NO_ORDER = '$no_order'";
+                                                            }
+                                                            if ($tgl1 && $tgl2) {
+                                                                $conditions[] = "DELIVERY BETWEEN '$tgl1' AND '$tgl2'";
+                                                            }
+                                                            if ($no_po) {
+                                                                $conditions[] = "NO_PO = '$no_po'";
+                                                            }
+                                                            if ($article_group && $article_code) {
+                                                                $conditions[] = "SUBCODE02 = '$article_group' AND SUBCODE03 = '$article_code'";
+                                                            }
+                                                            if ($kkoke === 'tidak') {
+                                                                $conditions2[] = "NOT PROGRESSSTATUS = '6' AND NOT PROGRESSSTATUS_DEMAND = '6'";
+                                                            }
+                                                            
+                                                            // Menyusun string kondisi
+                                                            $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
+                                                            
+                                                            // Menyusun query
+                                                            $query = "SELECT * FROM (SELECT * FROM ITXVIEW_MEMOPENTINGPPC WHERE $conditionsString)";
+                                                            
+                                                            if (count($conditions2) > 0) {
+                                                                $query .= " WHERE " . implode(" AND ", $conditions2);
+                                                            }
 
-                                                        // --------------------------------------------------------------------------------------------------------------- //
-                                                        $prod_order_2     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
-                                                        $prod_demand_2    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
-                                                        $no_order_2     = $_POST['no_order'] ?? '';
-                                                        $tgl1_2         = $_POST['tgl1'] ?? '';
-                                                        $tgl2_2         = $_POST['tgl2'] ?? '';
-                                                        $no_po2         = $_POST['no_po'] ?? '';
-                                                        $article_group2 = $_POST['article_group'] ?? '';
-                                                        $article_code2  = $_POST['article_code'] ?? '';
+                                                            // ITXVIEW_MEMOPENTINGPPC
+                                                            $itxviewmemo              = db2_exec($conn1, $query, array('cursor'=>DB2_SCROLLABLE));
+                                                            $r_itxviewmemo = [];
+                                                            while ($row_itxviewmemo   = db2_fetch_assoc($itxviewmemo)) {
+                                                                $r_itxviewmemo[] = [
+                                                                    cek(addslashes($row_itxviewmemo['ORDERDATE'])),
+                                                                    cek($row_itxviewmemo['PELANGGAN']),
+                                                                    cek($row_itxviewmemo['NO_ORDER']),
+                                                                    cek($row_itxviewmemo['NO_PO']),
+                                                                    cek($row_itxviewmemo['SUBCODE02']),
+                                                                    cek($row_itxviewmemo['SUBCODE03']),
+                                                                    cek($row_itxviewmemo['KETERANGAN_PRODUCT']),
+                                                                    cek($row_itxviewmemo['WARNA']),
+                                                                    cek($row_itxviewmemo['NO_WARNA']),
+                                                                    cek(addslashes($row_itxviewmemo['DELIVERY'])),
+                                                                    cek($row_itxviewmemo['QTY_BAGIKAIN']),
+                                                                    cek($row_itxviewmemo['NETTO']),
+                                                                    cek($row_itxviewmemo['DELAY']),
+                                                                    cek($row_itxviewmemo['NO_KK']),
+                                                                    cek($row_itxviewmemo['DEMAND']),
+                                                                    substr(cek($row_itxviewmemo['LOT']) ?? '', 0, 7), // di database length nya 7
+                                                                    cek($row_itxviewmemo['ORDERLINE']),
+                                                                    cek($row_itxviewmemo['PROGRESSSTATUS']),
+                                                                    cek($row_itxviewmemo['PROGRESSSTATUS_DEMAND']),
+                                                                    cek($row_itxviewmemo['KETERANGAN']),
+                                                                    $_SERVER['REMOTE_ADDR'],
+                                                                    date('Y-m-d H:i:s'),
+                                                                    'MEMO'
+                                                                ];
+                                                            }
 
-                                                        $conditions = [];
+                                                            try {
+                                                                // Define the query with placeholders
+                                                                $query = "
+                                                                    INSERT INTO nowprd.itxview_memopentingppc (
+                                                                        ORDERDATE, PELANGGAN, NO_ORDER, NO_PO, ARTICLE_GROUP, ARTICLE_CODE,
+                                                                        KETERANGAN_PRODUCT, WARNA, NO_WARNA, DELIVERY, QTY_BAGIKAIN, NETTO,
+                                                                        DELAY, NO_KK, DEMAND, LOT, ORDERLINE, PROGRESSSTATUS, PROGRESSSTATUS_DEMAND,
+                                                                        KETERANGAN, IPADDRESS, CREATEDATETIME, ACCESS_TO
+                                                                    ) VALUES (
+                                                                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                                                                    )
+                                                                ";
+                                                            
+                                                                // Prepare the statement
+                                                                $stmt = $pdo->prepare($query);
+                                                            
+                                                                // Define the data to be inserted
+                                                                foreach ($r_itxviewmemo as $row) {
+                                                                    // Ensure data is properly encoded and does not contain problematic characters
+                                                                    $row = array_map(function($value) {
+                                                                        // Check if the value is not null before converting encoding
+                                                                        return $value !== null ? mb_convert_encoding($value, 'UTF-8', 'auto') : $value;
+                                                                    }, $row);
+                                                            
+                                                                    // Execute the statement with the data
+                                                                    if (!$stmt->execute($row)) {
+                                                                        // Handle error
+                                                                        echo "Error: ";
+                                                                        print_r($stmt->errorInfo());
+                                                                        exit();
+                                                                    }
+                                                                }
+                                                                echo " ";
+                                                            } catch (PDOException $e) {
+                                                                echo "xError: " . $e->getMessage();
+                                                            }
+                                                            
 
-                                                        if ($prod_order_2) {
-                                                            $conditions[] = "NO_KK  = '$prod_order'";
-                                                        }
-                                                        if ($prod_demand_2) {
-                                                            $conditions[] = "DEMAND = '$prod_demand'";
-                                                        }
-                                                        if ($no_order_2) {
-                                                            $conditions[] = "NO_ORDER = '$no_order_2'";
-                                                        }
-                                                        if ($tgl1_2 & $tgl2_2) {
-                                                            $conditions[] = "DELIVERY BETWEEN '$tgl1_2' AND '$tgl2_2'";
-                                                        }
-                                                        if ($no_po2) {
-                                                            $conditions[] = "NO_PO = '$no_po'";
-                                                        }
-                                                        if ($article_group2 & $article_code2) {
-                                                            $conditions[] = "ARTICLE_GROUP = '$article_group2' AND ARTICLE_CODE = '$article_code2'";
-                                                        }
+                                                            // --------------------------------------------------------------------------------------------------------------- //
+                                                            $prod_order_2     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
+                                                            $prod_demand_2    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
+                                                            $no_order_2     = $_POST['no_order'] ?? '';
+                                                            $tgl1_2         = $_POST['tgl1'] ?? '';
+                                                            $tgl2_2         = $_POST['tgl2'] ?? '';
+                                                            $no_po2         = $_POST['no_po'] ?? '';
+                                                            $article_group2 = $_POST['article_group'] ?? '';
+                                                            $article_code2  = $_POST['article_code'] ?? '';
 
-                                                        // Menyusun string kondisi
-                                                        $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
-                                                        
-                                                        // Menyusun query
-                                                        $query = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE $conditionsString AND ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
+                                                            $conditions = [];
 
-                                                        $stmt   = sqlsrv_query($con_nowprd, $query);
-                                                        while ($rowdb2 = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                                                            if ($prod_order_2) {
+                                                                $conditions[] = "NO_KK  = '$prod_order'";
+                                                            }
+                                                            if ($prod_demand_2) {
+                                                                $conditions[] = "DEMAND = '$prod_demand'";
+                                                            }
+                                                            if ($no_order_2) {
+                                                                $conditions[] = "NO_ORDER = '$no_order_2'";
+                                                            }
+                                                            if ($tgl1_2 & $tgl2_2) {
+                                                                $conditions[] = "DELIVERY BETWEEN '$tgl1_2' AND '$tgl2_2'";
+                                                            }
+                                                            if ($no_po2) {
+                                                                $conditions[] = "NO_PO = '$no_po'";
+                                                            }
+                                                            if ($article_group2 & $article_code2) {
+                                                                $conditions[] = "ARTICLE_GROUP = '$article_group2' AND ARTICLE_CODE = '$article_code2'";
+                                                            }
+
+                                                            // Menyusun string kondisi
+                                                            $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
+                                                            
+                                                            // Menyusun query
+                                                            $query = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE $conditionsString AND ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
+
+                                                            $stmt   = sqlsrv_query($con_nowprd, $query);
+                                                            while ($rowdb2 = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                                         ?>
                                                             <?php
-                                                            //Deteksi Production Demand Closed Atau Belum
-                                                            if ($rowdb2['PROGRESSSTATUS_DEMAND'] == 6) {
-                                                                $status = 'AAA';
-                                                                $kode_dept          = '-';
-                                                                $status_terakhir    = '-';
-                                                                $status_operation   = 'KK Oke';
-                                                            } else {
-                                                                // 1. Deteksi Production Order Closed Atau Belum
-                                                                if ($rowdb2['PROGRESSSTATUS'] == 6) {
-                                                                    $status = 'AA';
+                                                                //Deteksi Production Demand Closed Atau Belum
+                                                                if ($rowdb2['PROGRESSSTATUS_DEMAND'] == 6) {
+                                                                    $status = 'AAA';
                                                                     $kode_dept          = '-';
                                                                     $status_terakhir    = '-';
                                                                     $status_operation   = 'KK Oke';
                                                                 } else {
-                                                                    // mendeteksi statusnya close
-                                                                    $q_deteksi_status_close = db2_exec($conn1, "SELECT 
-                                                                                                                    p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
-                                                                                                                    -- CASE
-                                                                                                                    --     WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
-                                                                                                                    --     WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
-                                                                                                                    --     ELSE p.GROUPSTEPNUMBER
-                                                                                                                    -- END AS GROUPSTEPNUMBER,
-                                                                                                                    TRIM(p.GROUPSTEPNUMBER) AS GROUPSTEPNUMBER,
-                                                                                                                    TRIM(p.PROGRESSSTATUS) AS PROGRESSSTATUS
-                                                                                                                FROM 
-                                                                                                                    VIEWPRODUCTIONDEMANDSTEP p
-                                                                                                                -- LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND p2.STEPTYPE = p.STEPTYPE AND p2.OPERATIONCODE = p.OPERATIONCODE 
-                                                                                                                WHERE
-                                                                                                                    p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND
-                                                                                                                    (p.PROGRESSSTATUS = '3' OR p.PROGRESSSTATUS = '2') ORDER BY p.GROUPSTEPNUMBER DESC LIMIT 1");
-                                                                    $row_status_close = db2_fetch_assoc($q_deteksi_status_close);
-
-                                                                    // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
-                                                                    if ($row_status_close['PROGRESSSTATUS'] == '2') { // KALAU PROGRESS STATUSNYA ENTERED
-                                                                        $q_delay_progress_selesai   = db2_exec($conn1, "SELECT 
-                                                                                                                                p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
-                                                                                                                                CASE
-                                                                                                                                    WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
-                                                                                                                                    WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
-                                                                                                                                    WHEN TRIM(p.STEPTYPE) = '1' THEN p2.STEPNUMBER
-                                                                                                                                    ELSE p.GROUPSTEPNUMBER
-                                                                                                                                END AS GROUPSTEPNUMBER,
-                                                                                                                                iptip.MULAI,
-                                                                                                                                DAYS(CURRENT DATE) - DAYS(iptip.MULAI) AS DELAY_PROGRESSSTATUS,
-                                                                                                                                p.PROGRESSSTATUS AS PROGRESSSTATUS
-                                                                                                                            FROM 
-                                                                                                                                PRODUCTIONDEMANDSTEP p
-                                                                                                                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND p2.STEPTYPE = p.STEPTYPE AND p2.OPERATIONCODE = p.OPERATIONCODE 
-                                                                                                                            LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
-                                                                                                                            WHERE
-                                                                                                                                p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND p.PROGRESSSTATUS = '2' ORDER BY p.GROUPSTEPNUMBER DESC LIMIT 1");
-                                                                        $d_delay_progress_selesai   = db2_fetch_assoc($q_delay_progress_selesai);
-                                                                        $jam_status_terakhir        = $d_delay_progress_selesai['MULAI'];
-                                                                        $delay_progress_status      = $d_delay_progress_selesai['DELAY_PROGRESSSTATUS'] . ' Hari';
-                                                                    } elseif ($row_status_close['PROGRESSSTATUS'] == '3') { // KALAU PROGRESS STATUSNYA PROGRESS
-                                                                        $q_delay_progress_mulai   = db2_exec($conn1, "SELECT 
-                                                                                                                                p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
-                                                                                                                                CASE
-                                                                                                                                    WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
-                                                                                                                                    WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
-                                                                                                                                    WHEN TRIM(p.STEPTYPE) = '1' THEN p2.STEPNUMBER
-                                                                                                                                    ELSE p.GROUPSTEPNUMBER
-                                                                                                                                END AS GROUPSTEPNUMBER,
-                                                                                                                                COALESCE(iptop.SELESAI, SUBSTRING(p2.LASTUPDATEDATETIME, 1, 19)) AS SELESAI,
-                                                                                                                                DAYS(CURRENT DATE) - COALESCE(DAYS(iptop.SELESAI), DAYS(p2.LASTUPDATEDATETIME)) AS DELAY_PROGRESSSTATUS,
-                                                                                                                                p.PROGRESSSTATUS AS PROGRESSSTATUS
-                                                                                                                            FROM 
-                                                                                                                                VIEWPRODUCTIONDEMANDSTEP p
-                                                                                                                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND p2.STEPTYPE = p.STEPTYPE AND p2.OPERATIONCODE = p.OPERATIONCODE
-                                                                                                                            LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE 
-                                                                                                                                                                                AND iptop.DEMANDSTEPSTEPNUMBER = 
-                                                                                                                                                                                    CASE
-                                                                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
-                                                                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
-                                                                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '1' THEN p2.STEPNUMBER
-                                                                                                                                                                                        ELSE p.GROUPSTEPNUMBER
-                                                                                                                                                                                    END
-                                                                                                                            WHERE
-                                                                                                                                p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND p.PROGRESSSTATUS = '3' 
-                                                                                                                                AND (NOT iptop.SELESAI IS NULL OR NOT p2.LASTUPDATEDATETIME IS NULL)
-                                                                                                                            ORDER BY 
-                                                                                                                                CASE
-                                                                                                                                    WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER 
-                                                                                                                                    WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
-                                                                                                                                    WHEN TRIM(p.STEPTYPE) = '1' THEN p2.STEPNUMBER
-                                                                                                                                    ELSE p.GROUPSTEPNUMBER
-                                                                                                                                END DESC 
-                                                                                                                            LIMIT 1");
-                                                                        $d_delay_progress_mulai   = db2_fetch_assoc($q_delay_progress_mulai);
-                                                                        $jam_status_terakhir      = $d_delay_progress_mulai['SELESAI'];
-                                                                        $delay_progress_status    = $d_delay_progress_mulai['DELAY_PROGRESSSTATUS'] . ' Hari';
+                                                                    // 1. Deteksi Production Order Closed Atau Belum
+                                                                    if ($rowdb2['PROGRESSSTATUS'] == 6) {
+                                                                        $status = 'AA';
+                                                                        $kode_dept          = '-';
+                                                                        $status_terakhir    = '-';
+                                                                        $status_operation   = 'KK Oke';
                                                                     } else {
-                                                                        $jam_status_terakhir      = '';
-                                                                        $delay_progress_status    = '';
-                                                                    }
-                                                                    // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
+                                                                        // mendeteksi statusnya close
+                                                                        $q_deteksi_status_close = db2_exec($conn1, "SELECT 
+                                                                                                                        p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
+                                                                                                                        -- CASE
+                                                                                                                        --     WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
+                                                                                                                        --     WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
+                                                                                                                        --     ELSE p.GROUPSTEPNUMBER
+                                                                                                                        -- END AS GROUPSTEPNUMBER,
+                                                                                                                        TRIM(p.GROUPSTEPNUMBER) AS GROUPSTEPNUMBER,
+                                                                                                                        TRIM(p.PROGRESSSTATUS) AS PROGRESSSTATUS
+                                                                                                                    FROM 
+                                                                                                                        VIEWPRODUCTIONDEMANDSTEP p
+                                                                                                                    -- LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND p2.STEPTYPE = p.STEPTYPE AND p2.OPERATIONCODE = p.OPERATIONCODE 
+                                                                                                                    WHERE
+                                                                                                                        p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND
+                                                                                                                        (p.PROGRESSSTATUS = '3' OR p.PROGRESSSTATUS = '2') ORDER BY p.GROUPSTEPNUMBER DESC LIMIT 1");
+                                                                        $row_status_close = db2_fetch_assoc($q_deteksi_status_close);
 
-                                                                    if (!empty($row_status_close['GROUPSTEPNUMBER'])) {
-                                                                        $groupstepnumber    = $row_status_close['GROUPSTEPNUMBER'];
-                                                                    } else {
-                                                                        $groupstepnumber    = '0';
-                                                                    }
-
-                                                                    $q_cnp1             = db2_exec($conn1, "SELECT 
-                                                                                                                GROUPSTEPNUMBER,
-                                                                                                                TRIM(OPERATIONCODE) AS OPERATIONCODE,
-                                                                                                                o.LONGDESCRIPTION AS LONGDESCRIPTION,
-                                                                                                                PROGRESSSTATUS,
-                                                                                                                CASE
-                                                                                                                    WHEN PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                                                                    WHEN PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                                                                    WHEN PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                                                                    WHEN PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                                                                END AS STATUS_OPERATION
-                                                                                                            FROM 
-                                                                                                                VIEWPRODUCTIONDEMANDSTEP v
-                                                                                                            LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
-                                                                                                            WHERE 
-                                                                                                                PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND PROGRESSSTATUS = 3 
-                                                                                                            ORDER BY 
-                                                                                                                GROUPSTEPNUMBER DESC LIMIT 1");
-                                                                    $d_cnp_close        = db2_fetch_assoc($q_cnp1);
-
-                                                                    if ($d_cnp_close['PROGRESSSTATUS'] == 3) { // 3 is Closed From Demands Steps 
-                                                                        $status = 'A';
-                                                                        if ($d_cnp_close['OPERATIONCODE'] == 'PPC4') {
-                                                                            if ($rowdb2['PROGRESSSTATUS'] == 6) {
-                                                                                $status = 'B';
-                                                                                $kode_dept          = '-';
-                                                                                $status_terakhir    = '-';
-                                                                                $status_operation   = 'KK Oke';
-                                                                            } else {
-                                                                                $status = 'C';
-                                                                                $kode_dept          = '-';
-                                                                                $status_terakhir    = '-';
-                                                                                $status_operation   = 'KK Oke | Segera Closed Production Order!';
-                                                                            }
+                                                                        // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
+                                                                        if ($row_status_close['PROGRESSSTATUS'] == '2') { // KALAU PROGRESS STATUSNYA ENTERED
+                                                                            $q_delay_progress_selesai   = db2_exec($conn1, "SELECT 
+                                                                                                                                    p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
+                                                                                                                                    CASE
+                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
+                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
+                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '1' THEN p2.STEPNUMBER
+                                                                                                                                        ELSE p.GROUPSTEPNUMBER
+                                                                                                                                    END AS GROUPSTEPNUMBER,
+                                                                                                                                    iptip.MULAI,
+                                                                                                                                    DAYS(CURRENT DATE) - DAYS(iptip.MULAI) AS DELAY_PROGRESSSTATUS,
+                                                                                                                                    p.PROGRESSSTATUS AS PROGRESSSTATUS
+                                                                                                                                FROM 
+                                                                                                                                    PRODUCTIONDEMANDSTEP p
+                                                                                                                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND p2.STEPTYPE = p.STEPTYPE AND p2.OPERATIONCODE = p.OPERATIONCODE 
+                                                                                                                                LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
+                                                                                                                                WHERE
+                                                                                                                                    p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND p.PROGRESSSTATUS = '2' ORDER BY p.GROUPSTEPNUMBER DESC LIMIT 1");
+                                                                            $d_delay_progress_selesai   = db2_fetch_assoc($q_delay_progress_selesai);
+                                                                            $jam_status_terakhir        = $d_delay_progress_selesai['MULAI'];
+                                                                            $delay_progress_status      = $d_delay_progress_selesai['DELAY_PROGRESSSTATUS'] . ' Hari';
+                                                                        } elseif ($row_status_close['PROGRESSSTATUS'] == '3') { // KALAU PROGRESS STATUSNYA PROGRESS
+                                                                            $q_delay_progress_mulai   = db2_exec($conn1, "SELECT 
+                                                                                                                                    p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
+                                                                                                                                    CASE
+                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
+                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
+                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '1' THEN p2.STEPNUMBER
+                                                                                                                                        ELSE p.GROUPSTEPNUMBER
+                                                                                                                                    END AS GROUPSTEPNUMBER,
+                                                                                                                                    COALESCE(iptop.SELESAI, SUBSTRING(p2.LASTUPDATEDATETIME, 1, 19)) AS SELESAI,
+                                                                                                                                    DAYS(CURRENT DATE) - COALESCE(DAYS(iptop.SELESAI), DAYS(p2.LASTUPDATEDATETIME)) AS DELAY_PROGRESSSTATUS,
+                                                                                                                                    p.PROGRESSSTATUS AS PROGRESSSTATUS
+                                                                                                                                FROM 
+                                                                                                                                    VIEWPRODUCTIONDEMANDSTEP p
+                                                                                                                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND p2.STEPTYPE = p.STEPTYPE AND p2.OPERATIONCODE = p.OPERATIONCODE
+                                                                                                                                LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE 
+                                                                                                                                                                                    AND iptop.DEMANDSTEPSTEPNUMBER = 
+                                                                                                                                                                                        CASE
+                                                                                                                                                                                            WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
+                                                                                                                                                                                            WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
+                                                                                                                                                                                            WHEN TRIM(p.STEPTYPE) = '1' THEN p2.STEPNUMBER
+                                                                                                                                                                                            ELSE p.GROUPSTEPNUMBER
+                                                                                                                                                                                        END
+                                                                                                                                WHERE
+                                                                                                                                    p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND p.PROGRESSSTATUS = '3' 
+                                                                                                                                    AND (NOT iptop.SELESAI IS NULL OR NOT p2.LASTUPDATEDATETIME IS NULL)
+                                                                                                                                ORDER BY 
+                                                                                                                                    CASE
+                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER 
+                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '3' THEN p2.STEPNUMBER 
+                                                                                                                                        WHEN TRIM(p.STEPTYPE) = '1' THEN p2.STEPNUMBER
+                                                                                                                                        ELSE p.GROUPSTEPNUMBER
+                                                                                                                                    END DESC 
+                                                                                                                                LIMIT 1");
+                                                                            $d_delay_progress_mulai   = db2_fetch_assoc($q_delay_progress_mulai);
+                                                                            $jam_status_terakhir      = $d_delay_progress_mulai['SELESAI'];
+                                                                            $delay_progress_status    = $d_delay_progress_mulai['DELAY_PROGRESSSTATUS'] . ' Hari';
                                                                         } else {
-                                                                            $status = 'D';
-                                                                            if ($row_status_close['PROGRESSSTATUS'] == 2) {
-                                                                                $status = 'E';
-                                                                                $groupstep_option       = "= '$groupstepnumber'";
-                                                                            } else { //kalau status terakhirnya bukan PPC dan status terakhirnya CLOSED
-                                                                                $status = 'F';
-                                                                                $q_deteksi_total_step    = db2_exec($conn1, "SELECT COUNT(*) AS TOTALSTEP FROM VIEWPRODUCTIONDEMANDSTEP 
-                                                                                                                            WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
-                                                                                $d_deteksi_total_step    = db2_fetch_assoc($q_deteksi_total_step);
+                                                                            $jam_status_terakhir      = '';
+                                                                            $delay_progress_status    = '';
+                                                                        }
+                                                                        // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
 
-                                                                                $q_deteksi_total_close  = db2_exec($conn1, "SELECT COUNT(*) AS TOTALCLOSE FROM VIEWPRODUCTIONDEMANDSTEP 
-                                                                                                                            WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
-                                                                                                                            AND PROGRESSSTATUS = 3");
-                                                                                $d_deteksi_total_close  = db2_fetch_assoc($q_deteksi_total_close);
+                                                                        if (!empty($row_status_close['GROUPSTEPNUMBER'])) {
+                                                                            $groupstepnumber    = $row_status_close['GROUPSTEPNUMBER'];
+                                                                        } else {
+                                                                            $groupstepnumber    = '0';
+                                                                        }
 
-                                                                                if ($d_deteksi_total_step['TOTALSTEP'] ==  $d_deteksi_total_close['TOTALCLOSE']) {
-                                                                                    $groupstep_option       = "= '$groupstepnumber'";
+                                                                        $q_cnp1             = db2_exec($conn1, "SELECT 
+                                                                                                                    GROUPSTEPNUMBER,
+                                                                                                                    TRIM(OPERATIONCODE) AS OPERATIONCODE,
+                                                                                                                    o.LONGDESCRIPTION AS LONGDESCRIPTION,
+                                                                                                                    PROGRESSSTATUS,
+                                                                                                                    CASE
+                                                                                                                        WHEN PROGRESSSTATUS = 0 THEN 'Entered'
+                                                                                                                        WHEN PROGRESSSTATUS = 1 THEN 'Planned'
+                                                                                                                        WHEN PROGRESSSTATUS = 2 THEN 'Progress'
+                                                                                                                        WHEN PROGRESSSTATUS = 3 THEN 'Closed'
+                                                                                                                    END AS STATUS_OPERATION
+                                                                                                                FROM 
+                                                                                                                    VIEWPRODUCTIONDEMANDSTEP v
+                                                                                                                LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
+                                                                                                                WHERE 
+                                                                                                                    PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND PROGRESSSTATUS = 3 
+                                                                                                                ORDER BY 
+                                                                                                                    GROUPSTEPNUMBER DESC LIMIT 1");
+                                                                        $d_cnp_close        = db2_fetch_assoc($q_cnp1);
+
+                                                                        if ($d_cnp_close['PROGRESSSTATUS'] == 3) { // 3 is Closed From Demands Steps 
+                                                                            $status = 'A';
+                                                                            if ($d_cnp_close['OPERATIONCODE'] == 'PPC4') {
+                                                                                if ($rowdb2['PROGRESSSTATUS'] == 6) {
+                                                                                    $status = 'B';
+                                                                                    $kode_dept          = '-';
+                                                                                    $status_terakhir    = '-';
+                                                                                    $status_operation   = 'KK Oke';
                                                                                 } else {
-                                                                                    $groupstep_option       = "> '$groupstepnumber'";
+                                                                                    $status = 'C';
+                                                                                    $kode_dept          = '-';
+                                                                                    $status_terakhir    = '-';
+                                                                                    $status_operation   = 'KK Oke | Segera Closed Production Order!';
                                                                                 }
-                                                                            }
-                                                                            // $status = 'G';
-                                                                            $q_not_cnp1             = db2_exec($conn1, "SELECT 
-                                                                                                                            GROUPSTEPNUMBER,
-                                                                                                                            TRIM(OPERATIONCODE) AS OPERATIONCODE,
-                                                                                                                            TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
-                                                                                                                            o.LONGDESCRIPTION AS LONGDESCRIPTION,
-                                                                                                                            PROGRESSSTATUS,
-                                                                                                                            CASE
-                                                                                                                                WHEN PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                                                                                WHEN PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                                                                                WHEN PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                                                                                WHEN PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                                                                            END AS STATUS_OPERATION
-                                                                                                                        FROM 
-                                                                                                                            VIEWPRODUCTIONDEMANDSTEP v
-                                                                                                                        LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
-                                                                                                                        WHERE 
-                                                                                                                            PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND 
-                                                                                                                            GROUPSTEPNUMBER $groupstep_option
-                                                                                                                        ORDER BY 
-                                                                                                                            GROUPSTEPNUMBER ASC LIMIT 1");
-                                                                            $d_not_cnp_close        = db2_fetch_assoc($q_not_cnp1);
-
-                                                                            if ($d_not_cnp_close) {
-                                                                                $kode_dept          = $d_not_cnp_close['OPERATIONGROUPCODE'];
-                                                                                $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
-                                                                                $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
                                                                             } else {
-                                                                                $status = 'H';
-                                                                                $groupstep_option       = "= '$groupstepnumber'";
+                                                                                $status = 'D';
+                                                                                if ($row_status_close['PROGRESSSTATUS'] == 2) {
+                                                                                    $status = 'E';
+                                                                                    $groupstep_option       = "= '$groupstepnumber'";
+                                                                                } else { //kalau status terakhirnya bukan PPC dan status terakhirnya CLOSED
+                                                                                    $status = 'F';
+                                                                                    $q_deteksi_total_step    = db2_exec($conn1, "SELECT COUNT(*) AS TOTALSTEP FROM VIEWPRODUCTIONDEMANDSTEP 
+                                                                                                                                WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
+                                                                                    $d_deteksi_total_step    = db2_fetch_assoc($q_deteksi_total_step);
+
+                                                                                    $q_deteksi_total_close  = db2_exec($conn1, "SELECT COUNT(*) AS TOTALCLOSE FROM VIEWPRODUCTIONDEMANDSTEP 
+                                                                                                                                WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
+                                                                                                                                AND PROGRESSSTATUS = 3");
+                                                                                    $d_deteksi_total_close  = db2_fetch_assoc($q_deteksi_total_close);
+
+                                                                                    if ($d_deteksi_total_step['TOTALSTEP'] ==  $d_deteksi_total_close['TOTALCLOSE']) {
+                                                                                        $groupstep_option       = "= '$groupstepnumber'";
+                                                                                    } else {
+                                                                                        $groupstep_option       = "> '$groupstepnumber'";
+                                                                                    }
+                                                                                }
+                                                                                // $status = 'G';
                                                                                 $q_not_cnp1             = db2_exec($conn1, "SELECT 
-                                                                                                                            GROUPSTEPNUMBER,
-                                                                                                                            TRIM(OPERATIONCODE) AS OPERATIONCODE,
-                                                                                                                            TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
-                                                                                                                            o.LONGDESCRIPTION AS LONGDESCRIPTION,
-                                                                                                                            PROGRESSSTATUS,
-                                                                                                                            CASE
-                                                                                                                                WHEN PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                                                                                WHEN PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                                                                                WHEN PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                                                                                WHEN PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                                                                            END AS STATUS_OPERATION
-                                                                                                                        FROM 
-                                                                                                                            VIEWPRODUCTIONDEMANDSTEP v
-                                                                                                                        LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
-                                                                                                                        WHERE 
-                                                                                                                            PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND 
-                                                                                                                            GROUPSTEPNUMBER $groupstep_option
-                                                                                                                        ORDER BY 
-                                                                                                                            GROUPSTEPNUMBER ASC LIMIT 1");
+                                                                                                                                GROUPSTEPNUMBER,
+                                                                                                                                TRIM(OPERATIONCODE) AS OPERATIONCODE,
+                                                                                                                                TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
+                                                                                                                                o.LONGDESCRIPTION AS LONGDESCRIPTION,
+                                                                                                                                PROGRESSSTATUS,
+                                                                                                                                CASE
+                                                                                                                                    WHEN PROGRESSSTATUS = 0 THEN 'Entered'
+                                                                                                                                    WHEN PROGRESSSTATUS = 1 THEN 'Planned'
+                                                                                                                                    WHEN PROGRESSSTATUS = 2 THEN 'Progress'
+                                                                                                                                    WHEN PROGRESSSTATUS = 3 THEN 'Closed'
+                                                                                                                                END AS STATUS_OPERATION
+                                                                                                                            FROM 
+                                                                                                                                VIEWPRODUCTIONDEMANDSTEP v
+                                                                                                                            LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
+                                                                                                                            WHERE 
+                                                                                                                                PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND 
+                                                                                                                                GROUPSTEPNUMBER $groupstep_option
+                                                                                                                            ORDER BY 
+                                                                                                                                GROUPSTEPNUMBER ASC LIMIT 1");
                                                                                 $d_not_cnp_close        = db2_fetch_assoc($q_not_cnp1);
 
-                                                                                $kode_dept          = $d_not_cnp_close['OPERATIONGROUPCODE'];
-                                                                                $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
-                                                                                $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
+                                                                                if ($d_not_cnp_close) {
+                                                                                    $kode_dept          = $d_not_cnp_close['OPERATIONGROUPCODE'];
+                                                                                    $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
+                                                                                    $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
+                                                                                } else {
+                                                                                    $status = 'H';
+                                                                                    $groupstep_option       = "= '$groupstepnumber'";
+                                                                                    $q_not_cnp1             = db2_exec($conn1, "SELECT 
+                                                                                                                                GROUPSTEPNUMBER,
+                                                                                                                                TRIM(OPERATIONCODE) AS OPERATIONCODE,
+                                                                                                                                TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
+                                                                                                                                o.LONGDESCRIPTION AS LONGDESCRIPTION,
+                                                                                                                                PROGRESSSTATUS,
+                                                                                                                                CASE
+                                                                                                                                    WHEN PROGRESSSTATUS = 0 THEN 'Entered'
+                                                                                                                                    WHEN PROGRESSSTATUS = 1 THEN 'Planned'
+                                                                                                                                    WHEN PROGRESSSTATUS = 2 THEN 'Progress'
+                                                                                                                                    WHEN PROGRESSSTATUS = 3 THEN 'Closed'
+                                                                                                                                END AS STATUS_OPERATION
+                                                                                                                            FROM 
+                                                                                                                                VIEWPRODUCTIONDEMANDSTEP v
+                                                                                                                            LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
+                                                                                                                            WHERE 
+                                                                                                                                PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND 
+                                                                                                                                GROUPSTEPNUMBER $groupstep_option
+                                                                                                                            ORDER BY 
+                                                                                                                                GROUPSTEPNUMBER ASC LIMIT 1");
+                                                                                    $d_not_cnp_close        = db2_fetch_assoc($q_not_cnp1);
+
+                                                                                    $kode_dept          = $d_not_cnp_close['OPERATIONGROUPCODE'];
+                                                                                    $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
+                                                                                    $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
+                                                                                }
                                                                             }
-                                                                        }
-                                                                    } else {
-                                                                        $status = 'H';
-                                                                        if ($row_status_close['PROGRESSSTATUS'] == 2) {
-                                                                            $status = 'I';
-                                                                            $groupstep_option       = "= '$groupstepnumber'";
                                                                         } else {
-                                                                            $status = 'J';
-                                                                            $groupstep_option       = "> '$groupstepnumber'";
+                                                                            $status = 'H';
+                                                                            if ($row_status_close['PROGRESSSTATUS'] == 2) {
+                                                                                $status = 'I';
+                                                                                $groupstep_option       = "= '$groupstepnumber'";
+                                                                            } else {
+                                                                                $status = 'J';
+                                                                                $groupstep_option       = "> '$groupstepnumber'";
+                                                                            }
+                                                                            $status = 'K';
+                                                                            $q_StatusTerakhir   = db2_exec($conn1, "SELECT 
+                                                                                                                        p.PRODUCTIONORDERCODE, 
+                                                                                                                        p.GROUPSTEPNUMBER, 
+                                                                                                                        p.OPERATIONCODE, 
+                                                                                                                        TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
+                                                                                                                        o.LONGDESCRIPTION AS LONGDESCRIPTION, 
+                                                                                                                        CASE
+                                                                                                                            WHEN p.PROGRESSSTATUS = 0 THEN 'Entered'
+                                                                                                                            WHEN p.PROGRESSSTATUS = 1 THEN 'Planned'
+                                                                                                                            WHEN p.PROGRESSSTATUS = 2 THEN 'Progress'
+                                                                                                                            WHEN p.PROGRESSSTATUS = 3 THEN 'Closed'
+                                                                                                                        END AS STATUS_OPERATION,
+                                                                                                                        wc.LONGDESCRIPTION AS DEPT, 
+                                                                                                                        p.WORKCENTERCODE
+                                                                                                                    FROM 
+                                                                                                                        VIEWPRODUCTIONDEMANDSTEP p
+                                                                                                                    LEFT JOIN WORKCENTER wc ON wc.CODE = p.WORKCENTERCODE
+                                                                                                                    LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE
+                                                                                                                    WHERE 
+                                                                                                                        p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND
+                                                                                                                        (p.PROGRESSSTATUS = '0' OR p.PROGRESSSTATUS = '1' OR p.PROGRESSSTATUS ='2') 
+                                                                                                                        AND p.GROUPSTEPNUMBER $groupstep_option
+                                                                                                                    ORDER BY p.GROUPSTEPNUMBER ASC LIMIT 1");
+                                                                            $d_StatusTerakhir   = db2_fetch_assoc($q_StatusTerakhir);
+                                                                            $kode_dept          = $d_StatusTerakhir['OPERATIONGROUPCODE'];
+                                                                            $status_terakhir    = $d_StatusTerakhir['LONGDESCRIPTION'];
+                                                                            $status_operation   = $d_StatusTerakhir['STATUS_OPERATION'];
                                                                         }
-                                                                        $status = 'K';
-                                                                        $q_StatusTerakhir   = db2_exec($conn1, "SELECT 
-                                                                                                                    p.PRODUCTIONORDERCODE, 
-                                                                                                                    p.GROUPSTEPNUMBER, 
-                                                                                                                    p.OPERATIONCODE, 
-                                                                                                                    TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
-                                                                                                                    o.LONGDESCRIPTION AS LONGDESCRIPTION, 
-                                                                                                                    CASE
-                                                                                                                        WHEN p.PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                                                                        WHEN p.PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                                                                        WHEN p.PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                                                                        WHEN p.PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                                                                    END AS STATUS_OPERATION,
-                                                                                                                    wc.LONGDESCRIPTION AS DEPT, 
-                                                                                                                    p.WORKCENTERCODE
-                                                                                                                FROM 
-                                                                                                                    VIEWPRODUCTIONDEMANDSTEP p
-                                                                                                                LEFT JOIN WORKCENTER wc ON wc.CODE = p.WORKCENTERCODE
-                                                                                                                LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE
-                                                                                                                WHERE 
-                                                                                                                    p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND
-                                                                                                                    (p.PROGRESSSTATUS = '0' OR p.PROGRESSSTATUS = '1' OR p.PROGRESSSTATUS ='2') 
-                                                                                                                    AND p.GROUPSTEPNUMBER $groupstep_option
-                                                                                                                ORDER BY p.GROUPSTEPNUMBER ASC LIMIT 1");
-                                                                        $d_StatusTerakhir   = db2_fetch_assoc($q_StatusTerakhir);
-                                                                        $kode_dept          = $d_StatusTerakhir['OPERATIONGROUPCODE'];
-                                                                        $status_terakhir    = $d_StatusTerakhir['LONGDESCRIPTION'];
-                                                                        $status_operation   = $d_StatusTerakhir['STATUS_OPERATION'];
                                                                     }
                                                                 }
-                                                            }
                                                             ?>
                                                             <tr>
                                                                 <td><?= $rowdb2['ORDERDATE']->format('Y-m-d H:i:s'); ?></td> <!-- TGL TERIMA ORDER -->
@@ -865,6 +867,53 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                     echo number_format($d_netto_yd['BASESECONDARYQUANTITY'] ?? 0, 0);
                                                                     ?>
                                                                 </td> <!-- NETTO YD-->
+                                                                <?php
+                                                                    //ini_set("error_reporting", 0);
+                                                                    $sqlQtyKurang   = db2_exec($conn1, "SELECT
+                                                                                                            TRIM(NO_ORDER) AS NO_ORDER,
+                                                                                                            ORDERLINE,
+                                                                                                            KONVERSI,
+                                                                                                            NETTO,
+                                                                                                            NETTO_2,
+                                                                                                            SUM(QTY_SUDAH_KIRIM) AS QTY_SUDAH_KIRIM,
+                                                                                                            SUM(QTY_SUDAH_KIRIM_2) AS QTY_SUDAH_KIRIM_2,
+                                                                                                            NO_WARNA,
+                                                                                                            KET_PRODUCT
+                                                                                                        FROM
+                                                                                                            ITXVIEW_SUMMARY_QTY_DELIVERY isqd
+                                                                                                        WHERE
+                                                                                                            NO_ORDER = '$rowdb2[NO_ORDER]'
+                                                                                                            AND ORDERLINE = '$rowdb2[ORDERLINE]'
+                                                                                                            AND NOT QUALITYREASONCODE = 'FOC'
+                                                                                                        GROUP BY
+                                                                                                            NO_ORDER,
+                                                                                                            ORDERLINE,
+                                                                                                            KONVERSI,
+                                                                                                            NETTO,
+                                                                                                            NETTO_2,
+                                                                                                            NO_WARNA,
+                                                                                                            KET_PRODUCT
+                                                                                                        ORDER BY
+                                                                                                            ORDERLINE ASC");
+                                                                    $fetchDataQtyKurang     = db2_fetch_assoc($sqlQtyKurang);
+
+                                                                    $sqlQtyReady          = "SELECT
+                                                                                                SUM(BASEPRIMARYQUANTITYUNIT) AS QTY_READY,
+                                                                                                SUM(BASESECONDARYQUANTITYUNIT) AS QTY_READY_2
+                                                                                            FROM
+                                                                                                BALANCE b
+                                                                                            WHERE
+                                                                                                PROJECTCODE = '$fetchDataQtyKurang[NO_ORDER]'
+                                                                                                AND TRIM(DECOSUBCODE02) || '-' || TRIM(DECOSUBCODE03) = '$fetchDataQtyKurang[KET_PRODUCT]' 
+                                                                                                AND TRIM(DECOSUBCODE05) = '$fetchDataQtyKurang[NO_WARNA]'
+                                                                                                AND LOGICALWAREHOUSECODE = 'M031'";
+
+                                                                    $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
+                                                                    $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
+                                                                ?>
+                                                                <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format(($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2']) / $fetchDataQtyKurang['KONVERSI'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (KG) -->
+                                                                <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (YD/MTR) -->
+
                                                                 <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
                                                                 <td></td> <!-- TARGET SELESAI -->
                                                                 <td><?= $kode_dept; ?></td> <!-- KODE DEPT -->

@@ -33,6 +33,8 @@ include_once "utils/helper.php";
             <th>QTY PACKING</th>
             <th>NETTO(kg)</th>
             <th>NETTO(yd)</th>
+            <th>QTY KURANG (KG)</th>
+            <th>QTY KURANG (YD/MTR)</th>
             <th>DELAY</th>
             <th>TARGET SELESAI</th>
             <th>KODE DEPT</th>
@@ -571,6 +573,52 @@ include_once "utils/helper.php";
                             echo number_format($d_netto_yd['BASESECONDARYQUANTITY'],0);
                         ?>
                     </td> <!-- NETTO KG-->
+                    <?php
+                        $sqlQtyKurang   = db2_exec($conn1, "SELECT
+                                                                TRIM(NO_ORDER) AS NO_ORDER,
+                                                                ORDERLINE,
+                                                                KONVERSI,
+                                                                NETTO,
+                                                                NETTO_2,
+                                                                SUM(QTY_SUDAH_KIRIM) AS QTY_SUDAH_KIRIM,
+                                                                SUM(QTY_SUDAH_KIRIM_2) AS QTY_SUDAH_KIRIM_2,
+                                                                NO_WARNA,
+                                                                KET_PRODUCT
+                                                            FROM
+                                                                ITXVIEW_SUMMARY_QTY_DELIVERY isqd
+                                                            WHERE
+                                                                NO_ORDER = '$rowdb2[NO_ORDER]'
+                                                                AND ORDERLINE = '$rowdb2[ORDERLINE]'
+                                                                AND NOT QUALITYREASONCODE = 'FOC'
+                                                            GROUP BY
+                                                                NO_ORDER,
+                                                                ORDERLINE,
+                                                                KONVERSI,
+                                                                NETTO,
+                                                                NETTO_2,
+                                                                NO_WARNA,
+                                                                KET_PRODUCT
+                                                            ORDER BY
+                                                                ORDERLINE ASC");
+                        $fetchDataQtyKurang     = db2_fetch_assoc($sqlQtyKurang);
+
+                        $sqlQtyReady          = "SELECT
+                                                    SUM(BASEPRIMARYQUANTITYUNIT) AS QTY_READY,
+                                                    SUM(BASESECONDARYQUANTITYUNIT) AS QTY_READY_2
+                                                FROM
+                                                    BALANCE b
+                                                WHERE
+                                                    PROJECTCODE = '$fetchDataQtyKurang[NO_ORDER]'
+                                                    AND TRIM(DECOSUBCODE02) || '-' || TRIM(DECOSUBCODE03) = '$fetchDataQtyKurang[KET_PRODUCT]' 
+                                                    AND TRIM(DECOSUBCODE05) = '$fetchDataQtyKurang[NO_WARNA]'
+                                                    AND LOGICALWAREHOUSECODE = 'M031'";
+
+                        $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
+                        $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
+                    ?>
+                    <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format(($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2']) / $fetchDataQtyKurang['KONVERSI'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (KG) -->
+                    <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (YD/MTR) -->
+
                     <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
                     <td></td> <!-- TARGET SELESAI -->
                     <td><?= $kode_dept; ?></td> <!-- KODE DEPT -->
