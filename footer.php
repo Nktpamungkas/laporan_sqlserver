@@ -252,7 +252,7 @@ echo '</script>';
             let groupLine = response.groupLine;
             let formattedString = '';
             if (groupLine.length > 1) {
-              formattedString = groupLine.map(num => '${num}').join(',');
+              formattedString = groupLine.map(num => `'${num}'`).join(',');
             } else {
               formattedString = groupLine[0];
             }
