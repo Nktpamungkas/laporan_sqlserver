@@ -148,7 +148,7 @@ require_once "koneksi.php";
 
 
                                                         $currentIP = $_SERVER['REMOTE_ADDR'];
-                                                        $allowedIPs = ['10.0.5.132', '10.0.6.247', '10.0.5.91'];
+                                                        $allowedIPs = ['10.0.5.132', '10.0.6.247', '10.0.5.36', '10.0.7.75'];
 
                                                         if (!function_exists('checkIP')) {
                                                             function checkIP($curIP, $allowIP)
