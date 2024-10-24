@@ -1,7 +1,7 @@
-<?php 
-    ini_set("error_reporting", 1);
-    session_start();
-    require_once "koneksi.php";
+<?php
+ini_set("error_reporting", 1);
+session_start();
+require_once "koneksi.php";
 ?>
 <?php
 // Mulai session
@@ -90,16 +90,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 <th>Nozzle</th>
                                                                 <th>Pump</th>
                                                                 <th>Blower</th>
-                                                                
+
                                                                 <th>Plaiter</th>
                                                                 <th>Defect</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <?php
-                                                                $sql_query = $pdo_orgatex_main->prepare("
-                                                                SELECT [batch_ref_no], 
+                                                            $sql_query = $pdo_orgatex_main->prepare("SELECT [batch_ref_no], 
                                                                 [batch_text_01],
+                                                                [batch_text_06],
                                                                 [machine_no], 
                                                                 [batch_parameter_01], 
                                                                 [started], 
@@ -111,67 +111,110 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 [batch_parameter_09], 
                                                                 [batch_parameter_07], 
                                                                 [batch_parameter_08] 
-                                                                FROM BatchDetail WHERE (([machine_no] IN (N'1401', N'1402', N'1406', 
-                                                                N'1409', N'1410', N'1411', N'1412', N'1413', N'1419', N'1420', N'1421', 
-                                                                N'1444', N'1445', N'1449', N'1450', N'1451', N'1452', N'1453', N'1454', 
-                                                                N'1455', N'1456', N'1457', N'1458', N'1459', N'1465', N'1466', N'1467', 
-                                                                N'1468', N'1469', N'1470', N'1471', N'1472', N'1473', N'1474', N'1475', 
-                                                                N'1476', N'1477', N'1478', N'1479', N'1480', N'1481', N'1482', N'1483', 
-                                                                N'1484', N'1505', N'2228', N'2229', N'2230', N'2231', N'2246', N'2247', 
-                                                                N'2348', N'2622', N'2623', N'2624', N'2625', N'2626', N'2627', N'2632', 
-                                                                N'2633', N'2634', N'2635', N'2636', N'2638', N'2639', N'2640', N'2641'))) 
-                                                                AND (([batch_text_01] LIKE N'% %'))
-                                                                ");
+                                                                FROM BatchDetail WHERE [batch_text_01] not like '%[a-zA-Z]%' 
+                                                                and [batch_text_01] <> '' ");
 
-                                                                $sql_query->execute();
-                                                                $db_orgatex = $sql_query->fetchAll(PDO::FETCH_ASSOC);
-
-                                                                $no = 1;
+                                                            $sql_query->execute();
+                                                            $db_orgatex = $sql_query->fetchAll(PDO::FETCH_ASSOC);
+                                                            $no = 1;
                                                             ?>
+                                                            <!-- Query untuk dborgatex integ1-->
                                                             <?php foreach ($db_orgatex as $row_data_orgatex): ?>
-                                                            <tr>
-                                                                <td><?php echo $row_data_orgatex['batch_ref_no'] ?></td>
-                                                                <td>NOW</td>
-                                                                <td>NOW</td>
-                                                                <td>NOW</td>
-                                                                <td><?php echo $row_data_orgatex['batch_text_01'] ?></td>
+                                                                <?php $sql_query2 = $pdo_orgatex->prepare("SELECT 
+                                                                                                                    *
+                                                                                                                    FROM 
+                                                                                                                        Dyelots 
+                                                                                                                    WHERE 
+                                                                                                                        DyelotRefNo ='$row_data_orgatex[batch_ref_no]' 
+                                                                                                            ");
 
-                                                                <td><?php echo $row_data_orgatex['machine_no'] ?></td>
-                                                                <td>ORGATEX</td>
-                                                                <td>ORGATEX</td>
-                                                                <td>ORGATEX</td>
-                                                                <td>ORGATEX</td>
-
-                                                                <td><?php echo $row_data_orgatex['started'] ?></td>
-                                                                <td><?php echo $row_data_orgatex['terminated'] ?></td>
-                                                                <td>
-                                                                    <?php
-                                                                     if($row_data_orgatex['started']!=null && $row_data_orgatex['terminated']!=null){
-                                                                        $start_date = new DateTime($row_data_orgatex['started']);
-                                                                        $end_date = new DateTime($row_data_orgatex['terminated']);
-
-                                                                        $interval = $start_date->diff($end_date);
-
-                                                                        echo $interval->format('%h hour %i minute %s second');
-                                                                     }else{
-                                                                        echo '';
-                                                                     }
-
+                                                                $sql_query2->execute();
+                                                                $db_orgatex_integ = $sql_query2->fetchAll(PDO::FETCH_ASSOC);
+                                                                foreach ($db_orgatex_integ as $row_integ):
                                                                     ?>
-                                                                </td>
-                                                                <td>ORGATEX</td>
-                                                                <td>ORGATEX</td>
+                                                                    <!-- End Query integ1-->
 
-                                                                <td>ORGATEX</td>
-                                                                <td>ONLINE</td>
-                                                                <td>ONLINE</td>
-                                                                <td>ORGATEX</td>
-                                                                <td>ORGATEX</td>
+                                                                    <!-- Querry DB2 Untuk Row 1 -->
+                                                                    <?php $query_db2 = "SELECT 
+                                                                                        p.ITEMTYPEAFICODE,
+                                                                                        p.SUBCODE01,
+                                                                                        p.SUBCODE02,
+                                                                                        p.SUBCODE03,
+                                                                                        p.SUBCODE04, 
+                                                                                        p.SUBCODE05,
+                                                                                        p.SUBCODE06,
+                                                                                        p.SUBCODE07,
+                                                                                        p.SUBCODE08,
+                                                                                        TRIM(p.SUBCODE02) ||'-'||TRIM(p.SUBCODE03) AS no_hanger,
+                                                                                        p2.LONGDESCRIPTION,
+                                                                                        DECIMAL(a.VALUEDECIMAL,10,0)||'x'||DECIMAL(a2.VALUEDECIMAL,10,0) AS LxG
+                                                                                    FROM ITXVIEWKK p
+                                                                                    LEFT JOIN PRODUCT p2 ON p2.ITEMTYPECODE = p.ITEMTYPEAFICODE 
+                                                                                    AND p2.SUBCODE01 = p.SUBCODE01
+                                                                                    AND p2.SUBCODE02 = p.SUBCODE02
+                                                                                    AND p2.SUBCODE03 = p.SUBCODE03
+                                                                                    AND p2.SUBCODE04 = p.SUBCODE04
+                                                                                    AND p2.SUBCODE05 = p.SUBCODE05
+                                                                                    AND p2.SUBCODE06 = p.SUBCODE06
+                                                                                    AND p2.SUBCODE07 = p.SUBCODE07
+                                                                                    AND p2.SUBCODE08 = p.SUBCODE08
+                                                                                    LEFT JOIN 
+                                                                                    ADSTORAGE a ON a.UNIQUEID = p2.ABSUNIQUEID
+                                                                                    AND a.FIELDNAME ='Width'
+                                                                                    LEFT JOIN 
+                                                                                    ADSTORAGE a2 ON a2.UNIQUEID = p2.ABSUNIQUEID
+                                                                                    AND a2.FIELDNAME ='GSM'
+                                                                                    WHERE p.CODE ='$row_integ[Dyelot]'";
+                                                                                    
+                                                                            $db2exec1 = db2_exec($conn1, $query_db2);
+                                                                            $db2_data = db2_fetch_assoc($db2exec1); ?>
+                                                                    <!-- End Query Db2 -->
 
-                                                                <td>ONLINE</td>
-                                                                <td>NOW</td>
+                                                                    <tr>
+                                                                        <td><?php echo $row_data_orgatex['batch_ref_no'] ?></td>
+                                                                        <td><?php echo $db2_data['LONGDESCRIPTION'] ?></td>
+                                                                        <td><?php echo $db2_data['NO_HANGER'] ?></td>
+                                                                        <td><?php echo $db2_data['LXG'] ?></td>
+                                                                        <td><?php echo $row_data_orgatex['batch_text_06'] ?>
+                                                                        </td>
 
-                                                            </tr>
+                                                                        <td><?php echo $row_data_orgatex['machine_no'] ?></td>
+                                                                        <td>ORGATEX</td>
+                                                                        <td>ORGATEX</td>
+                                                                        <td>ORGATEX</td>
+                                                                        <td>ORGATEX</td>
+
+                                                                        <td><?php echo $row_data_orgatex['started'] ?></td>
+                                                                        <td><?php echo $row_data_orgatex['terminated'] ?></td>
+                                                                        <td>
+                                                                            <?php
+                                                                            if ($row_data_orgatex['started'] != null && $row_data_orgatex['terminated'] != null) {
+                                                                                $start_date = new DateTime($row_data_orgatex['started']);
+                                                                                $end_date = new DateTime($row_data_orgatex['terminated']);
+
+                                                                                $interval = $start_date->diff($end_date);
+
+                                                                                echo $interval->format('%h hour %i minute %s second');
+                                                                            } else {
+                                                                                echo '';
+                                                                            }
+
+                                                                            ?>
+                                                                        </td>
+                                                                        <td>ORGATEX</td>
+                                                                        <td>ORGATEX</td>
+
+                                                                        <td>ORGATEX</td>
+                                                                        <td>ONLINE</td>
+                                                                        <td>ONLINE</td>
+                                                                        <td>ORGATEX</td>
+                                                                        <td>ORGATEX</td>
+
+                                                                        <td>ONLINE</td>
+                                                                        <td>NOW</td>
+
+                                                                    </tr>
+                                                                <?php endforeach; ?>
                                                             <?php endforeach; ?>
                                                         </tbody>
                                                     </table>
