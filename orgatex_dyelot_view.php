@@ -97,6 +97,7 @@ require_once "koneksi.php";
                                                 <thead>
                                                     <tr>
                                                         <th class="text-center">AutoKey</th>
+                                                        <th class="text-center">Dye Ref No</th>
                                                         <th class="text-center">Dyelot</th>
                                                         <th class="text-center">Redye</th>
                                                         <th class="text-center">Machine</th>
@@ -114,6 +115,7 @@ require_once "koneksi.php";
                                                     // Prepare the SQL query
                                                     $dyelots = $pdo_orgatex->query("SELECT
                                                     a.AutoKey, 
+                                                    a.DyelotRefNo,
                                                     a.Dyelot,
                                                     a.ReDye,
                                                     a.Machine,
@@ -121,6 +123,7 @@ require_once "koneksi.php";
                                                     a.QueueTime,
                                                     a.ImportState,
                                                     a.[State],
+                                                    b.[code] AS ErrorImportCode, 
                                                     b.[Desc] AS ImportDesc,
                                                     c.[Desc] AS StateDesc
                                                     FROM dbo.Dyelots AS a
@@ -172,13 +175,22 @@ require_once "koneksi.php";
                                                         ?>
                                                         <tr>
                                                             <td class="text-center"><?= $dyelot['AutoKey']; ?></td>
+                                                            <td class="text-center"><?= $dyelot['DyelotRefNo']; ?></td>
                                                             <td class="text-center"><?= $dyelot['Dyelot']; ?></td>
                                                             <td class="text-center"><?= $dyelot['ReDye']; ?></td>
                                                             <td class="text-center"><?= $dyelot['Machine']; ?></td>
                                                             <td class="text-center"><?= $dyelot['Color']; ?></td>
                                                             <td class="text-center"><?= $dyelot['QueueTime']; ?></td>
                                                             <td class="text-center"><?= $dyelot['ImportState'] . ' ' . $badge ?></td>
-                                                            <td><?= "<div class='text-wrap width-desc'>" . $dyelot['ImportDesc'] . "</div>" ?></td>
+                                                            <td>
+                                                                <?php
+                                                                    if ($dyelot['ErrorImportCode'] != 0) {
+                                                                        echo "<div class='text-wrap width-desc'>" . $dyelot['ErrorImportCode'] . ' - ' . $dyelot['ImportDesc'] . "</div>";
+                                                                    } else {
+                                                                        echo "<div class='text-wrap width-desc'>" . $dyelot['ImportDesc'] . "</div>";
+                                                                    }
+                                                                ?>
+                                                            </td>                                                            
                                                             <td class="text-center"><?= $dyelot['State']; ?></td>
                                                             <td><?= "<div class='text-wrap width-desc2'>" . $dyelot['StateDesc'] . "</div>" ?></td>
                                                             <td class="text-center"><?= $buttons ?></td>
