@@ -186,6 +186,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($machines as $machine) {
         $machineID = $machine['MachineNo'];
 
+        $sqlCheck = "SELECT LogTimeStamp as logTimeStamp, 
+            MachineProtocol.AlarmNo as value, 
+            AlarmList.AlarmText as reason 
+            FROM MachineProtocol 
+            LEFT JOIN AlarmList ON AlarmList.AlarmNo = MachineProtocol.AlarmNo 
+            WHERE MachineProtocol.Machine = :machineID AND 
+            MachineProtocol.LogTimeStamp BETWEEN :startDate AND :endDate 
+            AND MachineProtocol.AlarmNo=0
+            ORDER BY MachineProtocol.LogTimeStamp";
+        
+        $sqlCheck = $pdo_orgatex->prepare($sqlCheck);
+        $sqlCheck->bindParam(':machineID', $machineID);
+        $sqlCheck->bindParam(':startDate', $startDate);
+        $sqlCheck->bindParam(':endDate', $endDate);
+        $sqlCheck->execute();
+
+        $rowChecks = $sqlCheck->fetchAll(PDO::FETCH_ASSOC);
+
         $sqlLogs = "SELECT LogTimeStamp as logTimeStamp, 
             MachineProtocol.AlarmNo as value, 
             AlarmList.AlarmText as reason 
@@ -222,7 +240,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hours = floor($totalSeconds / 3600);
         $minutes = floor(($totalSeconds % 3600) / 60);
         $seconds = $totalSeconds % 60;
-        $totalStop = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+
+        if (count($rowChecks) > 0) {
+            $totalStop = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+        } else {
+            $totalStop = "OFFLINE";
+        }
+
+
 
         $startDateTime = new DateTime($startDate);
         $endDateTime = new DateTime($endDate);
@@ -266,12 +291,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 <td><?php echo htmlspecialchars($item['machine_number']); ?></td>
                                                                 <td><?php echo $item['machine_capacity']; ?></td>
                                                                 <td><?php echo $item['machine_description']; ?></td>
-                                                                <td><?php echo htmlspecialchars($item['total_stop']); ?></td>
+                                                                <td><?php echo $item['total_stop']; ?></td>
                                                                 <td><?php echo htmlspecialchars($item['total_percentage_running']); ?>%</td>
 
                                                                 <td>
-                                                                    <!-- Button to open the modal -->
-                                                                    <button class="btn btn-info btn-sm view-details" data-machine-id="<?php echo htmlspecialchars($item['machine_number']); ?>" data-toggle="modal" data-target="#machineDetailsModal">View Details</button>
+                                                                    <?php if ($item['total_stop'] !== 'OFFLINE'): ?>
+                                                                        <!-- Button to open the modal -->
+                                                                        <button class="btn btn-info btn-sm view-details" data-machine-id="<?php echo htmlspecialchars($item['machine_number']); ?>" data-toggle="modal" data-target="#machineDetailsModal">View Details</button>
+                                                                    <?php endif; ?>
                                                                 </td>
                                                             </tr>
                                                             <?php endforeach; ?>
