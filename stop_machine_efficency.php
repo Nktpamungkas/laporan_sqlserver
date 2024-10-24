@@ -186,22 +186,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($machines as $machine) {
         $machineID = $machine['MachineNo'];
 
-        // $sqlCheck = "SELECT 
-        //     MachineProtocol.AlarmNo as value
-        //     FROM MachineProtocol 
-        //     WHERE MachineProtocol.Machine = :machineID AND 
-        //     MachineProtocol.LogTimeStamp BETWEEN :startDate AND :endDate 
-        //     AND MachineProtocol.AlarmNo>0
-        //     ORDER BY MachineProtocol.LogTimeStamp";
-        
-        // $sqlCheck = $pdo_orgatex->prepare($sqlCheck);
-        // $sqlCheck->bindParam(':machineID', $machineID);
-        // $sqlCheck->bindParam(':startDate', $startDate);
-        // $sqlCheck->bindParam(':endDate', $endDate);
-        // $sqlCheck->execute();
-
-        // $rowChecks = $sqlCheck->fetchAll(PDO::FETCH_ASSOC);
-
         $sqlLogs = "SELECT LogTimeStamp as logTimeStamp, 
             MachineProtocol.AlarmNo as value, 
             AlarmList.AlarmText as reason 
