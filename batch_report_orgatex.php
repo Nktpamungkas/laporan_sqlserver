@@ -68,6 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         <thead>
                                                             <tr>
                                                                 <th>Batch No</th>
+                                                                <th>No KK</th>
+                                                                <th>No Demand</th>
                                                                 <th>Komposisi Kain</th>
                                                                 <th>No Item</th>
                                                                 <th>LxG</th>
@@ -190,7 +192,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                     
                                                                     <!-- End query -->
                                                                     <tr>
-                                                                        <td><?php echo $row_data_orgatex['batch_ref_no'] ?></td>
+                                                                        <td><?php echo $row_data_orgatex['batch_ref_no'];?></td>
+                                                                        <td><?php echo $row_integ['Dyelot']; ?></td>
+                                                                        <td><?php echo $db2_data['DEMAND']; ?></td>
                                                                         <td><?php echo $db2_data['LONGDESCRIPTION'] ?></td>
                                                                         <td><?php echo $db2_data['NO_HANGER'] ?></td>
                                                                         <td><?php echo $db2_data['LXG'] ?></td>
