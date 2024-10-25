@@ -60,7 +60,8 @@
     MachineProtocol.AlarmNo as value, 
     AlarmList.AlarmText as reason 
     FROM MachineProtocol 
-    LEFT JOIN AlarmList ON AlarmList.AlarmNo = MachineProtocol.AlarmNo 
+    LEFT JOIN AlarmList ON AlarmList.AlarmNo = MachineProtocol.AlarmNo
+    LEFT JOIN Dyelots ON Dyelots.DyelotRefNo = MachineProtocol.DyelotRefNo 
     WHERE MachineProtocol.Machine = :machineID AND 
     MachineProtocol.LogTimeStamp BETWEEN :startDate AND :endDate
     ORDER BY MachineProtocol.LogTimeStamp";
