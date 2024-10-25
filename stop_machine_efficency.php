@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     <div class="input-group input-group-sm">
                                                         <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" id="tglAwal"
                                                             value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl']; } ?>">
-                                                        <input name="time" id="time" type="text" class="form-control" id="time" value="07:00" size="5" maxlength="5" required readonly>
+                                                        <input name="time" id="time" type="text" class="form-control" id="time" value="23:00" size="5" maxlength="5" required readonly>
                                                     </div>
                                                 </div>
                                                 
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     <div class="input-group input-group-sm">
                                                         <input type="date" class="form-control" placeholder="input-group-sm" name="tgl2" id="tglAkhir"
                                                             value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>">
-                                                        <input name="time2" id="time2" type="text" class="form-control" id="time2" value="07:00" size="5" maxlength="5" required readonly>
+                                                        <input name="time2" id="time2" type="text" class="form-control" id="time2" value="23:00" size="5" maxlength="5" required readonly>
                                                     </div>
                                                 </div>
                                             
@@ -190,6 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             MachineProtocol.AlarmNo as value, 
             AlarmList.AlarmText as reason 
             FROM MachineProtocol 
+            LEFT JOIN Dyelots ON Dyelots.DyelotRefNo = MachineProtocol.DyelotRefNo
             LEFT JOIN AlarmList ON AlarmList.AlarmNo = MachineProtocol.AlarmNo 
             WHERE MachineProtocol.Machine = :machineID AND 
             MachineProtocol.LogTimeStamp BETWEEN :startDate AND :endDate
@@ -415,8 +416,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (timeRange === 'custom') {
             tglAwal.disabled = false;
             tglAkhir.disabled = false;
-            time.value = '07:00';
-            time2.value = '07:00';
+            time.value = '23:00';
+            time2.value = '23:00';
         } else {
             tglAwal.disabled = true;
             tglAkhir.disabled = true;
