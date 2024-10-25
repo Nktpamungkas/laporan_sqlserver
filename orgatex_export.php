@@ -29,6 +29,7 @@ require_once "koneksi.php";
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="alert/toastr.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="dist/css/select2.min.css"></link>
+    <link rel="stylesheet" type="text/css" href="dist/css/select2.css"></link>
     <link rel="stylesheet" type="text/css" href="files\assets\icon\font-awesome\css\font-awesome.min.css">
 
     <style>
