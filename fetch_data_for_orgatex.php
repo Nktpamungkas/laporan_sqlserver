@@ -5,7 +5,8 @@ if (isset($_POST['production_number'])) {
     $orderCode = $_POST['production_number'];
     $groupLineArray = $_POST['groupLineArray'];
     $groupLine = $_POST['groupLine'];
-
+    $arrayDariGetGroup = $_POST['arrayDariGetGroup'];
+    
     // Query to fetch the main data based on production number
     $sqlMain = "SELECT
                     DISTINCT 
@@ -340,6 +341,7 @@ if (isset($_POST['production_number'])) {
             'reelSpeed' => $dataMain['REELSPEED'],
             'absorption' => $dataMain['ABSORPTION'],
             'group_line' => (!empty($groupLineArray) || count($groupLineArray) > 1) ? $groupLineArray  :  $groupLine,
+            'arrayDariGetGroup' => $arrayDariGetGroup,
             'recipes' => $recipes,
             'treatments' => $treatments
         ]);
