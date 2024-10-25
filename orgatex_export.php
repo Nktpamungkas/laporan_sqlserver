@@ -92,15 +92,15 @@ require_once "koneksi.php";
                                                 <h6 style="font-weight: bold;">Dyelot</h6>
                                                 <input type="text" id="dyelot" class="form-control" readonly>
                                             </div>
-                                            <!-- <div class="col-sm-12 col-xl-2 m-b-10">
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Group Line</h6>
                                                 <input type="text" id="group_line" class="form-control" readonly>
-                                            </div> -->
-                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                            </div>
+                                            <!-- <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Group Line</h6>
                                                  <select class="js-example-basic-multiple" id="group_line" name="group_line[]" multiple="multiple">
                                                 </select>
-                                            </div>
+                                            </div> -->
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Redye</h6>
                                                 <input type="text" id="redye" class="form-control" readonly>
