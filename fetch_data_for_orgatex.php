@@ -346,6 +346,7 @@ if (isset($_POST['production_number'])) {
             'treatments' => $treatments
         ]);
     } else {
-        echo json_encode(['success' => false]);
+        // echo json_encode(['success' => false]);
+        echo json_encode(['success' => false, 'message' => 'Data sudah ada dalam daftar Batch Export.']);
     }
 }

@@ -428,7 +428,8 @@ echo '</script>';
               hideLoading();
             } else {
               hideLoading();
-              showToastError('Data not found, please check your production number');
+              // showToastError('Data not found, please check your production number');
+              showToastError(data.message);
             }
 
           },
