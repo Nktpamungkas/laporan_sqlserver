@@ -2,6 +2,38 @@
 ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
+
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    $messageType = $_SESSION['success']; // Pastikan Anda menggunakan ini untuk menyimpan tipe pesan
+
+    echo "<script>
+        window.onload = function() {
+            if ('{$messageType}' === 'true') {
+                Swal.fire({
+                    title: 'Success!',
+                    text: '{$message}',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: '{$message}',
+                    icon: 'error',
+                    showConfirmButton: true
+                });
+            }
+        };
+    </script>";
+
+    // Hapus pesan setelah ditampilkan
+    unset($_SESSION['message']);
+    unset($_SESSION['success']);
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,6 +62,10 @@ require_once "koneksi.php";
     <link href="alert/toastr.css" rel="stylesheet" />
     <link href="alert/sweetalert2.min.css" rel="stylesheet" />
     <style>
+        a.three:link {color:#ff0000;}
+        a.three:visited {color:#0000ff;}
+        a.three:hover {background:#66ff66;}
+
         .text-wrap {
             white-space: normal;
         }
@@ -189,12 +225,57 @@ require_once "koneksi.php";
                                                                     if ($dyelot['ErrorImportCode'] != 0) {
                                                                         if ($dyelot['ErrorImportCode'] == 9709) {
                                                                             echo "<div class='text-wrap width-desc'>
-                                                                                <a href='#' data-toggle='modal'data-target='#modalDetail'>
+                                                                                <a href='#' class='three' data-toggle='modal'data-target='#modalDetail'>
                                                                                     " . $dyelot['ErrorImportCode'] . "
-                                                                                </a> - " . $dyelot['ImportDesc'] . "
+                                                                                </a> - " . $dyelot['ImportDesc'] . " <button class='btn btn-sm btn-outline-danger' data-toggle='modal' data-target='#modalDelete" . $dyelot['DyelotRefNo'] . "'>Delete</button>
                                                                             </div>";
-                                                                        }
+
+                                                                            echo "
+                                                                                <div class='modal fade' role='dialog' id='modalDelete" . $dyelot['DyelotRefNo'] . "' >
+                                                                                    <div class='modal-dialog modal-lg'>
+                                                                                        <div class='modal-content'>
+                                                                                            <form action='delete_batch_detail.php' method='POST'>
+                                                                                                <div class='modal-header'>
+                                                                                                    <h5 class='modal-title'>Delete Batch Assistant/" . $dyelot['DyelotRefNo'] . "</h5>
+                                                                                                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                                                                                                        <span aria-hidden='true'>&times;</span>
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                                <div class='modal-body text-center'>
+                                                                                                    <svg aria-hidden='true' height='24' viewBox='0 0 24 24' version='1.1' width='24' class='octicon octicon-repo-locked color-fg-muted mt-2'>
+                                                                                                        <path d='M2 2.75A2.75 2.75 0 0 1 4.75 0h14.5a.75.75 0 0 1 .75.75v8a.75.75 0 0 1-1.5 0V1.5H4.75c-.69 0-1.25.56-1.25 1.25v12.651A2.987 2.987 0 0 1 5 15h6.25a.75.75 0 0 1 0 1.5H5A1.5 1.5 0 0 0 3.5 18v1.25c0 .69.56 1.25 1.25 1.25h6a.75.75 0 0 1 0 1.5h-6A2.75 2.75 0 0 1 2 19.25V2.75Z'></path>
+                                                                                                        <path d='M15 14.5a3.5 3.5 0 1 1 7 0V16h.25c.966 0 1.75.784 1.75 1.75v4.5A1.75 1.75 0 0 1 22.25 24h-7.5A1.75 1.75 0 0 1 13 22.25v-4.5c0-.966.784-1.75 1.75-1.75H15Zm3.5-2a2 2 0 0 0-2 2V16h4v-1.5a2 2 0 0 0-2-2Z'></path>
+                                                                                                    </svg>
+                                                                                                    <p class='font-weight-bold mt-2'>DeleteBatchAssistant/" . $dyelot['DyelotRefNo'] . "</p>
+                                                                                                   <div class='row'>
+                                                                                                        <div class='col-10 mx-auto'>
+                                                                                                            <input class='form-control' type='text' name='validasi' required>
+                                                                                                        </div>
+                                                                                                        <div class='col-10 mx-auto'>
+                                                                                                            <input class='form-control' type='hidden' value='" . $dyelot['DyelotRefNo'] . "' name='dyelotRefNo'>
+                                                                                                        </div>
+                                                                                                        <div class='col-10 mx-auto'>
+                                                                                                            <input class='form-control' type='hidden' value='" . $dyelot['Dyelot'] . "' name='dyelot'>
+                                                                                                        </div>
+                                                                                                        <div class='col-10 mx-auto'>
+                                                                                                            <input class='form-control' type='hidden' value='" . $dyelot['ReDye'] . "' name='reDye'>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                </div>
+                                                                                                <div class='modal-footer'>
+                                                                                                    <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>
+                                                                                                    <button class='btn btn-danger' type='submit' name='delete_data'>Delete this data</button>
+                                                                                                </div>
+                                                                                            </form>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                ";
+
+                                                                        }else{
                                                                             echo "<div class='text-wrap width-desc'>" . $dyelot['ErrorImportCode'] . ' - ' . $dyelot['ImportDesc'] . "</div>";
+                                                                        }
                                                                     } else {
                                                                         echo "<div class='text-wrap width-desc'>" . $dyelot['ImportDesc'] . "</div>";
                                                                     }
