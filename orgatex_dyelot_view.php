@@ -114,22 +114,24 @@ require_once "koneksi.php";
                                                     <?php
                                                     // Prepare the SQL query
                                                     $dyelots = $pdo_orgatex->query("SELECT
-                                                    a.AutoKey, 
-                                                    a.DyelotRefNo,
-                                                    a.Dyelot,
-                                                    a.ReDye,
-                                                    a.Machine,
-                                                    a.Color,
-                                                    a.QueueTime,
-                                                    a.ImportState,
-                                                    a.[State],
-                                                    b.[code] AS ErrorImportCode, 
-                                                    b.[Desc] AS ImportDesc,
-                                                    c.[Desc] AS StateDesc
-                                                    FROM dbo.Dyelots AS a
-                                                    LEFT JOIN dbo.Error_codes_ImportError AS b ON b.code = a.ImportError
-                                                    LEFT JOIN dbo.Status_State AS c ON c.code = a.State
-                                                    ORDER BY a.AutoKey DESC")->fetchAll(PDO::FETCH_ASSOC);
+                                                                                        a.AutoKey,
+                                                                                        a.DyelotRefNo,
+                                                                                        a.Dyelot,
+                                                                                        a.ReDye,
+                                                                                        a.Machine,
+                                                                                        a.Color,
+                                                                                        LEFT(CONVERT(VARCHAR, a.QueueTime, 120), 16) AS QueueTime,
+                                                                                        a.ImportState,
+                                                                                        a.[State],
+                                                                                        b.[code] AS ErrorImportCode,
+                                                                                        b.[Desc] AS ImportDesc,
+                                                                                        c.[Desc] AS StateDesc 
+                                                                                    FROM
+                                                                                        dbo.Dyelots AS a
+                                                                                        LEFT JOIN dbo.Error_codes_ImportError AS b ON b.code = a.ImportError
+                                                                                        LEFT JOIN dbo.Status_State AS c ON c.code = a.State 
+                                                                                    ORDER BY
+                                                                                        a.AutoKey DESC")->fetchAll(PDO::FETCH_ASSOC);
                                                     ?>
                                                     <?php foreach ($dyelots as $dyelot): ?>
                                                         <?php
