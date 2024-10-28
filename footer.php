@@ -656,7 +656,7 @@ echo '</script>';
       };
       // Validasi bahwa nomor mesin tidak boleh kosong
       if (formData.machine) {
-        // if(formData.treatments.MAINPROGRAM = 1){
+        if(formData.treatments.MAINPROGRAM = 1){
           // ambil data dari table dan input
           $('#recipe_table tbody tr').each(function() {
             const code = $(this).find('td:nth-child(1)').text();
@@ -724,10 +724,10 @@ echo '</script>';
               showToastError('Something when wrong, please try again');
             }
           });
-        // }else{
-        //   hideLoading();
-        //   showToastError('Error export data, Silahkan periksa Nomor Treatment anda.');
-        // }
+        }else{
+          hideLoading();
+          showToastError('Error export data, Silahkan periksa Nomor Treatment anda.');
+        }
       } else {
         hideLoading();
         showToastError('Error export data, nomor mesin tidak boleh kosong, periksa apakah schedule sudah dibuat atau belum.');
