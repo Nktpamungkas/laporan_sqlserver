@@ -187,7 +187,14 @@ require_once "koneksi.php";
                                                             <td>
                                                                 <?php
                                                                     if ($dyelot['ErrorImportCode'] != 0) {
-                                                                        echo "<div class='text-wrap width-desc'>" . $dyelot['ErrorImportCode'] . ' - ' . $dyelot['ImportDesc'] . "</div>";
+                                                                        if ($dyelot['ErrorImportCode'] == 9709) {
+                                                                            echo "<div class='text-wrap width-desc'>
+                                                                                <a href='#' data-toggle='modal'data-target='#modalDetail'>
+                                                                                    " . $dyelot['ErrorImportCode'] . "
+                                                                                </a> - " . $dyelot['ImportDesc'] . "
+                                                                            </div>";
+                                                                        }
+                                                                            echo "<div class='text-wrap width-desc'>" . $dyelot['ErrorImportCode'] . ' - ' . $dyelot['ImportDesc'] . "</div>";
                                                                     } else {
                                                                         echo "<div class='text-wrap width-desc'>" . $dyelot['ImportDesc'] . "</div>";
                                                                     }
@@ -210,6 +217,34 @@ require_once "koneksi.php";
             </div>
         </div>
     </div>
+
+     <!-- Modal to show machine details -->
+    <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetail" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-fullscreen" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Error Detail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                  <h3>
+                    Langkah Penyelesaian:
+                  </h3>
+                  <h5>
+                    1. Buka Batch Assistant di program Orgatex.Cari data berdasarkan Batch Ref No.
+                    Pilih data yang sesuai, lalu klik Delete.
+                    Lakukan proses ekspor ulang.
+                  </h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script type="text/javascript" src="files\bower_components\jquery\js\jquery.min.js"></script>
     <script type="text/javascript" src="files\bower_components\jquery-ui\js\jquery-ui.min.js"></script>
