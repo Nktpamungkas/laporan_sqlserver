@@ -218,25 +218,22 @@ require_once "koneksi.php";
         </div>
     </div>
 
-     <!-- Modal to show machine details -->
+    <!-- Modal to show machine details -->
     <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetail" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-fullscreen" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary">
                     <h5 class="modal-title" id="detailsModalLabel">Error Detail</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                  <h3>
-                    Langkah Penyelesaian:
-                  </h3>
-                  <h5>
-                    1. Buka Batch Assistant di program Orgatex.Cari data berdasarkan Batch Ref No.
-                    Pilih data yang sesuai, lalu klik Delete.
-                    Lakukan proses ekspor ulang.
-                  </h5>
+                  <p class="font-weight-bold">Langkah Penyelesaian:</p>
+                  <p class="font-weight-normal">1. Buka <strong>Batch Assistant</strong> di program Orgatex.</p>
+                  <p class="font-weight-normal">2. Cari data berdasarkan <strong>Batch Ref No.</strong></p>
+                  <p class="font-weight-normal">3. Pilih data yang sesuai, lalu klik <strong>Delete.</strong></p>
+                  <p class="font-weight-normal">4. Lakukan proses <strong>ekspor ulang.</strong></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
