@@ -30,6 +30,10 @@ require_once "koneksi.php";
     <link href="alert/toastr.css" rel="stylesheet" />
     <link href="alert/sweetalert2.min.css" rel="stylesheet" />
     <style>
+        a.three:link {color:#ff0000;}
+        a.three:visited {color:#0000ff;}
+        a.three:hover {background:#66ff66;}
+
         .text-wrap {
             white-space: normal;
         }
@@ -89,6 +93,39 @@ require_once "koneksi.php";
                             <div class="col-sm-12">
                                 <div class="card">
                                     <div class="card-header">
+                                        <h5>Filter Data</h5>
+                                    </div>
+                                    <div class="card-block">
+                                        <form action="" method="post" enctype="multipart/form-data">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-xl-2 m-b-0">
+                                                    <h4 class="sub-title">Tanggal Awal</h4>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" value="<?php if (isset($_POST['cari'])) {
+                                                                                                                                                    echo $_POST['tgl'];
+                                                                                                                                                }else{
+                                                                                                                                                    echo date("Y-m-d");
+                                                                                                                                                } ?>">
+                                                    </div>
+                                                    <button type="submit" name="cari" class="btn btn-primary btn-sm"><i class="icofont icofont-search-alt-1"></i> Search</button>
+                                                    <input type="button" name="reset" value="Reset" onclick="window.location.href='orgatex_dyelot_view.php'" class="btn btn-warning btn-sm">
+                                                </div>
+                                                <div class="col-sm-12 col-xl-2 m-b-0">
+                                                    <h4 class="sub-title">Tanggal Akhir</h4>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl2" value="<?php if (isset($_POST['cari'])) {
+                                                                                                                                                    echo $_POST['tgl2'];
+                                                                                                                                                } else{
+                                                                                                                                                    echo date("Y-m-d");
+                                                                                                                                                } ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
                                         <h5>List Dyelot</h5>
                                     </div>
                                     <div class="card-block">
@@ -113,23 +150,33 @@ require_once "koneksi.php";
                                                 <tbody>
                                                     <?php
                                                     // Prepare the SQL query
+                                                    if($_POST['tgl1'] && $_POST['tgl2']){
+                                                        $where_date     = "WHERE CAST(a.QueueTime AS DATE) BETWEEN '$_POST[tgl1]' AND '$_POST[tgl2]'";
+                                                    }else{
+                                                        $where_date     = "WHERE CAST(a.QueueTime AS DATE) BETWEEN CAST(GETDATE() AS DATE) AND CAST(GETDATE() AS DATE)";
+                                                    }
                                                     $dyelots = $pdo_orgatex->query("SELECT
-                                                    a.AutoKey, 
-                                                    a.DyelotRefNo,
-                                                    a.Dyelot,
-                                                    a.ReDye,
-                                                    a.Machine,
-                                                    a.Color,
-                                                    a.QueueTime,
-                                                    a.ImportState,
-                                                    a.[State],
-                                                    b.[code] AS ErrorImportCode, 
-                                                    b.[Desc] AS ImportDesc,
-                                                    c.[Desc] AS StateDesc
-                                                    FROM dbo.Dyelots AS a
-                                                    LEFT JOIN dbo.Error_codes_ImportError AS b ON b.code = a.ImportError
-                                                    LEFT JOIN dbo.Status_State AS c ON c.code = a.State
-                                                    ORDER BY a.AutoKey DESC")->fetchAll(PDO::FETCH_ASSOC);
+                                                                                        a.AutoKey,
+                                                                                        a.DyelotRefNo,
+                                                                                        a.Dyelot,
+                                                                                        a.ReDye,
+                                                                                        a.Machine,
+                                                                                        a.Color,
+                                                                                        LEFT(CONVERT(VARCHAR, a.QueueTime, 120), 16) AS QueueTime,
+                                                                                        a.ImportState,
+                                                                                        a.[State],
+                                                                                        b.[code] AS ErrorImportCode,
+                                                                                        b.[Desc] AS ImportDesc,
+                                                                                        c.[Desc] AS StateDesc,
+                                                                                        d.batch_ref_no
+                                                                                    FROM
+                                                                                        [ORGATEX-INTEG].[dbo].[Dyelots] a
+                                                                                    LEFT JOIN [ORGATEX-INTEG].[dbo].[Error_codes_ImportError] b ON b.code = a.ImportError
+                                                                                    LEFT JOIN [ORGATEX-INTEG].[dbo].[Status_State] c ON c.code = a.State 
+                                                                                    LEFT JOIN [ORGATEX].[dbo].[BatchDetail] d ON d.batch_ref_no = a.DyelotRefNo COLLATE SQL_Latin1_General_CP1_CI_AS
+                                                                                    $where_date
+                                                                                    ORDER BY
+                                                                                        a.AutoKey DESC")->fetchAll(PDO::FETCH_ASSOC);
                                                     ?>
                                                     <?php foreach ($dyelots as $dyelot): ?>
                                                         <?php
@@ -185,7 +232,63 @@ require_once "koneksi.php";
                                                             <td>
                                                                 <?php
                                                                     if ($dyelot['ErrorImportCode'] != 0) {
-                                                                        echo "<div class='text-wrap width-desc'>" . $dyelot['ErrorImportCode'] . ' - ' . $dyelot['ImportDesc'] . "</div>";
+                                                                        if ($dyelot['ErrorImportCode'] == 9709) {
+                                                                            if(!empty($dyelot['batch_ref_no'])){
+                                                                                echo "<div class='text-wrap width-desc'>
+                                                                                    <a href='#' class='three' data-toggle='modal'data-target='#modalDetail'>
+                                                                                        " . $dyelot['ErrorImportCode'] . "
+                                                                                    </a> - " . $dyelot['ImportDesc'] . " <button class='btn btn-sm btn-outline-danger' data-toggle='modal' data-target='#modalDelete" . $dyelot['DyelotRefNo'] . "'>Delete</button>
+                                                                                </div>";
+
+                                                                                echo "
+                                                                                    <div class='modal fade' role='dialog' id='modalDelete" . $dyelot['DyelotRefNo'] . "' >
+                                                                                        <div class='modal-dialog modal-lg'>
+                                                                                            <div class='modal-content'>
+                                                                                                <form id='deleteBatchForm' method='POST'>
+                                                                                                    <div class='modal-header'>
+                                                                                                        <h5 class='modal-title'>Delete Batch Assistant/" . $dyelot['DyelotRefNo'] . "</h5>
+                                                                                                        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                                                                                                            <span aria-hidden='true'>&times;</span>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div class='modal-body text-center'>
+                                                                                                        <svg aria-hidden='true' height='24' viewBox='0 0 24 24' version='1.1' width='24' class='octicon octicon-repo-locked color-fg-muted mt-2'>
+                                                                                                            <path d='M2 2.75A2.75 2.75 0 0 1 4.75 0h14.5a.75.75 0 0 1 .75.75v8a.75.75 0 0 1-1.5 0V1.5H4.75c-.69 0-1.25.56-1.25 1.25v12.651A2.987 2.987 0 0 1 5 15h6.25a.75.75 0 0 1 0 1.5H5A1.5 1.5 0 0 0 3.5 18v1.25c0 .69.56 1.25 1.25 1.25h6a.75.75 0 0 1 0 1.5h-6A2.75 2.75 0 0 1 2 19.25V2.75Z'></path>
+                                                                                                            <path d='M15 14.5a3.5 3.5 0 1 1 7 0V16h.25c.966 0 1.75.784 1.75 1.75v4.5A1.75 1.75 0 0 1 22.25 24h-7.5A1.75 1.75 0 0 1 13 22.25v-4.5c0-.966.784-1.75 1.75-1.75H15Zm3.5-2a2 2 0 0 0-2 2V16h4v-1.5a2 2 0 0 0-2-2Z'></path>
+                                                                                                        </svg>
+                                                                                                        <p class='font-weight-bold mt-2'>DeleteBatchAssistant/" . $dyelot['DyelotRefNo'] . "</p>
+                                                                                                    <div class='row'>
+                                                                                                            <div class='col-10 mx-auto'>
+                                                                                                                <input class='form-control' type='text' name='validasi' required>
+                                                                                                            </div>
+                                                                                                            <div class='col-10 mx-auto'>
+                                                                                                                <input class='form-control' type='hidden' value='" . $dyelot['DyelotRefNo'] . "' name='dyelotRefNo'>
+                                                                                                            </div>
+                                                                                                            <div class='col-10 mx-auto'>
+                                                                                                                <input class='form-control' type='hidden' value='" . $dyelot['Dyelot'] . "' name='dyelot'>
+                                                                                                            </div>
+                                                                                                            <div class='col-10 mx-auto'>
+                                                                                                                <input class='form-control' type='hidden' value='" . $dyelot['ReDye'] . "' name='reDye'>
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                    </div>
+                                                                                                    <div class='modal-footer'>
+                                                                                                        <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>
+                                                                                                        <button class='btn btn-danger' type='submit' name='delete_data'>Delete this data</button>
+                                                                                                    </div>
+                                                                                                </form>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    ";
+                                                                            }else{
+                                                                                echo '<span style="background-color:yellow">Data pada Batch List telah <b>berhasil dihapus</b>. Silakan lakukan <b>impor ulang</b>.</span>';
+                                                                            }
+
+                                                                        }else{
+                                                                            echo "<div class='text-wrap width-desc'>" . $dyelot['ErrorImportCode'] . ' - ' . $dyelot['ImportDesc'] . "</div>";
+                                                                        }
                                                                     } else {
                                                                         echo "<div class='text-wrap width-desc'>" . $dyelot['ImportDesc'] . "</div>";
                                                                     }
@@ -208,6 +311,31 @@ require_once "koneksi.php";
             </div>
         </div>
     </div>
+
+    <!-- Modal to show machine details -->
+    <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetail" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title" id="detailsModalLabel">Error Detail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                  <p class="font-weight-bold">Langkah Penyelesaian:</p>
+                  <p class="font-weight-normal">1. Buka <strong>Batch Assistant</strong> di program Orgatex.</p>
+                  <p class="font-weight-normal">2. Cari data berdasarkan <strong>Batch Ref No.</strong></p>
+                  <p class="font-weight-normal">3. Pilih data yang sesuai, lalu klik <strong>Delete.</strong></p>
+                  <p class="font-weight-normal">4. Lakukan proses <strong>ekspor ulang.</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script type="text/javascript" src="files\bower_components\jquery\js\jquery.min.js"></script>
     <script type="text/javascript" src="files\bower_components\jquery-ui\js\jquery-ui.min.js"></script>
@@ -321,6 +449,59 @@ require_once "koneksi.php";
             });
 
         });
+
+         // Show loading overlay
+        function showLoading() {
+        $('#loadingOverlay').show();
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+        $('#loadingOverlay').hide();
+        }
+
+        // Show toast error
+        function showToastError(message) {
+        toastr.error(message, 'Error', {
+            closeButton: true,
+            progressBar: true,
+        });
+        }
+
+        // Show toast success
+        function showToastSuccess(message) {
+        toastr.success(message, 'Success', {
+            closeButton: true,
+            progressBar: true,
+        });
+        }
+
+       $(document).ready(function () {
+            $('#deleteBatchForm').on('submit', function (e) {
+                e.preventDefault(); // Mencegah form submit secara default
+                showLoading(); // Menampilkan loading indicator
+
+                $.ajax({
+                    url: 'delete_batch_detail.php', // Target file PHP
+                    type: 'POST',
+                    data: $(this).serialize(), // Mengirim data dari form
+                    dataType: 'json',
+                    success: function (response) {
+                        hideLoading(); // Sembunyikan loading indicator
+                        if (response.success) {
+                            showToastSuccess(response.message); // Tampilkan toast sukses
+                        } else {
+                            showToastError(response.message); // Tampilkan toast error
+                        }
+                    },
+                    error: function () {
+                        hideLoading(); // Sembunyikan loading indicator
+                        showToastError('Terjadi kesalahan, silakan coba lagi nanti.');
+                    }
+                });
+            });
+        });
+
     </script>
 </body>
 

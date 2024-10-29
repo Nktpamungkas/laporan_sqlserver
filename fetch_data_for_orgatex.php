@@ -5,7 +5,8 @@ if (isset($_POST['production_number'])) {
     $orderCode = $_POST['production_number'];
     $groupLineArray = $_POST['groupLineArray'];
     $groupLine = $_POST['groupLine'];
-
+    $arrayDariGetGroup = $_POST['arrayDariGetGroup'];
+    
     // Query to fetch the main data based on production number
     $sqlMain = "SELECT
                     DISTINCT 
@@ -280,8 +281,28 @@ if (isset($_POST['production_number'])) {
                         $mainValidation         = '<span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available';
                         $mainValidationNumber   = 1;
                     }else{
-                        $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please add your treatment to the machines.';
-                        $mainValidationNumber   = 0;
+                        $sqlValidationTreatment_main = $pdo_orgatex_main->prepare("SELECT
+                                                                                        Machine.machine_no AS MachineNo,
+                                                                                        Machine.name AS MachineName,
+                                                                                        Machine.group_no AS MGroupNo,
+                                                                                        Treat2TreatGroup.Treatment_ID AS TreatmentNo,
+                                                                                        Treatments.TreatmentName
+                                                                                    FROM
+                                                                                        Machine
+                                                                                    LEFT JOIN Treat2TreatGroup on Treat2TreatGroup.TreaGroup_ID = Machine.group_no
+                                                                                    LEFT JOIN [ORGATEX-INTEG].dbo.Treatments Treatments ON Treatments.TreatmentNo = Treat2TreatGroup.Treatment_ID
+                                                                                    WHERE
+                                                                                        Machine.machine_no = '$dataSchedule[no_mesin]'
+                                                                                        AND Treat2TreatGroup.Treatment_ID = '$treatmentArray[MAINPROGRAM]'");
+                        $sqlValidationTreatment_main->execute();
+                        $ValidationTreatment_main = $sqlValidationTreatment_main->fetch(PDO::FETCH_ASSOC);
+                        if($ValidationTreatment_main['TreatmentNo']){
+                            $mainValidation         = '<span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available';
+                            $mainValidationNumber   = 1;
+                        }else{
+                            $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please add your treatment to the machines.';
+                            $mainValidationNumber   = 0;
+                        }
                     }
                 }else{
                     $mainValidation     = '<span class="pcoded-micon"><i class="fa fa-exclamation-circle" style="color: #ff1b00;"></i></span> Not Available | Please add your treatment to the machines.';
@@ -340,10 +361,12 @@ if (isset($_POST['production_number'])) {
             'reelSpeed' => $dataMain['REELSPEED'],
             'absorption' => $dataMain['ABSORPTION'],
             'group_line' => (!empty($groupLineArray) || count($groupLineArray) > 1) ? $groupLineArray  :  $groupLine,
+            'arrayDariGetGroup' => $arrayDariGetGroup,
             'recipes' => $recipes,
             'treatments' => $treatments
         ]);
     } else {
-        echo json_encode(['success' => false]);
+        // echo json_encode(['success' => false]);
+        echo json_encode(['success' => false, 'message' => 'Data sudah ada dalam daftar Batch Export.']);
     }
 }

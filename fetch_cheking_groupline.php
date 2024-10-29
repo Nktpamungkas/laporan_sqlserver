@@ -5,6 +5,15 @@ if (isset($_POST['production_number'])) {
     $productionNumber = $_POST['production_number'];
 
     try {
+        $sqlCekRedye        = "SELECT STRING_AGG(CONCAT('''', ReDye, ''''), ', ') AS REDYE FROM [dbo].[Dyelots] WHERE Dyelot = '$productionNumber'";
+        $resultCekReDye     = $pdo_orgatex->query($sqlCekRedye)->fetch();
+
+        if($resultCekReDye['REDYE']){
+            $where_cekReDye     = "AND NOT VIEWPRODUCTIONRESERVATION.GROUPLINE IN ($resultCekReDye[REDYE])";
+        }else{
+            $where_cekReDye     = "";
+        }
+
         // Prepare the SQL query
         $sql_query = "SELECT
                  DISTINCT VIEWPRODUCTIONRESERVATION.GROUPLINE AS GROUPLINE
@@ -15,7 +24,8 @@ if (isset($_POST['production_number'])) {
                                                 AND ir.PRODUCTIONORDERCODE = VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE 
                 WHERE
                     VIEWPRODUCTIONRESERVATION.PRODUCTIONORDERCODE = '$productionNumber'
-                    AND VIEWPRODUCTIONRESERVATION.ITEMTYPEAFICODE = 'RFD'";
+                    AND VIEWPRODUCTIONRESERVATION.ITEMTYPEAFICODE = 'RFD'
+                    $where_cekReDye";
 
         // Execute the query
         $result = db2_exec($conn1, $sql_query);

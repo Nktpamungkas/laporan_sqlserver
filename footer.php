@@ -235,6 +235,36 @@ echo '</script>';
       });
     }
 
+    $(document).ready(function() {
+        $('.js-example-basic-multiple').select2();
+    });
+
+   // Event saat item dipilih
+    $('#group_line').on('select2:select', function(e) {
+        let selectedValues = $(this).val();
+        let productionNumber = $('#production_number').val();
+
+        let formattedString = selectedValues.length > 1
+            ? selectedValues.map(num => `'${num}'`).join(',')
+            : selectedValues[0];
+
+        // Panggil fungsi AJAX
+        jalankanFungsi2(productionNumber, formattedString, selectedValues[0], selectedValues);
+    });
+
+    // Event saat item di-unselect
+    $('#group_line').on('select2:unselect', function(e) {
+        let selectedValues = $(this).val() || []; // Handle case saat tidak ada yang terpilih
+        let productionNumber = $('#production_number').val();
+
+        let formattedString = selectedValues.length > 1
+            ? selectedValues.map(num => `'${num}'`).join(',')
+            : selectedValues[0] || ''; // Jika kosong, kembalikan string kosong
+
+        // Panggil fungsi AJAX
+        jalankanFungsi2(productionNumber, formattedString, selectedValues[0] || '', selectedValues);
+    });
+
     function getGroupLine(productionNumber) {
       showLoading();
       $.ajax({
@@ -246,8 +276,6 @@ echo '</script>';
         },
         success: function(response) {
 
-          console.log(response);
-
           if (response.success) {
             let groupLine = response.groupLine;
             let formattedString = '';
@@ -256,7 +284,7 @@ echo '</script>';
             } else {
               formattedString = groupLine[0];
             }
-            jalankanFungsi(productionNumber, formattedString, groupLine[0]);
+            jalankanFungsi(productionNumber, formattedString, groupLine[0],groupLine);
           } else {
             hideLoading();
             showToastError('Data not found, please check your production number');
@@ -272,7 +300,7 @@ echo '</script>';
     }
 
     // fungsi fetch data dari production number
-    function jalankanFungsi(productionNumber, groupLineArray, groupLine) {
+    function jalankanFungsi(productionNumber, groupLineArray, groupLine,arrayDariGetGroup) {
       if (productionNumber) {
         $.ajax({
           url: 'fetch_data_for_orgatex.php',
@@ -280,17 +308,30 @@ echo '</script>';
           data: {
             production_number: productionNumber,
             groupLineArray: groupLineArray,
-            groupLine: groupLine
+            groupLine: groupLine,
+            arrayDariGetGroup:arrayDariGetGroup
           },
           success: function(response) {
             const data = JSON.parse(response);
 
-            console.log(data);
-
             if (data.success) {
               // Populate input fields
               $('#dyelot').val(data.dyelot).prop('disabled', false);
-              $('#group_line').val(data.group_line).prop('disabled', false);
+             
+              let arrayDariGetGroup = data.arrayDariGetGroup;
+
+              // Kosongkan select terlebih dahulu
+              $('#group_line').empty();
+
+              // Tambahkan options ke select tanpa mengatur val di dalam loop
+              arrayDariGetGroup.forEach(element => {
+                  var newOption = new Option(element, element, false, false);
+                  $('#group_line').append(newOption);
+              });
+
+              // Setelah semua options ditambahkan, set val untuk yang terpilih
+              $('#group_line').val(arrayDariGetGroup).trigger('change');
+              
               $('#redye').val(data.redye).prop('disabled', false);
               $('#machine_number').val(data.machine).prop('disabled', false);
               $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
@@ -315,8 +356,6 @@ echo '</script>';
               // Populate the recipe table
               const tableBody = $('#recipe_table tbody');
               tableBody.empty(); // Clear existing rows
-
-              console.log(data.recipes);
 
               let currentGroup = null; // Track the current group number
               let callOff = 0; // Start with a call off of 1
@@ -358,7 +397,158 @@ echo '</script>';
               const tableBodyTreatment = $('#treatment_table tbody');
               tableBodyTreatment.empty(); // Clear existing rows
 
-              console.log(data.treatments);
+              tableBodyTreatment.append(`
+                                    <tr>
+                                        <td></td>
+                                        <td>9990</td>
+                                        <td>Progarm Start</td>
+                                        <td><span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available</td>
+                                    </tr>
+                                `);
+
+              data.treatments.forEach(treatment => {
+                tableBodyTreatment.append(`
+                                    <tr>
+                                        <td>${treatment.SUBCODE01} - ${treatment.SUFFIXCODE}</td>
+                                        <td>${treatment.MAINPROGRAM || ""}</td>
+                                        <td>${treatment.TREATMENTNAME || ""}</td>
+                                        <td>${treatment.VALIDATION || ""}</td>
+                                    </tr>
+                                `);
+              });
+
+              tableBodyTreatment.append(`
+                                    <tr>
+                                        <td>-</td>
+                                        <td>9991</td>
+                                        <td>Program End</td>
+                                        <td><span class="pcoded-micon"><i class="fa fa-check-circle" style="color: #0bdf0f;"></i></span> Available</td>
+                                    </tr>
+                                `);
+              hideLoading();
+            } else {
+              hideLoading();
+              // showToastError('Data not found, please check your production number');
+              showToastError(data.message);
+            }
+
+          },
+          error: function() {
+            hideLoading();
+            showToastError('Something when wrong, please try again');
+
+          }
+        });
+      } else {
+        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption').val('');
+        // Populate the recipe table
+        const tableBody = $('#recipe_table tbody');
+        tableBody.empty(); // Clear existing rows
+
+        // Populate the recipe table
+        const tableBodyTreatment = $('#treatment_table tbody');
+        tableBodyTreatment.empty(); // Clear existing rows
+      }
+    }
+
+    // fungsi fetch data dari production number
+    function jalankanFungsi2(productionNumber, groupLineArray, groupLine,arrayDariGetGroup) {
+       showLoading();
+      if (productionNumber) {
+        $.ajax({
+          url: 'fetch_data_for_orgatex.php',
+          type: 'POST',
+          data: {
+            production_number: productionNumber,
+            groupLineArray: groupLineArray,
+            groupLine: groupLine,
+            arrayDariGetGroup:arrayDariGetGroup
+          },
+          success: function(response) {
+            const data = JSON.parse(response);
+
+            if (data.success) {
+              // Populate input fields
+              $('#dyelot').val(data.dyelot).prop('disabled', false);
+             
+              let arrayDariGetGroup = data.arrayDariGetGroup;
+
+              // Kosongkan select terlebih dahulu
+              $('#group_line').empty();
+
+              // Tambahkan options ke select tanpa mengatur val di dalam loop
+              arrayDariGetGroup.forEach(element => {
+                  var newOption = new Option(element, element, false, false);
+                  $('#group_line').append(newOption);
+              });
+
+              // Setelah semua options ditambahkan, set val untuk yang terpilih
+              $('#group_line').val(arrayDariGetGroup).trigger('change');
+              
+              $('#redye').val(data.redye).prop('disabled', false);
+              $('#machine_number').val(data.machine).prop('disabled', false);
+              $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
+              $('#procedure_number').val(data.procedure_no).prop('disabled', false);
+              $('#color').val(data.color).prop('disabled', false);
+              $('#warna').val(data.warna).prop('disabled', false);
+
+              $('#recipe_number').val(data.recipe_number).prop('disabled', false);
+              $('#order_number').val(data.order_number).prop('disabled', false);
+              $('#customer_name').val(data.customer_name).prop('disabled', false);
+              $('#article').val(data.article).prop('disabled', false);
+              $('#color_number').val(data.color_number).prop('disabled', false);
+              $('#weight').val(data.weight).prop('disabled', false);
+
+              $('#length').val(data.length).prop('disabled', false);
+              $('#liquorRatio').val(data.liquorRatio).prop('disabled', false);
+              $('#liquorQuantity').val(data.liquorQuantity).prop('disabled', false);
+              $('#pumpSpeed').val(data.pumpSpeed).prop('disabled', false);
+              $('#reelSpeed').val(data.reelSpeed).prop('disabled', false);
+              $('#absorption').val(data.absorption).prop('disabled', false);
+
+              // Populate the recipe table
+              const tableBody = $('#recipe_table tbody');
+              tableBody.empty(); // Clear existing rows
+
+              let currentGroup = null; // Track the current group number
+              let callOff = 0; // Start with a call off of 1
+              let counter = 1; // Start counter from 1
+
+              data.recipes.forEach(recipe => {
+                const groupNumber = recipe.GROUPNUMBER;
+
+                // If the group number changes, increment callOff and reset counter
+                // pengecekan SUBCODE (untuk comment SUBCODEnya tidak ada / null), tidak perlu menghitung callof dan counter
+                if(recipe.SUBCODE){
+                  if (currentGroup !== groupNumber) {
+                    callOff++;
+                    counter = 1; // Reset counter to 1
+                    currentGroup = groupNumber; // Update current group
+                  } else {
+                    counter++; // Increment counter if the group number is the same
+                  }
+                }
+                tableBody.append(`
+                        <tr>
+                            <td>${recipe.CODE || ""}</td>
+                            <td>${recipe.SUBCODE || ""}</td>
+                            <td>${recipe.COMMENTLINE || ""}</td>
+                            <td>${recipe.LONGDESCRIPTION || ""}</td>
+                            <td>${(recipe.CONSUMPTION === '0.00000' || recipe.CONSUMPTION === 0) ? "" : recipe.CONSUMPTION || ''}</td>
+                            <td>${recipe.CONSUMPTIONTYPE || ''}</td>  
+                            <td>${recipe.QUANTITY || ""}</td>
+                            <td>${recipe.CONSUMPTIONTYPEQTY || ""}</td>
+                            <td>${groupNumber || ""}</td>
+                            <td>${recipe.SUBCODE ? callOff : ''}</td>
+                            <td>${recipe.SUBCODE ? counter : ''}</td>
+                        </tr>
+                    `);
+                // }
+              });
+
+              // Populate the recipe table
+              const tableBodyTreatment = $('#treatment_table tbody');
+              tableBodyTreatment.empty(); // Clear existing rows
 
               tableBodyTreatment.append(`
                                     <tr>
@@ -412,6 +602,7 @@ echo '</script>';
         tableBodyTreatment.empty(); // Clear existing rows
       }
     }
+
 
 
     var urlParams = new URLSearchParams(window.location.search);
@@ -523,11 +714,9 @@ echo '</script>';
                 hideLoading();
                 jalankanFungsi("");
                 showToastSuccess('Success export data, please check in program orgatex');
-                console.log(response); // Log the received data
               } else {
                 hideLoading();
                 showToastError('Error export data, please try again');
-                console.log(response);
               }
             },
             error: function() {
