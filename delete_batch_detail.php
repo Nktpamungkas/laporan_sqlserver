@@ -13,10 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
 
         if($validasi != "DeleteBatchAssistant/$batchRefNo"){
-            $_SESSION['message'] = 'Inputan tidak sesuai !';
-            $_SESSION['success'] = 'false'; 
-            header('Location: orgatex_dyelot_view.php'); 
-            exit();
+            echo json_encode(['success' => false, 'message' => 'Tidak sama yang anda input dengan yang seharusnya']);
         }
 
         // Persiapkan statement untuk memanggil stored procedure
@@ -34,16 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Eksekusi stored procedure
         $stmt->execute();
-        $_SESSION['message'] = 'Batch berhasil di hapus';
-        $_SESSION['success'] = 'true'; 
-        header('Location: orgatex_dyelot_view.php'); 
+        echo json_encode(['success' => true, 'message' => 'Batch berhasil di hapus']);
     } catch (PDOException $e) {
-        $_SESSION['message'] = 'Database Error: ' . $e->getMessage();
-        $_SESSION['success'] = 'false'; 
-        header('Location: orgatex_dyelot_view.php'); 
+        // Tangkap dan log error
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     } catch (Exception $e) {
-        $_SESSION['message'] = 'Error: ' . $e->getMessage();
-        $_SESSION['success'] = 'false'; 
-        header('Location: orgatex_dyelot_view.php'); 
+        // Tangkap error lainnya
+        echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
     }
 }

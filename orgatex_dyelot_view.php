@@ -2,38 +2,6 @@
 ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
-
-if (isset($_SESSION['message'])) {
-    $message = $_SESSION['message'];
-    $messageType = $_SESSION['success']; // Pastikan Anda menggunakan ini untuk menyimpan tipe pesan
-
-    echo "<script>
-        window.onload = function() {
-            if ('{$messageType}' === 'true') {
-                Swal.fire({
-                    title: 'Success!',
-                    text: '{$message}',
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: '{$message}',
-                    icon: 'error',
-                    showConfirmButton: true
-                });
-            }
-        };
-    </script>";
-
-    // Hapus pesan setelah ditampilkan
-    unset($_SESSION['message']);
-    unset($_SESSION['success']);
-}
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -237,7 +205,7 @@ if (isset($_SESSION['message'])) {
                                                                                     <div class='modal fade' role='dialog' id='modalDelete" . $dyelot['DyelotRefNo'] . "' >
                                                                                         <div class='modal-dialog modal-lg'>
                                                                                             <div class='modal-content'>
-                                                                                                <form action='delete_batch_detail.php' method='POST'>
+                                                                                                <form id='deleteBatchForm' method='POST'>
                                                                                                     <div class='modal-header'>
                                                                                                         <h5 class='modal-title'>Delete Batch Assistant/" . $dyelot['DyelotRefNo'] . "</h5>
                                                                                                         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
@@ -442,6 +410,59 @@ if (isset($_SESSION['message'])) {
             });
 
         });
+
+         // Show loading overlay
+        function showLoading() {
+        $('#loadingOverlay').show();
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+        $('#loadingOverlay').hide();
+        }
+
+        // Show toast error
+        function showToastError(message) {
+        toastr.error(message, 'Error', {
+            closeButton: true,
+            progressBar: true,
+        });
+        }
+
+        // Show toast success
+        function showToastSuccess(message) {
+        toastr.success(message, 'Success', {
+            closeButton: true,
+            progressBar: true,
+        });
+        }
+
+       $(document).ready(function () {
+            $('#deleteBatchForm').on('submit', function (e) {
+                e.preventDefault(); // Mencegah form submit secara default
+                showLoading(); // Menampilkan loading indicator
+
+                $.ajax({
+                    url: 'delete_batch_detail.php', // Target file PHP
+                    type: 'POST',
+                    data: $(this).serialize(), // Mengirim data dari form
+                    dataType: 'json',
+                    success: function (response) {
+                        hideLoading(); // Sembunyikan loading indicator
+                        if (response.success) {
+                            showToastSuccess(response.message); // Tampilkan toast sukses
+                        } else {
+                            showToastError(response.message); // Tampilkan toast error
+                        }
+                    },
+                    error: function () {
+                        hideLoading(); // Sembunyikan loading indicator
+                        showToastError('Terjadi kesalahan, silakan coba lagi nanti.');
+                    }
+                });
+            });
+        });
+
     </script>
 </body>
 
