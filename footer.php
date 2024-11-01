@@ -661,9 +661,9 @@ echo '</script>';
           $('#recipe_table tbody tr').each(function() {
             const code = $(this).find('td:nth-child(1)').text();
             const subcode = $(this).find('td:nth-child(2)').text();
-            const consumption = parseFloat($(this).find('td:nth-child(3)').text()); // Ensure numeric value
+            // const commentline = $(this).find('td:nth-child(3)').text(); // Ensure numeric value
             const productName = $(this).find('td:nth-child(4)').text(); // Add additional fields as needed
-            const consum = parseFloat($(this).find('td:nth-child(5)').text()); // Adjust based on your table structure
+            const consum = $(this).find('td:nth-child(5)').text(); // Adjust based on your table structure
             const consumType = $(this).find('td:nth-child(6)').text(); // Adjust based on your table structure
             const qty = $(this).find('td:nth-child(7)').text(); // Adjust based on your table structure
             const qtyType = $(this).find('td:nth-child(8)').text(); // Adjust based on your table structure
@@ -686,7 +686,8 @@ echo '</script>';
                 ProductCode: subcode,
                 ProductShortName: subcode,
                 KindOfProduct: consumType == "%" ? 1 : 2,
-                RecipeUnit: consumType
+                RecipeUnit: consumType,
+                RecipeAmount: consum
               });
             }
           });
