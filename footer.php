@@ -440,7 +440,8 @@ echo '</script>';
           }
         });
       } else {
-        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption').val('');
+        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption, #blower_speed, #move_speed').val('');
+        $('#group_line').empty();
         // Populate the recipe table
         const tableBody = $('#recipe_table tbody');
         tableBody.empty(); // Clear existing rows
@@ -592,7 +593,8 @@ echo '</script>';
           }
         });
       } else {
-        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption').val('');
+        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption, #blower_speed, #move_speed').val('');
+        $('#group_line').empty();
         // Populate the recipe table
         const tableBody = $('#recipe_table tbody');
         tableBody.empty(); // Clear existing rows
