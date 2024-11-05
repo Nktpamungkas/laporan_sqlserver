@@ -236,33 +236,33 @@ echo '</script>';
     }
 
     $(document).ready(function() {
-        $('.js-example-basic-multiple').select2();
+      $('.js-example-basic-multiple').select2();
     });
 
-   // Event saat item dipilih
+    // Event saat item dipilih
     $('#group_line').on('select2:select', function(e) {
-        let selectedValues = $(this).val();
-        let productionNumber = $('#production_number').val();
+      let selectedValues = $(this).val();
+      let productionNumber = $('#production_number').val();
 
-        let formattedString = selectedValues.length > 1
-            ? selectedValues.map(num => `'${num}'`).join(',')
-            : selectedValues[0];
+      let formattedString = selectedValues.length > 1 ?
+        selectedValues.map(num => `'${num}'`).join(',') :
+        selectedValues[0];
 
-        // Panggil fungsi AJAX
-        jalankanFungsi2(productionNumber, formattedString, selectedValues[0], selectedValues);
+      // Panggil fungsi AJAX
+      jalankanFungsi2(productionNumber, formattedString, selectedValues[0], selectedValues);
     });
 
     // Event saat item di-unselect
     $('#group_line').on('select2:unselect', function(e) {
-        let selectedValues = $(this).val() || []; // Handle case saat tidak ada yang terpilih
-        let productionNumber = $('#production_number').val();
+      let selectedValues = $(this).val() || []; // Handle case saat tidak ada yang terpilih
+      let productionNumber = $('#production_number').val();
 
-        let formattedString = selectedValues.length > 1
-            ? selectedValues.map(num => `'${num}'`).join(',')
-            : selectedValues[0] || ''; // Jika kosong, kembalikan string kosong
+      let formattedString = selectedValues.length > 1 ?
+        selectedValues.map(num => `'${num}'`).join(',') :
+        selectedValues[0] || ''; // Jika kosong, kembalikan string kosong
 
-        // Panggil fungsi AJAX
-        jalankanFungsi2(productionNumber, formattedString, selectedValues[0] || '', selectedValues);
+      // Panggil fungsi AJAX
+      jalankanFungsi2(productionNumber, formattedString, selectedValues[0] || '', selectedValues);
     });
 
     function getGroupLine(productionNumber) {
@@ -284,7 +284,7 @@ echo '</script>';
             } else {
               formattedString = groupLine[0];
             }
-            jalankanFungsi(productionNumber, formattedString, groupLine[0],groupLine);
+            jalankanFungsi(productionNumber, formattedString, groupLine[0], groupLine);
           } else {
             hideLoading();
             showToastError('Data not found, please check your production number');
@@ -300,7 +300,7 @@ echo '</script>';
     }
 
     // fungsi fetch data dari production number
-    function jalankanFungsi(productionNumber, groupLineArray, groupLine,arrayDariGetGroup) {
+    function jalankanFungsi(productionNumber, groupLineArray, groupLine, arrayDariGetGroup) {
       if (productionNumber) {
         $.ajax({
           url: 'fetch_data_for_orgatex.php',
@@ -309,7 +309,7 @@ echo '</script>';
             production_number: productionNumber,
             groupLineArray: groupLineArray,
             groupLine: groupLine,
-            arrayDariGetGroup:arrayDariGetGroup
+            arrayDariGetGroup: arrayDariGetGroup
           },
           success: function(response) {
             const data = JSON.parse(response);
@@ -317,7 +317,7 @@ echo '</script>';
             if (data.success) {
               // Populate input fields
               $('#dyelot').val(data.dyelot).prop('disabled', false);
-             
+
               let arrayDariGetGroup = data.arrayDariGetGroup;
 
               // Kosongkan select terlebih dahulu
@@ -325,13 +325,13 @@ echo '</script>';
 
               // Tambahkan options ke select tanpa mengatur val di dalam loop
               arrayDariGetGroup.forEach(element => {
-                  var newOption = new Option(element, element, false, false);
-                  $('#group_line').append(newOption);
+                var newOption = new Option(element, element, false, false);
+                $('#group_line').append(newOption);
               });
 
               // Setelah semua options ditambahkan, set val untuk yang terpilih
               $('#group_line').val(arrayDariGetGroup).trigger('change');
-              
+
               $('#redye').val(data.redye).prop('disabled', false);
               $('#machine_number').val(data.machine).prop('disabled', false);
               $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
@@ -366,7 +366,7 @@ echo '</script>';
 
                 // If the group number changes, increment callOff and reset counter
                 // pengecekan SUBCODE (untuk comment SUBCODEnya tidak ada / null), tidak perlu menghitung callof dan counter
-                if(recipe.SUBCODE){
+                if (recipe.SUBCODE) {
                   if (currentGroup !== groupNumber) {
                     callOff++;
                     counter = 1; // Reset counter to 1
@@ -452,8 +452,8 @@ echo '</script>';
     }
 
     // fungsi fetch data dari production number
-    function jalankanFungsi2(productionNumber, groupLineArray, groupLine,arrayDariGetGroup) {
-       showLoading();
+    function jalankanFungsi2(productionNumber, groupLineArray, groupLine, arrayDariGetGroup) {
+      showLoading();
       if (productionNumber) {
         $.ajax({
           url: 'fetch_data_for_orgatex.php',
@@ -462,7 +462,7 @@ echo '</script>';
             production_number: productionNumber,
             groupLineArray: groupLineArray,
             groupLine: groupLine,
-            arrayDariGetGroup:arrayDariGetGroup
+            arrayDariGetGroup: arrayDariGetGroup
           },
           success: function(response) {
             const data = JSON.parse(response);
@@ -470,7 +470,7 @@ echo '</script>';
             if (data.success) {
               // Populate input fields
               $('#dyelot').val(data.dyelot).prop('disabled', false);
-             
+
               let arrayDariGetGroup = data.arrayDariGetGroup;
 
               // Kosongkan select terlebih dahulu
@@ -478,13 +478,13 @@ echo '</script>';
 
               // Tambahkan options ke select tanpa mengatur val di dalam loop
               arrayDariGetGroup.forEach(element => {
-                  var newOption = new Option(element, element, false, false);
-                  $('#group_line').append(newOption);
+                var newOption = new Option(element, element, false, false);
+                $('#group_line').append(newOption);
               });
 
               // Setelah semua options ditambahkan, set val untuk yang terpilih
               $('#group_line').val(arrayDariGetGroup).trigger('change');
-              
+
               $('#redye').val(data.redye).prop('disabled', false);
               $('#machine_number').val(data.machine).prop('disabled', false);
               $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
@@ -519,7 +519,7 @@ echo '</script>';
 
                 // If the group number changes, increment callOff and reset counter
                 // pengecekan SUBCODE (untuk comment SUBCODEnya tidak ada / null), tidak perlu menghitung callof dan counter
-                if(recipe.SUBCODE){
+                if (recipe.SUBCODE) {
                   if (currentGroup !== groupNumber) {
                     callOff++;
                     counter = 1; // Reset counter to 1
@@ -644,6 +644,7 @@ echo '</script>';
         colorNo: $('#color_number').val(),
         weight: parseFloat($('#weight').val()), // Ensure numeric values
         blower_speed: parseFloat($('#blower_speed').val()), // Ensure numeric values
+        move_speed: parseFloat($('#move_speed').val()), // Ensure numeric values
         length: parseFloat($('#length').val()), // Ensure numeric values
         liquorRatio: parseFloat($('#liquorRatio').val()), // Ensure numeric values
         liquorQuantity: parseFloat($('#liquorQuantity').val()), // Ensure numeric values
@@ -656,7 +657,7 @@ echo '</script>';
       };
       // Validasi bahwa nomor mesin tidak boleh kosong
       if (formData.machine) {
-        if(formData.treatments.MAINPROGRAM = 1){
+        if (formData.treatments.MAINPROGRAM = 1) {
           // ambil data dari table dan input
           $('#recipe_table tbody tr').each(function() {
             const code = $(this).find('td:nth-child(1)').text();
@@ -725,7 +726,7 @@ echo '</script>';
               showToastError('Something when wrong, please try again');
             }
           });
-        }else{
+        } else {
           hideLoading();
           showToastError('Error export data, Silahkan periksa Nomor Treatment anda.');
         }

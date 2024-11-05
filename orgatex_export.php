@@ -28,8 +28,10 @@ require_once "koneksi.php";
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="alert/toastr.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="dist/css/select2.min.css"></link>
-    <link rel="stylesheet" type="text/css" href="dist/css/select2.css"></link>
+    <link rel="stylesheet" type="text/css" href="dist/css/select2.min.css">
+    </link>
+    <link rel="stylesheet" type="text/css" href="dist/css/select2.css">
+    </link>
     <link rel="stylesheet" type="text/css" href="files\assets\icon\font-awesome\css\font-awesome.min.css">
 
     <style>
@@ -92,15 +94,15 @@ require_once "koneksi.php";
                                                 <h6 style="font-weight: bold;">Dyelot</h6>
                                                 <input type="text" id="dyelot" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-12 col-xl-2 m-b-10">
-                                                <h6 style="font-weight: bold;">Group Line</h6>
-                                                <input type="text" id="group_line" class="form-control" readonly>
-                                            </div>
                                             <!-- <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Group Line</h6>
-                                                 <select class="js-example-basic-multiple" id="group_line" name="group_line[]" multiple="multiple">
-                                                </select>
+                                                <input type="text" id="group_line" class="form-control" readonly>
                                             </div> -->
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Group Line</h6>
+                                                <select class="js-example-basic-multiple" id="group_line" name="group_line[]" multiple="multiple">
+                                                </select>
+                                            </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Redye</h6>
                                                 <input type="text" id="redye" class="form-control" readonly>
@@ -184,6 +186,10 @@ require_once "koneksi.php";
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Blower Speed</h6>
                                                 <input type="number" id="blower_speed" class="form-control">
+                                            </div>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Move Speed</h6>
+                                                <input type="number" id="move_speed" class="form-control">
                                             </div>
                                         </div>
 
