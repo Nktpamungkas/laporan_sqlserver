@@ -87,6 +87,10 @@ require_once "koneksi.php";
                                     <div class="card-block">
                                         <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <input type="checkbox" id="scouring_preset" name="scouring_preset">
+                                                <label for="scouring_preset">Scouring preset process</label>
+                                            </div>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Bon Resep</h6>
                                                 <input type="text" id="production_number" value="<?= $_GET['bonresep']; ?>" class="form-control">
                                             </div>
@@ -111,12 +115,12 @@ require_once "koneksi.php";
                                                 <h6 style="font-weight: bold;">Machine Number</h6>
                                                 <input type="text" id="machine_number" class="form-control" readonly>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Type Of Procedure</h6>
                                                 <input type="text" id="procedure_type" class="form-control" readonly>
                                             </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Procedure Number</h6>
                                                 <input type="text" id="procedure_number" class="form-control" readonly>
@@ -137,12 +141,12 @@ require_once "koneksi.php";
                                                 <h6 style="font-weight: bold;">Order Number</h6>
                                                 <input type="text" id="order_number" class="form-control" readonly>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Customer Name</h6>
                                                 <input type="text" id="customer_name" class="form-control" readonly>
                                             </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Article</h6>
                                                 <input type="text" id="article" class="form-control" readonly>
@@ -164,13 +168,12 @@ require_once "koneksi.php";
                                                 <h6 style="font-weight: bold;">LiquorQuantity</h6>
                                                 <input type="number" id="liquorQuantity" class="form-control">
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">PumpSpeed</h6>
                                                 <input type="number" id="pumpSpeed" class="form-control">
                                             </div>
-
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">ReelSpeed</h6>
                                                 <input type="number" id="reelSpeed" class="form-control">

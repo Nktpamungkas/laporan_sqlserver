@@ -208,6 +208,14 @@ echo '</script>';
 </script>
 <script>
   $(document).ready(function() {
+    $("#scouring_preset").attr('value','false');
+    $("#scouring_preset").on('change', function() {
+      if ($(this).is(':checked')) {
+          $(this).attr('value', 'true');
+      } else {
+          $(this).attr('value', 'false');
+      }
+    });
 
     // Show loading overlay
     function showLoading() {
@@ -265,14 +273,15 @@ echo '</script>';
       jalankanFungsi2(productionNumber, formattedString, selectedValues[0] || '', selectedValues);
     });
 
-    function getGroupLine(productionNumber) {
+    function getGroupLine(productionNumber, scouring_preset) {
       showLoading();
       $.ajax({
         url: 'fetch_cheking_groupline.php',
         type: 'POST',
         dataType: "json",
         data: {
-          production_number: productionNumber
+          production_number: productionNumber,
+          scouring_preset: scouring_preset
         },
         success: function(response) {
 
@@ -291,7 +300,8 @@ echo '</script>';
           }
 
         },
-        error: function() {
+        error: function(e) {
+          console.log(e);
           hideLoading();
           showToastError('Something when wrong, please try again');
 
@@ -609,19 +619,22 @@ echo '</script>';
 
     var urlParams = new URLSearchParams(window.location.search);
     var productionNumber = urlParams.get('bonresep'); // ganti dengan nama parameter
+    var scouring_preset = urlParams.get('scouring_preset'); // ganti dengan nama parameter
 
     // Check kondisi apakah ada get di url
     if (productionNumber) {
       // Ini jika ada url get
       // jalankan query untuk mencari berdasarkan no kk
-      getGroupLine(productionNumber);
+      getGroupLine(productionNumber, scouring_preset);
     } else {
       // ini jika dari change input no kk
       $('#production_number').on('change keydown', function() {
         if (event.type === 'keydown' && (event.key === 'Enter' || event.key === 'Tab')) {
           const productionNumber = $(this).val();
+          const scouring_preset = document.getElementById("scouring_preset").value;
           // jalankan query untuk mencari berdasarkan no kk
-          getGroupLine(productionNumber);
+          console.log(scouring_preset);
+          getGroupLine(productionNumber, scouring_preset);
         }
       });
     }
