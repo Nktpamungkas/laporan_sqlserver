@@ -211,7 +211,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                             <th title="Sumber data: &#013; 1. Production Order &#013; 2. Reservation &#013; 3. KFF/KGF User Primary Quantity">QTY SALINAN</th>
                                                             <th title="Sumber data: &#013; 1. Production Demand &#013; 2. Bagian group Entered quantity &#013; 3. User Primary Quantity">QTY PACKING</th>
                                                             <th>NETTO(kg)</th>
-                                                            <th>NETTO(yd)</th>
+                                                            <th>NETTO(yd/mtr)</th>
                                                             <th>QTY KURANG (KG)</th>
                                                             <th>QTY KURANG (YD/MTR)</th>
                                                             <th>DELAY</th>
@@ -864,7 +864,11 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                     <?php
                                                                     $sql_netto_yd = db2_exec($conn1, "SELECT * FROM ITXVIEW_NETTO WHERE CODE = '$rowdb2[DEMAND]'");
                                                                     $d_netto_yd = db2_fetch_assoc($sql_netto_yd);
-                                                                    echo number_format($d_netto_yd['BASESECONDARYQUANTITY'] ?? 0, 0);
+                                                                    if(TRIM($d_netto_yd['PRICEUNITOFMEASURECODE']) == 'm'){
+                                                                        echo number_format($d_netto_yd['USERSECONDARYQUANTITY'] ?? 0, 0);
+                                                                    }else{
+                                                                        echo number_format($d_netto_yd['BASESECONDARYQUANTITY'] ?? 0, 0);
+                                                                    }
                                                                     ?>
                                                                 </td> <!-- NETTO YD-->
                                                                 <?php
