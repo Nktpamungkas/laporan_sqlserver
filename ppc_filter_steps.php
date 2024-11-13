@@ -462,7 +462,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                                         ELSE LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ')
                                                                                     END
                                                                             END AS GEROBAK,
-                                                                            idqd.WORKCENTERCODE 
+                                                                            iptip.MACHINECODE
                                                                         FROM 
                                                                             PRODUCTIONDEMANDSTEP p 
                                                                         LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
@@ -506,7 +506,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                             iptip.LONGDESCRIPTION,
                                                                             iptop.LONGDESCRIPTION,
                                                                             a.VALUEBOOLEAN,
-                                                                            idqd.WORKCENTERCODE 
+                                                                            iptip.MACHINECODE
                                                                         ORDER BY p.STEPNUMBER ASC";
                                                         $stmt = db2_exec($conn1, $sqlDB2);
                                                         while ($rowdb2 = db2_fetch_assoc($stmt)) {
@@ -728,7 +728,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                     }
                                                                     ?>
                                                                 </td>
-                                                                <td align="center"><?= $rowdb2['WORKCENTERCODE']; ?></td>
+                                                                <td align="center"><?= $rowdb2['MACHINECODE']; ?></td>
                                                             </tr>
                                                             <div id="confirm-note<?= $rowdb2['STEPNUMBER']; ?>" class="modal fade" role="dialog">
                                                                 <div class="modal-dialog modal-lg">
