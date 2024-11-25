@@ -800,7 +800,7 @@
                     if($_GET['tgl1'] < '2024-01-01'){
                         echo 'PPC AST. MANAGER';
                     }else{
-                        echo 'AST. SUPERVISOR';
+                        echo 'SUPERVISOR';
                     }
                 ?>
             </th>
