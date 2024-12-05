@@ -93,39 +93,6 @@ require_once "koneksi.php";
                             <div class="col-sm-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Filter Data</h5>
-                                    </div>
-                                    <div class="card-block">
-                                        <form action="" method="post" enctype="multipart/form-data">
-                                            <div class="row">
-                                                <div class="col-sm-12 col-xl-2 m-b-0">
-                                                    <h4 class="sub-title">Tanggal Awal</h4>
-                                                    <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" value="<?php if (isset($_POST['cari'])) {
-                                                                                                                                                    echo $_POST['tgl'];
-                                                                                                                                                }else{
-                                                                                                                                                    echo date("Y-m-d");
-                                                                                                                                                } ?>">
-                                                    </div>
-                                                    <button type="submit" name="cari" class="btn btn-primary btn-sm"><i class="icofont icofont-search-alt-1"></i> Search</button>
-                                                    <input type="button" name="reset" value="Reset" onclick="window.location.href='orgatex_dyelot_view.php'" class="btn btn-warning btn-sm">
-                                                </div>
-                                                <div class="col-sm-12 col-xl-2 m-b-0">
-                                                    <h4 class="sub-title">Tanggal Akhir</h4>
-                                                    <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl2" value="<?php if (isset($_POST['cari'])) {
-                                                                                                                                                    echo $_POST['tgl2'];
-                                                                                                                                                } else{
-                                                                                                                                                    echo date("Y-m-d");
-                                                                                                                                                } ?>">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header">
                                         <h5>List Dyelot</h5>
                                     </div>
                                     <div class="card-block">
@@ -150,11 +117,6 @@ require_once "koneksi.php";
                                                 <tbody>
                                                     <?php
                                                     // Prepare the SQL query
-                                                    if($_POST['tgl1'] && $_POST['tgl2']){
-                                                        $where_date     = "WHERE CAST(a.QueueTime AS DATE) BETWEEN '$_POST[tgl1]' AND '$_POST[tgl2]'";
-                                                    }else{
-                                                        $where_date     = "WHERE CAST(a.QueueTime AS DATE) BETWEEN CAST(GETDATE() AS DATE) AND CAST(GETDATE() AS DATE)";
-                                                    }
                                                     $dyelots = $pdo_orgatex->query("SELECT
                                                                                         a.AutoKey,
                                                                                         a.DyelotRefNo,
@@ -174,7 +136,6 @@ require_once "koneksi.php";
                                                                                     LEFT JOIN [ORGATEX-INTEG].[dbo].[Error_codes_ImportError] b ON b.code = a.ImportError
                                                                                     LEFT JOIN [ORGATEX-INTEG].[dbo].[Status_State] c ON c.code = a.State 
                                                                                     LEFT JOIN [ORGATEX].[dbo].[BatchDetail] d ON d.batch_ref_no = a.DyelotRefNo COLLATE SQL_Latin1_General_CP1_CI_AS
-                                                                                    $where_date
                                                                                     ORDER BY
                                                                                         a.AutoKey DESC")->fetchAll(PDO::FETCH_ASSOC);
                                                     ?>

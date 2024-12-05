@@ -232,7 +232,21 @@ if (isset($_POST['production_number'])) {
 
         // SCHEDULE DYEING
         // $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE (no_resep = '$orderCode-$groupLine' OR no_resep = '$orderCode-$groupLine') OR (no_resep2 = '$orderCode-$groupLine' OR no_resep2 = '$orderCode-$groupLine')";
-        $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE nokk = '$orderCode' ORDER BY id DESC LIMIT 1";
+        // $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE nokk = '$orderCode' ORDER BY id DESC LIMIT 1";
+        $sqlScheduleDye  = "SELECT
+                                a.nokk,
+                                a.langganan,
+                                a.no_hanger,
+                                b.no_mesin_lama AS no_mesin,
+                                a.no_mesin AS no_mesin_new
+                            FROM
+                                tbl_schedule a
+                            LEFT JOIN tbl_mesin b ON b.no_mesin = a.no_mesin
+                            WHERE
+                                a.nokk = '$orderCode' 
+                            ORDER BY
+                                a.id DESC 
+                            LIMIT 1";
         $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
         $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
 
@@ -344,6 +358,7 @@ if (isset($_POST['production_number'])) {
             'dyelot' => $dataMain['DYELOT'],
             'redye' => $dataMain['REDYE'],
             'machine' => $dataSchedule['no_mesin'],
+            'machine_new' => $dataSchedule['no_mesin_new'],
             'type_of_procedure' => $dataMain['TYPEOFPROCEDURE'],
             'procedure_no' => $dataMain['PROCEDURENO'],
             'color' => $formulaColor,

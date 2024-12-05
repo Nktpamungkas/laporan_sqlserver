@@ -344,6 +344,7 @@ echo '</script>';
 
               $('#redye').val(data.redye).prop('disabled', false);
               $('#machine_number').val(data.machine).prop('disabled', false);
+              $('#machine_number_new').val(data.machine_new).prop('disabled', false);
               $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
               $('#procedure_number').val(data.procedure_no).prop('disabled', false);
               $('#color').val(data.color).prop('disabled', false);
@@ -450,7 +451,7 @@ echo '</script>';
           }
         });
       } else {
-        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption, #blower_speed, #move_speed').val('');
+        $('#production_number,#dyelot, #redye, #machine_number, #machine_number_new, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption, #blower_speed, #move_speed').val('');
         $('#group_line').empty();
         // Populate the recipe table
         const tableBody = $('#recipe_table tbody');
@@ -498,6 +499,7 @@ echo '</script>';
 
               $('#redye').val(data.redye).prop('disabled', false);
               $('#machine_number').val(data.machine).prop('disabled', false);
+              $('#machine_number_new').val(data.machine_new).prop('disabled', false);
               $('#procedure_type').val(data.type_of_procedure).prop('disabled', false);
               $('#procedure_number').val(data.procedure_no).prop('disabled', false);
               $('#color').val(data.color).prop('disabled', false);
@@ -603,7 +605,7 @@ echo '</script>';
           }
         });
       } else {
-        $('#production_number,#dyelot, #redye, #machine_number, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption, #blower_speed, #move_speed').val('');
+        $('#production_number,#dyelot, #redye, #machine_number, #machine_number_new, #procedure_type, #procedure_number, #color,#warna, #recipe_number, #order_number, #customer_name, #article, #color_number, #weight, #length, #liquorRatio, #liquorQuantity, #pumpSpeed, #reelSpeed, #absorption, #blower_speed, #move_speed').val('');
         $('#group_line').empty();
         // Populate the recipe table
         const tableBody = $('#recipe_table tbody');
@@ -660,6 +662,7 @@ echo '</script>';
         weight: parseFloat($('#weight').val()), // Ensure numeric values
         blower_speed: parseFloat($('#blower_speed').val()), // Ensure numeric values
         move_speed: parseFloat($('#move_speed').val()), // Ensure numeric values
+        nozle: parseFloat($('#nozle').val()), // Ensure numeric values
         length: parseFloat($('#length').val()), // Ensure numeric values
         liquorRatio: parseFloat($('#liquorRatio').val()), // Ensure numeric values
         liquorQuantity: parseFloat($('#liquorQuantity').val()), // Ensure numeric values

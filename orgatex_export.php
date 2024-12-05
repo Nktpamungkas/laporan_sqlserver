@@ -90,6 +90,8 @@ require_once "koneksi.php";
                                                 <input type="checkbox" id="scouring_preset" name="scouring_preset">
                                                 <label for="scouring_preset">Scouring preset process</label>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Bon Resep</h6>
                                                 <input type="text" id="production_number" value="<?= $_GET['bonresep']; ?>" class="form-control">
@@ -112,8 +114,12 @@ require_once "koneksi.php";
                                                 <input type="text" id="redye" class="form-control" readonly>
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
-                                                <h6 style="font-weight: bold;">Machine Number</h6>
+                                                <h6 style="font-weight: bold;">Ip Address</h6>
                                                 <input type="text" id="machine_number" class="form-control" readonly>
+                                            </div>
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Machine Number New</h6>
+                                                <input type="text" id="machine_number_new" class="form-control" readonly>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -193,6 +199,12 @@ require_once "koneksi.php";
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Move Speed</h6>
                                                 <input type="number" id="move_speed" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 col-xl-2 m-b-10">
+                                                <h6 style="font-weight: bold;">Nozzle</h6>
+                                                <input type="number" id="nozle" class="form-control">
                                             </div>
                                         </div>
 

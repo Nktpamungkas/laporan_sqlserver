@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $weight = $_POST['weight'];
     $blower_speed = $_POST['blower_speed'];
     $move_speed = $_POST['move_speed'];
+    $nozle = $_POST['nozle'];
     $length = $_POST['length'];
     $liquorRatio = $_POST['liquorRatio'];
     $liquorQuantity = $_POST['liquorQuantity'];
@@ -49,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         @Weight = :weight,
         @BlowerSpeed = :blower_speed,
         @MoveSpeed = :move_speed,
+        @Nozle = :nozle,
         @Length = :length,
         @LiquorRatio = :liquorRatio,
         @LiquorQuantity = :liquorQuantity,
@@ -75,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':weight', $weight);
         $stmt->bindParam(':blower_speed', $blower_speed);
         $stmt->bindParam(':move_speed', $move_speed);
+        $stmt->bindParam(':nozle', $nozle);
         $stmt->bindParam(':length', $length);
         $stmt->bindParam(':liquorRatio', $liquorRatio);
         $stmt->bindParam(':liquorQuantity', $liquorQuantity);
