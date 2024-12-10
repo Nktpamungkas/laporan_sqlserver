@@ -118,7 +118,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         class="table compact table-striped table-bordered nowrap">
                                                         <thead>
                                                             <tr>
-                                                                <th>Machine Number</th>
+                                                                <th>Ip Address</th>
+                                                                <th>Machine Number New</th>
                                                                 <th>Machine Capacity</th>
                                                                 <th>Machine Description</th>
                                                                 <th>Total Stop</th>
@@ -127,148 +128,160 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-<?php
-    $sqlMachine = "SELECT * FROM Machines";
-    $stmtMachine = $pdo_orgatex->prepare($sqlMachine);
-    $stmtMachine->execute();
-    $machines = $stmtMachine->fetchAll(PDO::FETCH_ASSOC);
-    $now = new DateTime();
-    
-    $startDate = $now;
-    $endDate = $now;
+                                                            <?php
+                                                                $sqlMachine = "SELECT * FROM Machines";
+                                                                $stmtMachine = $pdo_orgatex->prepare($sqlMachine);
+                                                                $stmtMachine->execute();
+                                                                $machines = $stmtMachine->fetchAll(PDO::FETCH_ASSOC);
+                                                                $now = new DateTime();
+                                                                
+                                                                $startDate = $now;
+                                                                $endDate = $now;
 
-    if(isset($_POST['tgl'])&&isset($_POST['time'])&&isset($_POST['tgl2'])&&isset($_POST['time2'])){
-        if($_POST['tgl']&&$_POST['time']){
-            $startDate = $_POST['tgl'].' '.$_POST['time'];
-        }
+                                                                if(isset($_POST['tgl'])&&isset($_POST['time'])&&isset($_POST['tgl2'])&&isset($_POST['time2'])){
+                                                                    if($_POST['tgl']&&$_POST['time']){
+                                                                        $startDate = $_POST['tgl'].' '.$_POST['time'];
+                                                                    }
 
-        if($_POST['tgl2']&&$_POST['time2']){
-            $endDate = $_POST['tgl2'].' '.$_POST['time2'];
-        }
-    }
+                                                                    if($_POST['tgl2']&&$_POST['time2']){
+                                                                        $endDate = $_POST['tgl2'].' '.$_POST['time2'];
+                                                                    }
+                                                                }
 
-    if(isset($_POST['time_range'])){
-        $time_range = $_POST['time_range'];
+                                                                if(isset($_POST['time_range'])){
+                                                                    $time_range = $_POST['time_range'];
 
-        if ($time_range != 'custom') {
-            switch ($time_range) {
-                case '24_hours':
-                    $start_date = clone $now;
-                    $start_date->modify('-24 hours');
-                    $end_date = $now;
-                    $startDate = $start_date->format('Y-m-d H:i:s');
-                    $endDate = $end_date->format('Y-m-d H:i:s');
-                    break;
+                                                                    if ($time_range != 'custom') {
+                                                                        switch ($time_range) {
+                                                                            case '24_hours':
+                                                                                $start_date = clone $now;
+                                                                                $start_date->modify('-24 hours');
+                                                                                $end_date = $now;
+                                                                                $startDate = $start_date->format('Y-m-d H:i:s');
+                                                                                $endDate = $end_date->format('Y-m-d H:i:s');
+                                                                                break;
 
-                case 'week':
-                    $start_date = clone $now;
-                    $start_date->modify('-1 week');
-                    $end_date = $now;
-                    $startDate = $start_date->format('Y-m-d H:i:s');
-                    $endDate = $end_date->format('Y-m-d H:i:s');
-                    break;
+                                                                            case 'week':
+                                                                                $start_date = clone $now;
+                                                                                $start_date->modify('-1 week');
+                                                                                $end_date = $now;
+                                                                                $startDate = $start_date->format('Y-m-d H:i:s');
+                                                                                $endDate = $end_date->format('Y-m-d H:i:s');
+                                                                                break;
 
-                case 'month':
-                    $start_date = clone $now;
-                    $start_date->modify('-1 month');
-                    $end_date = $now;
-                    $startDate = $start_date->format('Y-m-d H:i:s');
-                    $endDate = $end_date->format('Y-m-d H:i:s');
-                    break;
+                                                                            case 'month':
+                                                                                $start_date = clone $now;
+                                                                                $start_date->modify('-1 month');
+                                                                                $end_date = $now;
+                                                                                $startDate = $start_date->format('Y-m-d H:i:s');
+                                                                                $endDate = $end_date->format('Y-m-d H:i:s');
+                                                                                break;
 
-                default:
-                    echo "Please select a valid option.";
-            }
-        }
-    }
+                                                                            default:
+                                                                                echo "Please select a valid option.";
+                                                                        }
+                                                                    }
+                                                                }
 
 
-    $data = [];
+                                                                $data = [];
 
-    foreach ($machines as $machine) {
-        $machineID = $machine['MachineNo'];
+                                                                foreach ($machines as $machine) {
+                                                                    $machineID = $machine['MachineNo'];
 
-        $sqlLogs = "SELECT LogTimeStamp as logTimeStamp, 
-            MachineProtocol.AlarmNo as value, 
-            AlarmList.AlarmText as reason 
-            FROM MachineProtocol 
-            LEFT JOIN AlarmList ON AlarmList.AlarmNo = MachineProtocol.AlarmNo 
-            WHERE MachineProtocol.Machine = :machineID AND 
-            MachineProtocol.LogTimeStamp BETWEEN :startDate AND :endDate
-            ORDER BY MachineProtocol.LogTimeStamp";
-        
-        $stmtLogs = $pdo_orgatex->prepare($sqlLogs);
-        $stmtLogs->bindParam(':machineID', $machineID);
-        $stmtLogs->bindParam(':startDate', $startDate);
-        $stmtLogs->bindParam(':endDate', $endDate);
-        $stmtLogs->execute();
+                                                                    $sqlLogs = "SELECT LogTimeStamp as logTimeStamp, 
+                                                                        MachineProtocol.AlarmNo as value, 
+                                                                        AlarmList.AlarmText as reason 
+                                                                        FROM MachineProtocol 
+                                                                        LEFT JOIN AlarmList ON AlarmList.AlarmNo = MachineProtocol.AlarmNo 
+                                                                        WHERE MachineProtocol.Machine = :machineID AND 
+                                                                        MachineProtocol.LogTimeStamp BETWEEN :startDate AND :endDate
+                                                                        ORDER BY MachineProtocol.LogTimeStamp";
+                                                                    
+                                                                    $stmtLogs = $pdo_orgatex->prepare($sqlLogs);
+                                                                    $stmtLogs->bindParam(':machineID', $machineID);
+                                                                    $stmtLogs->bindParam(':startDate', $startDate);
+                                                                    $stmtLogs->bindParam(':endDate', $endDate);
+                                                                    $stmtLogs->execute();
 
-        $rows = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
+                                                                    $rows = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
 
-        $totalSeconds = 0;
-        foreach ($rows as $key => $row) {
-            if ($row['value'] > 500 && isset($rows[$key + 1]) && $rows[$key + 1]['value'] == 0) {
-                $date1 = new DateTime($row['logTimeStamp']);
-                $date2 = new DateTime($rows[$key + 1]['logTimeStamp']);
-                $interval = $date1->diff($date2);
-                
-                $seconds = ($interval->days * 24 * 60 * 60) +
-                        ($interval->h * 60 * 60) +
-                        ($interval->i * 60) +
-                        $interval->s;
-                
-                $totalSeconds += $seconds;
-            }
-        }
+                                                                    $totalSeconds = 0;
+                                                                    foreach ($rows as $key => $row) {
+                                                                        if ($row['value'] > 500 && isset($rows[$key + 1]) && $rows[$key + 1]['value'] == 0) {
+                                                                            $date1 = new DateTime($row['logTimeStamp']);
+                                                                            $date2 = new DateTime($rows[$key + 1]['logTimeStamp']);
+                                                                            $interval = $date1->diff($date2);
+                                                                            
+                                                                            $seconds = ($interval->days * 24 * 60 * 60) +
+                                                                                    ($interval->h * 60 * 60) +
+                                                                                    ($interval->i * 60) +
+                                                                                    $interval->s;
+                                                                            
+                                                                            $totalSeconds += $seconds;
+                                                                        }
+                                                                    }
 
-        $hours = floor($totalSeconds / 3600);
-        $minutes = floor(($totalSeconds % 3600) / 60);
-        $seconds = $totalSeconds % 60;
-        $totalStop = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+                                                                    $hours = floor($totalSeconds / 3600);
+                                                                    $minutes = floor(($totalSeconds % 3600) / 60);
+                                                                    $seconds = $totalSeconds % 60;
+                                                                    $totalStop = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
 
-        $startDateTime = new DateTime($startDate);
-        $endDateTime = new DateTime($endDate);
-        $timeSpanInterval = $startDateTime->diff($endDateTime);
+                                                                    $startDateTime = new DateTime($startDate);
+                                                                    $endDateTime = new DateTime($endDate);
+                                                                    $timeSpanInterval = $startDateTime->diff($endDateTime);
 
-        $totalSecondsCalculate = ($timeSpanInterval->days * 24 * 60 * 60) +
-                ($timeSpanInterval->h * 60 * 60) +
-                ($timeSpanInterval->i * 60) +
-                $timeSpanInterval->s;
+                                                                    $totalSecondsCalculate = ($timeSpanInterval->days * 24 * 60 * 60) +
+                                                                            ($timeSpanInterval->h * 60 * 60) +
+                                                                            ($timeSpanInterval->i * 60) +
+                                                                            $timeSpanInterval->s;
 
-        if($totalSeconds>0&&$totalSecondsCalculate>0){
-            $totalPercentage=(($totalSecondsCalculate-$totalSeconds)/$totalSecondsCalculate)*100;
-            $statusMachine=true;
-        }else{
-            $totalPercentage=0;
-            $statusMachine=false;
-        }
+                                                                    if($totalSeconds>0&&$totalSecondsCalculate>0){
+                                                                        $totalPercentage=(($totalSecondsCalculate-$totalSeconds)/$totalSecondsCalculate)*100;
+                                                                        $statusMachine=true;
+                                                                    }else{
+                                                                        $totalPercentage=0;
+                                                                        $statusMachine=false;
+                                                                    }
 
-        $resultDataMachine = mysqli_query($con_db_dyeing, "SELECT kapasitas as machine_capacity,
-        ket as machine_description FROM tbl_mesin WHERE no_mesin = '$machineID'");
+                                                                    $resultDataMachine = mysqli_query($con_db_dyeing, "SELECT kapasitas as machine_capacity,
+                                                                    ket as machine_description FROM tbl_mesin WHERE no_mesin = '$machineID'");
 
-        if (mysqli_num_rows($resultDataMachine) > 0) {
-            $row = mysqli_fetch_assoc($resultDataMachine);
-            $machine_capacity=$row["machine_capacity"];
-            $machine_description=$row["machine_description"];
-        } else {
-            $machine_capacity=null;
-            $machine_description=null;
-        }
+                                                                    if (mysqli_num_rows($resultDataMachine) > 0) {
+                                                                        $row = mysqli_fetch_assoc($resultDataMachine);
+                                                                        $machine_capacity=$row["machine_capacity"];
+                                                                        $machine_description=$row["machine_description"];
+                                                                    } else {
+                                                                        $machine_capacity=null;
+                                                                        $machine_description=null;
+                                                                    }
 
-        $data[] = [
-            "machine_number" => $machineID,
-            "machine_capacity"=>$machine_capacity,
-            "machine_description"=>$machine_description,
-            "total_stop"=>$totalStop,
-            "total_percentage_running"=>round($totalPercentage, 2),
-            "status_machine"=>$statusMachine
-        ];
-    }
+                                                                    $sqlScheduleDye  = "SELECT * FROM tbl_mesin WHERE no_mesin_lama = '$machineID'";
+                                                                    $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
 
-?>
+                                                                    if(mysqli_num_rows($resultScheduleDye) > 0){
+                                                                        $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
+                                                                        $machineIDNew   = $dataSchedule['no_mesin_baru'];
+                                                                    }else{
+                                                                        $machineIDNew   = null;
+                                                                    }
+
+                                                                    $data[] = [
+                                                                        "machine_number" => $machineID,
+                                                                        "machine_number_new" => $machineIDNew,
+                                                                        "machine_capacity"=>$machine_capacity,
+                                                                        "machine_description"=>$machine_description,
+                                                                        "total_stop"=>$totalStop,
+                                                                        "total_percentage_running"=>round($totalPercentage, 2),
+                                                                        "status_machine"=>$statusMachine
+                                                                    ];
+                                                                }
+
+                                                            ?>
                                                             <?php foreach ($data as $item): ?>
                                                             <tr>
                                                                 <td><?php echo htmlspecialchars($item['machine_number']); ?></td>
+                                                                <td><?php echo htmlspecialchars($item['machine_number_new']); ?></td>
                                                                 <td><?php echo $item['machine_capacity']; ?></td>
                                                                 <td><?php echo $item['machine_description']; ?></td>
 
@@ -345,7 +358,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <table class="table table-bordered" id="machineDetailsTable">
                             <thead>
                                 <tr>
-                                    <th>Machine Number</th>
+                                    <th>Ip Address</th>
                                     <th>Start Stop</th>
                                     <th>End Stop</th>
                                     <th>Total Stop</th>
