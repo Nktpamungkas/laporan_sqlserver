@@ -326,6 +326,11 @@
                                             Macro Plan
                                         </a>
                                     </li>
+                                    <li class="">
+                                        <a href="PRD_TimbangGerobak.php" data-i18n="nav.animations.main">
+                                            Konsistensi Timbang Gerobak
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                             <!-- <li class="pcoded-hasmenu">
