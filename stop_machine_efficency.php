@@ -358,6 +358,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <table class="table table-bordered" id="machineDetailsTable">
                             <thead>
                                 <tr>
+                                    <th>No Batch</th>
                                     <th>Ip Address</th>
                                     <th>Start Stop</th>
                                     <th>End Stop</th>
@@ -477,6 +478,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $.each(data, function(index, item) {
 
                     var row = '<tr>' +
+                        '<td>' + item.dyelot + '</td>' +
                         '<td>' + item.machine_number + '</td>' +
                         '<td>' + item.log_timestamp_start + '</td>' +
                         '<td>' + item.log_timestamp_stop + '</td>' +

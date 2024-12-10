@@ -59,6 +59,7 @@ $con_db_lab         = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_laborat");
 $con_dbnow_mkt      = mysqli_connect("10.0.0.10", "dit", "4dm1n", "dbnow_mkt");
 $con_db_qc          = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_qc");
 $con_hrd            = mysqli_connect("10.0.0.10", "dit", "4dm1n", "hrd");
+$con_now_gerobak    = mysqli_connect("10.0.0.10", "dit", "4dm1n", "dbnow_gerobak");
 
 $hostSVR19 = "10.0.0.221";
 $usernameSVR19 = "sa";

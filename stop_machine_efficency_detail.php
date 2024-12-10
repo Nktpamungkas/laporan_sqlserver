@@ -56,11 +56,12 @@
 
     $machineID = $_POST['machine_id'];
 
-    $sqlLogs = "SELECT LogTimeStamp as logTimeStamp, 
+    $sqlLogs = "SELECT Dyelots.Dyelot AS dyelot, LogTimeStamp as logTimeStamp, 
     MachineProtocol.AlarmNo as value, 
     AlarmList.AlarmText as reason 
     FROM MachineProtocol 
     LEFT JOIN AlarmList ON AlarmList.AlarmNo = MachineProtocol.AlarmNo
+    LEFT JOIN Dyelots ON Dyelots.DyelotRefNo = MachineProtocol.DyelotRefNo
     WHERE MachineProtocol.Machine = :machineID AND 
     MachineProtocol.LogTimeStamp BETWEEN :startDate AND :endDate
     ORDER BY MachineProtocol.LogTimeStamp";
@@ -77,6 +78,7 @@
         if ($row['value'] > 500 && isset($rows[$key + 1]) && $rows[$key + 1]['value'] == 0) {
             $date1 = new DateTime($row['logTimeStamp']);
             $date2 = new DateTime($rows[$key + 1]['logTimeStamp']);
+            $dyelot = $row['dyelot'];
 
             $log_timestamp_start = $date1->format('Y-m-d H:i:s');
             $log_timestamp_stop = $date2->format('Y-m-d H:i:s');
@@ -101,6 +103,7 @@
                 $totalStop = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
 
                 $data[] = [
+                    "dyelot" => $dyelot,
                     "machine_number" => $machineID,
                     "log_timestamp"=> $log_timestamp,
                     "log_timestamp_start"=> $log_timestamp_start,
