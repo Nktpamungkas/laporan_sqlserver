@@ -244,24 +244,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                         $statusMachine=false;
                                                                     }
 
-                                                                    $resultDataMachine = mysqli_query($con_db_dyeing, "SELECT kapasitas as machine_capacity,
-                                                                    ket as machine_description FROM tbl_mesin WHERE no_mesin = '$machineID'");
-
-                                                                    if (mysqli_num_rows($resultDataMachine) > 0) {
-                                                                        $row = mysqli_fetch_assoc($resultDataMachine);
-                                                                        $machine_capacity=$row["machine_capacity"];
-                                                                        $machine_description=$row["machine_description"];
-                                                                    } else {
-                                                                        $machine_capacity=null;
-                                                                        $machine_description=null;
-                                                                    }
-
                                                                     $sqlScheduleDye  = "SELECT * FROM tbl_mesin WHERE no_mesin_lama = '$machineID'";
                                                                     $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
 
                                                                     if(mysqli_num_rows($resultScheduleDye) > 0){
                                                                         $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
                                                                         $machineIDNew   = $dataSchedule['no_mesin_baru'];
+
+                                                                        $resultDataMachine = mysqli_query($con_db_dyeing, "SELECT 
+                                                                                                                                kapasitas as machine_capacity,
+                                                                                                                                ket as machine_description 
+                                                                                                                            FROM 
+                                                                                                                                tbl_mesin 
+                                                                                                                            WHERE 
+                                                                                                                                no_mesin = '$machineIDNew'");
+
+                                                                        if (mysqli_num_rows($resultDataMachine) > 0) {
+                                                                            $row = mysqli_fetch_assoc($resultDataMachine);
+                                                                            $machine_capacity=$row["machine_capacity"];
+                                                                            $machine_description=$row["machine_description"];
+                                                                        } else {
+                                                                            $machine_capacity=null;
+                                                                            $machine_description=null;
+                                                                        }
                                                                     }else{
                                                                         $machineIDNew   = null;
                                                                     }
