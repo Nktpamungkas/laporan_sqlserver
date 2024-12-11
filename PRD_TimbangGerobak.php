@@ -5,6 +5,7 @@ require_once "koneksi.php";
 include_once "utils/helper.php";
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,9 +41,11 @@ include_once "utils/helper.php";
         function cekStatus($before, $after, $keterangan) {
             if ($keterangan == "Before" && $before == "v" && $after == "x") {
                 return "Valid";
-            } elseif ($keterangan == "Before - After" && $before == "v" && $after == "v") {
+            }
+            elseif($keterangan == "Before - After" && $before == "v" && $after == "v") {
                 return "Valid";
-            } elseif ($keterangan == "After" && $before == "x" && $after == "v") {
+            }
+            elseif($keterangan == "After" && $before == "x" && $after == "v") {
                 return "Valid";
             } else {
                 return "Invalid";
@@ -68,8 +71,10 @@ include_once "utils/helper.php";
                                         <form action="" method="post">
                                             <div class="row">
                                                 <div class="col-sm-12 col-xl-12 m-b-30">
-                                                    <h4 class="sub-title">Creationdatetime Production Progress</h4>
-                                                    <input type="date" class="form-control" name="date" value="<?php if (isset($_POST['submit'])) {echo $_POST['date']; } ?>" required>
+                                                    <!-- <h4 class="sub-title">Creationdatetime Production Progress</h4> -->
+                                                    <input type="date" class="form-control" name="date" value="<?php if (isset($_POST['submit'])) {
+                                                                                                                    echo $_POST['date'];
+                                                                                                                } ?>" required>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"> <i
@@ -86,8 +91,9 @@ include_once "utils/helper.php";
                                                 <div class="card-block">
                                                     <h4>FROM MECHINE LOGIC ART : TICKET</h4>
                                                     <div class="row">
+                                                    <a class="btn btn-mat btn-success" target="_BLANK" href="export_excel.php?date=<?= $_POST['date'];?>">CETAK EXCEL</a>
                                                         <div class="table-responsive dt-responsive">
-                                                            <table id="excel-LA"
+                                                            <table 
                                                                 class="table table-striped table-bordered nowrap">
                                                                 <thead>
                                                                     <tr align="center">
@@ -108,9 +114,9 @@ include_once "utils/helper.php";
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php
-                                                                        ini_set("error_reporting", 1);
-                                                                        require_once "koneksi.php";
-                                                                        $query = "SELECT 
+                                                                    ini_set("error_reporting", 1);
+                                                                    require_once "koneksi.php";
+                                                                    $query = "SELECT 
                                                                                     p.PROGRESSNUMBER,
                                                                                     CAST(p.CREATIONDATETIME AS DATE) AS CREATIONDATETIME,
                                                                                     TRIM(p.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
@@ -167,10 +173,10 @@ include_once "utils/helper.php";
                                                                                                     AND q.CHARACTERISTICCODE = 'GRB1'
                                                                                                     AND q.VALUEQUANTITY = '1'
                                                                                             )";
-                                                                        $stmt = db2_exec($conn1, $query);
-                                                                        $no = 1;
-                                                                        while ($row_timbang = db2_fetch_assoc($stmt)) {
-                                                                            $MainTimbangGerobak_before = "SELECT
+                                                                    $stmt = db2_exec($conn1, $query);
+                                                                    $no = 1;
+                                                                    while ($row_timbang = db2_fetch_assoc($stmt)) {
+                                                                        $MainTimbangGerobak_before = "SELECT
                                                                                                         *,
                                                                                                         sum( jml_rol ) AS rol_tot,
                                                                                                         sum( berat ) AS berat_tot,
@@ -190,10 +196,10 @@ include_once "utils/helper.php";
                                                                                                     ORDER BY
                                                                                                         prod_order,
                                                                                                         no_step ASC";
-                                                                            $execTimbangGerobak_before = mysqli_query($con_now_gerobak, $MainTimbangGerobak_before);
-                                                                            $fetchTimbangGerobak_before = mysqli_fetch_assoc($execTimbangGerobak_before);
-                                                                            
-                                                                            $MainTimbangGerobak_after = "SELECT
+                                                                        $execTimbangGerobak_before = mysqli_query($con_now_gerobak, $MainTimbangGerobak_before);
+                                                                        $fetchTimbangGerobak_before = mysqli_fetch_assoc($execTimbangGerobak_before);
+
+                                                                        $MainTimbangGerobak_after = "SELECT
                                                                                                         *,
                                                                                                         sum( jml_rol ) AS rol_tot,
                                                                                                         sum( berat ) AS berat_tot,
@@ -213,21 +219,23 @@ include_once "utils/helper.php";
                                                                                                     ORDER BY
                                                                                                         prod_order,
                                                                                                         no_step ASC";
-                                                                            $execTimbangGerobak_after   = mysqli_query($con_now_gerobak, $MainTimbangGerobak_after);
-                                                                            $fetchTimbangGerobak_after  = mysqli_fetch_assoc($execTimbangGerobak_after);
+                                                                        $execTimbangGerobak_after   = mysqli_query($con_now_gerobak, $MainTimbangGerobak_after);
+                                                                        $fetchTimbangGerobak_after  = mysqli_fetch_assoc($execTimbangGerobak_after);
 
-                                                                            $MainCekStatus  = "SELECT
+                                                                        $MainCekStatus  = "SELECT
                                                                                                     * 
                                                                                                 FROM
                                                                                                     `tbl_masterstd` 
                                                                                                 WHERE
                                                                                                     operation = '$row_timbang[OPERATIONCODE]'";
-                                                                            $execCekStatus  = mysqli_query($con_now_gerobak, $MainCekStatus);
-                                                                            $fetchCekStatus = mysqli_fetch_assoc($execCekStatus);
+                                                                        $execCekStatus  = mysqli_query($con_now_gerobak, $MainCekStatus);
+                                                                        $fetchCekStatus = mysqli_fetch_assoc($execCekStatus);
                                                                     ?>
                                                                         <tr>
-                                                                            <td>'<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td>
-                                                                            <td>'<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td>
+                                                                            <!-- <td>'<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td> -->
+                                                                            <!-- <td>'<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td> -->
+                                                                            <td> <a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_timbang['PRODUCTIONORDERCODE']; ?>"><?= $row_timbang['PRODUCTIONORDERCODE']; ?></td>
+                                                                            <td> <a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_timbang['PRODUCTIONORDERCODE']; ?>"><?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td>
                                                                             <td><?= $row_timbang['ORIGDLVSALORDLINESALORDERCODE']; ?></td>
                                                                             <td><?= $row_timbang['STEPNUMBER']; ?></td>
                                                                             <td><?= $row_timbang['OPERATIONCODE']; ?></td>
@@ -236,42 +244,42 @@ include_once "utils/helper.php";
                                                                             <td><?= $row_timbang['OP_OUT']; ?></td>
                                                                             <td><?= $row_timbang['TOTALPRIMARYQUANTITY']; ?></td>
                                                                             <td align="center">
-                                                                                <?php 
-                                                                                    if($fetchTimbangGerobak_before['berat']) {
-                                                                                        $before = 'v';
-                                                                                        echo $before;
-                                                                                    }else{
-                                                                                        $before = 'x';
-                                                                                        echo $before;
-                                                                                    }
+                                                                                <?php
+                                                                                if ($fetchTimbangGerobak_before['berat']) {
+                                                                                    $before = 'v';
+                                                                                    echo $before;
+                                                                                } else {
+                                                                                    $before = 'x';
+                                                                                    echo $before;
+                                                                                }
                                                                                 ?>
                                                                             </td>
                                                                             <td align="center">
-                                                                                <?php 
-                                                                                    if($fetchTimbangGerobak_after['berat']) {
-                                                                                        $after = 'v';
-                                                                                        echo $after;
-                                                                                    }else{
-                                                                                        $after = 'x';
-                                                                                        echo $after;
-                                                                                    }
+                                                                                <?php
+                                                                                if ($fetchTimbangGerobak_after['berat']) {
+                                                                                    $after = 'v';
+                                                                                    echo $after;
+                                                                                } else {
+                                                                                    $after = 'x';
+                                                                                    echo $after;
+                                                                                }
                                                                                 ?>
                                                                             </td>
                                                                             <td><?= $fetchCekStatus['timbang_gerobak']; ?></td>
                                                                             <td>
-                                                                                <?php 
-                                                                                    $keterangan = $fetchCekStatus['timbang_gerobak'];
+                                                                                <?php
+                                                                                $keterangan = $fetchCekStatus['timbang_gerobak'];
 
-                                                                                    if ($keterangan == "Before" && $before == "v" && $after == "x") {
-                                                                                        $status = "Valid";
-                                                                                    } elseif ($keterangan == "Before - After" && $before == "v" && $after == "v") {
-                                                                                        $status = "Valid";
-                                                                                    } elseif ($keterangan == "After" && $before == "x" && $after == "v") {
-                                                                                        $status = "Valid";
-                                                                                    } else {
-                                                                                        $status = "Invalid";
-                                                                                    }
-                                                                                    echo $status;
+                                                                                if ($keterangan == "Before" && $before == "v" && $after == "x") {
+                                                                                    $status = "Valid";
+                                                                                } elseif ($keterangan == "Before - After" && $before == "v" && $after == "v") {
+                                                                                    $status = "Valid";
+                                                                                } elseif ($keterangan == "After" && $before == "x" && $after == "v") {
+                                                                                    $status = "Valid";
+                                                                                } else {
+                                                                                    $status = "Invalid";
+                                                                                }
+                                                                                echo $status;
                                                                                 ?>
                                                                             </td>
                                                                         </tr>
