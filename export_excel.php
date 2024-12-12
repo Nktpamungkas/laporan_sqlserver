@@ -14,8 +14,8 @@ require_once "koneksi.php";
             <th>PRODUCTION ORDER</th>
             <th>PRODUCTION DEMAND</th>
             <th>NO PROJECT</th>
-            <th>OPERATION CODE</th>
             <th>STEP NUMBER</th>
+            <th>OPERATION CODE</th>
             <th>DEPT</th>
             <th>OPERATOR IN</th>
             <th>OPERATOR OUT</th>
@@ -147,9 +147,9 @@ require_once "koneksi.php";
         ?>
             <tr>
                 <!-- <td>'<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td> -->
-                <td> <a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td>
-                <td> <a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td>
                 <!-- <td>'<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td> -->
+                <td> <a target="_BLANK" href="http://localhost/nowgerobak/HasilTimbang-<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td>
+                <td> <a target="_BLANK" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td>
                 <td><?= $row_timbang['ORIGDLVSALORDLINESALORDERCODE']; ?></td>
                 <td><?= $row_timbang['STEPNUMBER']; ?></td>
                 <td><?= $row_timbang['OPERATIONCODE']; ?></td>
