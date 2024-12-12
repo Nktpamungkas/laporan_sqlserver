@@ -148,7 +148,7 @@ require_once "koneksi.php";
             <tr>
                 <!-- <td>'<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td> -->
                 <!-- <td>'<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td> -->
-                <td> <a target="_BLANK" href="http://localhost/nowgerobak/HasilTimbang-<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td>
+                <td> <a target="_BLANK" href="https://online.indotaichen.com/nowgerobak/HasilTimbang-<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td>
                 <td> <a target="_BLANK" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td>
                 <td><?= $row_timbang['ORIGDLVSALORDLINESALORDERCODE']; ?></td>
                 <td><?= $row_timbang['STEPNUMBER']; ?></td>
