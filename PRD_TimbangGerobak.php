@@ -164,7 +164,7 @@ include_once "utils/helper.php";
                                                                                                             'WAIT33', 'WAIT34', 'WAIT35', 'WAIT36', 'WAIT37', 'WAIT38', 'WAIT39', 'WAIT4', 'WAIT40', 'WAIT41', 'WAIT42', 'WAIT43', 'WAIT44', 'WAIT45', 
                                                                                                             'WAIT46', 'WAIT47', 'WAIT48', 'WAIT49', 'WAIT5', 'WAIT50', 'WAIT51', 'WAIT52', 'WAIT53', 'WAIT54', 'WAIT55', 'WAIT56', 'WAIT57', 'WAIT58', 
                                                                                                             'WAIT59', 'WAIT6', 'WAIT60', 'WAIT61', 'WAIT62', 'WAIT63', 'WAIT64', 'WAIT65', 'WAIT7', 'WAIT8', 'WAIT9', 'WN1-RC3', 'WN1-RC4', 'WN1-RC5', 
-                                                                                                            'WN1-RP1', 'WN1-RP2', 'WN1-SC1', 'WN1-SC2', 'WN1-SP3', 'WN1-SP4', 'WSH1', 'WSH2', 'YDR1', 'YDR2')
+                                                                                                            'WN1-RP1', 'WN1-RP2', 'WN1-SC1', 'WN1-SC2', 'WN1-SP3', 'WN1-SP4', 'WSH1', 'WSH2', 'YDR1', 'YDR2', 'RLX1')
                                                                                     AND NOT EXISTS (
                                                                                                 SELECT
                                                                                                     q.QUALITYDOCPRODUCTIONORDERCODE,
