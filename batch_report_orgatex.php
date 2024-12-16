@@ -128,6 +128,7 @@ require_once 'header.php';
                                                                 <th>Colour Name</th>
                                                                 
                                                                 <th>Machine No</th>
+                                                                <th>New-Machine No</th>
                                                                 <th>Jumlah Roll</th>
                                                                 <th>Load</th>
                                                                 <th>% Load</th>
@@ -226,6 +227,14 @@ require_once 'header.php';
                                                                     $sql_exec = mysqli_query($con_db_dyeing, $query_dye);
                                                                     $data_dye = mysqli_fetch_assoc($sql_exec);
                                                                     ?>
+                                                                    <?php
+                                                                        $query_mesin = "SELECT 
+                                                                                       * 
+                                                                                        FROM tbl_mesin s
+                                                                                        where no_mesin_lama ='$row_data_orgatex[machine_no]'";
+                                                                        $sql_exec2 = mysqli_query($con_db_dyeing, $query_mesin);
+                                                                        $data_mesin_baru = mysqli_fetch_assoc($sql_exec2);
+                                                                        ?>
                                                                     <!-- End query -->
 
                                                                     <!-- Querry DB2 Untuk Row Last -->
@@ -269,6 +278,7 @@ require_once 'header.php';
                                                                         <td><?php echo $row_data_orgatex['batch_text_06'] ?>
                                                                         </td>
                                                                         <td><?php echo $row_data_orgatex['machine_no'] ?></td>
+                                                                        <td><?php echo $data_mesin_baru['no_mesin_baru'] ?></td>
                                                                         <td><?php echo $data_dye['rol'] ?></td>
                                                                         <td align="right"><?php if (!empty($data_dye['bruto'])) {
                                                                             echo $data_dye['bruto'] . ' Kg';
