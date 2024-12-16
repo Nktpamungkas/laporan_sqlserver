@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $weight = $_POST['weight'];
     $blower_speed = $_POST['blower_speed'];
     $move_speed = $_POST['move_speed'];
-    $nozle = $_POST['nozle'];
+    $nozle = !empty($_POST['nozle']) ? $_POST['nozle'] : 0;
     $length = $_POST['length'];
     $liquorRatio = $_POST['liquorRatio'];
     $liquorQuantity = $_POST['liquorQuantity'];
