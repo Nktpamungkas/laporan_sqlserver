@@ -9,10 +9,10 @@
             $dateformat = date_create($_GET['tgl1'] ); 
         ?>
         <tr align="center">
-            <th colspan="16">LAPORAN HARIAN PENGIRIMAN</th>
+            <th colspan="17">LAPORAN HARIAN PENGIRIMAN</th>
         </tr>
         <tr>
-            <th colspan="16">
+            <th colspan="17">
                 <?php
                     $date   = $_GET['tgl1'];
                     if($date <= '2023-09-20'){
@@ -24,7 +24,7 @@
             </th>
         </tr>
         <tr>
-            <th colspan="16">BULAN <?= date_format($dateformat,"M Y"); ?></th>
+            <th colspan="17">BULAN <?= date_format($dateformat,"M Y"); ?></th>
         </tr>
         <tr>
             <th>NO</th>
@@ -43,6 +43,7 @@
             <th>DEMAND</th>
             <th>FOC</th>
             <th>TYPE</th>
+            <th>DELIVERY ACTUAL</th>
         </tr>
     </thead>
     <tbody> 
@@ -155,95 +156,33 @@
             $no = 1;
             while ($rowdb2 = db2_fetch_assoc($stmt)) {
         ?>
-        <?php
-            $q_ket_foc  = db2_exec($conn1, "SELECT 
-                                                COUNT(QUALITYREASONCODE) AS ROLL,
-                                                SUM(FOC_KG) AS KG,
-                                                SUM(FOC_YARDMETER) AS YARD_MTR,
-                                                KET_YARDMETER
-                                            FROM
-                                                ITXVIEW_SURATJALAN_EXIM2A
-                                            WHERE 
-                                                QUALITYREASONCODE = 'FOC'
-                                                AND PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
-                                            GROUP BY 
-                                                KET_YARDMETER");
-            $d_ket_foc  = db2_fetch_assoc($q_ket_foc);
-        ?>
-        <?php if($d_ket_foc['ROLL'] > 0 AND $d_ket_foc['KG'] > 0 AND $d_ket_foc['YARD_MTR'] > 0) : ?>
-            <tr>
-                <td><?= $no++; ?></td>
-                <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
-                <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
-                <td><?= $rowdb2['WARNA']; ?></td> 
-                <td><?= $d_ket_foc['ROLL']; ?></td> 
-                <td><?= number_format($d_ket_foc['KG'], 2); ?></td> 
-                <td><?= number_format($d_ket_foc['YARD_MTR'], 2); ?></td> 
-                <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td> 
-                <td>
-                    <?php
-                        $q_roll     = db2_exec($conn1, "SELECT
-                                                            COUNT(ise.COUNTROLL) AS ROLL,
-                                                            SUM(ise.QTY_KG) AS QTY_SJ_KG,
-                                                            SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
-                                                            inpe.PROJECT,
-                                                            ise.ADDRESSEE,
-                                                            ise.BRAND_NM
-                                                        FROM
-                                                            ITXVIEW_SURATJALAN_EXIM2A ise 
-                                                        LEFT JOIN ITXVIEW_NO_PROJECTS_EXIM inpe ON inpe.PROVISIONALCODE = ise.PROVISIONALCODE 
-                                                        WHERE 
-                                                            ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
-                                                        GROUP BY 
-                                                            inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM");
-                        $d_roll     = db2_fetch_assoc($q_roll);
-                        $q_pelanggan    = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
-                                                                                            AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
-                        $r_pelanggan    = db2_fetch_assoc($q_pelanggan);
-                        if($rowdb2['CODE'] == 'EXPORT'){
-                            echo $d_roll['ADDRESSEE'].' - '.$d_roll['BRAND_NM'];
-                        }else{
-                            echo $r_pelanggan['LANGGANAN'];
-
-                        }
-                    ?>
-                </td> 
-                <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
-                <td>
-                    <?php
-                        if($rowdb2['CODE'] == 'EXPORT'){
-                            echo $d_roll['PROJECT'];
-                        }else{
-                            echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
-                        }
-                    ?>
-                </td> 
-                <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
-                <td>`<?= $rowdb2['LOTCODE']; ?></td> 
-                <td>`
-                    <?php
-                        $q_demand   = db2_exec($conn1, "SELECT 
-                                                            PRODUCTIONDEMANDCODE
-                                                        FROM 
-                                                            ITXVIEW_DEMANDBYLOTCODE 
-                                                        WHERE 
-                                                            PRODUCTIONORDERCODE = '$rowdb2[LOTCODE]'
-                                                            AND DLVSALESORDERLINEORDERLINE = '$rowdb2[DLVSALESORDERLINEORDERLINE]'");
-                        $d_demand   = db2_fetch_assoc($q_demand);
-                    ?>
-                    <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
-                </td> 
-                <td>FOC</td> 
-                <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
-            </tr>
-            <tr>
-                <td><?= $no++; ?></td>
-                <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
-                <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
-                <td><?= $rowdb2['WARNA']; ?></td> 
-                <td>
-                    <?php
-                        if($rowdb2['CODE'] == 'EXPORT'){
+            <?php
+                $q_ket_foc  = db2_exec($conn1, "SELECT 
+                                                    COUNT(QUALITYREASONCODE) AS ROLL,
+                                                    SUM(FOC_KG) AS KG,
+                                                    SUM(FOC_YARDMETER) AS YARD_MTR,
+                                                    KET_YARDMETER
+                                                FROM
+                                                    ITXVIEW_SURATJALAN_EXIM2A
+                                                WHERE 
+                                                    QUALITYREASONCODE = 'FOC'
+                                                    AND PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
+                                                GROUP BY 
+                                                    KET_YARDMETER");
+                $d_ket_foc  = db2_fetch_assoc($q_ket_foc);
+            ?>
+            <?php if($d_ket_foc['ROLL'] > 0 AND $d_ket_foc['KG'] > 0 AND $d_ket_foc['YARD_MTR'] > 0) : ?>
+                <tr>
+                    <td><?= $no++; ?></td>
+                    <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
+                    <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
+                    <td><?= $rowdb2['WARNA']; ?></td> 
+                    <td><?= $d_ket_foc['ROLL']; ?></td> 
+                    <td><?= number_format($d_ket_foc['KG'], 2); ?></td> 
+                    <td><?= number_format($d_ket_foc['YARD_MTR'], 2); ?></td> 
+                    <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td> 
+                    <td>
+                        <?php
                             $q_roll     = db2_exec($conn1, "SELECT
                                                                 COUNT(ise.COUNTROLL) AS ROLL,
                                                                 SUM(ise.QTY_KG) AS QTY_SJ_KG,
@@ -259,181 +198,299 @@
                                                             GROUP BY 
                                                                 inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM");
                             $d_roll     = db2_fetch_assoc($q_roll);
-                            if($d_ket_foc['KG'] != 0) { // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC DIPISAH DARI KESELURUHAN
-                                echo $d_roll['ROLL'] - $d_ket_foc['ROLL'];
+                            $q_pelanggan    = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
+                                                                                                AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
+                            $r_pelanggan    = db2_fetch_assoc($q_pelanggan);
+                            if($rowdb2['CODE'] == 'EXPORT'){
+                                echo $d_roll['ADDRESSEE'].' - '.$d_roll['BRAND_NM'];
                             }else{
+                                echo $r_pelanggan['LANGGANAN'];
+
+                            }
+                        ?>
+                    </td> 
+                    <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
+                    <td>
+                        <?php
+                            if($rowdb2['CODE'] == 'EXPORT'){
+                                echo $d_roll['PROJECT'];
+                            }else{
+                                echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
+                            }
+                        ?>
+                    </td> 
+                    <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
+                    <td>`<?= $rowdb2['LOTCODE']; ?></td> 
+                    <td>`
+                        <?php
+                            $q_demand   = db2_exec($conn1, "SELECT 
+                                                                PRODUCTIONDEMANDCODE
+                                                            FROM 
+                                                                ITXVIEW_DEMANDBYLOTCODE 
+                                                            WHERE 
+                                                                PRODUCTIONORDERCODE = '$rowdb2[LOTCODE]'
+                                                                AND DLVSALESORDERLINEORDERLINE = '$rowdb2[DLVSALESORDERLINEORDERLINE]'");
+                            $d_demand   = db2_fetch_assoc($q_demand);
+                        ?>
+                        <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
+                    </td> 
+                    <td>FOC</td> 
+                    <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
+                    <td>
+                        <?php
+                            $q_actual_delivery      = db2_exec($conn1, "SELECT
+                                                                            COALESCE(s2.CONFIRMEDDELIVERYDATE, s.CONFIRMEDDUEDATE) AS ACTUAL_DELIVERY
+                                                                        FROM
+                                                                            SALESORDER s 
+                                                                        LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = s.CODE AND s2.SALORDLINESALORDERCOMPANYCODE = s.COMPANYCODE AND s2.SALORDLINESALORDERCOUNTERCODE = s.COUNTERCODE 
+                                                                        WHERE
+                                                                            s2.SALESORDERLINESALESORDERCODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'
+                                                                            AND s2.SALESORDERLINEORDERLINE = '$rowdb2[DLVSALESORDERLINEORDERLINE]'");
+                            $row_actual_delivery    = db2_fetch_assoc($q_actual_delivery);
+                            echo $row_actual_delivery['ACTUAL_DELIVERY'];
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td><?= $no++; ?></td>
+                    <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
+                    <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
+                    <td><?= $rowdb2['WARNA']; ?></td> 
+                    <td>
+                        <?php
+                            if($rowdb2['CODE'] == 'EXPORT'){
+                                $q_roll     = db2_exec($conn1, "SELECT
+                                                                    COUNT(ise.COUNTROLL) AS ROLL,
+                                                                    SUM(ise.QTY_KG) AS QTY_SJ_KG,
+                                                                    SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
+                                                                    inpe.PROJECT,
+                                                                    ise.ADDRESSEE,
+                                                                    ise.BRAND_NM
+                                                                FROM
+                                                                    ITXVIEW_SURATJALAN_EXIM2A ise 
+                                                                LEFT JOIN ITXVIEW_NO_PROJECTS_EXIM inpe ON inpe.PROVISIONALCODE = ise.PROVISIONALCODE 
+                                                                WHERE 
+                                                                    ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                GROUP BY 
+                                                                    inpe.PROJECT,ise.ADDRESSEE,ise.BRAND_NM");
+                                $d_roll     = db2_fetch_assoc($q_roll);
+                                if($d_ket_foc['KG'] != 0) { // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC DIPISAH DARI KESELURUHAN
+                                    echo $d_roll['ROLL'] - $d_ket_foc['ROLL'];
+                                }else{
+                                    echo $d_roll['ROLL'];
+                                }
+                            }else{
+                                $q_roll     = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                                                                        SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                        SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                        LOTCODE
+                                                                FROM 
+                                                                    ITXVIEWALLOCATION0 
+                                                                WHERE 
+                                                                    CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                GROUP BY 
+                                                                    LOTCODE");
+                                $d_roll     = db2_fetch_assoc($q_roll);
                                 echo $d_roll['ROLL'];
                             }
-                        }else{
-                            $q_roll     = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
-                                                                    SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                    SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                    LOTCODE
-                                                            FROM 
-                                                                ITXVIEWALLOCATION0 
-                                                            WHERE 
-                                                                CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
-                                                            GROUP BY 
-                                                                LOTCODE");
-                            $d_roll     = db2_fetch_assoc($q_roll);
-                            echo $d_roll['ROLL'];
-                        }
-                    ?>
-                </td> 
-                <td><?= number_format($d_roll['QTY_SJ_KG'], 2); ?></td> 
-                <td>
-                    <?php 
-                        if($rowdb2['PRICEUNITOFMEASURECODE'] == 'm'){
-                            echo round(number_format($d_roll['QTY_SJ_YARD'], 2) * 0.9144, 2);
-                        }else{
-                            echo number_format($d_roll['QTY_SJ_YARD'], 2);
-                        }
-                    ?>
-                </td> 
-                <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td> 
-                <td>
-                    <?php
-                        $q_pelanggan    = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
-                                                                                            AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
-                        $r_pelanggan    = db2_fetch_assoc($q_pelanggan);
-                        if($rowdb2['CODE'] == 'EXPORT'){
-                            echo $d_roll['ADDRESSEE'].' - '.$d_roll['BRAND_NM'];
-                        }else{
-                            echo $r_pelanggan['LANGGANAN'];
-
-                        }
-                    ?>
-                </td> 
-                <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
-                <td>
-                    <?php
-                        if($rowdb2['CODE'] == 'EXPORT'){
-                            echo $d_roll['PROJECT'];
-                        }else{
-                            echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
-                        }
-                    ?>
-                </td> 
-                <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
-                <td>`<?= $rowdb2['LOTCODE']; ?></td> 
-                <td>
-                    <?php
-                        $q_demand   = db2_exec($conn1, "SELECT 
-                                                            PRODUCTIONDEMANDCODE
-                                                        FROM 
-                                                            ITXVIEW_DEMANDBYLOTCODE 
-                                                        WHERE 
-                                                            PRODUCTIONORDERCODE = '$rowdb2[LOTCODE]'
-                                                            AND DLVSALESORDERLINEORDERLINE = '$rowdb2[DLVSALESORDERLINEORDERLINE]'");
-                        $d_demand   = db2_fetch_assoc($q_demand);
-                    ?>
-                    <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
-                </td> 
-                <td><?php if($rowdb2['PAYMENTMETHODCODE'] == 'FOC'){ echo $rowdb2['PAYMENTMETHODCODE']; } ?></td> 
-                <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
-            </tr>
-        <?php else : ?>
-            <tr>
-                <td><?= $no++; ?></td>
-                <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
-                <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
-                <td><?= $rowdb2['WARNA']; ?></td> 
-                <td>
-                    <?php
-                        if($rowdb2['CODE'] == 'EXPORT'){
-                            $q_roll     = db2_exec($conn1, "SELECT
-                                                                ise.ITEMTYPEAFICODE,
-                                                                COUNT(ise.COUNTROLL) AS ROLL,
-                                                                SUM(ise.QTY_KG) AS QTY_SJ_KG,
-                                                                SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
-                                                                inpe.PROJECT,
-                                                                ise.ADDRESSEE,
-                                                                ise.BRAND_NM
-                                                            FROM
-                                                                ITXVIEW_SURATJALAN_EXIM2A ise 
-                                                            LEFT JOIN ITXVIEW_NO_PROJECTS_EXIM inpe ON inpe.PROVISIONALCODE = ise.PROVISIONALCODE 
-                                                            WHERE 
-                                                                ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]' AND ise.ITEMTYPEAFICODE = '$rowdb2[ITEMTYPEAFICODE]'
-                                                            GROUP BY 
-                                                                ise.ITEMTYPEAFICODE,
-                                                                inpe.PROJECT,
-                                                                ise.ADDRESSEE,
-                                                                ise.BRAND_NM");
-                            $d_roll     = db2_fetch_assoc($q_roll);
-                            if($d_ket_foc['ROLL'] > 0 AND $d_ket_foc['KG'] > 0 AND $d_ket_foc['YARD_MTR'] > 0) { // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC DIPISAH DARI KESELURUHAN
-                                echo $d_roll['ROLL'] - $d_ket_foc['ROLL'];
+                        ?>
+                    </td> 
+                    <td><?= number_format($d_roll['QTY_SJ_KG'], 2); ?></td> 
+                    <td>
+                        <?php 
+                            if($rowdb2['PRICEUNITOFMEASURECODE'] == 'm'){
+                                echo round(number_format($d_roll['QTY_SJ_YARD'], 2) * 0.9144, 2);
                             }else{
+                                echo number_format($d_roll['QTY_SJ_YARD'], 2);
+                            }
+                        ?>
+                    </td> 
+                    <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td> 
+                    <td>
+                        <?php
+                            $q_pelanggan    = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
+                                                                                                AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
+                            $r_pelanggan    = db2_fetch_assoc($q_pelanggan);
+                            if($rowdb2['CODE'] == 'EXPORT'){
+                                echo $d_roll['ADDRESSEE'].' - '.$d_roll['BRAND_NM'];
+                            }else{
+                                echo $r_pelanggan['LANGGANAN'];
+
+                            }
+                        ?>
+                    </td> 
+                    <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
+                    <td>
+                        <?php
+                            if($rowdb2['CODE'] == 'EXPORT'){
+                                echo $d_roll['PROJECT'];
+                            }else{
+                                echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
+                            }
+                        ?>
+                    </td> 
+                    <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
+                    <td>`<?= $rowdb2['LOTCODE']; ?></td> 
+                    <td>
+                        <?php
+                            $q_demand   = db2_exec($conn1, "SELECT 
+                                                                PRODUCTIONDEMANDCODE
+                                                            FROM 
+                                                                ITXVIEW_DEMANDBYLOTCODE 
+                                                            WHERE 
+                                                                PRODUCTIONORDERCODE = '$rowdb2[LOTCODE]'
+                                                                AND DLVSALESORDERLINEORDERLINE = '$rowdb2[DLVSALESORDERLINEORDERLINE]'");
+                            $d_demand   = db2_fetch_assoc($q_demand);
+                        ?>
+                        <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
+                    </td> 
+                    <td><?php if($rowdb2['PAYMENTMETHODCODE'] == 'FOC'){ echo $rowdb2['PAYMENTMETHODCODE']; } ?></td> 
+                    <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
+                    <td>
+                        <?php
+                            $q_actual_delivery      = db2_exec($conn1, "SELECT
+                                                                            COALESCE(s2.CONFIRMEDDELIVERYDATE, s.CONFIRMEDDUEDATE) AS ACTUAL_DELIVERY
+                                                                        FROM
+                                                                            SALESORDER s 
+                                                                        LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = s.CODE AND s2.SALORDLINESALORDERCOMPANYCODE = s.COMPANYCODE AND s2.SALORDLINESALORDERCOUNTERCODE = s.COUNTERCODE 
+                                                                        WHERE
+                                                                            s2.SALESORDERLINESALESORDERCODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'
+                                                                            AND s2.SALESORDERLINEORDERLINE = '$rowdb2[DLVSALESORDERLINEORDERLINE]'");
+                            $row_actual_delivery    = db2_fetch_assoc($q_actual_delivery);
+                            echo $row_actual_delivery['ACTUAL_DELIVERY'];
+                        ?>
+                    </td>
+                </tr>
+            <?php else : ?>
+                <tr>
+                    <td><?= $no++; ?></td>
+                    <td><?= $rowdb2['GOODSISSUEDATE']; ?></td> 
+                    <td><?= $rowdb2['PROVISIONALCODE']; ?></td> 
+                    <td><?= $rowdb2['WARNA']; ?></td> 
+                    <td>
+                        <?php
+                            if($rowdb2['CODE'] == 'EXPORT'){
+                                $q_roll     = db2_exec($conn1, "SELECT
+                                                                    ise.ITEMTYPEAFICODE,
+                                                                    COUNT(ise.COUNTROLL) AS ROLL,
+                                                                    SUM(ise.QTY_KG) AS QTY_SJ_KG,
+                                                                    SUM(ise.QTY_YARDMETER) AS QTY_SJ_YARD,
+                                                                    inpe.PROJECT,
+                                                                    ise.ADDRESSEE,
+                                                                    ise.BRAND_NM
+                                                                FROM
+                                                                    ITXVIEW_SURATJALAN_EXIM2A ise 
+                                                                LEFT JOIN ITXVIEW_NO_PROJECTS_EXIM inpe ON inpe.PROVISIONALCODE = ise.PROVISIONALCODE 
+                                                                WHERE 
+                                                                    ise.PROVISIONALCODE = '$rowdb2[PROVISIONALCODE]' AND ise.ITEMTYPEAFICODE = '$rowdb2[ITEMTYPEAFICODE]'
+                                                                GROUP BY 
+                                                                    ise.ITEMTYPEAFICODE,
+                                                                    inpe.PROJECT,
+                                                                    ise.ADDRESSEE,
+                                                                    ise.BRAND_NM");
+                                $d_roll     = db2_fetch_assoc($q_roll);
+                                if($d_ket_foc['ROLL'] > 0 AND $d_ket_foc['KG'] > 0 AND $d_ket_foc['YARD_MTR'] > 0) { // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC DIPISAH DARI KESELURUHAN
+                                    echo $d_roll['ROLL'] - $d_ket_foc['ROLL'];
+                                }else{
+                                    echo $d_roll['ROLL'];
+                                }
+                            }else{
+                                $q_roll     = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                                                                        SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                        SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                        LOTCODE
+                                                                FROM 
+                                                                    ITXVIEWALLOCATION0 
+                                                                WHERE 
+                                                                    CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                GROUP BY 
+                                                                    LOTCODE");
+                                $d_roll     = db2_fetch_assoc($q_roll);
                                 echo $d_roll['ROLL'];
                             }
-                        }else{
-                            $q_roll     = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
-                                                                    SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                    SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                    LOTCODE
+                        ?>
+                    </td> 
+                    <td><?= number_format($d_roll['QTY_SJ_KG'], 2); ?></td> 
+                    <td>
+                        <?php 
+                            if($rowdb2['PRICEUNITOFMEASURECODE'] == 'm'){
+                                echo round(number_format($d_roll['QTY_SJ_YARD'], 2) * 0.9144, 2);
+                            }else{
+                                echo number_format($d_roll['QTY_SJ_YARD'], 2);
+                            }
+                        ?>
+                    </td> 
+                    <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td> 
+                    <td>
+                        <?php
+                            $q_pelanggan    = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
+                                                                                                AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
+                            $r_pelanggan    = db2_fetch_assoc($q_pelanggan);
+                            if($rowdb2['CODE'] == 'EXPORT'){
+                                echo $d_roll['ADDRESSEE'].' - '.$d_roll['BRAND_NM'];
+                            }else{
+                                echo $r_pelanggan['LANGGANAN'];
+                            }
+                        ?>
+                    </td> 
+                    <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
+                    <td>
+                        <?php
+                            if($rowdb2['CODE'] == 'EXPORT'){
+                                echo $d_roll['PROJECT'];
+                            }else{
+                                echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
+                            }
+                        ?>
+                    </td> 
+                    <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
+                    <td>`<?= $rowdb2['LOTCODE']; ?></td> 
+                    <td>
+                        <?php
+                            $q_demand   = db2_exec($conn1, "SELECT 
+                                                                PRODUCTIONDEMANDCODE
                                                             FROM 
-                                                                ITXVIEWALLOCATION0 
+                                                                ITXVIEW_DEMANDBYLOTCODE 
                                                             WHERE 
-                                                                CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
-                                                            GROUP BY 
-                                                                LOTCODE");
-                            $d_roll     = db2_fetch_assoc($q_roll);
-                            echo $d_roll['ROLL'];
-                        }
-                    ?>
-                </td> 
-                <td><?= number_format($d_roll['QTY_SJ_KG'], 2); ?></td> 
-                <td>
-                    <?php 
-                        if($rowdb2['PRICEUNITOFMEASURECODE'] == 'm'){
-                            echo round(number_format($d_roll['QTY_SJ_YARD'], 2) * 0.9144, 2);
-                        }else{
-                            echo number_format($d_roll['QTY_SJ_YARD'], 2);
-                        }
-                    ?>
-                </td> 
-                <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td> 
-                <td>
-                    <?php
-                        $q_pelanggan    = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$rowdb2[ORDPRNCUSTOMERSUPPLIERCODE]' 
-                                                                                            AND CODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'");
-                        $r_pelanggan    = db2_fetch_assoc($q_pelanggan);
-                        if($rowdb2['CODE'] == 'EXPORT'){
-                            echo $d_roll['ADDRESSEE'].' - '.$d_roll['BRAND_NM'];
-                        }else{
-                            echo $r_pelanggan['LANGGANAN'];
-
-                        }
-                    ?>
-                </td> 
-                <td>`<?= $rowdb2['PO_NUMBER']; ?></td> 
-                <td>
-                    <?php
-                        if($rowdb2['CODE'] == 'EXPORT'){
-                            echo $d_roll['PROJECT'];
-                        }else{
-                            echo $rowdb2['DLVSALORDERLINESALESORDERCODE'];
-                        }
-                    ?>
-                </td> 
-                <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> 
-                <td>`<?= $rowdb2['LOTCODE']; ?></td> 
-                <td>
-                    <?php
-                        $q_demand   = db2_exec($conn1, "SELECT 
-                                                            PRODUCTIONDEMANDCODE
-                                                        FROM 
-                                                            ITXVIEW_DEMANDBYLOTCODE 
-                                                        WHERE 
-                                                            PRODUCTIONORDERCODE = '$rowdb2[LOTCODE]'
-                                                            AND DLVSALESORDERLINEORDERLINE = '$rowdb2[DLVSALESORDERLINEORDERLINE]'");
-                        $d_demand   = db2_fetch_assoc($q_demand);
-                    ?>
-                    <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
-                </td> 
-                <td><?php if($rowdb2['PAYMENTMETHODCODE'] == 'FOC'){ echo $rowdb2['PAYMENTMETHODCODE']; } ?></td> 
-                <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
-            </tr>
-        <?php endif; ?>
+                                                                PRODUCTIONORDERCODE = '$rowdb2[LOTCODE]'
+                                                                AND DLVSALESORDERLINEORDERLINE = '$rowdb2[DLVSALESORDERLINEORDERLINE]'");
+                            $d_demand   = db2_fetch_assoc($q_demand);
+                        ?>
+                        <?= $d_demand['PRODUCTIONDEMANDCODE']; ?>
+                    </td> 
+                    <td><?php if($rowdb2['PAYMENTMETHODCODE'] == 'FOC'){ echo $rowdb2['PAYMENTMETHODCODE']; } ?></td> 
+                    <td><?= $rowdb2['ITEMTYPEAFICODE']; ?></td> 
+                    <td>
+                        <?php
+                            $q_actual_delivery      = db2_exec($conn1, "SELECT
+                                                                            DISTINCT COALESCE(s3.CONFIRMEDDELIVERYDATE, s2.CONFIRMEDDUEDATE) AS ACTUAL_DELIVERY
+                                                                        FROM
+                                                                            SALESDOCUMENTLINE s
+                                                                        LEFT JOIN SALESORDER s2 ON s2.CODE = s.DLVSALORDERLINESALESORDERCODE
+                                                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.CODE 
+                                                                                                        AND s3.SALORDLINESALORDERCOMPANYCODE = s2.COMPANYCODE 
+                                                                                                        AND s3.SALORDLINESALORDERCOUNTERCODE = s2.COUNTERCODE 
+                                                                                                        AND s3.SALESORDERLINEORDERLINE = s.DLVSALESORDERLINEORDERLINE 
+                                                                        WHERE
+                                                                            s.DLVSALORDERLINESALESORDERCODE = '$d_roll[PROJECT]'");
+                            $row_actual_delivery    = db2_fetch_assoc($q_actual_delivery);
+                            echo $row_actual_delivery['ACTUAL_DELIVERY'];
+                        ?>
+                        <?php
+                            $q_actual_delivery      = db2_exec($conn1, "SELECT
+                                                                            COALESCE(s2.CONFIRMEDDELIVERYDATE, s.CONFIRMEDDUEDATE) AS ACTUAL_DELIVERY
+                                                                        FROM
+                                                                            SALESORDER s 
+                                                                        LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = s.CODE AND s2.SALORDLINESALORDERCOMPANYCODE = s.COMPANYCODE AND s2.SALORDLINESALORDERCOUNTERCODE = s.COUNTERCODE 
+                                                                        WHERE
+                                                                            s2.SALESORDERLINESALESORDERCODE = '$rowdb2[DLVSALORDERLINESALESORDERCODE]'
+                                                                            AND s2.SALESORDERLINEORDERLINE = '$rowdb2[DLVSALESORDERLINEORDERLINE]'");
+                            $row_actual_delivery    = db2_fetch_assoc($q_actual_delivery);
+                            echo $row_actual_delivery['ACTUAL_DELIVERY'];
+                        ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
         <?php } ?>
         <!-- CAPITAL KFF & KGF -->
         <?php
@@ -449,6 +506,7 @@
                                                 i.LEGALNAME1 AS CUSTOMER,
                                                 i.PO_NUMBER,
                                                 i.DLVSALORDERLINESALESORDERCODE,
+                                                i.DLVSALESORDERLINEORDERLINE,
                                                 CASE
                                                     WHEN LOCATE('//', LISTAGG(DISTINCT TRIM(p.LONGDESCRIPTION), '//')) = 0 THEN LISTAGG(DISTINCT TRIM(p.LONGDESCRIPTION), '//')
                                                     ELSE
@@ -479,6 +537,7 @@
                                                 i.LONGDESCRIPTION,
                                                 i.LEGALNAME1,
                                                 i.PO_NUMBER,
+                                                i.DLVSALESORDERLINEORDERLINE,
                                                 i.DLVSALORDERLINESALESORDERCODE");
         ?>
         <?php $nourut = 1; while ($row_stmt_cap_kff = db2_fetch_assoc($stmt_cap_kff)) { ?>
@@ -498,7 +557,21 @@
                 <td></td> 
                 <td></td> 
                 <td></td> 
-                <td>KFF</td> 
+                <td>KFF</td>
+                <td>
+                    <?php
+                        $q_actual_delivery      = db2_exec($conn1, "SELECT
+                                                                        COALESCE(s2.CONFIRMEDDELIVERYDATE, s.CONFIRMEDDUEDATE) AS ACTUAL_DELIVERY
+                                                                    FROM
+                                                                        SALESORDER s 
+                                                                    LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = s.CODE AND s2.SALORDLINESALORDERCOMPANYCODE = s.COMPANYCODE AND s2.SALORDLINESALORDERCOUNTERCODE = s.COUNTERCODE 
+                                                                    WHERE
+                                                                        s2.SALESORDERLINESALESORDERCODE = '$row_stmt_cap_kff[DLVSALORDERLINESALESORDERCODE]'
+                                                                        AND s2.SALESORDERLINEORDERLINE = '$row_stmt_cap_kff[DLVSALESORDERLINEORDERLINE]'");
+                        $row_actual_delivery    = db2_fetch_assoc($q_actual_delivery);
+                        echo $row_actual_delivery['ACTUAL_DELIVERY'];
+                    ?>
+                </td>
             </tr>
         <?php } ?>
     </tbody>
@@ -742,7 +815,7 @@
                                                     FROM
                                                         ITXVIEW_SURATJALAN_PPC_FOR_POSELESAI i
                                                     WHERE
-                                                        $where_date
+                                                        $where_date $where_no_order
                                                         AND i.DOCUMENTTYPETYPE = 05
                                                         AND NOT i.CODE IS NULL
                                                         AND i.PROGRESSSTATUS_SALDOC = 2
@@ -762,7 +835,7 @@
             <th colspan="1" align="center">
                 <?= number_format($fetch_roll_harian_local['QTY_SJ_YARD'] + $fetch_roll_harian_export['QTY_SJ_YARD'], 2); ?>
             </th>
-            <th colspan="3" align="center">ARIS</th>
+            <th colspan="4" align="center">ARIS</th>
             <th colspan="6" align="center">
                 <?php
                     if($_GET['tgl1'] < '2024-01-01'){
@@ -794,7 +867,7 @@
             <th colspan="1" align="center">
             <?= number_format($fetch_roll_harian_local_1['QTY_SJ_YARD'] + $fetch_roll_harian_export_1['QTY_SJ_YARD'], 2); ?>
             </th>
-            <th colspan="3" align="center">STAFF</th>
+            <th colspan="4" align="center">STAFF</th>
             <th colspan="6" align="center">
                 <?php
                     if($_GET['tgl1'] < '2024-01-01'){
@@ -826,13 +899,13 @@
             <th colspan="1" align="center">
                 <?= number_format($fetch_roll_harian_local_hariH['QTY_SJ_YARD'] + $fetch_roll_harian_export_hariH['QTY_SJ_YARD'], 2); ?>
             </th>
-            <th colspan="3" align="center"><?php $date = date_create($_GET['tgl1'] ); echo date_format($date,"d-M-Y"); ?></th>
+            <th colspan="4" align="center"><?php $date = date_create($_GET['tgl1'] ); echo date_format($date,"d-M-Y"); ?></th>
             <th colspan="6" align="center"><?php $date = date_create($_GET['tgl1'] ); echo date_format($date,"d-M-Y"); ?></th>
         </tr>
         <tr>
             <th colspan="5"><br></th>
             <th colspan="2"><br></th>
-            <th colspan="3"><br><br><br></th>
+            <th colspan="4"><br><br><br></th>
             <th colspan="6"><br><br><br></th>
         </tr>       
     </tfoot>
