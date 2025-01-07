@@ -187,7 +187,7 @@
                                     </div>
                                     <form action="" method="post">
                                         <div class="card-block">
-                                            <div class="form-group row">
+                                            <div class="row">
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Dari Tanggal</h4>
                                                     <input type="date" name="tgl1" class="form-control" value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl1']; } ?>">
@@ -196,10 +196,10 @@
                                                     <h4 class="sub-title">Sampai Tanggal</h4>
                                                     <input type="date" name="tgl2" class="form-control" value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>">
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-12 col-xl-12 m-b-30">
-                                                <button type="submit" name="update" class="btn btn-primary btn-sm"><i class="icofont icofont-save"></i> Update Invoice</button>
-                                                <p>*Note : Jika ingin update seluruh tanggal, silahkan klik <b>Update Invoice</b> secara langsung tanpa memilih tanggal.</p>
+                                                <div class="col-sm-12 col-xl-12 m-b-30">
+                                                    <button type="submit" name="update" class="btn btn-primary btn-sm"><i class="icofont icofont-save"></i> Update Invoice</button>
+                                                    <p>*Note : Jika ingin update seluruh tanggal, silahkan klik <b>Update Invoice</b> secara langsung tanpa memilih tanggal.</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </form>
