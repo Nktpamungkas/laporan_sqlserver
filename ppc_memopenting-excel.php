@@ -746,15 +746,23 @@
                                                                 ORDERLINE ASC");
                         $fetchDataQtyKurang     = db2_fetch_assoc($sqlQtyKurang);
 
+                        $ResultLotCode  = "SELECT 
+                                                LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', ', ' ) AS PRODUCTIONORDERCODE 
+                                            FROM 
+                                                ITXVIEWKK
+                                            WHERE 
+                                                PROJECTCODE = '$rowdb2[NO_ORDER]' 
+                                                AND ORIGDLVSALORDERLINEORDERLINE = '$rowdb2[ORDERLINE]'";
+                        $exec_lotcode   = db2_exec($conn1, $ResultLotCode);
+                        $fetch_lotcode  = db2_fetch_assoc($exec_lotcode);
+
                         $sqlQtyReady          = "SELECT
                                                     SUM(BASEPRIMARYQUANTITYUNIT) AS QTY_READY,
                                                     SUM(BASESECONDARYQUANTITYUNIT) AS QTY_READY_2
                                                 FROM
                                                     BALANCE b
                                                 WHERE
-                                                    PROJECTCODE = '$fetchDataQtyKurang[NO_ORDER]'
-                                                    AND TRIM(DECOSUBCODE02) || '-' || TRIM(DECOSUBCODE03) = '$fetchDataQtyKurang[KET_PRODUCT]' 
-                                                    AND TRIM(DECOSUBCODE05) = '$fetchDataQtyKurang[NO_WARNA]'
+                                                    LOTCODE IN ($fetch_lotcode[PRODUCTIONORDERCODE])
                                                     AND LOGICALWAREHOUSECODE = 'M031'";
 
                         $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
