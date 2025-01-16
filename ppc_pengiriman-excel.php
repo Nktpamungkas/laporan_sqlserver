@@ -18,7 +18,7 @@
                     if($date <= '2023-09-20'){
                         echo "FW-02-PPC-04/02";
                     }else{
-                        echo "FW-02-PPC-04/03";
+                        echo "FW-02-PPC-04/04";
                     }
                 ?>
             </th>
