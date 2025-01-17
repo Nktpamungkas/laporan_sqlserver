@@ -22,18 +22,18 @@ $now = new DateTime();
 $startDate = $now;
 $endDate   = $now;
 
-if (isset($_GET['tgl']) && isset($_GET['time']) && isset($_GET['tgl2']) && isset($_GET['time2'])) {
-    if ($_GET['tgl'] && $_GET['time']) {
-        $startDate = $_GET['tgl'] . ' ' . $_GET['time'];
+if (isset($_POST['tgl']) && isset($_POST['time']) && isset($_POST['tgl2']) && isset($_POST['time2'])) {
+    if ($_POST['tgl'] && $_POST['time']) {
+        $startDate = $_POST['tgl'] . ' ' . $_POST['time'];
     }
 
-    if ($_GET['tgl2'] && $_GET['time2']) {
-        $endDate = $_GET['tgl2'] . ' ' . $_GET['time2'];
+    if ($_POST['tgl2'] && $_POST['time2']) {
+        $endDate = $_POST['tgl2'] . ' ' . $_POST['time2'];
     }
 }
 
-if (isset($_GET['time_range'])) {
-    $time_range = $_GET['time_range'];
+if (isset($_POST['time_range'])) {
+    $time_range = $_POST['time_range'];
 
     if ($time_range != 'custom') {
         switch ($time_range) {
@@ -154,21 +154,19 @@ foreach ($machines as $machine) {
         $machineIDNew = null;
     }
 
-    $total_stop_value = ! $statusMachine ? "OFFLINE" : $totalStop;
-    $presentase_value = ! $statusMachine ? "OFFLINE" : round($totalPercentage, 2) . "%";
-
-    $dataHeader = [
-        "Ip Address"                    => $machineID,
-        "Machine Number New"            => $machineIDNew,
-        "Machine Capacity"              => $machine_capacity,
-        "Machine Description"           => $machine_description,
-        "Total Stop"                    => $total_stop_value,
-        "Presentase Efficiency Machine" => $presentase_value,
+    $dataHeader[] = [
+        "machine_number"           => $machineID,
+        "machine_number_new"       => $machineIDNew,
+        "machine_capacity"         => $machine_capacity,
+        "machine_description"      => $machine_description,
+        "total_stop"               => $totalStop,
+        "total_percentage_running" => round($totalPercentage, 2),
+        "status_machine"           => $statusMachine,
     ];
 
     $dataDetail = [];
 
-    // $machineID = $_GET['machine_id'];
+    // $machineID = $_POST['machine_id'];
 
     $sqlLogs = "SELECT Dyelots.Dyelot AS dyelot, LogTimeStamp as logTimeStamp,
     MachineProtocol.AlarmNo as value,
@@ -217,12 +215,13 @@ foreach ($machines as $machine) {
                 $totalStop = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
 
                 $dataDetail[] = [
-                    "Dyelot"     => $dyelot,
-                    "Ip Address" => $machineID,
-                    "Start Stop" => $log_timestamp_start,
-                    "End Stop"   => $log_timestamp_stop,
-                    "Total Stop" => $totalStop,
-                    "Reason"     => $reason,
+                    "dyelot"              => $dyelot,
+                    "machine_number"      => $machineID,
+                    "log_timestamp"       => $log_timestamp,
+                    "log_timestamp_start" => $log_timestamp_start,
+                    "log_timestamp_stop"  => $log_timestamp_stop,
+                    "reason"              => $reason,
+                    "total_stop"          => $totalStop,
                 ];
             }
         }
@@ -233,8 +232,6 @@ foreach ($machines as $machine) {
         'detail' => $dataDetail,
     ];
 }
-
-// print_r($data);
 
 // Data Header dan Detail (Sample)
 // $data = [
@@ -323,8 +320,6 @@ foreach ($machines as $machine) {
 //         ],
 //     ],
 // ];
-
-// print_r($data);
 
 // Style untuk Header Utama
 $headerMainStyle = [
