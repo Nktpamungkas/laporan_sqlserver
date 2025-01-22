@@ -67,6 +67,8 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                     <h4 class="sub-title">Bon Order</h4>
                                                     <input type="text" name="no_order" class="form-control" onkeyup="this.value = this.value.toUpperCase()" value="<?php if (isset($_POST['submit'])) {
                                                                                                                                                                         echo $_POST['no_order'];
+                                                                                                                                                                    }elseif ($_GET['no_order']) {
+                                                                                                                                                                        echo $_GET['no_order'];
                                                                                                                                                                     } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
@@ -185,7 +187,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                         </form>
                                     </div>
                                 </div>
-                                <?php if (isset($_POST['submit']) or ($_GET['demand'] and $_GET['prod_order'])) : ?>
+                                <?php if (isset($_POST['submit']) or ($_GET['demand'] and $_GET['prod_order']) or $_GET['no_order']) : ?>
                                     <div class="card">
                                         <div class="card-block">
                                             <div class="dt-responsive table-responsive">
@@ -239,14 +241,15 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                         <?php
                                                             $prod_order     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
                                                             $prod_demand    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
-                                                            $no_order       = $_POST['no_order'] ?? '';
+                                                            $no_order       = $_POST['no_order'] ?? $_GET['no_order'] ?? '';
+                                                            $orderline      = $_GET['orderline'] ?? '';
                                                             $tgl1           = $_POST['tgl1'] ?? '';
                                                             $tgl2           = $_POST['tgl2'] ?? '';
                                                             $no_po          = $_POST['no_po'] ?? '';
                                                             $article_group  = $_POST['article_group'] ?? '';
                                                             $article_code   = $_POST['article_code'] ?? '';
                                                             $nama_warna     = $_POST['nama_warna'] ?? '';
-                                                            $kkoke          = $_POST['kkoke'] ?? '';
+                                                            $kkoke          = $_POST['kkoke'] ?? $_GET['kkoke'] ?? '';
                                                             
                                                             $conditions = [];
                                                             $conditions2 = [];
@@ -263,6 +266,9 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                             }
                                                             if ($no_order) {
                                                                 $conditions[] = "NO_ORDER = '$no_order'";
+                                                            }
+                                                            if ($orderline) {
+                                                                $conditions[] = "ORDERLINE = '$orderline'";
                                                             }
                                                             if ($tgl1 && $tgl2) {
                                                                 $conditions[] = "DELIVERY BETWEEN '$tgl1' AND '$tgl2'";
@@ -357,9 +363,10 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                             
 
                                                             // --------------------------------------------------------------------------------------------------------------- //
-                                                            $prod_order_2     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
-                                                            $prod_demand_2    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
-                                                            $no_order_2     = $_POST['no_order'] ?? '';
+                                                            $prod_order_2   = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
+                                                            $prod_demand_2  = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
+                                                            $no_order_2     = $_POST['no_order'] ?? $_GET['no_order'] ?? '';
+                                                            $orderline_2    = $_GET['orderline'] ?? '';
                                                             $tgl1_2         = $_POST['tgl1'] ?? '';
                                                             $tgl2_2         = $_POST['tgl2'] ?? '';
                                                             $no_po2         = $_POST['no_po'] ?? '';
@@ -376,6 +383,9 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                             }
                                                             if ($no_order_2) {
                                                                 $conditions[] = "NO_ORDER = '$no_order_2'";
+                                                            }
+                                                            if ($orderline_2) {
+                                                                $conditions[] = "ORDERLINE = '$orderline_2'";
                                                             }
                                                             if ($tgl1_2 & $tgl2_2) {
                                                                 $conditions[] = "DELIVERY BETWEEN '$tgl1_2' AND '$tgl2_2'";
@@ -1047,7 +1057,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                     $article_group  = $_POST['article_group'] ?? '';
                                     $article_code   = $_POST['article_code'] ?? '';
                                     $nama_warna     = $_POST['nama_warna'] ?? '';
-                                    $kkoke          = $_POST['kkoke'] ?? '';
+                                    $kkoke          = $_POST['kkoke'] ?? $_GET['kkoke'] ?? '';
 
                                     echo '<script>window.location.href = "ppc_memopenting-excel.php?prod_order=' . $prod_order . '&prod_demand=' . $prod_demand . '&no_order=' . $no_order . '&tgl1=' . $tgl1 . '&tgl2=' . $tgl2 . '&no_po=' . $no_po . '&article_group=' . $article_group . '&article_code=' . $article_code . '&nama_warna=' . $nama_warna . '&kkoke=' . $kkoke . '&akses=catch";</script>';
                                     ?>
