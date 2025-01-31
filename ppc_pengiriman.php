@@ -127,189 +127,190 @@
                                                     </thead>
                                                     <tbody>
                                                         <?php
-                                                        ini_set("error_reporting", 1);
-                                                        session_start();
-                                                        set_time_limit(0);
-                                                        require_once "koneksi.php";
-                                                        $tgl1 = $_POST['tgl1'];
-                                                        $no_order = $_POST['no_order'];
+                                                            ini_set("error_reporting", 1);
+                                                            session_start();
+                                                            set_time_limit(0);
+                                                            require_once "koneksi.php";
+                                                            $tgl1 = $_POST['tgl1'];
+                                                            $no_order = $_POST['no_order'];
 
-                                                        if ($tgl1) {
-                                                            $where_date = "i.GOODSISSUEDATE = '$tgl1'";
-                                                        } else {
-                                                            $where_date = "";
-                                                        }
-                                                        if ($no_order) {
-                                                            $where_no_order = "i.DLVSALORDERLINESALESORDERCODE = '$no_order'";
-                                                        } else {
-                                                            $where_no_order = "";
-                                                        }
-                                                        $codeExport = "TRIM(i.DEFINITIVECOUNTERCODE) = 'CESDEF' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'CESPROV' OR
-                                                                                TRIM(i.DEFINITIVECOUNTERCODE) = 'DREDEF' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'DREPROV' OR 
-                                                                                TRIM(i.DEFINITIVECOUNTERCODE) = 'DSEDEF' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'EXDDEF' OR
-                                                                                TRIM(i.DEFINITIVECOUNTERCODE) = 'EXDPROV' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'EXPDEF' OR
-                                                                                TRIM(i.DEFINITIVECOUNTERCODE) = 'EXPPROV' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'GSEDEF' OR 
-                                                                                TRIM(i.DEFINITIVECOUNTERCODE) = 'GSEPROV' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'PSEPROV'";
-                                                        if ($_POST['dept'] == 'GKJ') {
-                                                            $sqlDB2 = "SELECT
-                                                                                DISTINCT 
-                                                                                LISTAGG(DISTINCT TRIM(i.SUBCODE05), ', ') AS NO_WARNA,
-                                                                                i.PROVISIONALCODE,
-                                                                                TRIM(i.PRICEUNITOFMEASURECODE) AS PRICEUNITOFMEASURECODE,
-                                                                                i.DEFINITIVECOUNTERCODE,
-                                                                                i.DEFINITIVEDOCUMENTDATE,
-                                                                                i.ORDERPARTNERBRANDCODE,
-                                                                                i.PO_NUMBER AS PO_NUMBER,
-                                                                                i.ITEMDESCRIPTION AS JENIS_KAIN,
-                                                                                LISTAGG(DISTINCT TRIM(iasp.WAREHOUSELOCATIONCODE), ', ') AS LOKASI,
-                                                                                DAY(i.GOODSISSUEDATE) || '-' || MONTHNAME(i.GOODSISSUEDATE) || '-' || YEAR(i.GOODSISSUEDATE) AS GOODSISSUEDATE,
-                                                                                i.ORDPRNCUSTOMERSUPPLIERCODE,
-                                                                                CASE 
-                                                                                    WHEN i.PAYMENTMETHODCODE <> 'FOC' THEN ''
-                                                                                    ELSE i.PAYMENTMETHODCODE
-                                                                                END AS PAYMENTMETHODCODE,
-                                                                                i.ITEMTYPEAFICODE,
-                                                                                i.DLVSALORDERLINESALESORDERCODE AS DLVSALORDERLINESALESORDERCODE,
-                                                                                i.DLVSALESORDERLINEORDERLINE AS DLVSALESORDERLINEORDERLINE,
-                                                                                LISTAGG(DISTINCT TRIM(iasp.LOTCODE), ', ' ) AS LOTCODE,
-                                                                                LISTAGG(DISTINCT ''''|| TRIM(iasp.LOTCODE) ||'''', ', ' ) AS LOTCODE2,
-                                                                                i2.WARNA AS WARNA,
-                                                                                i.LEGALNAME1,
-                                                                                i.CODE AS CODE
-                                                                            FROM
-                                                                                ITXVIEW_SURATJALAN_PPC_FOR_POSELESAI i
-                                                                            LEFT JOIN ITXVIEW_ALLOCATION_SURATJALAN_PPC iasp ON
-                                                                                iasp.CODE = i.CODE
-                                                                            LEFT JOIN ITXVIEWCOLOR i2 ON
-                                                                                i2.ITEMTYPECODE = i.ITEMTYPEAFICODE
-                                                                                AND i2.SUBCODE01 = i.SUBCODE01
-                                                                                AND i2.SUBCODE02 = i.SUBCODE02
-                                                                                AND i2.SUBCODE03 = i.SUBCODE03
-                                                                                AND i2.SUBCODE04 = i.SUBCODE04
-                                                                                AND i2.SUBCODE05 = i.SUBCODE05
-                                                                                AND i2.SUBCODE06 = i.SUBCODE06
-                                                                                AND i2.SUBCODE07 = i.SUBCODE07
-                                                                                AND i2.SUBCODE08 = i.SUBCODE08
-                                                                                AND i2.SUBCODE09 = i.SUBCODE09
-                                                                                AND i2.SUBCODE10 = i.SUBCODE10
-                                                                            WHERE
-                                                                                $where_no_order $where_date 
-                                                                                -- i.PROVISIONALCODE = 'ESP2400686'
-                                                                                AND NOT (SUBSTR(i.DLVSALORDERLINESALESORDERCODE, 1,3) = 'CAP' AND (i.ITEMTYPEAFICODE = 'KFF' OR i.ITEMTYPEAFICODE = 'KGF' OR i.ITEMTYPEAFICODE = 'CAP'))
-                                                                                AND i.DOCUMENTTYPETYPE = 05 
-                                                                                AND NOT i.CODE IS NULL 
-                                                                                AND i.PROGRESSSTATUS_SALDOC = 2
-                                                                            GROUP BY
-                                                                                i.PROVISIONALCODE,
-                                                                                i.PRICEUNITOFMEASURECODE,
-                                                                                i.DEFINITIVEDOCUMENTDATE,
-                                                                                i.ORDERPARTNERBRANDCODE,
-                                                                                i.PO_NUMBER,
-                                                                                i.PROJECTCODE,
-                                                                                i.GOODSISSUEDATE,
-                                                                                i.ORDPRNCUSTOMERSUPPLIERCODE,
-                                                                                i.PAYMENTMETHODCODE,
-                                                                                i.PO_NUMBER,
-                                                                                i.ITEMTYPEAFICODE,
-                                                                                i.DLVSALORDERLINESALESORDERCODE,
-                                                                                i.DLVSALESORDERLINEORDERLINE,
-                                                                                i.ITEMDESCRIPTION,
-                                                                                i.DEFINITIVECOUNTERCODE,
-                                                                                i2.WARNA,
-                                                                                i.LEGALNAME1,
-                                                                                i.CODE
-                                                                            ORDER BY
-                                                                                i.PROVISIONALCODE ASC";
-                                                        } elseif ($_POST['dept'] == 'PPC') {
-                                                            $sqlDB2 = "SELECT DISTINCT
-                                                                                i.PROVISIONALCODE,
-                                                                                TRIM(i.PRICEUNITOFMEASURECODE) AS PRICEUNITOFMEASURECODE,
-                                                                                i.DEFINITIVECOUNTERCODE,
-                                                                                i.DEFINITIVEDOCUMENTDATE,
-                                                                                i.ORDERPARTNERBRANDCODE,
-                                                                                CASE
-                                                                                    WHEN $codeExport THEN '' ELSE i.PO_NUMBER
-                                                                                END AS PO_NUMBER,
-                                                                                i.PROJECTCODE,
-                                                                                DAY(i.GOODSISSUEDATE) ||'-'|| MONTHNAME(i.GOODSISSUEDATE) ||'-'|| YEAR(i.GOODSISSUEDATE) AS GOODSISSUEDATE,
-                                                                                i.ORDPRNCUSTOMERSUPPLIERCODE,
-                                                                                i.PAYMENTMETHODCODE,   
-                                                                                i.ITEMTYPEAFICODE,
-                                                                                CASE
-                                                                                    WHEN $codeExport THEN '' ELSE i.DLVSALORDERLINESALESORDERCODE
-                                                                                END AS DLVSALORDERLINESALESORDERCODE,
-                                                                                CASE
-                                                                                    WHEN $codeExport THEN 0 ELSE i.DLVSALESORDERLINEORDERLINE
-                                                                                END AS DLVSALESORDERLINEORDERLINE,
-                                                                                CASE
-                                                                                    WHEN $codeExport THEN '' ELSE 
-                                                                                        TRIM(i.SUBCODE01) || '-' || TRIM(i.SUBCODE02) || '-' || TRIM(i.SUBCODE03) || '-' || TRIM(i.SUBCODE04) || '-' ||
-                                                                                        TRIM(i.SUBCODE05) || '-' || TRIM(i.SUBCODE06) || '-' || TRIM(i.SUBCODE07) || '-' || TRIM(i.SUBCODE08)
-                                                                                END AS ITEMDESCRIPTION,
-                                                                                CASE
-                                                                                    WHEN $codeExport THEN '' ELSE iasp.LOTCODE
-                                                                                END AS LOTCODE,
-                                                                                CASE
-                                                                                    WHEN $codeExport THEN '' ELSE i2.WARNA
-                                                                                END AS WARNA,
-                                                                                i.LEGALNAME1,
-                                                                                CASE
-                                                                                    WHEN $codeExport THEN 'EXPORT' ELSE i.CODE
-                                                                                END AS CODE
-                                                                            FROM 
-                                                                                ITXVIEW_SURATJALAN_PPC_FOR_POSELESAI i
-                                                                            LEFT JOIN ITXVIEW_ALLOCATION_SURATJALAN_PPC iasp ON iasp.CODE = i.CODE
-                                                                            LEFT JOIN ITXVIEWCOLOR i2 ON i2.ITEMTYPECODE =  i.ITEMTYPEAFICODE
-                                                                                                    AND i2.SUBCODE01 = i.SUBCODE01 AND i2.SUBCODE02 = i.SUBCODE02
-                                                                                                    AND i2.SUBCODE03 = i.SUBCODE03 AND i2.SUBCODE04 = i.SUBCODE04
-                                                                                                    AND i2.SUBCODE05 = i.SUBCODE05 AND i2.SUBCODE06 = i.SUBCODE06
-                                                                                                    AND i2.SUBCODE07 = i.SUBCODE07 AND i2.SUBCODE08 = i.SUBCODE08
-                                                                                                    AND i2.SUBCODE09 = i.SUBCODE09 AND i2.SUBCODE10 = i.SUBCODE10
-                                                                            WHERE 
-                                                                                $where_no_order $where_date 
-                                                                                AND NOT (SUBSTR(i.DLVSALORDERLINESALESORDERCODE, 1,3) = 'CAP' AND (i.ITEMTYPEAFICODE = 'KFF' OR i.ITEMTYPEAFICODE = 'KGF'))
-                                                                                AND i.DOCUMENTTYPETYPE = 05 
-                                                                                AND NOT i.CODE IS NULL 
-                                                                                AND i.PROGRESSSTATUS_SALDOC = 2
-                                                                            GROUP BY
-                                                                                i.PROVISIONALCODE,
-                                                                                i.PRICEUNITOFMEASURECODE,
-                                                                                i.DEFINITIVEDOCUMENTDATE,
-                                                                                i.ORDERPARTNERBRANDCODE,
-                                                                                i.PO_NUMBER,
-                                                                                i.PROJECTCODE,
-                                                                                i.GOODSISSUEDATE,
-                                                                                i.ORDPRNCUSTOMERSUPPLIERCODE,
-                                                                                i.PAYMENTMETHODCODE,
-                                                                                i.PO_NUMBER,    
-                                                                                i.ITEMTYPEAFICODE,
-                                                                                i.DLVSALORDERLINESALESORDERCODE,
-                                                                                i.DLVSALESORDERLINEORDERLINE,
-                                                                                i.ITEMDESCRIPTION,
-                                                                                iasp.LOTCODE,
-                                                                                i.DEFINITIVECOUNTERCODE,
-                                                                                i2.WARNA,
-                                                                                i.LEGALNAME1,
-                                                                                i.CODE,
-                                                                                i.SUBCODE01,
-                                                                                i.SUBCODE02,
-                                                                                i.SUBCODE03,
-                                                                                i.SUBCODE04,
-                                                                                i.SUBCODE05,
-                                                                                i.SUBCODE06,
-                                                                                i.SUBCODE07,
-                                                                                i.SUBCODE08,
-                                                                                i.SUBCODE09,
-                                                                                i.SUBCODE10
-                                                                            ORDER BY 
-                                                                                i.PROVISIONALCODE ASC";
-                                                        }
+                                                            if ($tgl1) {
+                                                                $where_date = "i.GOODSISSUEDATE = '$tgl1'";
+                                                            } else {
+                                                                $where_date = "";
+                                                            }
+                                                            if ($no_order) {
+                                                                $where_no_order = "i.DLVSALORDERLINESALESORDERCODE = '$no_order'";
+                                                            } else {
+                                                                $where_no_order = "";
+                                                            }
+                                                            $codeExport = "TRIM(i.DEFINITIVECOUNTERCODE) = 'CESDEF' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'CESPROV' OR
+                                                                                    TRIM(i.DEFINITIVECOUNTERCODE) = 'DREDEF' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'DREPROV' OR 
+                                                                                    TRIM(i.DEFINITIVECOUNTERCODE) = 'DSEDEF' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'EXDDEF' OR
+                                                                                    TRIM(i.DEFINITIVECOUNTERCODE) = 'EXDPROV' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'EXPDEF' OR
+                                                                                    TRIM(i.DEFINITIVECOUNTERCODE) = 'EXPPROV' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'GSEDEF' OR 
+                                                                                    TRIM(i.DEFINITIVECOUNTERCODE) = 'GSEPROV' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'PSEPROV'";
+                                                            if ($_POST['dept'] == 'GKJ') {
+                                                                $sqlDB2 = "SELECT
+                                                                                    DISTINCT 
+                                                                                    LISTAGG(DISTINCT TRIM(i.SUBCODE05), ', ') AS NO_WARNA,
+                                                                                    i.PROVISIONALCODE,
+                                                                                    TRIM(i.PRICEUNITOFMEASURECODE) AS PRICEUNITOFMEASURECODE,
+                                                                                    i.DEFINITIVECOUNTERCODE,
+                                                                                    i.DEFINITIVEDOCUMENTDATE,
+                                                                                    i.ORDERPARTNERBRANDCODE,
+                                                                                    i.PO_NUMBER AS PO_NUMBER,
+                                                                                    i.ITEMDESCRIPTION AS JENIS_KAIN,
+                                                                                    LISTAGG(DISTINCT TRIM(iasp.WAREHOUSELOCATIONCODE), ', ') AS LOKASI,
+                                                                                    DAY(i.GOODSISSUEDATE) || '-' || MONTHNAME(i.GOODSISSUEDATE) || '-' || YEAR(i.GOODSISSUEDATE) AS GOODSISSUEDATE,
+                                                                                    i.ORDPRNCUSTOMERSUPPLIERCODE,
+                                                                                    CASE 
+                                                                                        WHEN i.PAYMENTMETHODCODE <> 'FOC' THEN ''
+                                                                                        ELSE i.PAYMENTMETHODCODE
+                                                                                    END AS PAYMENTMETHODCODE,
+                                                                                    i.ITEMTYPEAFICODE,
+                                                                                    i.DLVSALORDERLINESALESORDERCODE AS DLVSALORDERLINESALESORDERCODE,
+                                                                                    i.DLVSALESORDERLINEORDERLINE AS DLVSALESORDERLINEORDERLINE,
+                                                                                    LISTAGG(DISTINCT TRIM(iasp.LOTCODE), ', ' ) AS LOTCODE,
+                                                                                    LISTAGG(DISTINCT ''''|| TRIM(iasp.LOTCODE) ||'''', ', ' ) AS LOTCODE2,
+                                                                                    i2.WARNA AS WARNA,
+                                                                                    i.LEGALNAME1,
+                                                                                    i.CODE AS CODE
+                                                                                FROM
+                                                                                    ITXVIEW_SURATJALAN_PPC_FOR_POSELESAI i
+                                                                                LEFT JOIN ITXVIEW_ALLOCATION_SURATJALAN_PPC iasp ON
+                                                                                    iasp.CODE = i.CODE
+                                                                                LEFT JOIN ITXVIEWCOLOR i2 ON
+                                                                                    i2.ITEMTYPECODE = i.ITEMTYPEAFICODE
+                                                                                    AND i2.SUBCODE01 = i.SUBCODE01
+                                                                                    AND i2.SUBCODE02 = i.SUBCODE02
+                                                                                    AND i2.SUBCODE03 = i.SUBCODE03
+                                                                                    AND i2.SUBCODE04 = i.SUBCODE04
+                                                                                    AND i2.SUBCODE05 = i.SUBCODE05
+                                                                                    AND i2.SUBCODE06 = i.SUBCODE06
+                                                                                    AND i2.SUBCODE07 = i.SUBCODE07
+                                                                                    AND i2.SUBCODE08 = i.SUBCODE08
+                                                                                    AND i2.SUBCODE09 = i.SUBCODE09
+                                                                                    AND i2.SUBCODE10 = i.SUBCODE10
+                                                                                WHERE
+                                                                                    $where_no_order $where_date 
+                                                                                    -- i.PROVISIONALCODE = 'ESP2400686'
+                                                                                    AND NOT (SUBSTR(i.DLVSALORDERLINESALESORDERCODE, 1,3) = 'CAP' AND (i.ITEMTYPEAFICODE = 'KFF' OR i.ITEMTYPEAFICODE = 'KGF' OR i.ITEMTYPEAFICODE = 'CAP'))
+                                                                                    AND i.DOCUMENTTYPETYPE = 05 
+                                                                                    AND NOT i.CODE IS NULL 
+                                                                                    AND i.PROGRESSSTATUS_SALDOC = 2
+                                                                                    AND iasp.PROGRESSSTATUS = 2 -- STATUS ALLOCATIONNYA 'CLOSED' = SHIPPED
+                                                                                GROUP BY
+                                                                                    i.PROVISIONALCODE,
+                                                                                    i.PRICEUNITOFMEASURECODE,
+                                                                                    i.DEFINITIVEDOCUMENTDATE,
+                                                                                    i.ORDERPARTNERBRANDCODE,
+                                                                                    i.PO_NUMBER,
+                                                                                    i.PROJECTCODE,
+                                                                                    i.GOODSISSUEDATE,
+                                                                                    i.ORDPRNCUSTOMERSUPPLIERCODE,
+                                                                                    i.PAYMENTMETHODCODE,
+                                                                                    i.PO_NUMBER,
+                                                                                    i.ITEMTYPEAFICODE,
+                                                                                    i.DLVSALORDERLINESALESORDERCODE,
+                                                                                    i.DLVSALESORDERLINEORDERLINE,
+                                                                                    i.ITEMDESCRIPTION,
+                                                                                    i.DEFINITIVECOUNTERCODE,
+                                                                                    i2.WARNA,
+                                                                                    i.LEGALNAME1,
+                                                                                    i.CODE
+                                                                                ORDER BY
+                                                                                    i.PROVISIONALCODE ASC";
+                                                            } elseif ($_POST['dept'] == 'PPC') {
+                                                                $sqlDB2 = "SELECT DISTINCT
+                                                                                    i.PROVISIONALCODE,
+                                                                                    TRIM(i.PRICEUNITOFMEASURECODE) AS PRICEUNITOFMEASURECODE,
+                                                                                    i.DEFINITIVECOUNTERCODE,
+                                                                                    i.DEFINITIVEDOCUMENTDATE,
+                                                                                    i.ORDERPARTNERBRANDCODE,
+                                                                                    CASE
+                                                                                        WHEN $codeExport THEN '' ELSE i.PO_NUMBER
+                                                                                    END AS PO_NUMBER,
+                                                                                    i.PROJECTCODE,
+                                                                                    DAY(i.GOODSISSUEDATE) ||'-'|| MONTHNAME(i.GOODSISSUEDATE) ||'-'|| YEAR(i.GOODSISSUEDATE) AS GOODSISSUEDATE,
+                                                                                    i.ORDPRNCUSTOMERSUPPLIERCODE,
+                                                                                    i.PAYMENTMETHODCODE,   
+                                                                                    i.ITEMTYPEAFICODE,
+                                                                                    CASE
+                                                                                        WHEN $codeExport THEN '' ELSE i.DLVSALORDERLINESALESORDERCODE
+                                                                                    END AS DLVSALORDERLINESALESORDERCODE,
+                                                                                    CASE
+                                                                                        WHEN $codeExport THEN 0 ELSE i.DLVSALESORDERLINEORDERLINE
+                                                                                    END AS DLVSALESORDERLINEORDERLINE,
+                                                                                    CASE
+                                                                                        WHEN $codeExport THEN '' ELSE 
+                                                                                            TRIM(i.SUBCODE01) || '-' || TRIM(i.SUBCODE02) || '-' || TRIM(i.SUBCODE03) || '-' || TRIM(i.SUBCODE04) || '-' ||
+                                                                                            TRIM(i.SUBCODE05) || '-' || TRIM(i.SUBCODE06) || '-' || TRIM(i.SUBCODE07) || '-' || TRIM(i.SUBCODE08)
+                                                                                    END AS ITEMDESCRIPTION,
+                                                                                    CASE
+                                                                                        WHEN $codeExport THEN '' ELSE iasp.LOTCODE
+                                                                                    END AS LOTCODE,
+                                                                                    CASE
+                                                                                        WHEN $codeExport THEN '' ELSE i2.WARNA
+                                                                                    END AS WARNA,
+                                                                                    i.LEGALNAME1,
+                                                                                    CASE
+                                                                                        WHEN $codeExport THEN 'EXPORT' ELSE i.CODE
+                                                                                    END AS CODE
+                                                                                FROM 
+                                                                                    ITXVIEW_SURATJALAN_PPC_FOR_POSELESAI i
+                                                                                LEFT JOIN ITXVIEW_ALLOCATION_SURATJALAN_PPC iasp ON iasp.CODE = i.CODE
+                                                                                LEFT JOIN ITXVIEWCOLOR i2 ON i2.ITEMTYPECODE =  i.ITEMTYPEAFICODE
+                                                                                                        AND i2.SUBCODE01 = i.SUBCODE01 AND i2.SUBCODE02 = i.SUBCODE02
+                                                                                                        AND i2.SUBCODE03 = i.SUBCODE03 AND i2.SUBCODE04 = i.SUBCODE04
+                                                                                                        AND i2.SUBCODE05 = i.SUBCODE05 AND i2.SUBCODE06 = i.SUBCODE06
+                                                                                                        AND i2.SUBCODE07 = i.SUBCODE07 AND i2.SUBCODE08 = i.SUBCODE08
+                                                                                                        AND i2.SUBCODE09 = i.SUBCODE09 AND i2.SUBCODE10 = i.SUBCODE10
+                                                                                WHERE 
+                                                                                    $where_no_order $where_date 
+                                                                                    AND NOT (SUBSTR(i.DLVSALORDERLINESALESORDERCODE, 1,3) = 'CAP' AND (i.ITEMTYPEAFICODE = 'KFF' OR i.ITEMTYPEAFICODE = 'KGF'))
+                                                                                    AND i.DOCUMENTTYPETYPE = 05 
+                                                                                    AND NOT i.CODE IS NULL 
+                                                                                    AND i.PROGRESSSTATUS_SALDOC = 2
+                                                                                GROUP BY
+                                                                                    i.PROVISIONALCODE,
+                                                                                    i.PRICEUNITOFMEASURECODE,
+                                                                                    i.DEFINITIVEDOCUMENTDATE,
+                                                                                    i.ORDERPARTNERBRANDCODE,
+                                                                                    i.PO_NUMBER,
+                                                                                    i.PROJECTCODE,
+                                                                                    i.GOODSISSUEDATE,
+                                                                                    i.ORDPRNCUSTOMERSUPPLIERCODE,
+                                                                                    i.PAYMENTMETHODCODE,
+                                                                                    i.PO_NUMBER,    
+                                                                                    i.ITEMTYPEAFICODE,
+                                                                                    i.DLVSALORDERLINESALESORDERCODE,
+                                                                                    i.DLVSALESORDERLINEORDERLINE,
+                                                                                    i.ITEMDESCRIPTION,
+                                                                                    iasp.LOTCODE,
+                                                                                    i.DEFINITIVECOUNTERCODE,
+                                                                                    i2.WARNA,
+                                                                                    i.LEGALNAME1,
+                                                                                    i.CODE,
+                                                                                    i.SUBCODE01,
+                                                                                    i.SUBCODE02,
+                                                                                    i.SUBCODE03,
+                                                                                    i.SUBCODE04,
+                                                                                    i.SUBCODE05,
+                                                                                    i.SUBCODE06,
+                                                                                    i.SUBCODE07,
+                                                                                    i.SUBCODE08,
+                                                                                    i.SUBCODE09,
+                                                                                    i.SUBCODE10
+                                                                                ORDER BY 
+                                                                                    i.PROVISIONALCODE ASC";
+                                                            }
 
-                                                        $stmt = db2_exec($conn1, $sqlDB2);
-                                                        $no = 1;
-                                                        while ($rowdb2 = db2_fetch_assoc($stmt)) {
-                                                            ?>
-                                                            <?php
+                                                            $stmt = db2_exec($conn1, $sqlDB2);
+                                                            $no = 1;
+                                                            while ($rowdb2 = db2_fetch_assoc($stmt)) {
+                                                        ?>
+                                                        <?php
                                                             if ($_POST['dept'] == 'GKJ') {
                                                                 $q_ket_foc = db2_exec($conn1, "SELECT 
                                                                                                 COUNT(QUALITYREASONCODE) AS ROLL,
@@ -351,7 +352,7 @@
                                                                         <td><?= $rowdb2['PROVISIONALCODE']; ?></td>
                                                                         <td><?= $rowdb2['WARNA']; ?></td>
                                                                         <td><?= $d_ket_foc['ROLL']; ?></td>
-                                                                        <td><?= number_format($d_ket_foc['KG'], 2); ?></td>
+                                                                        <td><?= number_format($d_ket_foc['KG'], 2); ?>halah</td>
                                                                         <td><?= number_format($d_ket_foc['YARD_MTR'], 2); ?></td>
                                                                         <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td>
                                                                         <td>
