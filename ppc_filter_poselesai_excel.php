@@ -3,8 +3,8 @@ session_start();
 require_once "koneksi.php";
 require_once "utils/helper.php";
 
-// header("Content-Type: application/vnd.ms-excel");
-// header("Content-Disposition: attachment; filename=ppc_filter_poselesai.xls");
+header("Content-Type: application/vnd.ms-excel");
+header("Content-Disposition: attachment; filename=ppc_filter_poselesai.xls");
 
 $no_order = $_GET['no_order'] ?? '';
 $tgl1 = $_GET['tgl1'] ?? '';
