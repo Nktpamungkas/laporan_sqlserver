@@ -105,6 +105,10 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                         echo 'checked';
                                                     } ?>>
                                                     <label for="rec"> Checklist for recycled</label><br>
+                                                    <input type="checkbox" id="non_rec" name="non_rec" value="non_rec" <?php if ($_POST['non_rec'] == 'non_rec') {
+                                                        echo 'checked';
+                                                    } ?>>
+                                                    <label for="non_rec"> Checklist for non-recycled</label><br>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">Tanggal (Tgl Kirim)</h4>
@@ -125,6 +129,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                             class="icofont icofont-search-alt-1"></i> Cari data</button>
                                                     <a class="btn btn-warning" href="ppc_filter_poselesai.php"><i
                                                             class="icofont icofont-refresh"></i> Reset</a>
+                                                    <a class="btn btn-info" id="exportExcel" href="ppc_filter_poselesai_excel.php?no_order=<?php echo $_POST['no_order']; ?>&tgl1=<?php echo $_POST['tgl1']; ?>&tgl2=<?php echo $_POST['tgl2']; ?>&tgl1_kirim=<?php echo $_POST['tgl1_kirim']; ?>&tgl2_kirim=<?php echo $_POST['tgl2_kirim']; ?>&rec=<?php echo $_POST['rec']; ?>" target="_blank"><i class="icofont icofont-file-excel"></i> Export to Excel</a>
                                                 </div>
                                             </div>
                                             <p>*Note : Jika data terasa mulai <b>lambat</b> cobalah untuk klik tombol
@@ -212,6 +217,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                         $tgl1_kirim = $_POST['tgl1_kirim'];
                                                         $tgl2_kirim = $_POST['tgl2_kirim'];
                                                         $rec = $_POST['rec'];
+                                                        $non_rec = $_POST['non_rec'];
 
                                                         if (!empty($no_order) and empty($tgl1) and empty($tgl2)) {
                                                             $where_order = "NO_ORDER = '$no_order'";
@@ -230,6 +236,8 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                         }
                                                         if ($rec) {
                                                             $where_rec = "AND im.JENIS_KAIN LIKE '%RECYCLED%'";
+                                                        } elseif ($non_rec) {
+                                                            $where_rec = "AND im.JENIS_KAIN NOT LIKE '%RECYCLED%'";
                                                         } else {
                                                             $where_rec = "";
                                                         }
@@ -1073,7 +1081,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                         ?>
                                                                         <?= $roll; ?>
                                                                     </td> <!-- ROLL -->
-                                                                    <td>
+                                                                    <!-- <td>
                                                                         <?php
                                                                         $q_orig_pd_code = db2_exec($conn1, "SELECT 
                                                                                                                 *, a.VALUESTRING AS ORIGINALPDCODE
@@ -1096,7 +1104,37 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
                                                                             ?>
                                                                         <?php endif; ?>
 
-                                                                    </td> <!-- BRUTO/BAGI KAIN -->
+                                                                    </td> -->
+                                                                     <!-- BRUTO/BAGI KAIN -->
+                                                                     <td>
+                                                                    <?php
+                                                                    $q_orig_pd_code     = db2_exec($conn1, "SELECT 
+                                                                                                                *, a.VALUESTRING AS ORIGINALPDCODE
+                                                                                                            FROM 
+                                                                                                                PRODUCTIONDEMAND p 
+                                                                                                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
+                                                                                                            WHERE p.CODE = '$rowdb2[DEMAND]'");
+                                                                    $d_orig_pd_code     = db2_fetch_assoc($q_orig_pd_code);
+
+                                                                    $q_cek_salinan     = db2_exec($conn1, "SELECT 
+                                                                                                                a2.VALUESTRING AS SALINAN_058
+                                                                                                            FROM 
+                                                                                                                PRODUCTIONDEMAND p 
+                                                                                                            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'DefectTypeCode'
+                                                                                                            LEFT JOIN USERGENERICGROUP u ON u.CODE = a2.VALUESTRING AND u.USERGENERICGROUPTYPECODE = '006'
+                                                                                                            WHERE p.CODE = '$rowdb2[DEMAND]'");
+                                                                    $d_cek_salinan     = db2_fetch_assoc($q_cek_salinan);
+                                                                    ?>
+                                                                    <?php if ($d_orig_pd_code['ORIGINALPDCODE']) : ?>
+                                                                        <?php if ($d_cek_salinan['SALINAN_058'] == '058') : ?>
+                                                                            <?= number_format($rowdb2['QTY_BAGIKAIN'], 2); ?>
+                                                                        <?php else : ?>
+                                                                            0
+                                                                        <?php endif; ?>
+                                                                    <?php else : ?>
+                                                                        <?= number_format($rowdb2['QTY_BAGIKAIN'], 2); ?>
+                                                                    <?php endif; ?>
+                                                                </td> <!-- BRUTO/BAGI KAIN -->
                                                                     <td>
                                                                         <?php
                                                                         $q_orig_pd_code = db2_exec($conn1, "SELECT 
@@ -1796,5 +1834,18 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.[cache_accessto] (IPADDRESS,CREATI
         ],
         "ordering": false,
         "pageLength": 20
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const recCheckbox = document.getElementById('rec');
+        const exportButton = document.getElementById('exportExcel');
+
+        function toggleExportButton() {
+            exportButton.style.display = recCheckbox.checked ? 'inline-block' : 'none';
+        }
+
+        recCheckbox.addEventListener('change', toggleExportButton);
+        toggleExportButton(); // Initial check
     });
 </script>
