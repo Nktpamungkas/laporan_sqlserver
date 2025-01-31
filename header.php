@@ -103,6 +103,11 @@
                                             Cetak Label
                                         </a>
                                     </li>
+                                    <li class=" ">
+                                        <a href="fin_filter_bon_reservation.php" data-i18n="nav.animations.main">
+                                            Lap. Bon Resep Reservation FIN
+                                        </a>
+                                    </li>
                                     <!-- <li class=" ">
                                         <a href="fin_bpp.php" data-i18n="nav.animations.main">
                                             Laporan Pembelian

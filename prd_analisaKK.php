@@ -802,37 +802,37 @@
                                                                     $cek_QA_DATA5    = sqlsrv_fetch_array($q_QA_DATA5);
                                                                     ?>
                                                                     <?php if ($cek_QA_DATA5) : ?>
-                                                                        <?php $opr = $rowdb5['OPERATIONCODE'];
-                                                                        if (str_contains($opr, 'DYE')) : ?>
-                                                                            <?php
-                                                                            $prod_order     = TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']);
-                                                                            $prod_demand    = TRIM($demand);
+                                                                        <?php $opr = $rowdb5['OPERATIONCODE']; 
+                                                                            if (str_contains($opr, 'DYE')) : ?>
+                                                                                <?php
+                                                                                $prod_order     = TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']);
+                                                                                $prod_demand    = TRIM($demand);
 
-                                                                            $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
-                                                                                                                                    a.id AS idm,
-                                                                                                                                    b.id AS ids,
-                                                                                                                                    b.no_resep 
-                                                                                                                                FROM
-                                                                                                                                    tbl_montemp a
-                                                                                                                                    LEFT JOIN tbl_schedule b ON a.id_schedule = b.id
-                                                                                                                                    LEFT JOIN tbl_setting_mesin c ON b.nokk = c.nokk 
-                                                                                                                                WHERE
-                                                                                                                                    b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
-                                                                                                                                ORDER BY
-                                                                                                                                    a.id DESC LIMIT 1 ");
-                                                                            $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
+                                                                                $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
+                                                                                                                                        a.id AS idm,
+                                                                                                                                        b.id AS ids,
+                                                                                                                                        b.no_resep 
+                                                                                                                                    FROM
+                                                                                                                                        tbl_montemp a
+                                                                                                                                        LEFT JOIN tbl_schedule b ON a.id_schedule = b.id
+                                                                                                                                        LEFT JOIN tbl_setting_mesin c ON b.nokk = c.nokk 
+                                                                                                                                    WHERE
+                                                                                                                                        b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
+                                                                                                                                    ORDER BY
+                                                                                                                                        a.id DESC LIMIT 1 ");
+                                                                                $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
 
-                                                                            ?>
-                                                                            <th style="text-align: center;">
-                                                                                <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/dye-itti/pages/cetak/cetak_monitoring_new.php?idkk=&no=<?= $d_dye_montemp['no_resep']; ?>&idm=<?php echo $d_dye_montemp['idm']; ?>&ids=<?php echo $d_dye_montemp['ids']; ?>" target="_blank">Monitoring <i class="icofont icofont-external-link"></i></a>
-                                                                                &ensp;
-                                                                                <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
-                                                                            </th>
+                                                                                ?>
+                                                                                <th style="text-align: center;">
+                                                                                    <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/dye-itti/pages/cetak/cetak_monitoring_new.php?idkk=&no=<?= $d_dye_montemp['no_resep']; ?>&idm=<?php echo $d_dye_montemp['idm']; ?>&ids=<?php echo $d_dye_montemp['ids']; ?>" target="_blank">Monitoring <i class="icofont icofont-external-link"></i></a>
+                                                                                    &ensp;
+                                                                                    <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
+                                                                                </th>
                                                                         <?php else : ?>
                                                                             <?php $opr_grup = $rowdb5['OPERATIONGROUPCODE'];
                                                                             if (str_contains($opr_grup, "FIN")) : ?>
                                                                                 <th style="text-align: center;">
-                                                                                    <!-- <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/finishing2-new/reports/pages/reports-detail-stenter.php?FromAnalisa=FromAnalisa&prod_order=<?= TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']); ?>&prod_demand=<?= TRIM($demand); ?>&tgl_in=<?= substr($rowdb5['MULAI'], 1, 10); ?>&tgl_out=<?= substr($rowdb5['SELESAI'], 1, 10); ?>" target="_blank">Detail proses <i class="icofont icofont-external-link"></i></a> -->
+                                                                                    <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/fin_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
                                                                                 </th>
                                                                             <?php else : ?>
                                                                                 <th style="text-align: center;">-</th>
