@@ -272,6 +272,7 @@
                                                                                     AND i.DOCUMENTTYPETYPE = 05 
                                                                                     AND NOT i.CODE IS NULL 
                                                                                     AND i.PROGRESSSTATUS_SALDOC = 2
+                                                                                    AND iasp.PROGRESSSTATUS = 2 -- STATUS ALLOCATIONNYA 'CLOSED' = SHIPPED
                                                                                 GROUP BY
                                                                                     i.PROVISIONALCODE,
                                                                                     i.PRICEUNITOFMEASURECODE,
@@ -352,7 +353,7 @@
                                                                         <td><?= $rowdb2['PROVISIONALCODE']; ?></td>
                                                                         <td><?= $rowdb2['WARNA']; ?></td>
                                                                         <td><?= $d_ket_foc['ROLL']; ?></td>
-                                                                        <td><?= number_format($d_ket_foc['KG'], 2); ?>halah</td>
+                                                                        <td><?= number_format($d_ket_foc['KG'], 2); ?></td>
                                                                         <td><?= number_format($d_ket_foc['YARD_MTR'], 2); ?></td>
                                                                         <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td>
                                                                         <td>
