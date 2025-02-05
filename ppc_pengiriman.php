@@ -811,16 +811,31 @@
                                                                                     echo $d_roll['ROLL'];
                                                                                 }
                                                                             } else {
-                                                                                $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
-                                                                                                                                SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                                                                                LOTCODE
-                                                                                                                        FROM 
-                                                                                                                            ITXVIEWALLOCATION0 
-                                                                                                                        WHERE 
-                                                                                                                            CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
-                                                                                                                        GROUP BY 
-                                                                                                                            LOTCODE");
+                                                                                // $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                                                                                //                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                                                 LOTCODE
+                                                                                //                                         FROM 
+                                                                                //                                             ITXVIEWALLOCATION0 
+                                                                                //                                         WHERE 
+                                                                                //                                             CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                                //                                         GROUP BY 
+                                                                                //                                             LOTCODE");
+                                                                                // DIGANTI JADI NGAMBILNYA LEWAT STOCKTRANSACTION
+                                                                                $q_roll = db2_exec($conn1, "SELECT
+                                                                                                                COUNT(ITEMTYPECODE) AS ROLL,
+                                                                                                                SUM(USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                                                SUM(USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                                                LOTCODE 
+                                                                                                            FROM
+                                                                                                                STOCKTRANSACTION s
+                                                                                                            WHERE
+                                                                                                                TEMPLATECODE = 'S02'
+                                                                                                                AND LOGICALWAREHOUSECODE = 'M031'
+                                                                                                                AND ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                                                AND DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                                                            GROUP BY
+                                                                                                                LOTCODE");
                                                                                 $d_roll = db2_fetch_assoc($q_roll);
                                                                                 echo $d_roll['ROLL'];
                                                                             }
