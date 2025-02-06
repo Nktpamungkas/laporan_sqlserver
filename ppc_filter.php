@@ -885,35 +885,79 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                     if($rowdb2['NO_ORDER'] && $rowdb2['ORDERLINE']){
                                                                         //ini_set("error_reporting", 0);
                                                                         $sqlQtyKurang   = db2_exec($conn1, "SELECT
-                                                                                                                TRIM(NO_ORDER) AS NO_ORDER,
-                                                                                                                ORDERLINE,
-                                                                                                                KONVERSI,
-                                                                                                                NETTO,
-                                                                                                                NETTO_2,
-                                                                                                                SUM(QTY_SUDAH_KIRIM) AS QTY_SUDAH_KIRIM,
-                                                                                                                SUM(QTY_SUDAH_KIRIM_2) AS QTY_SUDAH_KIRIM_2,
-                                                                                                                NO_WARNA,
-                                                                                                                KET_PRODUCT
-                                                                                                            FROM
-                                                                                                                ITXVIEW_SUMMARY_QTY_DELIVERY isqd
-                                                                                                            WHERE
-                                                                                                                NO_ORDER = '$rowdb2[NO_ORDER]'
-                                                                                                                AND ORDERLINE = '$rowdb2[ORDERLINE]'
-                                                                                                                AND NOT QUALITYREASONCODE = 'FOC'
-                                                                                                            GROUP BY
-                                                                                                                NO_ORDER,
-                                                                                                                ORDERLINE,
-                                                                                                                KONVERSI,
-                                                                                                                NETTO,
-                                                                                                                NETTO_2,
-                                                                                                                NO_WARNA,
-                                                                                                                KET_PRODUCT
-                                                                                                            ORDER BY
-                                                                                                                ORDERLINE ASC");
+                                                                                                    isqd.ORDERLINE,
+                                                                                                    isqd.PELANGGAN,
+                                                                                                    TRIM(isqd.NO_ORDER) AS NO_ORDER,
+                                                                                                    isqd.NO_PO,
+                                                                                                    isqd.KET_PRODUCT,
+                                                                                                    isqd.STYLE,
+                                                                                                    isqd.LEBAR,
+                                                                                                    isqd.GRAMASI,
+                                                                                                    isqd.WARNA,
+                                                                                                    isqd.NO_WARNA,
+                                                                                                    isqd.PRICEUNITOFMEASURECODE,
+                                                                                                    isqd.NETTO,
+                                                                                                    isqd.NETTO_2,
+                                                                                                    isqd.NETTO_M,
+                                                                                                    isqd.KONVERSI,
+                                                                                                    isqd.ACTUAL_DELIVERY,
+                                                                                                    SUM(isqd.QTY_SUDAH_KIRIM) AS QTY_SUDAH_KIRIM,
+                                                                                                    SUM(isqd.QTY_SUDAH_KIRIM_2) AS QTY_SUDAH_KIRIM_2,
+                                                                                                    CASE
+                                                                                                        WHEN DAYS(now()) - DAYS(Timestamp_Format(isqd.ACTUAL_DELIVERY, 'YYYY-MM-DD')) < 0 THEN 0
+                                                                                                        ELSE DAYS(now()) - DAYS(Timestamp_Format(isqd.ACTUAL_DELIVERY, 'YYYY-MM-DD'))
+                                                                                                    END	AS DELAY,
+                                                                                                    isqd.SUBCODE01,
+                                                                                                    isqd.SUBCODE02,
+                                                                                                    isqd.SUBCODE03,
+                                                                                                    isqd.SUBCODE04,
+                                                                                                    isqd.SUBCODE05,
+                                                                                                    isqd.SUBCODE06,
+                                                                                                    isqd.SUBCODE07,
+                                                                                                    isqd.SUBCODE08,
+                                                                                                    s.STATISTICALGROUPCODE,
+                                                                                                    ip.BUYER 
+                                                                                                FROM
+                                                                                                    ITXVIEW_SUMMARY_QTY_DELIVERY isqd
+                                                                                                LEFT JOIN SALESORDER s ON s.CODE = isqd.NO_ORDER 
+                                                                                                LEFT JOIN ITXVIEW_PELANGGAN ip ON ip.ORDPRNCUSTOMERSUPPLIERCODE = s.ORDPRNCUSTOMERSUPPLIERCODE AND ip.CODE = s.CODE 
+                                                                                                WHERE
+                                                                                                    isqd.NO_ORDER = '$rowdb2[NO_ORDER]'
+                                                                                                    AND isqd.ORDERLINE = '$rowdb2[ORDERLINE]'
+                                                                                                GROUP BY
+                                                                                                    isqd.ORDERLINE,
+                                                                                                    isqd.PELANGGAN,
+                                                                                                    isqd.NO_ORDER,
+                                                                                                    isqd.NO_PO,
+                                                                                                    isqd.KET_PRODUCT,
+                                                                                                    isqd.STYLE,
+                                                                                                    isqd.LEBAR,
+                                                                                                    isqd.GRAMASI,
+                                                                                                    isqd.WARNA,
+                                                                                                    isqd.NO_WARNA,
+                                                                                                    isqd.PRICEUNITOFMEASURECODE,
+                                                                                                    isqd.NETTO,
+                                                                                                    isqd.NETTO_2,
+                                                                                                    isqd.NETTO_M,
+                                                                                                    isqd.KONVERSI,
+                                                                                                    isqd.ACTUAL_DELIVERY,
+                                                                                                    isqd.SUBCODE01,
+                                                                                                    isqd.SUBCODE02,
+                                                                                                    isqd.SUBCODE03,
+                                                                                                    isqd.SUBCODE04,
+                                                                                                    isqd.SUBCODE05,
+                                                                                                    isqd.SUBCODE06,
+                                                                                                    isqd.SUBCODE07,
+                                                                                                    isqd.SUBCODE08,
+                                                                                                    s.STATISTICALGROUPCODE,
+                                                                                                    ip.BUYER  
+                                                                                                ORDER BY
+                                                                                                    isqd.ORDERLINE ASC");
                                                                         $fetchDataQtyKurang     = db2_fetch_assoc($sqlQtyKurang);
 
                                                                         $ResultLotCode  = "SELECT 
-                                                                                                LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', ', ' ) AS PRODUCTIONORDERCODE 
+                                                                                                LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', ', ' ) AS PRODUCTIONORDERCODE,
+                                                                                                LISTAGG('''' || TRIM(PRODUCTIONDEMANDCODE) || '''', ', ' ) AS PRODUCTIONDEMANDCODE
                                                                                             FROM 
                                                                                                 ITXVIEWKK
                                                                                             WHERE 
@@ -922,22 +966,26 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                         $exec_lotcode   = db2_exec($conn1, $ResultLotCode);
                                                                         $fetch_lotcode  = db2_fetch_assoc($exec_lotcode);
 
-                                                                        $sqlQtyReady          = "SELECT
-                                                                                                    SUM(BASEPRIMARYQUANTITYUNIT) AS QTY_READY,
-                                                                                                    SUM(BASESECONDARYQUANTITYUNIT) AS QTY_READY_2
-                                                                                                FROM
-                                                                                                    BALANCE b
-                                                                                                WHERE
-                                                                                                    LOTCODE IN ($fetch_lotcode[PRODUCTIONORDERCODE])
-                                                                                                    AND LOGICALWAREHOUSECODE = 'M031'";
+                                                                        if($fetch_lotcode['PRODUCTIONORDERCODE']){
+                                                                            $sqlQtyReady          = "SELECT
+                                                                                                        SUM(BASEPRIMARYQUANTITYUNIT) AS QTY_READY,
+                                                                                                        SUM(BASESECONDARYQUANTITYUNIT) AS QTY_READY_2
+                                                                                                    FROM
+                                                                                                        BALANCE b
+                                                                                                    WHERE
+                                                                                                        LOTCODE IN ($fetch_lotcode[PRODUCTIONORDERCODE])
+                                                                                                        AND LEFT(ELEMENTSCODE, 8) IN ($fetch_lotcode[PRODUCTIONDEMANDCODE])
+                                                                                                        AND LOGICALWAREHOUSECODE = 'M031'
+                                                                                                        AND PROJECTCODE = '$dt_sum[NO_ORDER]'";
 
-                                                                        $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
-                                                                        $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
+                                                                            $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
+                                                                            $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
+                                                                        }
                                                                     }
                                                                 ?>
                                                                 <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format(($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2']) / $fetchDataQtyKurang['KONVERSI'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (KG) -->
                                                                 <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (YD/MTR) -->
-
+                                                                
                                                                 <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
                                                                 <td></td> <!-- TARGET SELESAI -->
                                                                 <td><?= $kode_dept; ?></td> <!-- KODE DEPT -->
