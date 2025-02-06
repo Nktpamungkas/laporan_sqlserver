@@ -78,13 +78,15 @@
                                                     <h4 class="sub-title">LOGICAL WAREHOUSE</h4>
                                                     <div class="input-group input-group-sm">
                                                         <select name="warehouse" class="form-control" style="width: 100%;" required>
-                                                            <option value="M510">M510</option>
+                                                            <option value="M510 dan M101">M510 & M101</option>
                                                             <?php 
                                                                 $sqlDB  =   "SELECT  
                                                                                 TRIM(CODE) AS CODE,
                                                                                 LONGDESCRIPTION 
                                                                             FROM
                                                                                 LOGICALWAREHOUSE
+                                                                            WHERE 
+                                                                                CODE NOT IN ('M510', 'M101')
                                                                             ORDER BY 
                                                                                 CODE ASC";
                                                                 $stmt   =   db2_exec($conn1, $sqlDB);
@@ -139,6 +141,7 @@
                                                                     <th>SATUAN</th>
                                                                     <th>KETERANGAN</th>
                                                                     <th>NAMA OBAT</th>
+                                                                    <th>QTY AWAL</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -147,6 +150,13 @@
                                                                         $where_time     = "AND s.TRANSACTIONTIME BETWEEN '$_POST[time]' AND '$_POST[time2]'";
                                                                     }else{
                                                                         $where_time     = "";
+                                                                    }
+                                                                    if ($_POST['warehouse'] == 'M510 dan M101') {
+                                                                        $where_warehouse = "AND s.LOGICALWAREHOUSECODE IN ('M510', 'M101')";
+                                                                        $where_warehouse2 = "AND LOGICALWAREHOUSECODE IN ('M510', 'M101')";
+                                                                    } else {
+                                                                        $where_warehouse = "AND s.LOGICALWAREHOUSECODE = '$_POST[warehouse]'";
+                                                                        $where_warehouse2 = "AND LOGICALWAREHOUSECODE = '$_POST[warehouse]'";
                                                                     }
                                                                     $db_stocktransaction   = db2_exec($conn1, "SELECT 
                                                                                                                     * 
@@ -194,10 +204,10 @@
                                                                                                                 LEFT JOIN LOGICALWAREHOUSE l2 ON l2.CODE = s2.LOGICALWAREHOUSECODE
                                                                                                                 WHERE
                                                                                                                     s.ITEMTYPECODE = 'DYC'
-                                                                                                                    AND s.LOGICALWAREHOUSECODE = '$_POST[warehouse]'
                                                                                                                     AND s.TRANSACTIONDATE BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'
                                                                                                                     AND NOT s.TEMPLATECODE = '313'
                                                                                                                     AND (s.DETAILTYPE = 1 OR s.DETAILTYPE = 0)
+                                                                                                                    $where_warehouse
                                                                                                                 ORDER BY
                                                                                                                     s.PRODUCTIONORDERCODE ASC)
                                                                                                                 WHERE
@@ -236,6 +246,26 @@
                                                                                                                     p3.OPERATIONCODE,
                                                                                                                     p.PRODRESERVATIONLINKGROUPCODE");
                                                                         $row_reservation    = db2_fetch_assoc($db_reservation);
+                                                                        
+                                                                        $db_balance     = db2_exec($conn1, "SELECT 
+                                                                                                                ITEMTYPECODE,
+                                                                                                                DECOSUBCODE01 ,
+                                                                                                                DECOSUBCODE02 ,
+                                                                                                                DECOSUBCODE03 ,
+                                                                                                                SUM(BASEPRIMARYQUANTITYUNIT) AS QTY_MASUK
+                                                                                                                FROM BALANCE b  
+                                                                                                                WHERE
+                                                                                                                ITEMTYPECODE = 'DYC'
+                                                                                                                AND DECOSUBCODE01 = '$row_stocktransaction[DECOSUBCODE01]'
+                                                                                                                AND DECOSUBCODE02 = '$row_stocktransaction[DECOSUBCODE02]' 
+                                                                                                                AND DECOSUBCODE03 = '$row_stocktransaction[DECOSUBCODE03]'
+                                                                                                                $where_warehouse2
+                                                                                                                GROUP BY 
+                                                                                                                ITEMTYPECODE,
+                                                                                                                DECOSUBCODE01,
+                                                                                                                DECOSUBCODE02,
+                                                                                                                DECOSUBCODE03 ");
+                                                                        $row_balance    = db2_fetch_assoc($db_balance);
                                                                 ?>
                                                                 <tr>
                                                                     <!-- <td><?= $no++; ?></td> -->
@@ -259,6 +289,7 @@
                                                                         <?php endif; ?>
                                                                     </td>
                                                                     <td><?= $row_stocktransaction['LONGDESCRIPTION']; ?></td>
+                                                                    <td><?= $row_balance['QTY_MASUK'] ?></td>
                                                                 </tr>
                                                                 <?php } ?>
                                                             </tbody>

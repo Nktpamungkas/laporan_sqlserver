@@ -195,7 +195,7 @@
                                                                                 WHERE
                                                                                     $where_no_order $where_date 
                                                                                     -- i.PROVISIONALCODE = 'ESP2400686'
-                                                                                    AND NOT (SUBSTR(i.DLVSALORDERLINESALESORDERCODE, 1,3) = 'CAP' AND (i.ITEMTYPEAFICODE = 'KFF' OR i.ITEMTYPEAFICODE = 'KGF' OR i.ITEMTYPEAFICODE = 'CAP'))
+                                                                                    -- AND NOT (SUBSTR(i.DLVSALORDERLINESALESORDERCODE, 1,3) = 'CAP' AND (i.ITEMTYPEAFICODE = 'KFF' OR i.ITEMTYPEAFICODE = 'KGF' OR i.ITEMTYPEAFICODE = 'CAP'))
                                                                                     AND i.DOCUMENTTYPETYPE = 05 
                                                                                     AND NOT i.CODE IS NULL 
                                                                                     AND i.PROGRESSSTATUS_SALDOC = 2
@@ -306,6 +306,7 @@
                                                                                 ORDER BY 
                                                                                     i.PROVISIONALCODE ASC";
                                                             }
+                                                            // echo $sqlDB2;
 
                                                             $stmt = db2_exec($conn1, $sqlDB2);
                                                             $no = 1;
