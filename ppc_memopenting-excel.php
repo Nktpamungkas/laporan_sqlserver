@@ -747,7 +747,8 @@
                         $fetchDataQtyKurang     = db2_fetch_assoc($sqlQtyKurang);
 
                         $ResultLotCode  = "SELECT 
-                                                LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', ', ' ) AS PRODUCTIONORDERCODE 
+                                                LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', ', ' ) AS PRODUCTIONORDERCODE,
+                                                LISTAGG('''' || TRIM(PRODUCTIONDEMANDCODE) || '''', ', ' ) AS PRODUCTIONDEMANDCODE
                                             FROM 
                                                 ITXVIEWKK
                                             WHERE 
@@ -756,17 +757,21 @@
                         $exec_lotcode   = db2_exec($conn1, $ResultLotCode);
                         $fetch_lotcode  = db2_fetch_assoc($exec_lotcode);
 
-                        $sqlQtyReady          = "SELECT
-                                                    SUM(BASEPRIMARYQUANTITYUNIT) AS QTY_READY,
-                                                    SUM(BASESECONDARYQUANTITYUNIT) AS QTY_READY_2
-                                                FROM
-                                                    BALANCE b
-                                                WHERE
-                                                    LOTCODE IN ($fetch_lotcode[PRODUCTIONORDERCODE])
-                                                    AND LOGICALWAREHOUSECODE = 'M031'";
+                        if($fetch_lotcode['PRODUCTIONORDERCODE']){
+                            $sqlQtyReady          = "SELECT
+                                                        SUM(BASEPRIMARYQUANTITYUNIT) AS QTY_READY,
+                                                        SUM(BASESECONDARYQUANTITYUNIT) AS QTY_READY_2
+                                                    FROM
+                                                        BALANCE b
+                                                    WHERE
+                                                        LOTCODE IN ($fetch_lotcode[PRODUCTIONORDERCODE])
+                                                        AND LEFT(ELEMENTSCODE, 8) IN ($fetch_lotcode[PRODUCTIONDEMANDCODE])
+                                                        AND LOGICALWAREHOUSECODE = 'M031'
+                                                        AND PROJECTCODE = '$dt_sum[NO_ORDER]'";
 
-                        $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
-                        $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
+                            $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
+                            $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
+                        }
                     ?>
                     <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format(($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2']) / $fetchDataQtyKurang['KONVERSI'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (KG) -->
                     <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (YD/MTR) -->
