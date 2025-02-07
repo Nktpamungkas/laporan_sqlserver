@@ -127,7 +127,7 @@
                                                         </table>                                                    
                                                     </div>
                                                 </div>
-                                                <div class="card-block" hidden>
+                                                <div class="card-block" >
                                                     <div class="dt-responsive table-responsive">
                                                         <table id="basic-btn" class="table compact table-striped table-bordered nowrap" >
                                                             <thead>
@@ -272,7 +272,7 @@
                                                                     <td><?php if($row_reservation['NO_RESEP']){ echo $row_reservation['NO_RESEP']; } else { echo $row_stocktransaction['PRODUCTIONORDERCODE']; } ?></td>
                                                                     <td><?= $row_stocktransaction['TGL']; ?></td>
                                                                     <td><?= $row_stocktransaction['KODE_OBAT']; ?></td>
-                                                                    <td><?= number_format($row_reservation['USERPRIMARYQUANTITY'], 2); ?></td>
+                                                                    <td><?= number_format($row_reservation['USERPRIMARYQUANTITY'] ?? 0, 2); ?></td>
                                                                     <td>
                                                                         <?php if(substr(number_format($row_stocktransaction['AKTUAL_QTY'], 2), -3) == '.00') : ?>
                                                                             <?= number_format($row_stocktransaction['AKTUAL_QTY'], 0); ?>
@@ -324,7 +324,7 @@
                 var SafetyStokStr = $(this).find('td:nth-child(10)').text().trim();
                 var BukaPostr = $(this).find('td:nth-child(11)').text().trim().replace(',', '');
                 var BukaPo = parseFloat(BukaPostr);
-                var StockAwalstr = $(this).find('td:nth-child(12)').text().trim().replace(',', '');
+                var StockAwalstr = $(this).find('td:nth-child(4)').text().trim().replace(',', '');
                 var TStockAwal = parseFloat(StockAwalstr);
                 if (satuan.toLowerCase() === 'kg') {
                     qtyAktual *= 1000;
@@ -340,7 +340,7 @@
                         'Nama Obat': namaObat,
                         'Stok Aman': 0,
                         'Buka PO': 0,
-                        'Stock Awal': 0,
+                        'Stock Awal': TStockAwal,
                         'Masuk': 0,
                         'Normal': 0,
                         'Tambah Obat': 0,
