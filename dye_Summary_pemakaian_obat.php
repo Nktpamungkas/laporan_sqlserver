@@ -127,7 +127,7 @@
                                                         </table>                                                    
                                                     </div>
                                                 </div>
-                                                <div class="card-block" hidden>
+                                                <div class="card-block" >
                                                     <div class="dt-responsive table-responsive">
                                                         <table id="basic-btn" class="table compact table-striped table-bordered nowrap" >
                                                             <thead>
