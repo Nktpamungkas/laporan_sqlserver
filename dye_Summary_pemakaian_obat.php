@@ -210,7 +210,7 @@
                                                                                                             DECOSUBCODE01 ,
                                                                                                             DECOSUBCODE02 ,
                                                                                                             DECOSUBCODE03 ,
-                                                                                                            SUM(USERPRIMARYQUANTITY) AS QTY_MASUK,
+                                                                                                            IFNULL(SUM(USERPRIMARYQUANTITY), 0) AS QTY_MASUK,
                                                                                                             USERPRIMARYUOMCODE
                                                                                                             from
                                                                                                             (SELECT 
@@ -231,8 +231,9 @@
                                                                                                             STOCKTRANSACTION s 
                                                                                                             WHERE
                                                                                                             s.ITEMTYPECODE ='DYC'   
-                                                                                                            AND s.LOGICALWAREHOUSECODE  in ('M510' , 'M101')  
+                                                                                                            $where_warehouse 
                                                                                                             AND s. TEMPLATECODE in('QCT','OPN')
+                                                                                                            AND s.TRANSACTIONDATE BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'
                                                                                                             GROUP BY 
                                                                                                             s.ITEMTYPECODE,
                                                                                                             s.DECOSUBCODE01,
@@ -376,7 +377,7 @@
                 var StockAwalstr = $(this).find('td:nth-child(9)').text().trim().replace(',', '');
                 var TStockAwal = parseFloat(StockAwalstr);
                 var StocMasukstr = $(this).find('td:nth-child(10)').text().trim().replace(',', '');
-                var TStockMasuk = parseFloat(StocMasukstr);
+                var TStockMasuk = parseFloat(StocMasukstr) ?? 0;
                 if (satuan.toLowerCase() === 'kg') {
                     qtyAktual *= 1000;
                 }
@@ -389,7 +390,7 @@
                 var StockAwal = TStockAwal;
                 StockAwal = parseFloat(StockAwal.toFixed(2));
                 var StockMasuk = TStockMasuk;
-                StockMasuk = parseFloat(StockMasuk.toFixed(2));
+                var StockMasuk = parseFloat((TStockMasuk || 0).toFixed(2));
                 qtyAktual = parseFloat(qtyAktual.toFixed(2));
                 var SafetyStok = parseFloat(SafetyStokStr);
                 SafetyStok = parseFloat(SafetyStok.toFixed(2));
