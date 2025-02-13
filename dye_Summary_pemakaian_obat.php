@@ -296,6 +296,11 @@
                                                                                                                     p3.OPERATIONCODE,
                                                                                                                     p.PRODRESERVATIONLINKGROUPCODE");
                                                                         $row_reservation    = db2_fetch_assoc($db_reservation);
+                                                                    $q_qty_awal = sqlsrv_query($con_nowprd, "SELECT * 
+                                                                                                                    FROM nowprd.stock_awal_obat_gdKimia 
+                                                                                                                    WHERE kode_obat = '$row_stocktransaction[KODE_OBAT]'
+                                                                                                                    ORDER BY kode_obat ASC");
+                                                                    $row_qty_awal = sqlsrv_fetch_array($q_qty_awal);
                                                                         
                                                                         // $db_balance     = db2_exec($conn1, "SELECT 
                                                                         //                                         ITEMTYPECODE,
@@ -317,11 +322,7 @@
                                                                         //                                         DECOSUBCODE02,
                                                                         //                                         DECOSUBCODE03 ");
                                                                         // $row_balance    = db2_fetch_assoc($db_balance);
-                                                                    $q_qty_awal = sqlsrv_query($con_nowprd, "SELECT * 
-                                                                                                                    FROM nowprd.stock_awal_obat_gdKimia 
-                                                                                                                    WHERE kode_obat = '$row_stocktransaction[KODE_OBAT]'
-                                                                                                                    ORDER BY kode_obat ASC");
-                                                                    $row_qty_awal = sqlsrv_fetch_array($q_qty_awal);
+                                                             
                                                                     ?>
                                                                 <tr>
                                                                     <!-- <td><?= $no++; ?></td> -->
@@ -347,7 +348,7 @@
                                                                     <td><?= $row_stocktransaction['LONGDESCRIPTION']; ?></td>
                                                                    <td>
                                                                     <?php
-                                                                    $qty_awal = $row_balance['QTY_AWAL'] ?? 0; // Jika null, isi dengan 0
+                                                                    $qty_awal = $row_qty_awal['qty_awal'] ?? 0; // Jika null, isi dengan 0
                                                                     if (substr(number_format($qty_awal, 2), -3) == '.00'): ?>
                                                                         <?= number_format($qty_awal, 0); ?>
                                                                     <?php else: ?>
@@ -355,7 +356,7 @@
                                                                     <?php endif; ?>
                                                                 </td>
                                                                     <td><?php
-                                                                        $qty_masuk = $row_qty_awal['QTY_MASUK'] ?? 0;
+                                                                        $qty_masuk = $row_stocktransaction['QTY_MASUK'] ?? 0;
                                                                          if (substr(number_format($qty_masuk, 2), -3) == '.00'): ?>
                                                                             <?= number_format($qty_masuk, 0); ?>
                                                                         <?php else: ?>
