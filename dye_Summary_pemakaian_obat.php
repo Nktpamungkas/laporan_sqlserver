@@ -255,7 +255,7 @@
                                                                                                         WHERE  
                                                                                                             s.ITEMTYPECODE = 'DYC'
                                                                                                             AND s.TRANSACTIONDATE BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'
-                                                                                                            AND NOT s.TEMPLATECODE IN ('313','QCR')
+                                                                                                            AND NOT s.TEMPLATECODE IN ('313','QCR','QCT','OPN')
                                                                                                             AND (s.DETAILTYPE = 1 OR s.DETAILTYPE = 0)
                                                                                                             $where_warehouse
                                                                                                         ORDER BY
