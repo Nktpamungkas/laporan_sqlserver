@@ -664,26 +664,35 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                     }
                                                                 }
 
-                                                                // mendeteksi jika status terakrhinya closed, tapi step selanjutnya tidak muncul. Tiket no : BDIT250000492
-                                                                $q_deteksi_status_terakhir_closed   = db2_exec($conn1, "WITH FirstQuery AS (
-                                                                                                                            SELECT DISTINCT STEPNUMBER 
-                                                                                                                            FROM ITXVIEW_POSISI_KARTU_KERJA 
-                                                                                                                            WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' 
-                                                                                                                            AND PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]' 
+                                                                // mendeteksi jika status terakrhinya BKR1 closed, tapi step selanjutnya tidak muncul. Tiket no : BDIT250000492
+                                                                $q_deteksi_status_terakhir_BKR1   = db2_exec($conn1, "SELECT
+                                                                                                                            DISTINCT STEPNUMBER
+                                                                                                                        FROM
+                                                                                                                            ITXVIEW_POSISI_KARTU_KERJA
+                                                                                                                        WHERE
+                                                                                                                            PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
+                                                                                                                            AND PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]'
                                                                                                                             AND NOT STATUS_OPERATION = 'Entered'
-                                                                                                                            ORDER BY STEPNUMBER DESC 
-                                                                                                                            FETCH FIRST 1 ROWS ONLY
-                                                                                                                        )
-                                                                                                                        SELECT DISTINCT * 
-                                                                                                                        FROM ITXVIEW_POSISI_KARTU_KERJA 
-                                                                                                                        WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' 
-                                                                                                                        AND PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]' 
-                                                                                                                        AND STEPNUMBER > (SELECT STEPNUMBER FROM FirstQuery) 
-                                                                                                                        ORDER BY STEPNUMBER DESC 
-                                                                                                                        FETCH FIRST 1 ROWS ONLY;");
-                                                                $row_status_terakhir_closed = db2_fetch_assoc($q_deteksi_status_terakhir_closed);
+                                                                                                                            AND (OPERATIONCODE = 'BKR1' OR OPERATIONCODE = 'MAT1')
+                                                                                                                        ORDER BY
+                                                                                                                            STEPNUMBER DESC 
+                                                                                                                        FETCH FIRST 1 ROWS ONLY");
+                                                                $row_status_terakhir_closed_BKR1 = db2_fetch_assoc($q_deteksi_status_terakhir_BKR1);
+                                                                
+                                                                $q_deteksi_status_terakhir   = db2_exec($conn1, "SELECT
+                                                                                                                        DISTINCT *
+                                                                                                                    FROM
+                                                                                                                        ITXVIEW_POSISI_KARTU_KERJA
+                                                                                                                    WHERE
+                                                                                                                        PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
+                                                                                                                        AND PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]'
+                                                                                                                        AND STEPNUMBER > '$row_status_terakhir_closed_BKR1[STEPNUMBER]'
+                                                                                                                    ORDER BY
+                                                                                                                        STEPNUMBER DESC 
+                                                                                                                    FETCH FIRST 1 ROWS ONLY;");
+                                                                $row_status_terakhir_closed = db2_fetch_assoc($q_deteksi_status_terakhir);
                                                             ?>
-                                                            <?php if($row_status_terakhir_closed) : ?>
+                                                            <?php if(empty($row_status_terakhir_closed_BKR1) OR $row_status_terakhir_closed) : ?>
                                                                 <tr>
                                                                     <td><?= $rowdb2['ORDERDATE']->format('Y-m-d H:i:s'); ?></td> <!-- TGL TERIMA ORDER -->
                                                                     <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
