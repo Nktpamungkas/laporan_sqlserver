@@ -685,8 +685,8 @@
                                                                                 $q_roll = db2_exec($conn1, "SELECT
                                                                                                                 COUNT(CODE) AS ROLL,
                                                                                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                                                                LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
+                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD
+                                                                                                                -- LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
                                                                                                             FROM
                                                                                                                 ITXVIEWALLOCATION0
                                                                                                             WHERE
