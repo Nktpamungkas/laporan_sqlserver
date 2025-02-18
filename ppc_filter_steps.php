@@ -16,7 +16,7 @@ if ($_GET['demand']) {
     $demand     = $_POST['demand'];
 }
 
-$q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+$q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' ORDER BY CREATIONDATETIME DESC");
 $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
 
 if ($_GET['prod_order']) {

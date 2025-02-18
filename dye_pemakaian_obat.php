@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     <div class="input-group input-group-sm">
                                                         <select name="warehouse" class="form-control"
                                                             style="width: 100%;" required>
-                                                            <option value="M510">M510</option>
+                                                             <option value="M510 dan M101">M510 & M101</option>
                                                             <?php 
                                                                 $sqlDB  =   "SELECT  
                                                                                 TRIM(CODE) AS CODE,
@@ -161,12 +161,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         </thead>
                                                         <tbody>
                                                             <?php
-                                                                    if($_POST['time'] && $_POST['time2']){
-                                                                        $where_time     = "AND s.TRANSACTIONTIME BETWEEN '$_POST[time]' AND '$_POST[time2]'";
-                                                                    }else{
-                                                                        $where_time     = "";
-                                                                    }
-                                                                    $db_stocktransaction   = db2_exec($conn1, "SELECT 
+                                                            set_time_limit(0);
+                                                            if ($_POST['time'] && $_POST['time2']) {
+                                                                $where_time = "AND s.TRANSACTIONTIME BETWEEN '$_POST[time]' AND '$_POST[time2]'";
+                                                            } else {
+                                                                $where_time = "";
+                                                            }
+                                                            if ($_POST['warehouse'] == 'M510 dan M101') {
+                                                                $where_warehouse = "AND s.LOGICALWAREHOUSECODE IN ('M510', 'M101')";
+                                                                $where_warehouse2 = "AND LOGICALWAREHOUSECODE IN ('M510', 'M101')";
+                                                            } else {
+                                                                $where_warehouse = "AND s.LOGICALWAREHOUSECODE = '$_POST[warehouse]'";
+                                                                $where_warehouse2 = "AND LOGICALWAREHOUSECODE = '$_POST[warehouse]'";
+                                                            }
+                                                            $db_stocktransaction   = db2_exec($conn1, "SELECT 
                                                                                                                     * 
                                                                                                                 FROM 
                                                                                                                 (SELECT
@@ -186,7 +194,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                                                                         WHEN s.TEMPLATECODE = '304' THEN TRIM(s.DECOSUBCODE01) || '-' || TRIM(s.DECOSUBCODE02) || '-' || TRIM(s.DECOSUBCODE03)
                                                                                                                         WHEN s.TEMPLATECODE = '203' THEN TRIM(s.DECOSUBCODE01) || '-' || TRIM(s.DECOSUBCODE02) || '-' || TRIM(s.DECOSUBCODE03)
                                                                                                                         WHEN s.TEMPLATECODE = '201' THEN TRIM(s.DECOSUBCODE01) || '-' || TRIM(s.DECOSUBCODE02) || '-' || TRIM(s.DECOSUBCODE03)
-                                                                                                                        ELSE s.TEMPLATECODE
+                                                                                                                        WHEN s.TEMPLATECODE IN ('QCT','OPN') THEN TRIM(s.DECOSUBCODE01) || '-' || TRIM(s.DECOSUBCODE02) || '-' || TRIM(s.DECOSUBCODE03)
                                                                                                                     END AS KODE_OBAT,
                                                                                                                     s.USERPRIMARYQUANTITY AS AKTUAL_QTY,
                                                                                                                     s.USERPRIMARYUOMCODE AS SATUAN,
@@ -211,10 +219,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                                                                 LEFT JOIN LOGICALWAREHOUSE l2 ON l2.CODE = s2.LOGICALWAREHOUSECODE
                                                                                                                 WHERE
                                                                                                                     s.ITEMTYPECODE = 'DYC'
-                                                                                                                    AND s.LOGICALWAREHOUSECODE = '$_POST[warehouse]'
                                                                                                                     AND s.TRANSACTIONDATE BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'
                                                                                                                     AND NOT s.TEMPLATECODE = '313'
                                                                                                                     AND (s.DETAILTYPE = 1 OR s.DETAILTYPE = 0)
+                                                                                                                    $where_warehouse
                                                                                                                 ORDER BY
                                                                                                                     s.PRODUCTIONORDERCODE ASC)
                                                                                                                 WHERE
@@ -259,7 +267,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 </td>
                                                                 <td><?= $row_stocktransaction['TGL']; ?></td>
                                                                 <td><?= $row_stocktransaction['KODE_OBAT']; ?></td>
-                                                                <td><?= number_format($row_reservation['USERPRIMARYQUANTITY'], 2); ?>
+                                                                 <td>
+                                                                    <?php if (substr( number_format($row_reservation['USERPRIMARYQUANTITY'], 2), -3) == '.00'): ?>
+                                                                        <?= number_format($row_reservation['USERPRIMARYQUANTITY'], 0); ?>
+                                                                    <?php else: ?>
+                                                                        <?= number_format($row_reservation['USERPRIMARYQUANTITY'], 2); ?>
+                                                                    <?php endif; ?>
+                                                                </td>
                                                                 </td>
                                                                 <td>
                                                                     <?php if(substr(number_format($row_stocktransaction['AKTUAL_QTY'], 2), -3) == '.00') : ?>
