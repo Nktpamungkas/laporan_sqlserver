@@ -175,10 +175,7 @@
                                                                                     LISTAGG(DISTINCT ''''|| TRIM(iasp.LOTCODE) ||'''', ', ' ) AS LOTCODE2,
                                                                                     i2.WARNA AS WARNA,
                                                                                     i.LEGALNAME1,
-                                                                                    CASE 
-                                                                                        WHEN i.CODE = isp.CODE THEN i.CODE
-                                                                                        ELSE isp.CODE
-                                                                                    END AS CODE
+                                                                                    i.CODE AS CODE                                                                                 
                                                                                 FROM
                                                                                     ITXVIEW_SURATJALAN_PPC_FOR_POSELESAI i
                                                                                 LEFT JOIN ITXVIEW_SURATJALAN_PPCNEW isp ON
@@ -223,10 +220,7 @@
                                                                                     i.DEFINITIVECOUNTERCODE,
                                                                                     i2.WARNA,
                                                                                     i.LEGALNAME1,
-                                                                                    CASE 
-                                                                                        WHEN i.CODE = isp.CODE THEN i.CODE
-                                                                                        ELSE isp.CODE
-                                                                                    END
+                                                                                    i.CODE
                                                                                 ORDER BY
                                                                                     i.PROVISIONALCODE ASC";
                                                             } elseif ($_POST['dept'] == 'PPC') {
@@ -609,6 +603,16 @@
                                                                                 $d_roll = db2_fetch_assoc($q_roll);
                                                                                 echo $d_roll['ROLL']; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
                                                                             } else {
+                                                                                $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                                                                                                                                SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                                                                LOTCODE
+                                                                                                                        FROM 
+                                                                                                                            ITXVIEWALLOCATION0 
+                                                                                                                        WHERE 
+                                                                                                                            CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                                                                        GROUP BY 
+                                                                                                                            LOTCODE");
                                                                                 // $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
                                                                                 //                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
                                                                                 //                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
@@ -631,49 +635,49 @@
                                                                                 //                                 AND DERIVATIONCODE = '$rowdb2[CODE]'
                                                                                 //                             GROUP BY
                                                                                 //                                 LOTCODE");
-                                                                                $q_roll = db2_exec($conn1, "SELECT
-                                                                                                        COUNT(s.ITEMTYPECODE) AS ROLL,
-                                                                                                        SUM(s.USERPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                                                        SUM(s.USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                                                        -- s.LOTCODE,
-                                                                                                        CASE 
-                                                                                                            WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
-                                                                                                            ELSE 'NON'
-                                                                                                        END AS QUALITYREASONCODE
-                                                                                                    FROM
-                                                                                                        STOCKTRANSACTION s
-                                                                                                        LEFT JOIN ELEMENTS e ON e.CODE = s.ITEMELEMENTCODE 
-                                                                                                        AND e.DECOSUBCODE01 = s.DECOSUBCODE01
-                                                                                                        AND e.DECOSUBCODE02 = s.DECOSUBCODE02
-                                                                                                        AND e.DECOSUBCODE03 = s.DECOSUBCODE03
-                                                                                                        AND e.DECOSUBCODE04 = s.DECOSUBCODE04
-                                                                                                        AND e.DECOSUBCODE05 = s.DECOSUBCODE05
-                                                                                                        AND e.DECOSUBCODE06 = s.DECOSUBCODE06
-                                                                                                        AND e.DECOSUBCODE07 = s.DECOSUBCODE07
-                                                                                                        AND e.DECOSUBCODE08 = s.DECOSUBCODE08
-                                                                                                        -- AND e.DECOSUBCODE09 = s.DECOSUBCODE09
-                                                                                                        -- AND e.DECOSUBCODE10 = s.DECOSUBCODE10
-                                                                                                    WHERE
-                                                                                                        s.TEMPLATECODE = 'S02'
-                                                                                                        -- AND ( s.LOGICALWAREHOUSECODE = 'M031'  or s.LOGICALWAREHOUSECODE = 'M504' or s.LOGICALWAREHOUSECODE = 'M631' )
-                                                                                                        AND s.ORDERCODE = '$rowdb2[PROVISIONALCODE]'
-                                                                                                        AND s.DERIVATIONCODE = '$rowdb2[CODE]'
-                                                                                                    GROUP BY
-                                                                                                        -- s.LOTCODE,
-                                                                                                        s.DECOSUBCODE01,
-                                                                                                        s.DECOSUBCODE02,
-                                                                                                        s.DECOSUBCODE03,
-                                                                                                        s.DECOSUBCODE04,
-                                                                                                        s.DECOSUBCODE05,
-                                                                                                        s.DECOSUBCODE06,
-                                                                                                        s.DECOSUBCODE07,
-                                                                                                        s.DECOSUBCODE08,
-                                                                                                        s.DECOSUBCODE09,
-                                                                                                        s.DECOSUBCODE10,
-                                                                                                        CASE 
-                                                                                                            WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
-                                                                                                            ELSE 'NON'
-                                                                                                        END");
+                                                                                // $q_roll = db2_exec($conn1, "SELECT
+                                                                                //                         COUNT(s.ITEMTYPECODE) AS ROLL,
+                                                                                //                         SUM(s.USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                         SUM(s.USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                         -- s.LOTCODE,
+                                                                                //                         CASE 
+                                                                                //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                //                             ELSE 'NON'
+                                                                                //                         END AS QUALITYREASONCODE
+                                                                                //                     FROM
+                                                                                //                         STOCKTRANSACTION s
+                                                                                //                         LEFT JOIN ELEMENTS e ON e.CODE = s.ITEMELEMENTCODE 
+                                                                                //                         AND e.DECOSUBCODE01 = s.DECOSUBCODE01
+                                                                                //                         AND e.DECOSUBCODE02 = s.DECOSUBCODE02
+                                                                                //                         AND e.DECOSUBCODE03 = s.DECOSUBCODE03
+                                                                                //                         AND e.DECOSUBCODE04 = s.DECOSUBCODE04
+                                                                                //                         AND e.DECOSUBCODE05 = s.DECOSUBCODE05
+                                                                                //                         AND e.DECOSUBCODE06 = s.DECOSUBCODE06
+                                                                                //                         AND e.DECOSUBCODE07 = s.DECOSUBCODE07
+                                                                                //                         AND e.DECOSUBCODE08 = s.DECOSUBCODE08
+                                                                                //                         AND e.DECOSUBCODE09 = s.DECOSUBCODE09
+                                                                                //                         AND e.DECOSUBCODE10 = s.DECOSUBCODE10
+                                                                                //                     WHERE
+                                                                                //                         s.TEMPLATECODE = 'S02'
+                                                                                //                         -- AND ( s.LOGICALWAREHOUSECODE = 'M031'  or s.LOGICALWAREHOUSECODE = 'M504' or s.LOGICALWAREHOUSECODE = 'M631' )
+                                                                                //                         AND s.ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                //                         AND s.DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                                //                     GROUP BY
+                                                                                //                         -- s.LOTCODE,
+                                                                                //                         s.DECOSUBCODE01,
+                                                                                //                         s.DECOSUBCODE02,
+                                                                                //                         s.DECOSUBCODE03,
+                                                                                //                         s.DECOSUBCODE04,
+                                                                                //                         s.DECOSUBCODE05,
+                                                                                //                         s.DECOSUBCODE06,
+                                                                                //                         s.DECOSUBCODE07,
+                                                                                //                         s.DECOSUBCODE08,
+                                                                                //                         s.DECOSUBCODE09,
+                                                                                //                         s.DECOSUBCODE10,
+                                                                                //                         CASE 
+                                                                                //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                //                             ELSE 'NON'
+                                                                                //                         END");
                                                                                 $d_roll = db2_fetch_assoc($q_roll);
                                                                                 echo $d_roll['ROLL'];
                                                                             }
