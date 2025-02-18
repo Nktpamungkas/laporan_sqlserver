@@ -664,7 +664,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                     }
                                                                 }
 
-                                                                // mendeteksi jika status terakrhinya BKR1 closed, tapi step selanjutnya tidak muncul. Tiket no : BDIT250000492
+                                                                // mendeteksi jika status terakrhinya BKR1 MAT1 BKN1 closed, tapi step selanjutnya tidak muncul. Tiket no : BDIT250000492
                                                                 $q_deteksi_status_terakhir_BKR1   = db2_exec($conn1, "SELECT
                                                                                                                             DISTINCT STEPNUMBER
                                                                                                                         FROM
@@ -673,7 +673,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                                                                             PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
                                                                                                                             AND PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]'
                                                                                                                             AND NOT STATUS_OPERATION = 'Entered'
-                                                                                                                            AND (OPERATIONCODE = 'BKR1' OR OPERATIONCODE = 'MAT1')
+                                                                                                                            AND (OPERATIONCODE = 'BKR1' OR OPERATIONCODE = 'MAT1' OR OPERATIONCODE = 'BKN1')
                                                                                                                         ORDER BY
                                                                                                                             STEPNUMBER DESC 
                                                                                                                         FETCH FIRST 1 ROWS ONLY");
