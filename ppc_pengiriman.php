@@ -175,9 +175,14 @@
                                                                                     LISTAGG(DISTINCT ''''|| TRIM(iasp.LOTCODE) ||'''', ', ' ) AS LOTCODE2,
                                                                                     i2.WARNA AS WARNA,
                                                                                     i.LEGALNAME1,
-                                                                                    i.CODE AS CODE
+                                                                                    CASE 
+                                                                                        WHEN i.CODE = isp.CODE THEN i.CODE
+                                                                                        ELSE isp.CODE
+                                                                                    END AS CODE
                                                                                 FROM
                                                                                     ITXVIEW_SURATJALAN_PPC_FOR_POSELESAI i
+                                                                                LEFT JOIN ITXVIEW_SURATJALAN_PPCNEW isp ON
+                                                                                    isp.PROVISIONALCODE = i.PROVISIONALCODE
                                                                                 LEFT JOIN ITXVIEW_ALLOCATION_SURATJALAN_PPC iasp ON
                                                                                     iasp.CODE = i.CODE
                                                                                 LEFT JOIN ITXVIEWCOLOR i2 ON
@@ -218,7 +223,10 @@
                                                                                     i.DEFINITIVECOUNTERCODE,
                                                                                     i2.WARNA,
                                                                                     i.LEGALNAME1,
-                                                                                    i.CODE
+                                                                                    CASE 
+                                                                                        WHEN i.CODE = isp.CODE THEN i.CODE
+                                                                                        ELSE isp.CODE
+                                                                                    END
                                                                                 ORDER BY
                                                                                     i.PROVISIONALCODE ASC";
                                                             } elseif ($_POST['dept'] == 'PPC') {
@@ -643,8 +651,8 @@
                                                                                                         AND e.DECOSUBCODE06 = s.DECOSUBCODE06
                                                                                                         AND e.DECOSUBCODE07 = s.DECOSUBCODE07
                                                                                                         AND e.DECOSUBCODE08 = s.DECOSUBCODE08
-                                                                                                        AND e.DECOSUBCODE09 = s.DECOSUBCODE09
-                                                                                                        AND e.DECOSUBCODE10 = s.DECOSUBCODE10
+                                                                                                        -- AND e.DECOSUBCODE09 = s.DECOSUBCODE09
+                                                                                                        -- AND e.DECOSUBCODE10 = s.DECOSUBCODE10
                                                                                                     WHERE
                                                                                                         s.TEMPLATECODE = 'S02'
                                                                                                         -- AND ( s.LOGICALWAREHOUSECODE = 'M031'  or s.LOGICALWAREHOUSECODE = 'M504' or s.LOGICALWAREHOUSECODE = 'M631' )
