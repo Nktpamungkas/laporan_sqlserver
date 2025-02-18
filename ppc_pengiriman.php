@@ -308,8 +308,7 @@
                                                                                 ORDER BY 
                                                                                     i.PROVISIONALCODE ASC";
                                                             }
-                                                            // echo $sqlDB2;
-
+                                                            echo $sqlDB2;
                                                             $stmt = db2_exec($conn1, $sqlDB2);
                                                             $no = 1;
                                                             while ($rowdb2 = db2_fetch_assoc($stmt)) {
@@ -603,16 +602,19 @@
                                                                                 $d_roll = db2_fetch_assoc($q_roll);
                                                                                 echo $d_roll['ROLL']; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
                                                                             } else {
-                                                                                $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
-                                                                                                                                SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                                                                                LOTCODE
-                                                                                                                        FROM 
-                                                                                                                            ITXVIEWALLOCATION0 
-                                                                                                                        WHERE 
-                                                                                                                            CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
-                                                                                                                        GROUP BY 
-                                                                                                                            LOTCODE");
+                                                                            // Sebelum perubahan pakai query ini
+                                                                                // $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                                                                                //                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                                                 LOTCODE
+                                                                                //                                         FROM 
+                                                                                //                                             ITXVIEWALLOCATION0 
+                                                                                //                                         WHERE 
+                                                                                //                                             CODE = '$rowdb2[CODE]' 
+                                                                                //                                             AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                                //                                         GROUP BY 
+                                                                                //                                             LOTCODE");
+                                                                            // End Query
                                                                                 // $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
                                                                                 //                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
                                                                                 //                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
@@ -678,6 +680,27 @@
                                                                                 //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
                                                                                 //                             ELSE 'NON'
                                                                                 //                         END");
+                                                                                $q_roll = db2_exec($conn1, "SELECT
+                                                                                                                COUNT(CODE) AS ROLL,
+                                                                                                                SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                                                LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
+                                                                                                            FROM
+                                                                                                                ITXVIEWALLOCATION0
+                                                                                                            WHERE
+                                                                                                                CODE = '$rowdb2[CODE]'
+                                                                                                            --	AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                                                            GROUP BY
+                                                                                                                DECOSUBCODE01,
+                                                                                                                DECOSUBCODE02,
+                                                                                                                DECOSUBCODE03,
+                                                                                                                DECOSUBCODE04,
+                                                                                                                DECOSUBCODE05,
+                                                                                                                DECOSUBCODE06,
+                                                                                                                DECOSUBCODE07,
+                                                                                                                DECOSUBCODE08,
+                                                                                                                DECOSUBCODE09,
+                                                                                                                DECOSUBCODE10");
                                                                                 $d_roll = db2_fetch_assoc($q_roll);
                                                                                 echo $d_roll['ROLL'];
                                                                             }
