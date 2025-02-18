@@ -308,7 +308,7 @@
                                                                                 ORDER BY 
                                                                                     i.PROVISIONALCODE ASC";
                                                             }
-                                                            echo $sqlDB2;
+                                                            // echo $sqlDB2;
                                                             $stmt = db2_exec($conn1, $sqlDB2);
                                                             $no = 1;
                                                             while ($rowdb2 = db2_fetch_assoc($stmt)) {
@@ -615,6 +615,7 @@
                                                                                 //                                         GROUP BY 
                                                                                 //                                             LOTCODE");
                                                                             // End Query
+                                                                            // Query nya anto
                                                                                 // $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
                                                                                 //                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
                                                                                 //                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
@@ -680,6 +681,7 @@
                                                                                 //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
                                                                                 //                             ELSE 'NON'
                                                                                 //                         END");
+                                                                            // End query nya anto
                                                                                 $q_roll = db2_exec($conn1, "SELECT
                                                                                                                 COUNT(CODE) AS ROLL,
                                                                                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
