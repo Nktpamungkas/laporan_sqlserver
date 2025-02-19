@@ -382,7 +382,10 @@
                 if (satuan.toLowerCase() === 'kg') {
                     qtyAktual *= 1000;
                 }
-                               
+                if (satuan.toLowerCase() === 't') {
+                    qtyAktual *= 1000000;
+                }
+
                 var StockAwal = TStockAwal;
                 StockAwal = parseFloat(StockAwal.toFixed(2));
                 var StockMasuk = TStockMasuk;
