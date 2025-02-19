@@ -183,6 +183,7 @@
                                                                                                             END AS KODE_OBAT,
                                                                                                             CASE 
                                                                                                                 WHEN s.ORDERCOUNTERCODE LIKE '%I01%' THEN 0
+                                                                                                                WHEN s.TEMPLATECODE = '303' AND s2.LOGICALWAREHOUSECODE ='M510' THEN 0
                                                                                                                 ELSE s.USERPRIMARYQUANTITY
                                                                                                             END AS AKTUAL_QTY,
                                                                                                             CASE 
