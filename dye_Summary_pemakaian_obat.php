@@ -181,8 +181,15 @@
                                                                                                                 WHEN s.TEMPLATECODE = '098' THEN TRIM(s.DECOSUBCODE01) || '-' || TRIM(s.DECOSUBCODE02) || '-' || TRIM(s.DECOSUBCODE03)
                                                                                                                 ELSE s.TEMPLATECODE
                                                                                                             END AS KODE_OBAT,
-                                                                                                            s.USERPRIMARYQUANTITY  AS AKTUAL_QTY,
-                                                                                                            s.USERPRIMARYUOMCODE   AS SATUAN,
+                                                                                                            CASE 
+                                                                                                                WHEN s.ORDERCOUNTERCODE LIKE '%I01%' THEN 0
+                                                                                                                ELSE s.USERPRIMARYQUANTITY
+                                                                                                            END AS AKTUAL_QTY,
+                                                                                                            CASE 
+                                                                                                                WHEN s.ORDERCOUNTERCODE LIKE '%I01%' AND s.USERPRIMARYUOMCODE = 'g' 
+                                                                                                                THEN 'kg' 
+                                                                                                                ELSE s.USERPRIMARYUOMCODE 
+                                                                                                            END AS SATUAN,
                                                                                                             p.LONGDESCRIPTION,
                                                                                                             s.TEMPLATECODE,
                                                                                                             CASE
