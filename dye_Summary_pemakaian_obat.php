@@ -125,7 +125,7 @@
                                                         </table>                                                    
                                                     </div>
                                                 </div>
-                                                <div class="card-block" hidden>
+                                                <div class="card-block">
                                                     <div class="dt-responsive table-responsive">
                                                         <table id="basic-btn" class="table compact table-striped table-bordered nowrap" >
                                                             <thead>
@@ -141,6 +141,7 @@
                                                                     <th>NAMA OBAT</th>
                                                                     <th>QTY AWAL</th>
                                                                     <th>QTY MASUK</th>
+                                                                    <th>SATUAN QTY MASUK</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -166,7 +167,8 @@
                                                                                                             SATUAN,
                                                                                                             LONGDESCRIPTION,
                                                                                                             KETERANGAN,
-                                                                                                            QTY_MASUK
+                                                                                                            QTY_MASUK,
+                                                                                                            SATUAN_MASUK
                                                                                                         FROM 
                                                                                                         (SELECT           
                                                                                                             s.DECOSUBCODE01,
@@ -201,7 +203,8 @@
                                                                                                                 WHEN n2.KETERANGAN NOT IN ('Tambah Obat','Perbaikan') THEN 'Normal'
                                                                                                                 ELSE n2.KETERANGAN
                                                                                                             END AS KETERANGAN,
-                                                                                                            s3.QTY_MASUK
+                                                                                                            s3.QTY_MASUK,
+                                                                                                            s3.USERPRIMARYUOMCODE AS SATUAN_MASUK
                                                                                                         FROM
                                                                                                             STOCKTRANSACTION s
                                                                                                         LEFT JOIN PRODUCT p ON p.ITEMTYPECODE = s.ITEMTYPECODE
@@ -233,7 +236,7 @@
                                                                                                                                         ELSE   SUM(s.USERPRIMARYQUANTITY)
                                                                                                                                     END AS  USERPRIMARYQUANTITY,
                                                                                                                                     CASE 
-                                                                                                                                        WHEN USERPRIMARYUOMCODE = 't' THEN 'kg'
+                                                                                                                                        WHEN USERPRIMARYUOMCODE = 't' then 'kg'
                                                                                                                                         ELSE USERPRIMARYUOMCODE
                                                                                                                                     END AS USERPRIMARYUOMCODE    
                                                                                                                                     FROM 
@@ -296,7 +299,8 @@
                                                                                                         SATUAN,
                                                                                                         LONGDESCRIPTION,
                                                                                                         KETERANGAN,
-                                                                                                         QTY_MASUK
+                                                                                                         QTY_MASUK,
+                                                                                                         SATUAN_MASUK
                                                                                                         ");
                                                                 $no = 1;
                                                                 while ($row_stocktransaction = db2_fetch_assoc($db_stocktransaction)) {
@@ -305,8 +309,6 @@
                                                                                                                     WHERE kode_obat = '$row_stocktransaction[KODE_OBAT]'
                                                                                                                     ORDER BY kode_obat ASC");
                                                                     $row_qty_awal = sqlsrv_fetch_array($q_qty_awal);
-                                                                    ?>
-                                                             
                                                                     ?>
                                                                 <tr>
                                                                     <!-- <td><?= $no++; ?></td> -->
@@ -341,6 +343,7 @@
                                                                             <?= number_format($qty_masuk, 2); ?>
                                                                         <?php endif; ?>
                                                                     </td>
+                                                                     <td><?= $row_stocktransaction['SATUAN_MASUK']; ?></td>
                                                                 </tr>
                                                                 <?php } ?>
                                                             </tbody>
@@ -379,13 +382,16 @@
                 var TStockAwal = parseFloat(StockAwalstr);
                 var StocMasukstr = $(this).find('td:nth-child(10)').text().trim().replace(',', '');
                 var TStockMasuk = parseFloat(StocMasukstr) ?? 0;
+                var satuanmasuk = $(this).find('td:nth-child(11)').text().trim();
                 if (satuan.toLowerCase() === 'kg') {
                     qtyAktual *= 1000;
                 }
                 if (satuan.toLowerCase() === 't') {
                     qtyAktual *= 1000000;
                 }
-
+                if (satuanmasuk.toLowerCase() === 'kg') {
+                    TStockMasuk *= 1000;
+                }
                 var StockAwal = TStockAwal;
                 StockAwal = parseFloat(StockAwal.toFixed(2));
                 var StockMasuk = TStockMasuk;
