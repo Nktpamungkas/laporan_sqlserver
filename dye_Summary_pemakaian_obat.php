@@ -233,10 +233,11 @@
                                                                                                                                     s.DECOSUBCODE03 ,
                                                                                                                                     CASE 
                                                                                                                                         WHEN USERPRIMARYUOMCODE = 't' THEN  SUM(s.USERPRIMARYQUANTITY)*1000
+                                                                                                                                        WHEN USERPRIMARYUOMCODE = 'g' THEN  SUM(s.USERPRIMARYQUANTITY)/1000
                                                                                                                                         ELSE   SUM(s.USERPRIMARYQUANTITY)
                                                                                                                                     END AS  USERPRIMARYQUANTITY,
                                                                                                                                     CASE 
-                                                                                                                                        WHEN USERPRIMARYUOMCODE = 't' then 'kg'
+                                                                                                                                        WHEN USERPRIMARYUOMCODE in('t','g') THEN 'kg'
                                                                                                                                         ELSE USERPRIMARYUOMCODE
                                                                                                                                     END AS USERPRIMARYUOMCODE    
                                                                                                                                     FROM 
@@ -244,7 +245,7 @@
                                                                                                                                     WHERE
                                                                                                                                     s.ITEMTYPECODE ='DYC'   
                                                                                                                                     $where_warehouse 
-                                                                                                                                    AND s. TEMPLATECODE in('QCT','OPN')
+                                                                                                                                    AND s. TEMPLATECODE in('QCT','OPN','125')
                                                                                                                                     AND s.TRANSACTIONDATE BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'
                                                                                                                                     GROUP BY 
                                                                                                                                     s.ITEMTYPECODE,
@@ -285,7 +286,10 @@
                                                                                                     WHERE  
                                                                                                         s.ITEMTYPECODE = 'DYC'
                                                                                                         AND s.TRANSACTIONDATE BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'
-                                                                                                        AND NOT s.TEMPLATECODE IN ('313','QCR','QCT','OPN')
+                                                                                                        AND NOT s.TEMPLATECODE IN ('313','QCR','QCT','OPN','125')
+                                                                                                        AND s.DECOSUBCODE01 ='E'
+                                                                                                        AND s.DECOSUBCODE02 ='6'
+                                                                                                        AND s.DECOSUBCODE03 ='008'
                                                                                                         AND (s.DETAILTYPE = 1 OR s.DETAILTYPE = 0)
                                                                                                        $where_warehouse
                                                                                                         AND TIMESTAMP(s.TRANSACTIONDATE, s.TRANSACTIONTIME) BETWEEN '$_POST[tgl] $_POST[time]:00' AND '$_POST[tgl2] $_POST[time2]:00'
@@ -369,7 +373,7 @@
             $('#basic-btn tbody tr').each(function() {
                 // Ambil data dari kolom yang diperlukan
                 var kodeObat = $(this).find('td:nth-child(3)').text().trim();
-                var qtyAktualStr = $(this).find('td:nth-child(5)').text().trim().replace(',', '');
+                var qtyAktualStr = $(this).find('td:nth-child(5)').text().trim().replace(/,/g, ''); // Hapus semua koma
                 var qtyAktual = parseFloat(qtyAktualStr);
                 var keterangan = $(this).find('td:nth-child(7)').text().trim();
                 var namaObat = $(this).find('td:nth-child(8)').text().trim();
@@ -377,11 +381,11 @@
                 var destinationWarehouseCode = $(this).find('td:nth-child(9)').text().trim();
                 var SafetyStokStr = $(this).find('td:nth-child(10)').text().trim();
                 var BukaPostr = $(this).find('td:nth-child(11)').text().trim().replace(',', '');
-                var BukaPo = parseFloat(BukaPostr);
+                var BukaPo = parseFloat(BukaPostr) ?? 0;
                 var StockAwalstr = $(this).find('td:nth-child(9)').text().trim().replace(',', '');
-                var TStockAwal = parseFloat(StockAwalstr);
-                var StocMasukstr = $(this).find('td:nth-child(10)').text().trim().replace(',', '');
-                var TStockMasuk = parseFloat(StocMasukstr) ?? 0;
+                var TStockAwal = parseFloat(StockAwalstr) ?? 0;
+                var StocMasukstr = $(this).find('td:nth-child(10)').text().trim().replace(/,/g, ''); // Hapus semua koma
+                var TStockMasuk = parseFloat(StocMasukstr);
                 var satuanmasuk = $(this).find('td:nth-child(11)').text().trim();
                 if (satuan.toLowerCase() === 'kg') {
                     qtyAktual *= 1000;
@@ -430,8 +434,12 @@
                     summaryData[kodeObat]['Perbaikan'] += qtyAktual;
                     summaryData[kodeObat]['Perbaikan'] = parseFloat(summaryData[kodeObat]['Perbaikan'].toFixed(2));            
                 } else if (keterangan.includes('Normal')) {
+                    console.log("Data dari database:", qtyAktual);
+                    console.log("Tipe data qtyAktual:", typeof qtyAktual);
+                   console.log("Sebelum: ", summaryData[kodeObat]['Normal']);
                     summaryData[kodeObat]['Normal'] += qtyAktual;
                     summaryData[kodeObat]['Normal'] = parseFloat(summaryData[kodeObat]['Normal'].toFixed(2));
+                    console.log("Sesudah: ", summaryData[kodeObat]['Normal']);
                 } else if (keterangan.includes('finishing')) {
                     summaryData[kodeObat]['finishing'] += qtyAktual;
                     summaryData[kodeObat]['finishing'] = parseFloat(summaryData[kodeObat]['finishing'].toFixed(2));
