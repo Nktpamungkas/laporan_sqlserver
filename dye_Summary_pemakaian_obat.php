@@ -186,11 +186,13 @@
                                                                                                             CASE 
                                                                                                                 WHEN s.ORDERCOUNTERCODE LIKE '%I01%' THEN 0
                                                                                                                 WHEN s.TEMPLATECODE = '303' AND s2.LOGICALWAREHOUSECODE ='M510' THEN 0
+                                                                                                                WHEN s.USERPRIMARYUOMCODE = 'kg' THEN s.USERPRIMARYQUANTITY * 1000
                                                                                                                 ELSE s.USERPRIMARYQUANTITY
                                                                                                             END AS AKTUAL_QTY,
                                                                                                             CASE 
                                                                                                                 WHEN s.ORDERCOUNTERCODE LIKE '%I01%' AND s.USERPRIMARYUOMCODE = 'g' 
                                                                                                                 THEN 'kg' 
+                                                                                                                WHEN s.USERPRIMARYUOMCODE = 'kg' THEN 'g'
                                                                                                                 ELSE s.USERPRIMARYUOMCODE 
                                                                                                             END AS SATUAN,
                                                                                                             p.LONGDESCRIPTION,
@@ -336,13 +338,8 @@
                                                                         <?= number_format($qty_awal, 2); ?>
                                                                     <?php endif; ?>
                                                                 </td>
-                                                                    <td><?php
-                                                                        $qty_masuk = $row_stocktransaction['QTY_MASUK'] ?? 0;
-                                                                         if (substr(number_format($qty_masuk, 2), -3) == '.00'): ?>
-                                                                            <?= number_format($qty_masuk, 0); ?>
-                                                                        <?php else: ?>
-                                                                            <?= number_format($qty_masuk, 2); ?>
-                                                                        <?php endif; ?>
+                                                                     <td>
+                                                                        <?= $row_stocktransaction['QTY_MASUK'] ?? 0; ?>
                                                                     </td>
                                                                      <td><?= $row_stocktransaction['SATUAN_MASUK']; ?></td>
                                                                 </tr>
@@ -383,6 +380,7 @@
                 var TStockAwal = parseFloat(StockAwalstr) ?? 0;
                 var StocMasukstr = $(this).find('td:nth-child(10)').text().trim().replace(/,/g, ''); // Hapus semua koma
                 var TStockMasuk = parseFloat(StocMasukstr);
+                console.log("qtyAktual yang ditambahkan:", TStockMasuk);
                 var satuanmasuk = $(this).find('td:nth-child(11)').text().trim();
                 if (satuan.toLowerCase() === 'kg') {
                     qtyAktual *= 1000;
