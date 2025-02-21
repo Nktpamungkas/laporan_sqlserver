@@ -125,7 +125,7 @@
                                                         </table>                                                    
                                                     </div>
                                                 </div>
-                                                <div class="card-block">
+                                                <div class="card-block" hidden>
                                                     <div class="dt-responsive table-responsive">
                                                         <table id="basic-btn" class="table compact table-striped table-bordered nowrap" >
                                                             <thead>
@@ -287,9 +287,6 @@
                                                                                                         s.ITEMTYPECODE = 'DYC'
                                                                                                         AND s.TRANSACTIONDATE BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'
                                                                                                         AND NOT s.TEMPLATECODE IN ('313','QCR','QCT','OPN','125')
-                                                                                                        AND s.DECOSUBCODE01 ='E'
-                                                                                                        AND s.DECOSUBCODE02 ='6'
-                                                                                                        AND s.DECOSUBCODE03 ='008'
                                                                                                         AND (s.DETAILTYPE = 1 OR s.DETAILTYPE = 0)
                                                                                                        $where_warehouse
                                                                                                         AND TIMESTAMP(s.TRANSACTIONDATE, s.TRANSACTIONTIME) BETWEEN '$_POST[tgl] $_POST[time]:00' AND '$_POST[tgl2] $_POST[time2]:00'
