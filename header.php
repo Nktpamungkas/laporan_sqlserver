@@ -49,6 +49,7 @@
                             'ppc_filter_poselesai.php', 
                             'ppc_filter_steps.php', 
                             'ppc_filter_qty_knt.php', 
+                            'ppc_bagi_kain.php', 
                             'ppc_pengiriman.php'];
         $style_active_ppc = in_array($current_page, $active_pages_ppc) ? 'style="background-color: #d4e9fa;"' : '';
         
@@ -66,8 +67,7 @@
         $active_pages_tas = ['tas_filter_cetaklabel.php'];
         $style_active_tas = in_array($current_page, $active_pages_tas) ? 'style="background-color: #d4e9fa;"' : '';
 
-        $active_pages_dye = ['dye_pemakaian_obat.php', 
-                            'dye_filter_LA.php', 
+        $active_pages_dye = ['dye_filter_LA.php', 
                             'dye_filter_bon_reservation.php', 
                             'dye_kk_bysuffix.php', 
                             'dye_greigewhiteness.php', 
@@ -130,11 +130,11 @@
                                             Memo Penting
                                         </a>
                                     </li>
-                                    <li <?= ($current_page == 'ppc_filter_order_perminggu.php') ? $style_active_ppc : ''; ?>>
+                                    <!-- <li <?= ($current_page == 'ppc_filter_order_perminggu.php') ? $style_active_ppc : ''; ?>>
                                         <a href="ppc_filter_order_perminggu.php" data-i18n="nav.animations.main">
                                             Laporan Order
                                         </a>
-                                    </li>
+                                    </li> -->
                                     <li <?= ($current_page == 'ppc_filter_persediaan_kain_jadi.php') ? $style_active_ppc : ''; ?>>
                                         <a href="ppc_filter_persediaan_kain_jadi.php" data-i18n="nav.animations.main">
                                             Lap. Persediaan Kain Jadi
@@ -158,6 +158,11 @@
                                     <li <?= ($current_page == 'ppc_pengiriman.php') ? $style_active_ppc : ''; ?>>
                                         <a href="ppc_pengiriman.php" data-i18n="nav.animations.main">
                                             Laporan Pengiriman PPC
+                                        </a>
+                                    </li>
+                                    <li <?= ($current_page == 'ppc_bagi_kain.php') ? $style_active_ppc : ''; ?>>
+                                        <a href="ppc_bagi_kain.php" data-i18n="nav.animations.main">
+                                            Laporan Bagi Kain
                                         </a>
                                     </li>
                                 </ul>
@@ -240,11 +245,11 @@
                                     <span class="pcoded-mcaret"></span>
                                 </a>
                                 <ul class="pcoded-submenu">
-                                    <li <?= ($current_page == 'dye_pemakaian_obat.php') ? $style_active_dye : ''; ?>>
+                                    <!-- <li <?= ($current_page == 'dye_pemakaian_obat.php') ? $style_active_dye : ''; ?>>
                                         <a href="dye_pemakaian_obat.php" data-i18n="nav.animations.main">
                                             Laporan pemakaian obat
                                         </a>
-                                    </li>
+                                    </li> -->
                                     <li <?= ($current_page == 'dye_filter_LA.php') ? $style_active_dye : ''; ?>>
                                         <a href="dye_filter_LA.php" data-i18n="nav.animations.main">
                                             Laporan Hasil Aktual (LA)
