@@ -7,12 +7,6 @@ $password = "Q?o*]vdjDb#w";
 $db_name = "TICKET";
 $connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
 $conn_sql = sqlsrv_connect($host, $connInfo);
-$host = "10.0.4.8";
-$username = "sa";
-$password = "Q?o*]vdjDb#w";
-$db_name = "TICKET";
-$connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
-$conn_sql = sqlsrv_connect($host, $connInfo);
 
 $host = "10.0.4.8";
 $username = "sa";
@@ -21,19 +15,6 @@ $db_name = "LA1000_Exchange";
 $connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
 $conn_sql2 = sqlsrv_connect($host, $connInfo);
 
-$host = "10.0.4.8";
-$username = "sa";
-$password = "Q?o*]vdjDb#w";
-$db_name = "LA1000_Exchange";
-$connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
-$conn_sql2 = sqlsrv_connect($host, $connInfo);
-
-$host = "S-CATS";
-$username = "progm";
-$password = "BW#bbfW";
-$db_name = "TAICHEN_CAMS_LIVE";
-$connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
-$conn_cams = sqlsrv_connect($host, $connInfo);
 $host = "S-CATS";
 $username = "progm";
 $password = "BW#bbfW";
