@@ -221,6 +221,24 @@ if (isset($_POST['simpanin_catch'])) {
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <style>
+        .button-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .new-label {
+            background-color: yellow; /* Warna latar belakang label */
+            color: black; /* Warna teks label */
+            padding: 5px 10px; /* Padding untuk label */
+            border-radius: 5px; /* Sudut melengkung */
+            position: absolute; /* Posisi absolut untuk label */
+            top: -10px; /* Atur posisi vertikal */
+            right: -10px; /* Atur posisi horizontal */
+            font-weight: bold; /* Tebal */
+            font-size: 12px; /* Ukuran font */
+        }
+    </style>
 </head>
 <?php require_once 'header.php'; ?>
 
@@ -257,6 +275,12 @@ if (isset($_POST['simpanin_catch'])) {
                                                 </div>
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
+                                                    <div class="button-container">
+                                                        <a href="http://online.indotaichen.com/NOWGerobak/IdentitasGerobak-<?= $_GET['demand']; ?>" class="btn btn-danger" target="_blank">
+                                                            <i class="icofont icofont-print"></i> Cetak Kartu Gerobak
+                                                        </a>
+                                                        <span class="new-label">Fitur Baru</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
