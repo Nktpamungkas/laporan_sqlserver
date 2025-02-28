@@ -276,7 +276,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
                                                     <div class="button-container">
-                                                        <a href="http://online.indotaichen.com/NOWGerobak/IdentitasGerobak-<?= $_GET['demand']; ?>" class="btn btn-danger" target="_blank">
+                                                        <a href="http://online.indotaichen.com/NOWGerobak/IdentitasGerobak-<?= $demand; ?>" class="btn btn-danger" target="_blank">
                                                             <i class="icofont icofont-print"></i> Cetak Kartu Gerobak
                                                         </a>
                                                         <span class="new-label">Fitur Baru</span>
