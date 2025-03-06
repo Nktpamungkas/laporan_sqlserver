@@ -51,9 +51,15 @@
                                                         } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
-                                                    <h4 class="sub-title">Issue Date/Tgl Pengiriman</h4>
+                                                    <h4 class="sub-title">Issue Date/Tgl Pengiriman 1</h4>
                                                     <input type="date" name="tgl1" class="form-control" id="tgl1" value="<?php if (isset($_POST['submit'])) {
                                                         echo $_POST['tgl1'];
+                                                    } ?>">
+                                                </div>
+                                                <div class="col-sm-12 col-xl-2 m-b-30">
+                                                    <h4 class="sub-title">Issue Date/Tgl Pengiriman 2</h4>
+                                                    <input type="date" name="tgl2" class="form-control" id="tgl2" value="<?php if (isset($_POST['submit'])) {
+                                                        echo $_POST['tgl2'];
                                                     } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
@@ -132,10 +138,11 @@
                                                             set_time_limit(0);
                                                             require_once "koneksi.php";
                                                             $tgl1 = $_POST['tgl1'];
+                                                            $tgl2 = $_POST['tgl2'];
                                                             $no_order = $_POST['no_order'];
 
                                                             if ($tgl1) {
-                                                                $where_date = "i.GOODSISSUEDATE = '$tgl1'";
+                                                                $where_date = "i.GOODSISSUEDATE BETWEEN '$tgl1' AND '$tgl2'";
                                                             } else {
                                                                 $where_date = "";
                                                             }
