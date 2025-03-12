@@ -673,7 +673,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                                                                                             PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
                                                                                                                             AND PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]'
                                                                                                                             AND NOT STATUS_OPERATION = 'Entered'
-                                                                                                                            AND (OPERATIONCODE = 'BKR1' OR OPERATIONCODE = 'MAT1' OR OPERATIONCODE = 'BKN1')
+                                                                                                                            AND (OPERATIONCODE = 'BKR1' OR OPERATIONCODE = 'MAT1' OR OPERATIONCODE = 'BKN1' OR OPERATIONCODE = 'BAT1' OR OPERATIONCODE = 'BAT2')
                                                                                                                         ORDER BY
                                                                                                                             STEPNUMBER DESC 
                                                                                                                         FETCH FIRST 1 ROWS ONLY");
