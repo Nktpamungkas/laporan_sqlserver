@@ -93,26 +93,35 @@
                                                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light m-b-10" id='deselect-all'>deselect all</button>
                                                     <select id='public-methods' multiple='multiple' name="operation[]">
                                                         <?php
-                                                        $query_ITXVIEWKK     = db2_exec($conn1, "SELECT TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE, TRIM(PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$_GET[demand]'");
-                                                        $data_ITXVIEWKK      = db2_fetch_assoc($query_ITXVIEWKK);
-
-                                                        $q_operation    = db2_exec($conn1, "SELECT
-                                                                                                    DISTINCT 
-                                                                                                    TRIM(OPERATIONCODE) AS OPERATIONCODE,
-                                                                                                    DESKRIPSI_OPERATION
+                                                        $query_ITXVIEWKK     = db2_exec($conn1, "SELECT
+                                                                                                    TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
+                                                                                                    TRIM(PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE
                                                                                                 FROM
-                                                                                                    ITXVIEW_DETAIL_QA_DATA
+                                                                                                    ITXVIEWKK
                                                                                                 WHERE
-                                                                                                    PRODUCTIONORDERCODE = '$data_ITXVIEWKK[PRODUCTIONORDERCODE]'
-                                                                                                    AND PRODUCTIONDEMANDCODE = '$data_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
-                                                                                                ORDER BY
-                                                                                                    OPERATIONCODE ASC");
+                                                                                                    PRODUCTIONDEMANDCODE = '$_GET[demand]'
+                                                                                                ORDER BY CREATIONDATETIME DESC");
+                                                        $data_ITXVIEWKK      = db2_fetch_assoc($query_ITXVIEWKK);
+                                                        if($data_ITXVIEWKK){
+                                                        $dataOperation = "SELECT
+                                                                                DISTINCT 
+                                                                                TRIM(OPERATIONCODE) AS OPERATIONCODE,
+                                                                                DESKRIPSI_OPERATION
+                                                                            FROM
+                                                                                ITXVIEW_DETAIL_QA_DATA
+                                                                            WHERE
+                                                                                PRODUCTIONORDERCODE IN ($data_ITXVIEWKK[PRODUCTIONORDERCODE])
+                                                                                AND PRODUCTIONDEMANDCODE = '$data_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
+                                                                            ORDER BY
+                                                                                OPERATIONCODE ASC";
+                                                        $q_operation    = db2_exec($conn1, $dataOperation);
                                                         ?>
                                                         <?php while ($row_operation = db2_fetch_assoc($q_operation)) : ?>
                                                             <option value="<?= $row_operation['OPERATIONCODE']; ?>">
                                                                 <?= $row_operation['DESKRIPSI_OPERATION']; ?> - <?= $row_operation['OPERATIONCODE']; ?>
                                                             </option>
                                                         <?php endwhile; ?>
+                                                        <?php } ?>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-6 col-xl-6 m-b-30">
@@ -127,7 +136,7 @@
                                                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light m-b-10" id='deselect-all2'>deselect all</button>
                                                     <select id='public-methods2' multiple='multiple' name="operation2[]">
                                                         <?php
-                                                        $query_ITXVIEWKK2     = db2_exec($conn1, "SELECT TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE, TRIM(PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$_GET[demand2]'");
+                                                        $query_ITXVIEWKK2     = db2_exec($conn1, "SELECT TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE, TRIM(PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$_GET[demand2]' ORDER BY CREATIONDATETIME DESC");
                                                         $data_ITXVIEWKK2      = db2_fetch_assoc($query_ITXVIEWKK2);
 
                                                         $q_operation2    = db2_exec($conn1, "SELECT
@@ -179,7 +188,7 @@
                                                         $demand     = $_POST['demand'];
                                                     }
 
-                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' ORDER BY CREATIONDATETIME DESC");
                                                     $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
 
                                                     if ($_GET['prod_order']) {
@@ -1013,7 +1022,7 @@
                                                             require_once "koneksi.php";
                                                             $demand     = $row_looping1['PRODUCTIONDEMANDCODE'];
 
-                                                            $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+                                                            $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' ORDER BY CREATIONDATETIME DESC");
                                                             $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
 
                                                             if ($_GET['prod_order']) {
@@ -1867,7 +1876,7 @@
                                                                 <?php
                                                                     $demand     = $row_looping2['PRODUCTIONDEMANDCODE'];
 
-                                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+                                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' ORDER BY CREATIONDATETIME DESC");
                                                                     $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
 
                                                                     if ($_GET['prod_order']) {
@@ -2706,7 +2715,7 @@
                                                                 $demand_2     = $_POST['demand2'];
                                                             }
 
-                                                            $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2'");
+                                                            $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2' ORDER BY CREATIONDATETIME DESC");
                                                             $d_ITXVIEWKK_2    = db2_fetch_assoc($q_ITXVIEWKK_2);
 
                                                             if ($_GET['prod_order']) {
@@ -3540,7 +3549,7 @@
                                                             $demand_2     = $row_looping1_bd2['PRODUCTIONDEMANDCODE'];
 
 
-                                                            $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2'");
+                                                            $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2' ORDER BY CREATIONDATETIME DESC");
                                                             $d_ITXVIEWKK_2    = db2_fetch_assoc($q_ITXVIEWKK_2);
 
                                                             if ($_GET['prod_order']) {
@@ -4381,7 +4390,7 @@
                                                                 $demand_2     = $row_looping2_bd2['PRODUCTIONDEMANDCODE'];
 
 
-                                                                $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2'");
+                                                                $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2' ORDER BY CREATIONDATETIME DESC");
                                                                 $d_ITXVIEWKK_2    = db2_fetch_assoc($q_ITXVIEWKK_2);
 
                                                                 if ($_GET['prod_order']) {
