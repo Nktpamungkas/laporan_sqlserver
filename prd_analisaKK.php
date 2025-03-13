@@ -102,7 +102,7 @@
                                                                                                     PRODUCTIONDEMANDCODE = '$_GET[demand]'
                                                                                                 ORDER BY CREATIONDATETIME DESC");
                                                         $data_ITXVIEWKK      = db2_fetch_assoc($query_ITXVIEWKK);
-                                                        if($data_ITXVIEWKK){
+                                                        
                                                         $dataOperation = "SELECT
                                                                                 DISTINCT 
                                                                                 TRIM(OPERATIONCODE) AS OPERATIONCODE,
@@ -110,7 +110,7 @@
                                                                             FROM
                                                                                 ITXVIEW_DETAIL_QA_DATA
                                                                             WHERE
-                                                                                PRODUCTIONORDERCODE IN ($data_ITXVIEWKK[PRODUCTIONORDERCODE])
+                                                                                PRODUCTIONORDERCODE = '$data_ITXVIEWKK[PRODUCTIONORDERCODE]'
                                                                                 AND PRODUCTIONDEMANDCODE = '$data_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
                                                                             ORDER BY
                                                                                 OPERATIONCODE ASC";
@@ -121,7 +121,6 @@
                                                                 <?= $row_operation['DESKRIPSI_OPERATION']; ?> - <?= $row_operation['OPERATIONCODE']; ?>
                                                             </option>
                                                         <?php endwhile; ?>
-                                                        <?php } ?>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-6 col-xl-6 m-b-30">
