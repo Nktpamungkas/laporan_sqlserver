@@ -6,6 +6,8 @@ include_once "utils/helper.php";
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE());");
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
 
+// echo($_GET['prod_order']);
+$kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_POST['kkoke'] : 'tidak');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -158,12 +160,12 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
                                                     <h4 class="sub-title">KK OKE</h4>
                                                     <select name="kkoke" class="form-control">
-                                                        <option value="tidak" <?php if ($_POST['kkoke'] == 'tidak') {
+                                                        <option value="tidak" <?php if ($kkoke_1 == 'tidak') {
                                                                                     echo "SELECTED";
                                                                                 } else {
                                                                                     echo "";
                                                                                 } ?>>Jangan sertakan KK OKE</option>
-                                                        <option value="ya" <?php if ($_POST['kkoke'] == 'ya') {
+                                                        <option value="ya" <?php if ($kkoke_1 == 'ya') {
                                                                                 echo "SELECTED";
                                                                             } else {
                                                                                 echo "";
@@ -187,7 +189,7 @@ sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_memopentingppc WHERE IPADD
                                         </form>
                                     </div>
                                 </div>
-                                <?php if (isset($_POST['submit']) or ($_GET['demand'] and $_GET['prod_order']) or $_GET['no_order']) : ?>
+                                <?php if (isset($_POST['submit']) or ($_GET['demand'] and $_GET['prod_order']) or $_GET['no_order'] or $_GET['prod_order']) : ?>
                                     <div class="card">
                                         <div class="card-block">
                                             <div class="dt-responsive table-responsive">
