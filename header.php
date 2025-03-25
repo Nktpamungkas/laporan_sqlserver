@@ -73,7 +73,8 @@
                             'dye_greigewhiteness.php', 
                             'dye_greigewhiteness.php', 
                             'dye_kk_bysuffix.php',
-                            'dye_lab_rcode.php'];
+                            'dye_lab_rcode.php',
+                            'dye_search_detail_recipe.php'];
         $style_active_dye = in_array($current_page, $active_pages_dye) ? 'style="background-color: #d4e9fa;"' : '';
         
         $active_pages_mkt = ['mkt_sales_report.php', 
@@ -282,7 +283,7 @@
                                     </li>
                                     <li <?= ($current_page == 'dye_search_detail_recipe.php') ? $style_active_dye : ''; ?>>
                                         <a href="dye_search_detail_recipe.php" data-i18n="nav.animations.main">
-                                            Detail Recipe 
+                                            Bon Resep Dyeing
                                         </a>
                                     </li>
                                 </ul>
