@@ -179,8 +179,8 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Code</th>
-                                                        <th>Subcode</th>
                                                         <th>Commentline</th>
+                                                        <th>Subcode</th>
                                                         <th>Description</th>
                                                         <th>Consumption</th>
                                                         <th>UoM</th>
@@ -356,8 +356,8 @@ function fillTableRecipe(data) {
             var row = document.createElement('tr');
             row.innerHTML = `
                 <td>${item.CODE || ''}</td>
-                <td>${item.SUBCODE || ''}</td>
                 <td>${item.COMMENTLINE || ''}</td>
+                <td>${item.SUBCODE || ''}</td>
                 <td>${item.LONGDESCRIPTION || ''}</td>
                 <td>${item.CONSUMPTION || ''}</td>
                 <td>${item.CONSUMPTIONTYPE || ''}</td>
