@@ -280,6 +280,11 @@
                                             Cek RCode Dyeing dan Laborat
                                         </a>
                                     </li>
+                                    <li <?= ($current_page == 'dye_search_detail_recipe.php') ? $style_active_dye : ''; ?>>
+                                        <a href="dye_search_detail_recipe.php" data-i18n="nav.animations.main">
+                                            Detail Recipe 
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                             <!-- <li class="pcoded-hasmenu">
