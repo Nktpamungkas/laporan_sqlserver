@@ -93,7 +93,38 @@ require_once "koneksi.php";
                             <div class="col-sm-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>List Dyelot</h5>
+                                        <h5>Filter Data</h5>
+                                    </div>
+                                    <div class="card-block">
+                                        <form action="" method="post" enctype="multipart/form-data">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-xl-2 m-b-0">
+                                                    <h4 class="sub-title">Tanggal Awal</h4>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl" value="<?php if (isset($_POST['cari'])) {
+                                                                                                                                                    echo $_POST['tgl'];
+                                                                                                                                                } ?>">
+                                                    </div>
+                                                    <button type="submit" name="cari" class="btn btn-primary btn-sm"><i class="icofont icofont-search-alt-1"></i> Search</button>
+                                                    <input type="button" name="reset" value="Reset" onclick="window.location.href='orgatex_dyelot_view.php'" class="btn btn-warning btn-sm">
+                                                </div>
+                                                <div class="col-sm-12 col-xl-2 m-b-0">
+                                                    <h4 class="sub-title">Tanggal Akhir</h4>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="date" class="form-control" placeholder="input-group-sm" name="tgl2" value="<?php if (isset($_POST['cari'])) {
+                                                                                                                                                    echo $_POST['tgl2'];
+                                                                                                                                                } ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" style="background-color: #FFF7AE; padding: 5px; font-family: 'Courier New', monospace; font-size: 15px;">
+                                        <center>Data yang tampil adalah data yang tercatat hari ini.</center>
+                                        <center>Silahkan gunakan fitur pencarian untuk menemukan lebih banyak data pada tanggal yang Anda inginkan.</center>
+                                        <!-- <center><b>UNDER MAINTENANCE !!</b><br>PROGRAM TETAP BISA DIGUNAKAN.</center> -->
                                     </div>
                                     <div class="card-block">
                                         <div class="dt-responsive table-responsive">
@@ -117,6 +148,13 @@ require_once "koneksi.php";
                                                 </thead>
                                                 <tbody>
                                                     <?php
+
+                                                    if (isset($_POST['cari'])) {
+                                                        $where_tgl  = "CAST(a.QueueTime AS DATE) BETWEEN '$_POST[tgl]' AND '$_POST[tgl2]'";
+                                                    } else {
+                                                        $where_tgl  = "CAST(a.QueueTime AS DATE) = CAST(GETDATE() AS DATE)";
+                                                    }
+
                                                     // Prepare the SQL query
                                                     $dyelots = $pdo_orgatex->query("SELECT
                                                                                         a.AutoKey,
@@ -137,6 +175,8 @@ require_once "koneksi.php";
                                                                                     LEFT JOIN [ORGATEX-INTEG].[dbo].[Error_codes_ImportError] b ON b.code = a.ImportError
                                                                                     LEFT JOIN [ORGATEX-INTEG].[dbo].[Status_State] c ON c.code = a.State 
                                                                                     LEFT JOIN [ORGATEX].[dbo].[BatchDetail] d ON d.batch_ref_no = a.DyelotRefNo COLLATE SQL_Latin1_General_CP1_CI_AS
+                                                                                    WHERE
+	                                                                                    $where_tgl
                                                                                     ORDER BY
                                                                                         a.AutoKey DESC")->fetchAll(PDO::FETCH_ASSOC);
                                                     ?>
