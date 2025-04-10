@@ -214,8 +214,8 @@ require_once "koneksi.php";
                                                         if (checkIP($currentIP, $allowedIPs)) {
                                                             $buttons .= '<div class="d-flex text-center">
                                                                             <div class="col">
-                                                                                <button class="btn btn-danger" id="update-btn" data-dyelot="' . $dyelot['Dyelot'] . '" data-redye="' . $dyelot['ReDye'] . '" data-importstate="30">Delete Batch</button>
-                                                                                <button class="btn btn-warning" id="update-btn" data-dyelot="' . $dyelot['Dyelot'] . '" data-redye="' . $dyelot['ReDye'] . '" data-importstate="40">Hard Delete</button>
+                                                                                <button class="btn btn-danger btn-sm" id="update-btn" data-dyelot="' . $dyelot['Dyelot'] . '" data-redye="' . $dyelot['ReDye'] . '" data-importstate="30">Delete Batch</button>
+                                                                                <button class="btn btn-warning btn-sm" id="update-btn" data-dyelot="' . $dyelot['Dyelot'] . '" data-redye="' . $dyelot['ReDye'] . '" data-importstate="40">Hard Delete</button>
                                                                             </div>
                                                                         </div>';
                                                         } else if ($dyelot['ImportState'] == 10 && $dyelot['State'] == 10) {
