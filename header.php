@@ -61,12 +61,13 @@
         $style_active_brs = in_array($current_page, $active_pages_brs) ? 'style="background-color: #d4e9fa;"' : '';
 
         $active_pages_lab = ['dye_pemakaian_obat.php',
-                            'dye_Summary_pemakaian_obat.php'];
+                            'dye_Summary_pemakaian_obat.php',
+                            'gas_filter_MasterSuhu.php'];
         $style_active_lab = in_array($current_page, $active_pages_lab) ? 'style="background-color: #d4e9fa;"' : '';
 
         $active_pages_tas = ['tas_filter_cetaklabel.php'];
         $style_active_tas = in_array($current_page, $active_pages_tas) ? 'style="background-color: #d4e9fa;"' : '';
-
+        
         $active_pages_dye = ['dye_filter_LA.php', 
                             'dye_filter_bon_reservation.php', 
                             'dye_kk_bysuffix.php', 
@@ -221,6 +222,11 @@
                                     <li <?= ($current_page == 'dye_Summary_pemakaian_obat.php') ? $style_active_lab : ''; ?>>
                                         <a href="dye_Summary_pemakaian_obat.php" data-i18n="nav.animations.main">
                                             Laporan bulanan pemakaian obat
+                                        </a>
+                                    </li>
+                                    <li <?= ($current_page == 'lab_filter_MasterSuhu.php') ? $style_active_lab : ''; ?>>
+                                        <a href="lab_filter_MasterSuhu.php" data-i18n="nav.animations.main">
+                                            Master Suhu
                                         </a>
                                     </li>
                                 </ul>
@@ -437,7 +443,7 @@
                             <li class="pcoded-hasmenu">
                                 <a href="javascript:void(0)" <?= $style_active_afs; ?>>
                                     <span class="pcoded-micon"><i class="icofont icofont-support"></i></span>
-                                    <span class="pcoded-mtext">AFTER-SALES SERVICES</span>
+                                    <span class="pcoded-mtext">AFTER-SALES SERV.</span>
                                     <span class="pcoded-mcaret"></span>
                                 </a>
                                 <ul class="pcoded-submenu">
