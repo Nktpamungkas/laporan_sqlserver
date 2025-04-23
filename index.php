@@ -1,107 +1,138 @@
+<?php
+    require_once "koneksi.php";
+
+    // Grafik 1: Rata-rata loading per URL
+    $url_data = [];
+    $sql1 = "SELECT url, AVG(load_duration) AS avg_duration 
+            FROM nowprd.log_loading_ppc 
+            GROUP BY url ORDER BY avg_duration DESC";
+    $stmt1 = sqlsrv_query($con_nowprd, $sql1);
+    while ($row = sqlsrv_fetch_array($stmt1, SQLSRV_FETCH_ASSOC)) {
+        $url_data[] = $row;
+    }
+
+    // Grafik 2: Total akses per IP
+    $ip_data = [];
+    $sql2 = "SELECT ip_address, COUNT(*) AS total_akses 
+            FROM nowprd.log_loading_ppc 
+            GROUP BY ip_address ORDER BY total_akses DESC";
+    $stmt2 = sqlsrv_query($con_nowprd, $sql2);
+    while ($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)) {
+        $ip_data[] = $row;
+    }
+
+    // Grafik 3: Akses per jam
+    $jam_data = [];
+    $sql3 = "SELECT FORMAT(accessed_at, 'HH') AS jam, COUNT(*) AS total 
+            FROM nowprd.log_loading_ppc 
+            GROUP BY FORMAT(accessed_at, 'HH') ORDER BY jam";
+    $stmt3 = sqlsrv_query($con_nowprd, $sql3);
+    while ($row = sqlsrv_fetch_array($stmt3, SQLSRV_FETCH_ASSOC)) {
+        $jam_data[] = $row;
+    }
+
+    $urls = [];
+    $sql = "SELECT DISTINCT url FROM nowprd.log_loading_ppc ORDER BY url";
+    $stmt = sqlsrv_query($con_nowprd, $sql);
+    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+        $urls[] = ''.$row['url'];
+    }
+
+    sqlsrv_close($con_nowprd);
+?>
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
-    <title>Home</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="#">
-    <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
-    <meta name="author" content="#">
-    <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\icon\feather\css\feather.css">
-    <link rel="stylesheet" href="files\bower_components\select2\css\select2.min.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap-multiselect\css\bootstrap-multiselect.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\multiselect\css\multi-select.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\css\style.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\pages\prism\prism.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\css\style.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\css\pcoded-horizontal.min.css">
-    <link rel="stylesheet" type="text/css" href="files\assets\css\component.css">
-    <?php if ($pinjambuku = 'pinjam_buku') : ?>
-        <script src="xeditable/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-    <?php endif; ?>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <meta charset="UTF-8">
+    <title>Dashboard Log Loading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
 </head>
-<?php require_once 'header.php'; ?>
+<body class="bg-gray-100 text-gray-800 p-2">
+    <div class="flex max-w-12xl h-screen">
+        <!-- Sidebar Filter -->
+        <div class="w-1/4 bg-white p-2 rounded shadow mr-4 h-fit">
+            <h2 class="text-xl font-semibold mb-4">🔍 Filter</h2>
+            <label class="block mb-1 font-medium">Pilih URL</label>
+            <select id="urlSelect" class="w-full p-2 border rounded">
+                <option value="">-- Semua URL --</option>
+                <?php foreach ($urls as $url): ?>
+                    <option value="<?= htmlspecialchars($url) ?>">https://online.indotaichen.com<?= $url ?></option>
+                <?php endforeach; ?>
+            </select>
 
-<body>
-    <div class="pcoded-content">
-        <div class="pcoded-inner-content">
-            <div class="main-body">
-                <div class="page-wrapper">
-                    <div class="page-body">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <div id="curve_chart" style="width: 900px; height: 500px"></div>
-                                        <?php
-                                            require_once "koneksi.php";
-                                            $sql = "SELECT TOP 5 IPADDRESS, COUNT(*) AS jumlah_data
-                                                    FROM [nowprd].[itxview_memopentingppc]
-                                                    WHERE CAST(CREATEDATETIME AS DATE) = CAST(GETDATE() AS DATE)
-                                                    GROUP BY IPADDRESS
-                                                    HAVING COUNT(*) > 10
-                                                    ORDER BY MAX(CREATEDATETIME) DESC;";
-                                            
-                                            $result = sqlsrv_query($con_nowprd, $sql);
-                                            
-                                            // Create arrays to hold the data
-                                            $ipAddresses = [];
-                                            $jumlahData = [];
-                                            
-                                            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                                                $ipAddresses[] = $row['IPADDRESS'];
-                                                $jumlahData[] = $row['jumlah_data'];
-                                            }
-                                        ?>
-                                        <script type="text/javascript">
-                                            var ipAddresses = <?php echo json_encode($ipAddresses); ?>;
-                                            var jumlahData = <?php echo json_encode($jumlahData); ?>;
+            <!-- Filter Tanggal -->
+            <label class="block mt-4 mb-1 font-medium">Pilih Tanggal</label>
+            <input type="date" id="dateSelect" class="w-full p-2 border rounded" value="<?= date('Y-m-d') ?>">
+        </div>
 
-                                            google.charts.load('current', {'packages':['corechart']});
-                                            google.charts.setOnLoadCallback(drawChart);
-
-                                            function drawChart() {
-                                                // Prepare the data for Google Charts
-                                                var data = new google.visualization.DataTable();
-                                                data.addColumn('string', 'IP Address');
-                                                data.addColumn('number', 'Jumlah Data');
-
-                                                // Populate the DataTable with the PHP arrays
-                                                for (var i = 0; i < ipAddresses.length; i++) {
-                                                    data.addRow([ipAddresses[i], jumlahData[i]]);
-                                                }
-
-                                                var options = {
-                                                    title: 'Jumlah Data per IP Address',
-                                                    curveType: 'function',
-                                                    legend: { position: 'bottom' }
-                                                };
-
-                                                var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-                                                chart.draw(data, options);
-                                            }
-
-                                        </script>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Chart Area -->
+        <div class="flex-1 bg-white p-20 rounded shadow">
+            <h2 class="text-xl font-semibold mb-0">📊 Grafik Durasi Loading (per 30 menit)</h2>
+            <canvas id="chartUrl" class="w-full h-50"></canvas>
         </div>
     </div>
+
+    <script>
+        const ctx = document.getElementById('chartUrl').getContext('2d');
+        let chart;
+
+        // Inisialisasi Choices untuk dropdown URL
+        const urlSelect = document.getElementById('urlSelect');
+        const choices = new Choices(urlSelect, {
+            searchEnabled: true, // Enable search
+            itemSelectText: '',  // Hide default text
+            noResultsText: 'Tidak ada hasil', // Custom message when no results found
+        });
+
+        // Mendapatkan filter tanggal
+        const dateSelect = document.getElementById('dateSelect');
+
+        // Fungsi untuk memperbarui grafik berdasarkan URL dan tanggal yang dipilih
+        function updateChart(url = '', date = '') {
+            let query = 'get_chart_data.php?url=' + encodeURIComponent(url);
+            if (date) {
+                query += '&date=' + encodeURIComponent(date); // Kirim tanggal sebagai parameter
+            }
+            
+            fetch(query)
+                .then(res => res.json())
+                .then(data => {
+                    if (chart) chart.destroy();
+                    chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Durasi (detik)',
+                                data: data.values,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
+                });
+        }
+
+        // Event listener untuk perubahan pilihan URL
+        urlSelect.addEventListener('change', function () {
+            const url = this.value;
+            const date = dateSelect.value; // Ambil tanggal
+            updateChart(url, date); // Update chart dengan URL dan tanggal
+        });
+
+        // Event listener untuk perubahan tanggal
+        dateSelect.addEventListener('change', function () {
+            const url = urlSelect.value; // Ambil URL
+            const date = this.value; // Ambil tanggal
+            updateChart(url, date); // Update chart dengan URL dan tanggal
+        });
+
+        // Inisialisasi chart dengan data default
+        updateChart();
+    </script>
+
 </body>
-<?php require_once 'footer.php'; ?>
+</html>

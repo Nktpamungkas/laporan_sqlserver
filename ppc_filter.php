@@ -1,4 +1,5 @@
 <?php
+$start_time = microtime(true);
 // ini_set("error_reporting", 1);
 session_start();
 require_once "koneksi.php";
@@ -43,7 +44,26 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
         document.querySelector("title").innerText = count + " Tabs opened Memo Penting.";
     }, true);
 </script>
+<?php
+    $end_time       = microtime(true);
+    $load_duration  = round(($end_time - $start_time), 3);
+    $ip_address     = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
+    $datetime       = date('Y-m-d H:i:s');
+    $url            = $_SERVER['REQUEST_URI'] ?? '';
 
+    require_once "koneksi.php";
+    
+    if ($con_nowprd) {
+        $sql = "INSERT INTO nowprd.log_loading_ppc (ip_address, url, load_duration, source, accessed_at)
+                VALUES (?, ?, ?, 'server', ?)";
+        $params = [$ip_address, $url, $load_duration, $datetime];
+        $stmt = sqlsrv_query($con_nowprd, $sql, $params);
+
+        if (!$stmt) {
+            die(print_r(sqlsrv_errors(), true));  // Menampilkan error jika query gagal
+        }
+    }
+?>
 <body>
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
@@ -69,7 +89,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                     <h4 class="sub-title">Bon Order</h4>
                                                     <input type="text" name="no_order" class="form-control" onkeyup="this.value = this.value.toUpperCase()" value="<?php if (isset($_POST['submit'])) {
                                                                                                                                                                         echo $_POST['no_order'];
-                                                                                                                                                                    }elseif ($_GET['no_order']) {
+                                                                                                                                                                    } elseif ($_GET['no_order']) {
                                                                                                                                                                         echo $_GET['no_order'];
                                                                                                                                                                     } ?>">
                                                 </div>
@@ -241,94 +261,94 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                     </thead>
                                                     <tbody>
                                                         <?php
-                                                            $prod_order     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
-                                                            $prod_demand    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
-                                                            $no_order       = $_POST['no_order'] ?? $_GET['no_order'] ?? '';
-                                                            $orderline      = $_GET['orderline'] ?? '';
-                                                            $tgl1           = $_POST['tgl1'] ?? '';
-                                                            $tgl2           = $_POST['tgl2'] ?? '';
-                                                            $no_po          = $_POST['no_po'] ?? '';
-                                                            $article_group  = $_POST['article_group'] ?? '';
-                                                            $article_code   = $_POST['article_code'] ?? '';
-                                                            $nama_warna     = $_POST['nama_warna'] ?? '';
-                                                            $kkoke          = $_POST['kkoke'] ?? $_GET['kkoke'] ?? '';
-                                                            
-                                                            $conditions = [];
-                                                            $conditions2 = [];
-                                                            
-                                                            // Menambahkan kondisi berdasarkan filter yang diisi
-                                                            if ($nama_warna) {
-                                                                $conditions[] = "WARNA LIKE '%$nama_warna%'";
-                                                            }
-                                                            if ($prod_order) {
-                                                                $conditions[] = "NO_KK = '$prod_order'";
-                                                            }
-                                                            if ($prod_demand) {
-                                                                $conditions[] = "DEMAND = '$prod_demand'";
-                                                            }
-                                                            if ($no_order) {
-                                                                $conditions[] = "NO_ORDER = '$no_order'";
-                                                            }
-                                                            if ($orderline) {
-                                                                $conditions[] = "ORDERLINE = '$orderline'";
-                                                            }
-                                                            if ($tgl1 && $tgl2) {
-                                                                $conditions[] = "DELIVERY BETWEEN '$tgl1' AND '$tgl2'";
-                                                            }
-                                                            if ($no_po) {
-                                                                $conditions[] = "NO_PO = '$no_po'";
-                                                            }
-                                                            if ($article_group && $article_code) {
-                                                                $conditions[] = "SUBCODE02 = '$article_group' AND SUBCODE03 = '$article_code'";
-                                                            }
-                                                            if ($kkoke === 'tidak') {
-                                                                $conditions2[] = "NOT PROGRESSSTATUS = '6' AND NOT PROGRESSSTATUS_DEMAND = '6'";
-                                                            }
-                                                            
-                                                            // Menyusun string kondisi
-                                                            $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
-                                                            
-                                                            // Menyusun query
-                                                            $query = "SELECT * FROM (SELECT * FROM ITXVIEW_MEMOPENTINGPPC WHERE $conditionsString)";
-                                                            
-                                                            if (count($conditions2) > 0) {
-                                                                $query .= " WHERE " . implode(" AND ", $conditions2);
-                                                            }
+                                                        $prod_order     = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
+                                                        $prod_demand    = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
+                                                        $no_order       = $_POST['no_order'] ?? $_GET['no_order'] ?? '';
+                                                        $orderline      = $_GET['orderline'] ?? '';
+                                                        $tgl1           = $_POST['tgl1'] ?? '';
+                                                        $tgl2           = $_POST['tgl2'] ?? '';
+                                                        $no_po          = $_POST['no_po'] ?? '';
+                                                        $article_group  = $_POST['article_group'] ?? '';
+                                                        $article_code   = $_POST['article_code'] ?? '';
+                                                        $nama_warna     = $_POST['nama_warna'] ?? '';
+                                                        $kkoke          = $_POST['kkoke'] ?? $_GET['kkoke'] ?? '';
 
-                                                            // ITXVIEW_MEMOPENTINGPPC
-                                                            $itxviewmemo              = db2_exec($conn1, $query, array('cursor'=>DB2_SCROLLABLE));
-                                                            $r_itxviewmemo = [];
-                                                            while ($row_itxviewmemo   = db2_fetch_assoc($itxviewmemo)) {
-                                                                $r_itxviewmemo[] = [
-                                                                    cek(addslashes($row_itxviewmemo['ORDERDATE'])),
-                                                                    cek($row_itxviewmemo['PELANGGAN']),
-                                                                    cek($row_itxviewmemo['NO_ORDER']),
-                                                                    cek($row_itxviewmemo['NO_PO']),
-                                                                    cek($row_itxviewmemo['SUBCODE02']),
-                                                                    cek($row_itxviewmemo['SUBCODE03']),
-                                                                    cek($row_itxviewmemo['KETERANGAN_PRODUCT']),
-                                                                    cek($row_itxviewmemo['WARNA']),
-                                                                    cek($row_itxviewmemo['NO_WARNA']),
-                                                                    cek(addslashes($row_itxviewmemo['DELIVERY'])),
-                                                                    cek($row_itxviewmemo['QTY_BAGIKAIN']),
-                                                                    cek($row_itxviewmemo['NETTO']),
-                                                                    cek($row_itxviewmemo['DELAY']),
-                                                                    cek($row_itxviewmemo['NO_KK']),
-                                                                    cek($row_itxviewmemo['DEMAND']),
-                                                                    substr(cek($row_itxviewmemo['LOT']) ?? '', 0, 7), // di database length nya 7
-                                                                    cek($row_itxviewmemo['ORDERLINE']),
-                                                                    cek($row_itxviewmemo['PROGRESSSTATUS']),
-                                                                    cek($row_itxviewmemo['PROGRESSSTATUS_DEMAND']),
-                                                                    cek($row_itxviewmemo['KETERANGAN']),
-                                                                    $_SERVER['REMOTE_ADDR'],
-                                                                    date('Y-m-d H:i:s'),
-                                                                    'MEMO'
-                                                                ];
-                                                            }
+                                                        $conditions = [];
+                                                        $conditions2 = [];
 
-                                                            try {
-                                                                // Define the query with placeholders
-                                                                $query = "
+                                                        // Menambahkan kondisi berdasarkan filter yang diisi
+                                                        if ($nama_warna) {
+                                                            $conditions[] = "WARNA LIKE '%$nama_warna%'";
+                                                        }
+                                                        if ($prod_order) {
+                                                            $conditions[] = "NO_KK = '$prod_order'";
+                                                        }
+                                                        if ($prod_demand) {
+                                                            $conditions[] = "DEMAND = '$prod_demand'";
+                                                        }
+                                                        if ($no_order) {
+                                                            $conditions[] = "NO_ORDER = '$no_order'";
+                                                        }
+                                                        if ($orderline) {
+                                                            $conditions[] = "ORDERLINE = '$orderline'";
+                                                        }
+                                                        if ($tgl1 && $tgl2) {
+                                                            $conditions[] = "DELIVERY BETWEEN '$tgl1' AND '$tgl2'";
+                                                        }
+                                                        if ($no_po) {
+                                                            $conditions[] = "NO_PO = '$no_po'";
+                                                        }
+                                                        if ($article_group && $article_code) {
+                                                            $conditions[] = "SUBCODE02 = '$article_group' AND SUBCODE03 = '$article_code'";
+                                                        }
+                                                        if ($kkoke === 'tidak') {
+                                                            $conditions2[] = "NOT PROGRESSSTATUS = '6' AND NOT PROGRESSSTATUS_DEMAND = '6'";
+                                                        }
+
+                                                        // Menyusun string kondisi
+                                                        $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
+
+                                                        // Menyusun query
+                                                        $query = "SELECT * FROM (SELECT * FROM ITXVIEW_MEMOPENTINGPPC WHERE $conditionsString)";
+
+                                                        if (count($conditions2) > 0) {
+                                                            $query .= " WHERE " . implode(" AND ", $conditions2);
+                                                        }
+
+                                                        // ITXVIEW_MEMOPENTINGPPC
+                                                        $itxviewmemo              = db2_exec($conn1, $query, array('cursor' => DB2_SCROLLABLE));
+                                                        $r_itxviewmemo = [];
+                                                        while ($row_itxviewmemo   = db2_fetch_assoc($itxviewmemo)) {
+                                                            $r_itxviewmemo[] = [
+                                                                cek(addslashes($row_itxviewmemo['ORDERDATE'])),
+                                                                cek($row_itxviewmemo['PELANGGAN']),
+                                                                cek($row_itxviewmemo['NO_ORDER']),
+                                                                cek($row_itxviewmemo['NO_PO']),
+                                                                cek($row_itxviewmemo['SUBCODE02']),
+                                                                cek($row_itxviewmemo['SUBCODE03']),
+                                                                cek($row_itxviewmemo['KETERANGAN_PRODUCT']),
+                                                                cek($row_itxviewmemo['WARNA']),
+                                                                cek($row_itxviewmemo['NO_WARNA']),
+                                                                cek(addslashes($row_itxviewmemo['DELIVERY'])),
+                                                                cek($row_itxviewmemo['QTY_BAGIKAIN']),
+                                                                cek($row_itxviewmemo['NETTO']),
+                                                                cek($row_itxviewmemo['DELAY']),
+                                                                cek($row_itxviewmemo['NO_KK']),
+                                                                cek($row_itxviewmemo['DEMAND']),
+                                                                substr(cek($row_itxviewmemo['LOT']) ?? '', 0, 7), // di database length nya 7
+                                                                cek($row_itxviewmemo['ORDERLINE']),
+                                                                cek($row_itxviewmemo['PROGRESSSTATUS']),
+                                                                cek($row_itxviewmemo['PROGRESSSTATUS_DEMAND']),
+                                                                cek($row_itxviewmemo['KETERANGAN']),
+                                                                $_SERVER['REMOTE_ADDR'],
+                                                                date('Y-m-d H:i:s'),
+                                                                'MEMO'
+                                                            ];
+                                                        }
+
+                                                        try {
+                                                            // Define the query with placeholders
+                                                            $query = "
                                                                     INSERT INTO nowprd.itxview_memopentingppc (
                                                                         ORDERDATE, PELANGGAN, NO_ORDER, NO_PO, ARTICLE_GROUP, ARTICLE_CODE,
                                                                         KETERANGAN_PRODUCT, WARNA, NO_WARNA, DELIVERY, QTY_BAGIKAIN, NETTO,
@@ -338,93 +358,93 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                                                                     )
                                                                 ";
-                                                            
-                                                                // Prepare the statement
-                                                                $stmt = $pdo->prepare($query);
-                                                            
-                                                                // Define the data to be inserted
-                                                                foreach ($r_itxviewmemo as $row) {
-                                                                    // Ensure data is properly encoded and does not contain problematic characters
-                                                                    $row = array_map(function($value) {
-                                                                        // Check if the value is not null before converting encoding
-                                                                        return $value !== null ? mb_convert_encoding($value, 'UTF-8', 'auto') : $value;
-                                                                    }, $row);
-                                                            
-                                                                    // Execute the statement with the data
-                                                                    if (!$stmt->execute($row)) {
-                                                                        // Handle error
-                                                                        echo "Error: ";
-                                                                        print_r($stmt->errorInfo());
-                                                                        exit();
-                                                                    }
+
+                                                            // Prepare the statement
+                                                            $stmt = $pdo->prepare($query);
+
+                                                            // Define the data to be inserted
+                                                            foreach ($r_itxviewmemo as $row) {
+                                                                // Ensure data is properly encoded and does not contain problematic characters
+                                                                $row = array_map(function ($value) {
+                                                                    // Check if the value is not null before converting encoding
+                                                                    return $value !== null ? mb_convert_encoding($value, 'UTF-8', 'auto') : $value;
+                                                                }, $row);
+
+                                                                // Execute the statement with the data
+                                                                if (!$stmt->execute($row)) {
+                                                                    // Handle error
+                                                                    echo "Error: ";
+                                                                    print_r($stmt->errorInfo());
+                                                                    exit();
                                                                 }
-                                                                echo " ";
-                                                            } catch (PDOException $e) {
-                                                                echo "xError: " . $e->getMessage();
                                                             }
-                                                            
+                                                            echo " ";
+                                                        } catch (PDOException $e) {
+                                                            echo "xError: " . $e->getMessage();
+                                                        }
 
-                                                            // --------------------------------------------------------------------------------------------------------------- //
-                                                            $prod_order_2   = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
-                                                            $prod_demand_2  = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
-                                                            $no_order_2     = $_POST['no_order'] ?? $_GET['no_order'] ?? '';
-                                                            $orderline_2    = $_GET['orderline'] ?? '';
-                                                            $tgl1_2         = $_POST['tgl1'] ?? '';
-                                                            $tgl2_2         = $_POST['tgl2'] ?? '';
-                                                            $no_po2         = $_POST['no_po'] ?? '';
-                                                            $article_group2 = $_POST['article_group'] ?? '';
-                                                            $article_code2  = $_POST['article_code'] ?? '';
 
-                                                            $conditions = [];
+                                                        // --------------------------------------------------------------------------------------------------------------- //
+                                                        $prod_order_2   = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
+                                                        $prod_demand_2  = $_POST['prod_demand'] ?? $_GET['prod_demand'] ?? '';
+                                                        $no_order_2     = $_POST['no_order'] ?? $_GET['no_order'] ?? '';
+                                                        $orderline_2    = $_GET['orderline'] ?? '';
+                                                        $tgl1_2         = $_POST['tgl1'] ?? '';
+                                                        $tgl2_2         = $_POST['tgl2'] ?? '';
+                                                        $no_po2         = $_POST['no_po'] ?? '';
+                                                        $article_group2 = $_POST['article_group'] ?? '';
+                                                        $article_code2  = $_POST['article_code'] ?? '';
 
-                                                            if ($prod_order_2) {
-                                                                $conditions[] = "NO_KK  = '$prod_order'";
-                                                            }
-                                                            if ($prod_demand_2) {
-                                                                $conditions[] = "DEMAND = '$prod_demand'";
-                                                            }
-                                                            if ($no_order_2) {
-                                                                $conditions[] = "NO_ORDER = '$no_order_2'";
-                                                            }
-                                                            if ($orderline_2) {
-                                                                $conditions[] = "ORDERLINE = '$orderline_2'";
-                                                            }
-                                                            if ($tgl1_2 & $tgl2_2) {
-                                                                $conditions[] = "DELIVERY BETWEEN '$tgl1_2' AND '$tgl2_2'";
-                                                            }
-                                                            if ($no_po2) {
-                                                                $conditions[] = "NO_PO = '$no_po'";
-                                                            }
-                                                            if ($article_group2 & $article_code2) {
-                                                                $conditions[] = "ARTICLE_GROUP = '$article_group2' AND ARTICLE_CODE = '$article_code2'";
-                                                            }
+                                                        $conditions = [];
 
-                                                            // Menyusun string kondisi
-                                                            $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
-                                                            
-                                                            // Menyusun query
-                                                            $query = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE $conditionsString AND ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
+                                                        if ($prod_order_2) {
+                                                            $conditions[] = "NO_KK  = '$prod_order'";
+                                                        }
+                                                        if ($prod_demand_2) {
+                                                            $conditions[] = "DEMAND = '$prod_demand'";
+                                                        }
+                                                        if ($no_order_2) {
+                                                            $conditions[] = "NO_ORDER = '$no_order_2'";
+                                                        }
+                                                        if ($orderline_2) {
+                                                            $conditions[] = "ORDERLINE = '$orderline_2'";
+                                                        }
+                                                        if ($tgl1_2 & $tgl2_2) {
+                                                            $conditions[] = "DELIVERY BETWEEN '$tgl1_2' AND '$tgl2_2'";
+                                                        }
+                                                        if ($no_po2) {
+                                                            $conditions[] = "NO_PO = '$no_po'";
+                                                        }
+                                                        if ($article_group2 & $article_code2) {
+                                                            $conditions[] = "ARTICLE_GROUP = '$article_group2' AND ARTICLE_CODE = '$article_code2'";
+                                                        }
 
-                                                            $stmt   = sqlsrv_query($con_nowprd, $query);
-                                                            while ($rowdb2 = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                                                        // Menyusun string kondisi
+                                                        $conditionsString = count($conditions) > 0 ? implode(" AND ", $conditions) : "1=1";
+
+                                                        // Menyusun query
+                                                        $query = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE $conditionsString AND ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' ORDER BY DELIVERY ASC";
+
+                                                        $stmt   = sqlsrv_query($con_nowprd, $query);
+                                                        while ($rowdb2 = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
                                                         ?>
                                                             <?php
-                                                                //Deteksi Production Demand Closed Atau Belum
-                                                                if ($rowdb2['PROGRESSSTATUS_DEMAND'] == 6) {
-                                                                    $status = 'AAA';
+                                                            //Deteksi Production Demand Closed Atau Belum
+                                                            if ($rowdb2['PROGRESSSTATUS_DEMAND'] == 6) {
+                                                                $status = 'AAA';
+                                                                $kode_dept          = '-';
+                                                                $status_terakhir    = '-';
+                                                                $status_operation   = 'KK Oke';
+                                                            } else {
+                                                                // 1. Deteksi Production Order Closed Atau Belum
+                                                                if ($rowdb2['PROGRESSSTATUS'] == 6) {
+                                                                    $status = 'AA';
                                                                     $kode_dept          = '-';
                                                                     $status_terakhir    = '-';
                                                                     $status_operation   = 'KK Oke';
                                                                 } else {
-                                                                    // 1. Deteksi Production Order Closed Atau Belum
-                                                                    if ($rowdb2['PROGRESSSTATUS'] == 6) {
-                                                                        $status = 'AA';
-                                                                        $kode_dept          = '-';
-                                                                        $status_terakhir    = '-';
-                                                                        $status_operation   = 'KK Oke';
-                                                                    } else {
-                                                                        // mendeteksi statusnya close
-                                                                        $q_deteksi_status_close = db2_exec($conn1, "SELECT 
+                                                                    // mendeteksi statusnya close
+                                                                    $q_deteksi_status_close = db2_exec($conn1, "SELECT 
                                                                                                                         p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
                                                                                                                         -- CASE
                                                                                                                         --     WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
@@ -439,11 +459,11 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                     WHERE
                                                                                                                         p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND
                                                                                                                         (p.PROGRESSSTATUS = '3' OR p.PROGRESSSTATUS = '2') ORDER BY p.GROUPSTEPNUMBER DESC LIMIT 1");
-                                                                        $row_status_close = db2_fetch_assoc($q_deteksi_status_close);
+                                                                    $row_status_close = db2_fetch_assoc($q_deteksi_status_close);
 
-                                                                        // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
-                                                                        if ($row_status_close['PROGRESSSTATUS'] == '2') { // KALAU PROGRESS STATUSNYA ENTERED
-                                                                            $q_delay_progress_selesai   = db2_exec($conn1, "SELECT 
+                                                                    // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
+                                                                    if ($row_status_close['PROGRESSSTATUS'] == '2') { // KALAU PROGRESS STATUSNYA ENTERED
+                                                                        $q_delay_progress_selesai   = db2_exec($conn1, "SELECT 
                                                                                                                                     p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
                                                                                                                                     CASE
                                                                                                                                         WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
@@ -460,11 +480,11 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                                 LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                                                                                 WHERE
                                                                                                                                     p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND p.PROGRESSSTATUS = '2' ORDER BY p.GROUPSTEPNUMBER DESC LIMIT 1");
-                                                                            $d_delay_progress_selesai   = db2_fetch_assoc($q_delay_progress_selesai);
-                                                                            $jam_status_terakhir        = $d_delay_progress_selesai['MULAI'];
-                                                                            $delay_progress_status      = $d_delay_progress_selesai['DELAY_PROGRESSSTATUS'] . ' Hari';
-                                                                        } elseif ($row_status_close['PROGRESSSTATUS'] == '3') { // KALAU PROGRESS STATUSNYA PROGRESS
-                                                                            $q_delay_progress_mulai   = db2_exec($conn1, "SELECT 
+                                                                        $d_delay_progress_selesai   = db2_fetch_assoc($q_delay_progress_selesai);
+                                                                        $jam_status_terakhir        = $d_delay_progress_selesai['MULAI'];
+                                                                        $delay_progress_status      = $d_delay_progress_selesai['DELAY_PROGRESSSTATUS'] . ' Hari';
+                                                                    } elseif ($row_status_close['PROGRESSSTATUS'] == '3') { // KALAU PROGRESS STATUSNYA PROGRESS
+                                                                        $q_delay_progress_mulai   = db2_exec($conn1, "SELECT 
                                                                                                                                     p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
                                                                                                                                     CASE
                                                                                                                                         WHEN TRIM(p.STEPTYPE) = '0' THEN p.GROUPSTEPNUMBER
@@ -497,22 +517,22 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                                         ELSE p.GROUPSTEPNUMBER
                                                                                                                                     END DESC 
                                                                                                                                 LIMIT 1");
-                                                                            $d_delay_progress_mulai   = db2_fetch_assoc($q_delay_progress_mulai);
-                                                                            $jam_status_terakhir      = $d_delay_progress_mulai['SELESAI'];
-                                                                            $delay_progress_status    = $d_delay_progress_mulai['DELAY_PROGRESSSTATUS'] . ' Hari';
-                                                                        } else {
-                                                                            $jam_status_terakhir      = '';
-                                                                            $delay_progress_status    = '';
-                                                                        }
-                                                                        // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
+                                                                        $d_delay_progress_mulai   = db2_fetch_assoc($q_delay_progress_mulai);
+                                                                        $jam_status_terakhir      = $d_delay_progress_mulai['SELESAI'];
+                                                                        $delay_progress_status    = $d_delay_progress_mulai['DELAY_PROGRESSSTATUS'] . ' Hari';
+                                                                    } else {
+                                                                        $jam_status_terakhir      = '';
+                                                                        $delay_progress_status    = '';
+                                                                    }
+                                                                    // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
 
-                                                                        if (!empty($row_status_close['GROUPSTEPNUMBER'])) {
-                                                                            $groupstepnumber    = $row_status_close['GROUPSTEPNUMBER'];
-                                                                        } else {
-                                                                            $groupstepnumber    = '0';
-                                                                        }
+                                                                    if (!empty($row_status_close['GROUPSTEPNUMBER'])) {
+                                                                        $groupstepnumber    = $row_status_close['GROUPSTEPNUMBER'];
+                                                                    } else {
+                                                                        $groupstepnumber    = '0';
+                                                                    }
 
-                                                                        $q_cnp1             = db2_exec($conn1, "SELECT 
+                                                                    $q_cnp1             = db2_exec($conn1, "SELECT 
                                                                                                                     GROUPSTEPNUMBER,
                                                                                                                     TRIM(OPERATIONCODE) AS OPERATIONCODE,
                                                                                                                     o.LONGDESCRIPTION AS LONGDESCRIPTION,
@@ -530,45 +550,74 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                     PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND PROGRESSSTATUS = 3 
                                                                                                                 ORDER BY 
                                                                                                                     GROUPSTEPNUMBER DESC LIMIT 1");
-                                                                        $d_cnp_close        = db2_fetch_assoc($q_cnp1);
+                                                                    $d_cnp_close        = db2_fetch_assoc($q_cnp1);
 
-                                                                        if ($d_cnp_close['PROGRESSSTATUS'] == 3) { // 3 is Closed From Demands Steps 
-                                                                            $status = 'A';
-                                                                            if ($d_cnp_close['OPERATIONCODE'] == 'PPC4') {
-                                                                                if ($rowdb2['PROGRESSSTATUS'] == 6) {
-                                                                                    $status = 'B';
-                                                                                    $kode_dept          = '-';
-                                                                                    $status_terakhir    = '-';
-                                                                                    $status_operation   = 'KK Oke';
-                                                                                } else {
-                                                                                    $status = 'C';
-                                                                                    $kode_dept          = '-';
-                                                                                    $status_terakhir    = '-';
-                                                                                    $status_operation   = 'KK Oke | Segera Closed Production Order!';
-                                                                                }
+                                                                    if ($d_cnp_close['PROGRESSSTATUS'] == 3) { // 3 is Closed From Demands Steps 
+                                                                        $status = 'A';
+                                                                        if ($d_cnp_close['OPERATIONCODE'] == 'PPC4') {
+                                                                            if ($rowdb2['PROGRESSSTATUS'] == 6) {
+                                                                                $status = 'B';
+                                                                                $kode_dept          = '-';
+                                                                                $status_terakhir    = '-';
+                                                                                $status_operation   = 'KK Oke';
                                                                             } else {
-                                                                                $status = 'D';
-                                                                                if ($row_status_close['PROGRESSSTATUS'] == 2) {
-                                                                                    $status = 'E';
-                                                                                    $groupstep_option       = "= '$groupstepnumber'";
-                                                                                } else { //kalau status terakhirnya bukan PPC dan status terakhirnya CLOSED
-                                                                                    $status = 'F';
-                                                                                    $q_deteksi_total_step    = db2_exec($conn1, "SELECT COUNT(*) AS TOTALSTEP FROM VIEWPRODUCTIONDEMANDSTEP 
+                                                                                $status = 'C';
+                                                                                $kode_dept          = '-';
+                                                                                $status_terakhir    = '-';
+                                                                                $status_operation   = 'KK Oke | Segera Closed Production Order!';
+                                                                            }
+                                                                        } else {
+                                                                            $status = 'D';
+                                                                            if ($row_status_close['PROGRESSSTATUS'] == 2) {
+                                                                                $status = 'E';
+                                                                                $groupstep_option       = "= '$groupstepnumber'";
+                                                                            } else { //kalau status terakhirnya bukan PPC dan status terakhirnya CLOSED
+                                                                                $status = 'F';
+                                                                                $q_deteksi_total_step    = db2_exec($conn1, "SELECT COUNT(*) AS TOTALSTEP FROM VIEWPRODUCTIONDEMANDSTEP 
                                                                                                                                 WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
-                                                                                    $d_deteksi_total_step    = db2_fetch_assoc($q_deteksi_total_step);
+                                                                                $d_deteksi_total_step    = db2_fetch_assoc($q_deteksi_total_step);
 
-                                                                                    $q_deteksi_total_close  = db2_exec($conn1, "SELECT COUNT(*) AS TOTALCLOSE FROM VIEWPRODUCTIONDEMANDSTEP 
+                                                                                $q_deteksi_total_close  = db2_exec($conn1, "SELECT COUNT(*) AS TOTALCLOSE FROM VIEWPRODUCTIONDEMANDSTEP 
                                                                                                                                 WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
                                                                                                                                 AND PROGRESSSTATUS = 3");
-                                                                                    $d_deteksi_total_close  = db2_fetch_assoc($q_deteksi_total_close);
+                                                                                $d_deteksi_total_close  = db2_fetch_assoc($q_deteksi_total_close);
 
-                                                                                    if ($d_deteksi_total_step['TOTALSTEP'] ==  $d_deteksi_total_close['TOTALCLOSE']) {
-                                                                                        $groupstep_option       = "= '$groupstepnumber'";
-                                                                                    } else {
-                                                                                        $groupstep_option       = "> '$groupstepnumber'";
-                                                                                    }
+                                                                                if ($d_deteksi_total_step['TOTALSTEP'] ==  $d_deteksi_total_close['TOTALCLOSE']) {
+                                                                                    $groupstep_option       = "= '$groupstepnumber'";
+                                                                                } else {
+                                                                                    $groupstep_option       = "> '$groupstepnumber'";
                                                                                 }
-                                                                                // $status = 'G';
+                                                                            }
+                                                                            // $status = 'G';
+                                                                            $q_not_cnp1             = db2_exec($conn1, "SELECT 
+                                                                                                                                GROUPSTEPNUMBER,
+                                                                                                                                TRIM(OPERATIONCODE) AS OPERATIONCODE,
+                                                                                                                                TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
+                                                                                                                                o.LONGDESCRIPTION AS LONGDESCRIPTION,
+                                                                                                                                PROGRESSSTATUS,
+                                                                                                                                CASE
+                                                                                                                                    WHEN PROGRESSSTATUS = 0 THEN 'Entered'
+                                                                                                                                    WHEN PROGRESSSTATUS = 1 THEN 'Planned'
+                                                                                                                                    WHEN PROGRESSSTATUS = 2 THEN 'Progress'
+                                                                                                                                    WHEN PROGRESSSTATUS = 3 THEN 'Closed'
+                                                                                                                                END AS STATUS_OPERATION
+                                                                                                                            FROM 
+                                                                                                                                VIEWPRODUCTIONDEMANDSTEP v
+                                                                                                                            LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
+                                                                                                                            WHERE 
+                                                                                                                                PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND 
+                                                                                                                                GROUPSTEPNUMBER $groupstep_option
+                                                                                                                            ORDER BY 
+                                                                                                                                GROUPSTEPNUMBER ASC LIMIT 1");
+                                                                            $d_not_cnp_close        = db2_fetch_assoc($q_not_cnp1);
+
+                                                                            if ($d_not_cnp_close) {
+                                                                                $kode_dept          = $d_not_cnp_close['OPERATIONGROUPCODE'];
+                                                                                $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
+                                                                                $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
+                                                                            } else {
+                                                                                $status = 'H';
+                                                                                $groupstep_option       = "= '$groupstepnumber'";
                                                                                 $q_not_cnp1             = db2_exec($conn1, "SELECT 
                                                                                                                                 GROUPSTEPNUMBER,
                                                                                                                                 TRIM(OPERATIONCODE) AS OPERATIONCODE,
@@ -591,51 +640,22 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                                 GROUPSTEPNUMBER ASC LIMIT 1");
                                                                                 $d_not_cnp_close        = db2_fetch_assoc($q_not_cnp1);
 
-                                                                                if ($d_not_cnp_close) {
-                                                                                    $kode_dept          = $d_not_cnp_close['OPERATIONGROUPCODE'];
-                                                                                    $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
-                                                                                    $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
-                                                                                } else {
-                                                                                    $status = 'H';
-                                                                                    $groupstep_option       = "= '$groupstepnumber'";
-                                                                                    $q_not_cnp1             = db2_exec($conn1, "SELECT 
-                                                                                                                                GROUPSTEPNUMBER,
-                                                                                                                                TRIM(OPERATIONCODE) AS OPERATIONCODE,
-                                                                                                                                TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
-                                                                                                                                o.LONGDESCRIPTION AS LONGDESCRIPTION,
-                                                                                                                                PROGRESSSTATUS,
-                                                                                                                                CASE
-                                                                                                                                    WHEN PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                                                                                    WHEN PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                                                                                    WHEN PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                                                                                    WHEN PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                                                                                END AS STATUS_OPERATION
-                                                                                                                            FROM 
-                                                                                                                                VIEWPRODUCTIONDEMANDSTEP v
-                                                                                                                            LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
-                                                                                                                            WHERE 
-                                                                                                                                PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND 
-                                                                                                                                GROUPSTEPNUMBER $groupstep_option
-                                                                                                                            ORDER BY 
-                                                                                                                                GROUPSTEPNUMBER ASC LIMIT 1");
-                                                                                    $d_not_cnp_close        = db2_fetch_assoc($q_not_cnp1);
-
-                                                                                    $kode_dept          = $d_not_cnp_close['OPERATIONGROUPCODE'];
-                                                                                    $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
-                                                                                    $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
-                                                                                }
+                                                                                $kode_dept          = $d_not_cnp_close['OPERATIONGROUPCODE'];
+                                                                                $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
+                                                                                $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
                                                                             }
+                                                                        }
+                                                                    } else {
+                                                                        $status = 'H';
+                                                                        if ($row_status_close['PROGRESSSTATUS'] == 2) {
+                                                                            $status = 'I';
+                                                                            $groupstep_option       = "= '$groupstepnumber'";
                                                                         } else {
-                                                                            $status = 'H';
-                                                                            if ($row_status_close['PROGRESSSTATUS'] == 2) {
-                                                                                $status = 'I';
-                                                                                $groupstep_option       = "= '$groupstepnumber'";
-                                                                            } else {
-                                                                                $status = 'J';
-                                                                                $groupstep_option       = "> '$groupstepnumber'";
-                                                                            }
-                                                                            $status = 'K';
-                                                                            $q_StatusTerakhir   = db2_exec($conn1, "SELECT 
+                                                                            $status = 'J';
+                                                                            $groupstep_option       = "> '$groupstepnumber'";
+                                                                        }
+                                                                        $status = 'K';
+                                                                        $q_StatusTerakhir   = db2_exec($conn1, "SELECT 
                                                                                                                         p.PRODUCTIONORDERCODE, 
                                                                                                                         p.GROUPSTEPNUMBER, 
                                                                                                                         p.OPERATIONCODE, 
@@ -658,16 +678,16 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                         (p.PROGRESSSTATUS = '0' OR p.PROGRESSSTATUS = '1' OR p.PROGRESSSTATUS ='2') 
                                                                                                                         AND p.GROUPSTEPNUMBER $groupstep_option
                                                                                                                     ORDER BY p.GROUPSTEPNUMBER ASC LIMIT 1");
-                                                                            $d_StatusTerakhir   = db2_fetch_assoc($q_StatusTerakhir);
-                                                                            $kode_dept          = $d_StatusTerakhir['OPERATIONGROUPCODE'];
-                                                                            $status_terakhir    = $d_StatusTerakhir['LONGDESCRIPTION'];
-                                                                            $status_operation   = $d_StatusTerakhir['STATUS_OPERATION'];
-                                                                        }
+                                                                        $d_StatusTerakhir   = db2_fetch_assoc($q_StatusTerakhir);
+                                                                        $kode_dept          = $d_StatusTerakhir['OPERATIONGROUPCODE'];
+                                                                        $status_terakhir    = $d_StatusTerakhir['LONGDESCRIPTION'];
+                                                                        $status_operation   = $d_StatusTerakhir['STATUS_OPERATION'];
                                                                     }
                                                                 }
+                                                            }
 
-                                                                // mendeteksi jika status terakrhinya BKR1 MAT1 BKN1 closed, tapi step selanjutnya tidak muncul. Tiket no : BDIT250000492
-                                                                $q_deteksi_status_terakhir_BKR1   = db2_exec($conn1, "SELECT
+                                                            // mendeteksi jika status terakrhinya BKR1 MAT1 BKN1 closed, tapi step selanjutnya tidak muncul. Tiket no : BDIT250000492
+                                                            $q_deteksi_status_terakhir_BKR1   = db2_exec($conn1, "SELECT
                                                                                                                             DISTINCT STEPNUMBER
                                                                                                                         FROM
                                                                                                                             ITXVIEW_POSISI_KARTU_KERJA
@@ -679,9 +699,9 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                         ORDER BY
                                                                                                                             STEPNUMBER DESC 
                                                                                                                         FETCH FIRST 1 ROWS ONLY");
-                                                                $row_status_terakhir_closed_BKR1 = db2_fetch_assoc($q_deteksi_status_terakhir_BKR1);
-                                                                
-                                                                $q_deteksi_status_terakhir   = db2_exec($conn1, "SELECT
+                                                            $row_status_terakhir_closed_BKR1 = db2_fetch_assoc($q_deteksi_status_terakhir_BKR1);
+
+                                                            $q_deteksi_status_terakhir   = db2_exec($conn1, "SELECT
                                                                                                                         DISTINCT *
                                                                                                                     FROM
                                                                                                                         ITXVIEW_POSISI_KARTU_KERJA
@@ -692,9 +712,9 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                     ORDER BY
                                                                                                                         STEPNUMBER DESC 
                                                                                                                     FETCH FIRST 1 ROWS ONLY;");
-                                                                $row_status_terakhir_closed = db2_fetch_assoc($q_deteksi_status_terakhir);
+                                                            $row_status_terakhir_closed = db2_fetch_assoc($q_deteksi_status_terakhir);
                                                             ?>
-                                                            <?php if(empty($row_status_terakhir_closed_BKR1) OR $row_status_terakhir_closed) : ?>
+                                                            <?php if (empty($row_status_terakhir_closed_BKR1) or $row_status_terakhir_closed) : ?>
                                                                 <tr>
                                                                     <td><?= $rowdb2['ORDERDATE']->format('Y-m-d H:i:s'); ?></td> <!-- TGL TERIMA ORDER -->
                                                                     <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
@@ -725,7 +745,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                     </td> <!-- GRAMASI -->
                                                                     <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
                                                                     <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                                                                    <td><?php echo cek( $rowdb2['DELIVERY']);?></td> <!-- DELIVERY -->
+                                                                    <td><?php echo cek($rowdb2['DELIVERY']); ?></td> <!-- DELIVERY -->
                                                                     <td>
                                                                         <?php
                                                                         $q_actual_delivery      = db2_exec($conn1, "SELECT
@@ -740,18 +760,18 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                         echo $row_actual_delivery['ACTUAL_DELIVERY'];
                                                                         ?>
                                                                     </td> <!-- ACTUAL DELIVERY -->
-                                                                        <?php
-                                                                            $q_qtysalinan = db2_exec($conn1, "SELECT * FROM PRODUCTIONDEMAND WHERE CODE = '$rowdb2[DEMAND]'");
-                                                                            $d_qtysalinan = db2_fetch_assoc($q_qtysalinan);
-                                                                        ?>
-                                                                        <?php
-                                                                            $sql_benang_booking_new        = db2_exec($conn1, "SELECT * FROM ITXVIEW_BOOKING_NEW WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]'
+                                                                    <?php
+                                                                    $q_qtysalinan = db2_exec($conn1, "SELECT * FROM PRODUCTIONDEMAND WHERE CODE = '$rowdb2[DEMAND]'");
+                                                                    $d_qtysalinan = db2_fetch_assoc($q_qtysalinan);
+                                                                    ?>
+                                                                    <?php
+                                                                    $sql_benang_booking_new        = db2_exec($conn1, "SELECT * FROM ITXVIEW_BOOKING_NEW WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]'
                                                                                                                                                     AND ORDERLINE = '$rowdb2[ORDERLINE]'");
-                                                                            $r_benang_booking_new        = db2_fetch_assoc($sql_benang_booking_new);
-                                                                            $d_benang_booking_new        = $r_benang_booking_new['SALESORDERCODE'];
-                                                                        ?>
-                                                                        <?php
-                                                                            $sql_benang_rajut        = db2_exec($conn1, "SELECT
+                                                                    $r_benang_booking_new        = db2_fetch_assoc($sql_benang_booking_new);
+                                                                    $d_benang_booking_new        = $r_benang_booking_new['SALESORDERCODE'];
+                                                                    ?>
+                                                                    <?php
+                                                                    $sql_benang_rajut        = db2_exec($conn1, "SELECT
                                                                                                                             *
                                                                                                                         FROM
                                                                                                                             ITXVIEW_RAJUT
@@ -762,11 +782,11 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                             AND TRIM(SUBCODE03) = '$d_qtysalinan[SUBCODE03]'
                                                                                                                             AND TRIM(SUBCODE04) = '$d_qtysalinan[SUBCODE04]'
                                                                                                                             AND TRIM(ORIGDLVSALORDLINESALORDERCODE) = '$rowdb2[NO_ORDER]'");
-                                                                            $r_benang_rajut        = db2_fetch_assoc($sql_benang_rajut);
-                                                                            $d_benang_rajut        = $r_benang_rajut['CODE'];
-                                                                        ?>
-                                                                        <?php
-                                                                            $q_tgl_greige       = db2_exec($conn1, "SELECT
+                                                                    $r_benang_rajut        = db2_fetch_assoc($sql_benang_rajut);
+                                                                    $d_benang_rajut        = $r_benang_rajut['CODE'];
+                                                                    ?>
+                                                                    <?php
+                                                                    $q_tgl_greige       = db2_exec($conn1, "SELECT
                                                                                                                         a2.VALUEDATE AS AWAL,
                                                                                                                         a.VALUEDATE AS AKHIR	
                                                                                                                     FROM
@@ -775,10 +795,10 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                     LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'RMPReqDate'
                                                                                                                     WHERE 
                                                                                                                         CODE = '$d_benang_rajut'");
-                                                                            $data_tgl_greige    = db2_fetch_assoc($q_tgl_greige);
-                                                                        ?>
-                                                                        <?php
-                                                                            $tgl_awal_greige_rmp        = db2_exec($conn1, "SELECT
+                                                                    $data_tgl_greige    = db2_fetch_assoc($q_tgl_greige);
+                                                                    ?>
+                                                                    <?php
+                                                                    $tgl_awal_greige_rmp        = db2_exec($conn1, "SELECT
                                                                                                                             a.VALUESTRING,
                                                                                                                             a2.VALUEDATE AS AWAL
                                                                                                                         FROM
@@ -787,22 +807,22 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                         LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'ProAllowDate'
                                                                                                                         WHERE
                                                                                                                             CODE = '$rowdb2[DEMAND]'");
-                                                                            $data_tgl_awal_greige_rmp   = db2_fetch_assoc($tgl_awal_greige_rmp);
-                                                                        ?>
-                                                                        <?php
-                                                                            if($d_benang_rajut){
-                                                                                if(!empty($data_tgl_greige['AWAL'])){
-                                                                                    $awal   = $data_tgl_greige['AWAL'];
-                                                                                }else{
-                                                                                    $awal   = $data_tgl_awal_greige_rmp['AWAL'];
-                                                                                }
+                                                                    $data_tgl_awal_greige_rmp   = db2_fetch_assoc($tgl_awal_greige_rmp);
+                                                                    ?>
+                                                                    <?php
+                                                                    if ($d_benang_rajut) {
+                                                                        if (!empty($data_tgl_greige['AWAL'])) {
+                                                                            $awal   = $data_tgl_greige['AWAL'];
+                                                                        } else {
+                                                                            $awal   = $data_tgl_awal_greige_rmp['AWAL'];
+                                                                        }
 
-                                                                                $akhir  = $data_tgl_greige['AKHIR'];
-                                                                            }else{
-                                                                                $awal   = $data_tgl_awal_greige_rmp['AWAL'];
-                                                                                $akhir  = $r_benang_rajut['TGLPOGREIGE'];
-                                                                            }
-                                                                        ?>
+                                                                        $akhir  = $data_tgl_greige['AKHIR'];
+                                                                    } else {
+                                                                        $awal   = $data_tgl_awal_greige_rmp['AWAL'];
+                                                                        $akhir  = $r_benang_rajut['TGLPOGREIGE'];
+                                                                    }
+                                                                    ?>
                                                                     <td><?= $awal; ?></td><!-- GREIGE AWAL -->
                                                                     <td><?= $akhir; ?></td><!-- GREIGE AKHIR -->
                                                                     <td>
@@ -884,7 +904,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                         // $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
                                                                         // $d_qtypacking = db2_fetch_assoc($q_qtypacking);
                                                                         // echo $d_qtypacking['QTY_PACKING'];
-                                                                        
+
                                                                         $q_qtypacking = mysqli_query($con_db_qc, "SELECT
                                                                                                                 nodemand,
                                                                                                                 sum( jml_mutasi ) AS roll,
@@ -905,17 +925,17 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                         <?php
                                                                         $sql_netto_yd = db2_exec($conn1, "SELECT * FROM ITXVIEW_NETTO WHERE CODE = '$rowdb2[DEMAND]'");
                                                                         $d_netto_yd = db2_fetch_assoc($sql_netto_yd);
-                                                                        if(TRIM($d_netto_yd['PRICEUNITOFMEASURECODE']) == 'm'){
+                                                                        if (TRIM($d_netto_yd['PRICEUNITOFMEASURECODE']) == 'm') {
                                                                             echo number_format($d_netto_yd['USERSECONDARYQUANTITY'] ?? 0, 0);
-                                                                        }else{
+                                                                        } else {
                                                                             echo number_format($d_netto_yd['BASESECONDARYQUANTITY'] ?? 0, 0);
                                                                         }
                                                                         ?>
                                                                     </td> <!-- NETTO YD-->
                                                                     <?php
-                                                                        if($rowdb2['NO_ORDER'] && $rowdb2['ORDERLINE']){
-                                                                            //ini_set("error_reporting", 0);
-                                                                            $sqlQtyKurang   = db2_exec($conn1, "SELECT
+                                                                    if ($rowdb2['NO_ORDER'] && $rowdb2['ORDERLINE']) {
+                                                                        //ini_set("error_reporting", 0);
+                                                                        $sqlQtyKurang   = db2_exec($conn1, "SELECT
                                                                                                         isqd.ORDERLINE,
                                                                                                         isqd.PELANGGAN,
                                                                                                         TRIM(isqd.NO_ORDER) AS NO_ORDER,
@@ -984,9 +1004,9 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                         ip.BUYER  
                                                                                                     ORDER BY
                                                                                                         isqd.ORDERLINE ASC");
-                                                                            $fetchDataQtyKurang     = db2_fetch_assoc($sqlQtyKurang);
+                                                                        $fetchDataQtyKurang     = db2_fetch_assoc($sqlQtyKurang);
 
-                                                                            $ResultLotCode  = "SELECT 
+                                                                        $ResultLotCode  = "SELECT 
                                                                                                     LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', ', ' ) AS PRODUCTIONORDERCODE,
                                                                                                     LISTAGG('''' || TRIM(PRODUCTIONDEMANDCODE) || '''', ', ' ) AS PRODUCTIONDEMANDCODE
                                                                                                 FROM 
@@ -994,11 +1014,11 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                 WHERE 
                                                                                                     PROJECTCODE = '$rowdb2[NO_ORDER]' 
                                                                                                     AND ORIGDLVSALORDERLINEORDERLINE = '$rowdb2[ORDERLINE]'";
-                                                                            $exec_lotcode   = db2_exec($conn1, $ResultLotCode);
-                                                                            $fetch_lotcode  = db2_fetch_assoc($exec_lotcode);
+                                                                        $exec_lotcode   = db2_exec($conn1, $ResultLotCode);
+                                                                        $fetch_lotcode  = db2_fetch_assoc($exec_lotcode);
 
-                                                                            if($fetch_lotcode['PRODUCTIONORDERCODE']){
-                                                                                $sqlQtyReady          = "SELECT
+                                                                        if ($fetch_lotcode['PRODUCTIONORDERCODE']) {
+                                                                            $sqlQtyReady          = "SELECT
                                                                                                             SUM(BASEPRIMARYQUANTITYUNIT) AS QTY_READY,
                                                                                                             SUM(BASESECONDARYQUANTITYUNIT) AS QTY_READY_2
                                                                                                         FROM
@@ -1009,14 +1029,14 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                             AND LOGICALWAREHOUSECODE = 'M031'
                                                                                                             AND PROJECTCODE = '$dt_sum[NO_ORDER]'";
 
-                                                                                $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
-                                                                                $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
-                                                                            }
+                                                                            $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
+                                                                            $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
                                                                         }
+                                                                    }
                                                                     ?>
-                                                                    <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format(($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2']) / $fetchDataQtyKurang['KONVERSI'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (KG) -->
-                                                                    <td><?php if($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format($fetchDataQtyKurang['NETTO_2']-$fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (YD/MTR) -->
-                                                                    
+                                                                    <td><?php if ($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format(($fetchDataQtyKurang['NETTO_2'] - $fetchDataQtyKurang['QTY_SUDAH_KIRIM_2'] - $dataQtyReady['QTY_READY_2']) / $fetchDataQtyKurang['KONVERSI'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (KG) -->
+                                                                    <td><?php if ($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format($fetchDataQtyKurang['NETTO_2'] - $fetchDataQtyKurang['QTY_SUDAH_KIRIM_2'] - $dataQtyReady['QTY_READY_2'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (YD/MTR) -->
+
                                                                     <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
                                                                     <td></td> <!-- TARGET SELESAI -->
                                                                     <td><?= $kode_dept; ?></td> <!-- KODE DEPT -->
@@ -1089,14 +1109,14 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                     <td><?= $rowdb2['KETERANGAN']; ?></td> <!-- KETERANGAN -->
                                                                     <td>
                                                                         <?php
-                                                                            $pr_order   = $rowdb2['NO_KK'];
-                                                                            $dmand      = $rowdb2['DEMAND'];
-                                                                            $additional = db2_exec($conn1, "SELECT COUNT(*) AS TOTAL_ADDITIONAL
+                                                                        $pr_order   = $rowdb2['NO_KK'];
+                                                                        $dmand      = $rowdb2['DEMAND'];
+                                                                        $additional = db2_exec($conn1, "SELECT COUNT(*) AS TOTAL_ADDITIONAL
                                                                                                                 FROM PRODUCTIONDEMANDSTEP p 
                                                                                                                 WHERE p.PRODUCTIONORDERCODE = $pr_order 
                                                                                                                     AND p.PRODUCTIONDEMANDCODE =  $dmand
                                                                                                                     AND (p.STEPTYPE = 1)");
-                                                                            $additional_data = db2_fetch_assoc($additional);
+                                                                        $additional_data = db2_fetch_assoc($additional);
                                                                         ?>
                                                                         <?= $additional_data['TOTAL_ADDITIONAL']; ?>
                                                                     </td>
@@ -1107,7 +1127,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                         </td>
                                                                     <?php endif; ?>
                                                                 </tr>
-                                                            <?php endif;?>
+                                                            <?php endif; ?>
                                                         <?php } ?>
                                                     </tbody>
                                                 </table>

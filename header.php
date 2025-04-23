@@ -497,6 +497,19 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li class="pcoded-hasmenu">
+                                <a href="javascript:void(0)">
+                                    <span class="pcoded-micon"><i class="icofont icofont-info"></i></span>
+                                    <span class="pcoded-mtext">Info</span>
+                                </a>
+                                <ul class="pcoded-submenu">
+                                    <li>
+                                        <a href="index.php" target="_blank" data-i18n="nav.animations.main">
+                                            Dashboard Log Loading
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                 </nav>
