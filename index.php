@@ -49,8 +49,22 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+    <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\icon\feather\css\feather.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\pages\prism\prism.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\css\style.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\css\pcoded-horizontal.min.css">
+    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+
 </head>
-<body class="bg-gray-100 text-gray-800 p-2">
+<?php require_once 'header.php'; ?>
+<body class="bg-gray-100 text-gray-800 p-2"><br><br><br>
     <div class="flex max-w-12xl h-screen">
         <!-- Sidebar Filter -->
         <div class="w-1/4 bg-white p-2 rounded shadow mr-4 h-fit">
@@ -135,4 +149,5 @@
     </script>
 
 </body>
-</html>
+
+<?php require_once 'footer.php'; ?>
