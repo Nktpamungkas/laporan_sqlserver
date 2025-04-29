@@ -686,7 +686,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                 }
                                                             }
 
-                                                            // mendeteksi jika status terakrhinya BKR1 MAT1 BKN1 closed, tapi step selanjutnya tidak muncul. Tiket no : BDIT250000492
+                                                            // mendeteksi jika status terakrhinya BKR1 MAT1 BKN1 closed, tapi step selanjutnya tidak muncul. Tiket no : BDIT250000492, BDIT250001161
                                                             $q_deteksi_status_terakhir_BKR1   = db2_exec($conn1, "SELECT
                                                                                                                             DISTINCT STEPNUMBER
                                                                                                                         FROM
@@ -695,7 +695,9 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                             PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
                                                                                                                             AND PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]'
                                                                                                                             AND NOT STATUS_OPERATION = 'Entered'
-                                                                                                                            AND (OPERATIONCODE = 'BKR1' OR OPERATIONCODE = 'MAT1' OR OPERATIONCODE = 'BKN1' OR OPERATIONCODE = 'BAT1' OR OPERATIONCODE = 'BAT2')
+                                                                                                                            AND (OPERATIONCODE = 'BKR1' OR OPERATIONCODE = 'MAT1' OR OPERATIONCODE = 'BKN1' OR OPERATIONCODE = 'BAT1' OR OPERATIONCODE = 'BAT2' OR
+                                                                                                                                OPERATIONCODE = 'WAIT35' OR OPERATIONCODE = 'WAIT40' OR OPERATIONCODE = 'WAIT37' OR OPERATIONCODE = 'PRE1' OR OPERATIONCODE = 'SUE1' 
+                                                                                                                                OR OPERATIONCODE = 'WAIT33' OR OPERATIONCODE = 'WAIT36')
                                                                                                                         ORDER BY
                                                                                                                             STEPNUMBER DESC 
                                                                                                                         FETCH FIRST 1 ROWS ONLY");
