@@ -60,6 +60,11 @@
         font-weight: bold; /* Tebal */
         font-size: 12px; /* Ukuran font */
     }
+
+    .input-error {
+        border: 2px solid red;
+        background-color: #ffe6e6;
+    }
 </style>
 <?php require_once 'header.php'; ?>
 
@@ -100,7 +105,7 @@
                                                 </div>
                                                 <div class="form-group row">
                                                     <div class="col-sm-6">
-                                                        <input type="text" class="form-control form-control-sm form-control-danger" id="lr_before" placeholder="Liquor Ratio">
+                                                        <input type="text" class="form-control form-control-sm form-control-danger" id="lr_new" placeholder="Liquor Ratio">
                                                         <span class="new-label">Liquor Ratio</span>
                                                     </div>
                                                 </div>
@@ -110,21 +115,21 @@
                                                 <form>
                                                     <div class="form-group row">
                                                         <div class="col-sm-6">
-                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="recipecode" id="recipecode" onkeydown="cekBonResep()" placeholder="Recipe Code">
+                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="recipecode_new" id="recipecode_new" onkeydown="cekBonResep()" placeholder="Recipe Code">
                                                         </div>
                                                         <div class="col-sm-6">
-                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="suffix" id="suffix" onkeydown="cekBonResep()" placeholder="Suffix">
+                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="suffix_new" id="suffix_new" onkeydown="cekBonResep()" placeholder="Suffix">
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <div class="col-sm-4">
-                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="long" id="long" onkeydown="cekBonResep()" placeholder="Long Description*">
+                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="long_new" id="long_new" onkeydown="cekBonResep()" placeholder="Long Description*">
                                                         </div>
                                                         <div class="col-sm-4">
-                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="short" id="short" onkeydown="cekBonResep()" placeholder="Short Description">
+                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="short_new" id="short_new" onkeydown="cekBonResep()" placeholder="Short Description">
                                                         </div>
                                                         <div class="col-sm-4">
-                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="search" id="search" onkeydown="cekBonResep()" placeholder="Search Description">
+                                                            <input type="text" class="form-control form-control-sm form-control-danger" name="search_new" id="search_new" onkeydown="cekBonResep()" placeholder="Search Description">
                                                         </div>
                                                     </div>
                                                 </form>
@@ -181,7 +186,74 @@
         });
         
         $('#exsecute').on('click', function() {
-            alert('proses export disini');
+            const formData = {
+                recipe_code_new: $('#recipecode_new').val(),
+                suffix_new: $('#suffix_new').val(),
+                long_new: $('#long_new').val(),
+                short_new: $('#short_new').val(),
+                search_new: $('#search_new').val(),
+                lr_new: $('#lr_new').val()
+            };
+
+            if (formData.recipe_code_new && formData.suffix_new) {
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: "Apakah Anda yakin ingin mengeksport data ini?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Export!',
+                    cancelButtonText: 'Tidak'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "export_recipe_to_now.php",
+                            data: formData,
+                            success: function(response) {
+                                Swal.fire({
+                                    title: 'Sukses!',
+                                    text: 'Data berhasil diexport ke NOW.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    // Refresh halaman setelah klik OK
+                                    location.reload();
+                                });
+                            },
+                            error: function(xhr, status, error) {
+                                Swal.fire('Error', 'Terjadi kesalahan saat menyimpan data.', 'error');
+                            }
+                        });
+                    }
+                });
+            } else {
+                const recipeCodeVal = $('#recipecode_new').val().trim();
+                const suffixVal = $('#suffix_new').val().trim();
+
+                const recipeCodeEl = document.getElementById('recipecode_new');
+                const suffixEl = document.getElementById('suffix_new');
+
+                // Reset style dulu
+                recipeCodeEl.classList.remove('input-error');
+                suffixEl.classList.remove('input-error');
+
+                Swal.fire({
+                    title: 'Peringatan!',
+                    text: 'Harap isi dulu Recipe Code dan Suffix sebelum melanjutkan.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+
+                if (!recipeCodeVal) {
+                    recipeCodeEl.classList.add('input-error');
+                }
+
+                if (!suffixVal) {
+                    suffixEl.classList.add('input-error');
+                }
+
+                return;
+            }
         });
         
         $('#recipeComponents_table').DataTable({
@@ -190,23 +262,24 @@
             info: false,
         });
     });
+
     function cekBonResep() {
-        var recipecode  = document.getElementById('recipecode').value.trim();
-        var suffix      = document.getElementById('suffix').value.trim();
-        var long        = document.getElementById('long').value.trim();
-        var short       = document.getElementById('short').value.trim();
-        var search      = document.getElementById('search').value.trim();
-        if (recipecode === '' || suffix === '' || long === '' || short === '' || search === '') {
-            Swal.fire({
-                title: 'Peringatan!',
-                text: 'Harap isi dulu Recipe Code dan Suffix sebelum melanjutkan.',
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                // Setelah klik OK, fokuskan kembali ke input bon_resep
-                document.getElementById('bon_resep').focus();
-            });
-        }
+        // var recipecode  = document.getElementById('recipecode_before').value.trim();
+        // var suffix      = document.getElementById('suffix_before').value.trim();
+        // var long        = document.getElementById('long_new').value.trim();
+        // var short       = document.getElementById('short_new').value.trim();
+        // var search      = document.getElementById('search_new').value.trim();
+        // if (recipecode === '' || suffix === '' || long === '' || short === '' || search === '') {
+        //     Swal.fire({
+        //         title: 'Peringatan!',
+        //         text: 'Harap isi dulu Recipe Code dan Suffix sebelum melanjutkan.',
+        //         icon: 'warning',
+        //         confirmButtonText: 'OK'
+        //     }).then(() => {
+        //         // Setelah klik OK, fokuskan kembali ke input bon_resep
+        //         document.getElementById('recipecode_new').focus();
+        //     });
+        // }
     }
 
     document.getElementById('basic-addon10').addEventListener('click', function() {
@@ -230,10 +303,10 @@
             if (data.success) {
                 document.getElementById('recipecode_before').value = data.recipecode_before;
                 document.getElementById('suffix_before').value = data.suffix_before;
-                document.getElementById('lr_before').value = data.lr_before;
-                document.getElementById('long').value = data.longdescription;
-                document.getElementById('short').value = data.shortdescription;
-                document.getElementById('search').value = data.searchdescription;
+                document.getElementById('lr_new').value = data.lr_before;
+                document.getElementById('long_new').value = data.longdescription;
+                document.getElementById('short_new').value = data.shortdescription;
+                document.getElementById('search_new').value = data.searchdescription;
                 console.log(data.recipecomponent);
 
                 // Isi tabel RecipeComponent
