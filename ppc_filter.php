@@ -694,7 +694,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                                         WHERE
                                                                                                                             PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
                                                                                                                             AND PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]'
-                                                                                                                            AND NOT STATUS_OPERATION = 'Entered'
+                                                                                                                            AND NOT STATUS_OPERATION IN ('Entered', 'Progress')
                                                                                                                             AND (OPERATIONCODE = 'BKR1' OR OPERATIONCODE = 'MAT1' OR OPERATIONCODE = 'BKN1' OR OPERATIONCODE = 'BAT1' OR OPERATIONCODE = 'BAT2' OR
                                                                                                                                 OPERATIONCODE = 'WAIT35' OR OPERATIONCODE = 'WAIT40' OR OPERATIONCODE = 'WAIT37' OR OPERATIONCODE = 'PRE1' OR OPERATIONCODE = 'SUE1' 
                                                                                                                                 OR OPERATIONCODE = 'WAIT33' OR OPERATIONCODE = 'WAIT36')
