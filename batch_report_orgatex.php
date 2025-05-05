@@ -243,7 +243,10 @@ require_once 'header.php';
                                                                     $query2_db2 = "SELECT DISTINCT
                                                                                             LISTAGG(DISTINCT (TRIM(ELEMENTSINSPECTIONEVENT.ELEMENTSINSPECTIONELEMENTCODE)),',') AS ELEMENTCODE,
                                                                                             ELEMENTSINSPECTION.QUALITYCODE,
-                                                                                            LISTAGG(DISTINCT(ELEMENTSINSPECTIONEVENT.CODEEVENTCODE),',') AS DEFECT,
+                                                                                            LISTAGG(DISTINCT(ELEMENTSINSPECTIONEVENT.CODEEVENTCODE||' - '||INSPECTIONEVENTTEMPLATE.LONGDESCRIPTION),
+                                                                                            ', ') AS DEFECT,
+                                                                                            LISTAGG(DISTINCT(INSPECTIONEVENTTEMPLATE.LONGDESCRIPTION),
+                                                                                            ', ') AS DEFECT_NAME,
                                                                                             SUM(ELEMENTSINSPECTIONEVENT.POINTS) AS TOT_POINT,
                                                                                             SUM(ELEMENTSINSPECTIONEVENT.CREDITS) AS TOT_CREDIT
                                                                                         FROM
@@ -255,6 +258,8 @@ require_once 'header.php';
                                                                                             AND ADSTORAGE.FIELDNAME = 'GSM'
                                                                                         LEFT JOIN ELEMENTS ON
                                                                                             ELEMENTSINSPECTION.ELEMENTCODE = ELEMENTS.CODE
+                                                                                        LEFT JOIN INSPECTIONEVENTTEMPLATE ON
+                                                                                            INSPECTIONEVENTTEMPLATE.EVENTCODE = ELEMENTSINSPECTIONEVENT.CODEEVENTCODE
                                                                                         WHERE
                                                                                             ELEMENTSINSPECTION.ELEMENTCODE LIKE '%$el10%' 
                                                                                         AND
@@ -311,7 +316,12 @@ require_once 'header.php';
                                                                         </td>
                                                                         <td><?php echo number_format($row_integ['LiquorRatio'], 2) ?>
                                                                         </td>
-                                                                        <td><?php echo $data_dye['pakai_air'] ?></td>
+                                                                        <td align="left"><?php if (!empty($row_integ['LiquorRatio']) && !empty($data_dye['bruto'])) {
+                                                                            $rumus_air = ROUND((number_format($row_integ['LiquorRatio'], 2) * $data_dye['bruto']));
+                                                                            echo $rumus_air;
+                                                                        } else {
+                                                                            echo '';
+                                                                        } ?></td>
 
                                                                         <td><?php echo $data_dye['rpm'] ?></td>
                                                                         <td><?php echo $data_dye['cycle_time'] ?></td>
