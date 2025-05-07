@@ -1038,8 +1038,22 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                     }
                                                                     ?>
                                                                     <td align="right">
-                                                                        <?= number_format(
-                                                                            ((trim($fetchDataQtyKurang['PRICEUNITOFMEASURECODE']) == 'm' ? $fetchDataQtyKurang['NETTO_M'] : $fetchDataQtyKurang['NETTO_2']) - $fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'])/$fetchDataQtyKurang['KONVERSI'], 2); ?>
+                                                                    <?= 
+                                                                        ($fetchDataQtyKurang['KONVERSI'] != 0) 
+                                                                        ? number_format(
+                                                                            (
+                                                                                (trim($fetchDataQtyKurang['PRICEUNITOFMEASURECODE']) == 'm' 
+                                                                                    ? $fetchDataQtyKurang['NETTO_M'] 
+                                                                                    : $fetchDataQtyKurang['NETTO_2']
+                                                                                ) 
+                                                                                - $fetchDataQtyKurang['QTY_SUDAH_KIRIM_2'] 
+                                                                                - $dataQtyReady['QTY_READY_2']
+                                                                            ) / $fetchDataQtyKurang['KONVERSI'], 
+                                                                            2
+                                                                        ) 
+                                                                        : '0.00';
+                                                                    ?>
+
 
                                                                     </td><!-- QTY KURANG (KG) -->
                                                                     <td align="right">
