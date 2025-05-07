@@ -101,11 +101,7 @@ if (isset($_POST['execute'])) {
                                                 <div class="form-group row">
                                                     <label class="col-sm-2 col-form-label"><b>Scan no kartu kerja</b></label>
                                                     <div class="col-sm-10">
-                                                        <input type="text" name="productionorder" class="form-control form-control-sm" autofocus>
-                                                    </div>
-                                                    <label class="col-sm-2 col-form-label">Status terakhir</label>
-                                                    <div class="col-sm-10">
-                                                        <label class="col-sm-2 col-form-label">.....</label>
+                                                        <input type="text" name="productionorder" class="form-control form-control-sm" autofocus autocomplete="off">
                                                     </div>
                                                     <label class="col-sm-2 col-form-label">Waktu sekarang</label>
                                                     <div class="col-sm-2">
