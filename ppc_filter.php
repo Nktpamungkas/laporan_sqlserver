@@ -1015,6 +1015,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                     ITXVIEWKK
                                                                                                 WHERE 
                                                                                                     PROJECTCODE = '$rowdb2[NO_ORDER]' 
+                                                                                                AND ITEMTYPEAFICODE = 'KFF'
                                                                                                     AND ORIGDLVSALORDERLINEORDERLINE = '$rowdb2[ORDERLINE]'";
                                                                         $exec_lotcode   = db2_exec($conn1, $ResultLotCode);
                                                                         $fetch_lotcode  = db2_fetch_assoc($exec_lotcode);
@@ -1029,15 +1030,23 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                                                             LOTCODE IN ($fetch_lotcode[PRODUCTIONORDERCODE])
                                                                                                             AND LEFT(ELEMENTSCODE, 8) IN ($fetch_lotcode[PRODUCTIONDEMANDCODE])
                                                                                                             AND LOGICALWAREHOUSECODE = 'M031'
-                                                                                                            AND PROJECTCODE = '$dt_sum[NO_ORDER]'";
+                                                                                                            AND PROJECTCODE = '$rowdb2[NO_ORDER]'";
 
                                                                             $fetchQtyReady    = db2_exec($conn1, $sqlQtyReady);
                                                                             $dataQtyReady    = db2_fetch_assoc($fetchQtyReady);
                                                                         }
                                                                     }
                                                                     ?>
-                                                                    <td><?php if ($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format(($fetchDataQtyKurang['NETTO_2'] - $fetchDataQtyKurang['QTY_SUDAH_KIRIM_2'] - $dataQtyReady['QTY_READY_2']) / $fetchDataQtyKurang['KONVERSI'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (KG) -->
-                                                                    <td><?php if ($fetchDataQtyKurang['NETTO_2']) : ?><?= number_format($fetchDataQtyKurang['NETTO_2'] - $fetchDataQtyKurang['QTY_SUDAH_KIRIM_2'] - $dataQtyReady['QTY_READY_2'], 2); ?><?php endif; ?></td> <!-- QTY KURANG (YD/MTR) -->
+                                                                    <td align="right">
+                                                                        <?= number_format(
+                                                                            ((trim($fetchDataQtyKurang['PRICEUNITOFMEASURECODE']) == 'm' ? $fetchDataQtyKurang['NETTO_M'] : $fetchDataQtyKurang['NETTO_2']) - $fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'])/$fetchDataQtyKurang['KONVERSI'], 2); ?>
+
+                                                                    </td><!-- QTY KURANG (KG) -->
+                                                                    <td align="right">
+                                                                        <?= number_format(
+                                                                            (trim($fetchDataQtyKurang['PRICEUNITOFMEASURECODE']) == 'm' ? $fetchDataQtyKurang['NETTO_M'] : $fetchDataQtyKurang['NETTO_2']) - $fetchDataQtyKurang['QTY_SUDAH_KIRIM_2']-$dataQtyReady['QTY_READY_2'], 2); ?>
+
+                                                                    </td> <!-- QTY KURANG (YD/MTR) -->
 
                                                                     <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
                                                                     <td></td> <!-- TARGET SELESAI -->
