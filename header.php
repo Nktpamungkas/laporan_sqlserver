@@ -50,7 +50,8 @@
                             'ppc_filter_steps.php', 
                             'ppc_filter_qty_knt.php', 
                             'ppc_bagi_kain.php', 
-                            'ppc_pengiriman.php'];
+                            'ppc_pengiriman.php',
+                            'ppc_scan_kkoke.php'];
         $style_active_ppc = in_array($current_page, $active_pages_ppc) ? 'style="background-color: #d4e9fa;"' : '';
         
         $active_pages_fin = ['fin_filter_cetaklabel.php', 
@@ -167,6 +168,11 @@
                                     <li <?= ($current_page == 'ppc_bagi_kain.php') ? $style_active_ppc : ''; ?>>
                                         <a href="ppc_bagi_kain.php" data-i18n="nav.animations.main">
                                             Laporan Bagi Kain
+                                        </a>
+                                    </li>
+                                    <li <?= ($current_page == 'ppc_scan_kkoke.php') ? $style_active_ppc : ''; ?>>
+                                        <a href="ppc_scan_kkoke.php" data-i18n="nav.animations.main">
+                                            Scan KK OKE
                                         </a>
                                     </li>
                                 </ul>
