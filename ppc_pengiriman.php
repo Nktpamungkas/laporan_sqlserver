@@ -939,6 +939,11 @@
                                                                             ?>
                                                                         </td>
                                                                         <td><?= number_format($d_roll['QTY_SJ_KG'], 2); ?></td>
+                                                                        <?php
+                                                                           if (strtoupper($rowdb2['ITEMTYPEAFICODE']) !== 'GYR') {
+                                                                                $total_qty_sj_kg += $d_roll['QTY_SJ_KG'] ?? 0;
+                                                                            }
+                                                                        ?>
                                                                         <td>
                                                                             <?php
                                                                             if ($rowdb2['PRICEUNITOFMEASURECODE'] == 'm') {
@@ -1101,6 +1106,11 @@
                                                                             ?>
                                                                         </td>
                                                                         <td><?= number_format($d_roll['QTY_SJ_KG'] ?? 0, 2); ?></td>
+                                                                        <?php
+                                                                           if (strtoupper($rowdb2['ITEMTYPEAFICODE']) !== 'GYR') {
+                                                                                $total_qty_sj_kg += $d_roll['QTY_SJ_KG'] ?? 0;
+                                                                            }
+                                                                        ?>
                                                                         <td>
                                                                             <?php
                                                                                 $qty_sj_yard = $d_roll['QTY_SJ_YARD'] ?? 0; // Use 0 as default if null or undefined
@@ -1160,6 +1170,15 @@
                                                                 <?php endif; ?>
                                                             <?php endif; ?>
                                                         <?php } ?>
+
+                                                        <!-- <?php if ($_POST['dept'] == 'PPC'): ?>
+                                                            <tr style="font-weight: bold; background-color: #f0f0f0;">
+                                                                <td colspan="5" align="right">Total:</td>
+                                                                <td><?= number_format($total_qty_sj_kg ?? 0, 2); ?></td>
+                                                                <td colspan="11"></td>
+                                                            </tr>
+                                                        <?php endif; ?> -->
+                                                        
                                                         <!-- CAPITAL KFF & KGF -->
                                                         <?php
                                                         $stmt_cap_kff = db2_exec($conn1, "SELECT 

@@ -54,8 +54,11 @@ $qc = "db_qc";
 $lab = "db_laborat";
 $hrd = "hrd";
 $db_nowmkt = "dbnow_mkt";
+$db_ppc = "test_ppc";
 
 $nowprdd = array("Database" => $nowprd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$nowppc = array("Database" => $db_ppc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+
 // $db_dying = array("Database" => $dying, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 // $dbLab = array("Database" => $lab, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 // $db_qc = array("Database" => $qc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
@@ -65,6 +68,7 @@ $nowprdd = array("Database" => $nowprd, "UID" => $usernameSVR19, "PWD" => $passw
 // $db_nowmkt = array("Database" => $db_nowmkt, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 
 $con_nowprd = sqlsrv_connect($hostSVR19, $nowprdd);
+$con_db_ppc = sqlsrv_connect($hostSVR19, $nowppc);
 // $con_db_dyeing = sqlsrv_connect($hostSVR19, $db_dying);
 // $con_db_qc = sqlsrv_connect($hostSVR19, $db_qc);
 // $con_db_lab = sqlsrv_connect($hostSVR19, $dbLab);
@@ -109,6 +113,11 @@ if ($con_db_finishing) {
 }
 
 if ($con_dbnow_mkt) {
+} else {
+    exit("SQLSVR19 Connection failed to con_finishing");
+}
+
+if ($con_db_ppc) {
 } else {
     exit("SQLSVR19 Connection failed to con_finishing");
 }
