@@ -9,7 +9,7 @@
     // echo $sel_line;
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pcoded-main-container">
 
 <head>
     <title>DYE - Approved Recipe </title>
@@ -51,73 +51,81 @@
         /* CSS untuk spinner loader */
     </style> -->
     <style>
-    /* Spinner style */
-    .loader2 {
-        border: 8px solid #f3f3f3; /* Light gray */
-        border-top: 8px solid #3498db; /* Blue */
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-top: -25px; /* Half of the height */
-        margin-left: -25px; /* Half of the width */
-    }
+        /* Spinner style */
+        .loader2 {
+            border: 8px solid #f3f3f3; /* Light gray */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -25px; /* Half of the height */
+            margin-left: -25px; /* Half of the width */
+        }
 
-    /* Animasi untuk spinner */
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+        /* Animasi untuk spinner */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-    /* Membuat posisi loader di tengah tabel */
-    .table-responsive {
-        position: relative;
-    }
-</style>
+        /* Membuat posisi loader di tengah tabel */
+        .table-responsive {
+            position: relative;
+        }
+
+        .bg-blue-soft {
+            background-color: #e3f2fd;
+            /* color: #0d47a1; */
+            padding: 1rem;
+            border-radius: 0.25rem;
+        }
+    </style>
 
 </head>
 <?php require_once 'header.php'; 
-$recipe = [];
-$qlist =  "SELECT 
-                * 
-            FROM 
-                data_upload d
-            where 
-                d.status_resep = '1'";
-$result = mysqli_query($con_rec, $qlist);
-while ($list= mysqli_fetch_assoc($result)){
-    $recipe[] = "'" . $list['recipe'] . "'";
-}
-$recipe_string = implode(',', $recipe);
+    $recipe = [];
+    $qlist =  "SELECT 
+                    * 
+                FROM 
+                    data_upload d
+                where 
+                    d.status_resep = '1'";
+    $result = mysqli_query($con_rec, $qlist);
 
-$qdye = "SELECT
-	*
-from
-	(
-	SELECT
-		no_resep as resep,
-		suffix as suffix
-	from
-		tbl_schedule ts
-union all
-	SELECT
-		no_resep2 as resep,
-		suffix2 as suffix
-	from
-		tbl_schedule ts) s
-where
-	s.resep in ($recipe_string)
-";
-$stmt_dye = mysqli_query($con_db_dyeing, $qdye);
+    while ($list= mysqli_fetch_assoc($result)){
+        $recipe[] = "'" . $list['recipe'] . "'";
+    }
+    $recipe_string = implode(',', $recipe);
+
+    $qdye = "SELECT
+        *
+        from
+            (
+            SELECT
+                no_resep as resep,
+                suffix as suffix
+            from
+                tbl_schedule ts
+        union all
+            SELECT
+                no_resep2 as resep,
+                suffix2 as suffix
+            from
+                tbl_schedule ts) s
+        where
+            s.resep in ($recipe_string)
+    ";
+    
+    $stmt_dye = mysqli_query($con_db_dyeing, $qdye);
 ?>
 
 <body>
-
     <div class="pcoded-content">
-        <div class="pcoded-inner-content">
+        <div class="pcoded-inner-content bg-blue-soft">
             <div class="main-body">
                 <div class="page-wrapper">
                     <div class="page-body">
@@ -129,59 +137,62 @@ $stmt_dye = mysqli_query($con_db_dyeing, $qdye);
                                     </div>
                                 </div>
                                 <div class="card">
-                                    <div class="card-header">
-                                    </div>
                                     <div class="card-block">
                                         <div class="table-responsive dt-responsive">
                                             <table border="1" id='detail_recipe' style='font-family:"Microsoft Sans Serif"' width="100%">
                                                 <thead>
                                                     <tr>
-                                                        <th>No</th>
-                                                        <th>No Recipe</th>
-                                                        <th>Suffix</th>
-                                                        <th>Tanggal Masuk Dye</th>
-                                                        <th>Approve User</th>
-                                                        <th>Tanggal Approve</th>
-                                                        <th>Status</th>
-                                                        <th>Action</th>
+                                                        <th class="text-center">No</th>
+                                                        <th class="text-center">No Recipe</th>
+                                                        <th class="text-center">Suffix</th>
+                                                        <th class="text-center">Tanggal Masuk Dye</th>
+                                                        <th class="text-center">Approve User</th>
+                                                        <th class="text-center">Tanggal Approve</th>
+                                                        <th class="text-center">Status</th>
+                                                        <th class="text-center">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php 
-                                                    $no=1;
-                                                while ($data = mysqli_fetch_assoc($stmt_dye)) {
-                                                    list($prod_order, $line) = explode('-', $data['resep']);
-                                                    $qapprove =  "SELECT
-                                                                        d.*,
-                                                                        u.name as user_approve,
-                                                                        d2.name,
-                                                                        d2.dept 
-                                                                    FROM
-                                                                        data_upload d
-                                                                    LEFT JOIN users u on user_updated = u.id 
-                                                                    LEFT JOIN departement d2 on d2.id = u.dept 
-                                                                    WHERE
-                                                                        d.status_resep = 1
-                                                                        AND d.recipe = '$data[resep]'";
-                                                    $result_approve = mysqli_query($con_rec, $qapprove);
-                                                    $detail_approve = mysqli_fetch_assoc($result_approve);
-                                                    ?>
-                                                <tr>
-                                                        <td><?= $no++ ?></td>
-                                                        <td><?= $data['resep']?></td>
-                                                        <td><?= $data['suffix']?></td>
-                                                        <td><?= $detail_approve['tanggal_upload']?></td>
-                                                        <td><?= $detail_approve['user_approve']?></td>
-                                                        <td><?= $detail_approve['updated_at']?></td>
-                                                        <td><?php if($detail_approve['status_resep']=1){
-                                                            echo 'Approve DYE';}?></td>
-                                                        <td><a href="https://online.indotaichen.com/laporan/dye_search_detail_recipe.php?prod_order=<?= urlencode($prod_order) ?>&line=<?= urlencode($line) ?>" target="_blank" class="btn btn-primary btn-sm">Details</a></td>
-                                                    </tr>
-                                                <?php }?>
-
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                        $no=1;
+                                                        while ($data = mysqli_fetch_assoc($stmt_dye)) {
+                                                            list($prod_order, $line) = explode('-', $data['resep']);
+                                                            $qapprove =  "SELECT
+                                                                                d.*,
+                                                                                u.name as user_approve,
+                                                                                d2.name,
+                                                                                d2.dept 
+                                                                            FROM
+                                                                                data_upload d
+                                                                            LEFT JOIN users u on user_updated = u.id 
+                                                                            LEFT JOIN departement d2 on d2.id = u.dept 
+                                                                            WHERE
+                                                                                d.status_resep = 1
+                                                                                AND d.recipe = '$data[resep]'";
+                                                            $result_approve = mysqli_query($con_rec, $qapprove);
+                                                            $detail_approve = mysqli_fetch_assoc($result_approve);
+                                                        ?>
+                                                        <tr>
+                                                            <td style="text-align: center;"><?= $no++ ?></td>
+                                                            <td style="text-align: center;"><?= $data['resep']?></td>
+                                                            <td style="text-align: center;"><?= $data['suffix']?></td>
+                                                            <td style="text-align: center;"><?= $detail_approve['tanggal_upload']?></td>
+                                                            <td style="text-align: center;"><?= $detail_approve['user_approve']?></td>
+                                                            <td style="text-align: center;"><?= $detail_approve['updated_at']?></td>
+                                                            <td style="text-align: center;">
+                                                                <?php if($detail_approve['status_resep']=1){
+                                                                echo 'Approve DYE';}?>
+                                                            </td>
+                                                           <td style="text-align: center;">
+                                                                <a href="https://online.indotaichen.com/laporan/dye_search_detail_recipe.php?prod_order=<?= urlencode($prod_order) ?>&line=<?= urlencode($line) ?>" target="_blank" 
+                                                                    title="Lihat Detail" style="display: inline-block; background-color: #0d6efd;  color: white; padding: 6px 8px; border-radius: 50%; font-size: 16px; line-height: 1; text-decoration: none;">
+                                                                    <i class="feather icon-eye"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    <?php }?>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
