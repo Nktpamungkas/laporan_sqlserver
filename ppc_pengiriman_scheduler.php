@@ -245,7 +245,7 @@
     echo "Proses tanggal: $tanggal_kemarin<br>";
 
         // Increment ke tanggal berikutnya
-        $start->modify('+1 day');
+        // $start->modify('+1 day');
     }
 
 ?>
