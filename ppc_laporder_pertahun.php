@@ -1,2890 +1,4623 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-  <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-      <meta name="generator" content="PhpSpreadsheet, https://github.com/PHPOffice/PhpSpreadsheet">
-      <meta name="author" content="nilo.pamungkas" />
-    <style type="text/css">
-      html { font-family:Calibri, Arial, Helvetica, sans-serif; font-size:11pt; background-color:white }
-      a.comment-indicator:hover + div.comment { background:#ffd; position:absolute; display:block; border:1px solid black; padding:0.5em }
-      a.comment-indicator { background:red; display:inline-block; border:1px solid black; width:0.5em; height:0.5em }
-      div.comment { display:none }
-      table { border-collapse:collapse; page-break-after:always }
-      .gridlines td { border:1px dotted black }
-      .gridlines th { border:1px dotted black }
-      .b { text-align:center }
-      .e { text-align:center }
-      .f { text-align:right }
-      .inlineStr { text-align:left }
-      .n { text-align:right }
-      .s { text-align:left }
-      td.style0 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style0 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style1 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style1 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style2 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      th.style2 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      td.style3 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      th.style3 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      td.style4 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style4 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style5 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style5 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style6 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      th.style6 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      td.style7 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      th.style7 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      td.style8 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      th.style8 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      td.style9 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      th.style9 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#BDD6EE }
-      td.style10 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style10 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style11 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style11 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style12 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style12 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style13 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style13 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style14 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style14 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style15 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style15 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style16 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style16 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style17 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      th.style17 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      td.style18 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      th.style18 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      td.style19 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      th.style19 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      td.style20 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:8pt; background-color:#BDD6EE }
-      th.style20 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:8pt; background-color:#BDD6EE }
-      td.style21 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:14pt; background-color:white }
-      th.style21 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:14pt; background-color:white }
-      td.style22 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:14pt; background-color:white }
-      th.style22 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:14pt; background-color:white }
-      td.style23 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:14pt; background-color:white }
-      th.style23 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:14pt; background-color:white }
-      td.style24 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:#FFFF00 }
-      th.style24 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:#FFFF00 }
-      td.style25 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:#F2F2F2 }
-      th.style25 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:#F2F2F2 }
-      td.style26 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style26 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style27 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style27 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style28 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style28 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style29 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style29 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style30 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      th.style30 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:white }
-      td.style31 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      th.style31 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      td.style32 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      th.style32 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#7030A0; font-family:'Calibri'; font-size:11pt; background-color:#FFFF00 }
-      table.sheet0 col.col0 { width:25.07777749pt }
-      table.sheet0 col.col1 { width:13.5555554pt }
-      table.sheet0 col.col2 { width:31.17777742pt }
-      table.sheet0 col.col3 { width:60.9999993pt }
-      table.sheet0 col.col4 { width:60.9999993pt }
-      table.sheet0 col.col5 { width:60.9999993pt }
-      table.sheet0 col.col6 { width:60.9999993pt }
-      table.sheet0 col.col7 { width:60.9999993pt }
-      table.sheet0 col.col8 { width:60.9999993pt }
-      table.sheet0 col.col9 { width:8.81111101pt }
-      table.sheet0 col.col10 { width:25.07777749pt }
-      table.sheet0 col.col11 { width:13.5555554pt }
-      table.sheet0 col.col12 { width:31.17777742pt }
-      table.sheet0 col.col13 { width:60.9999993pt }
-      table.sheet0 col.col14 { width:66.42222146pt }
-      table.sheet0 col.col15 { width:64.38888815pt }
-      table.sheet0 col.col16 { width:70.48888808pt }
-      table.sheet0 col.col17 { width:60.9999993pt }
-      table.sheet0 tr { height:15pt }
-      table.sheet0 tr.row14 { height:22.5pt }
-      table.sheet0 tr.row21 { height:22.5pt }
-      table.sheet0 tr.row28 { height:22.5pt }
-      table.sheet0 tr.row35 { height:22.5pt }
-      table.sheet0 tr.row42 { height:22.5pt }
-      table.sheet0 tr.row49 { height:22.5pt }
-      table.sheet0 tr.row56 { height:22.5pt }
-      table.sheet0 tr.row63 { height:22.5pt }
-      table.sheet0 tr.row70 { height:22.5pt }
-      table.sheet0 tr.row77 { height:22.5pt }
-      table.sheet0 tr.row84 { height:22.5pt }
-      table.sheet0 tr.row91 { height:22.5pt }
-      table.sheet0 tr.row97 { height:18.75pt }
-      table.sheet0 tr.row112 { height:18.75pt }
-      table.sheet0 tr.row127 { height:18.75pt }
-    </style>
-  </head>
+<?php
+// header("content-type:application/vnd-ms-excel");
+// header("content-disposition:attachment;filename=TerimaOrder.xls");
+// header('Cache-Control: max-age=0');
+require_once 'koneksi.php';
+$tglInput = '2025-05-15';
+?>
+<center><h4>LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025</h4></center>
+<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
+    <thead>
+      <tr>
+        <th colspan="12" style="text-align: right;">Update, <?= $tglInput; ?></th>
+      </tr>
+      <tr>
+        <th>BULAN</th>
+        <th>LOKAL</th>
+        <th>%LOKAL</th>
+        <th>EXPORT</th>
+        <th>%EXPORT</th>
+        <th>F/K</th>
+        <th>TOTAL</th>
+        <th style="background-color: yellow;">BOOKING</th>
+        <th>JASA</th>
+        <th>PRINTING</th>
+        <th>KIRIM</th>
+        <th>ON TIME</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- DESEMBER 'TAHUN SEBELUMNYA -->
+        <?php
+          // Ambil tahun sebelumnya
+          $tahunSebelumnya = date('Y', strtotime($tglInput)) - 1;
 
-  <body>
-<style>
-@page { margin-left: 0.7in; margin-right: 0.7in; margin-top: 0.75in; margin-bottom: 0.75in; }
-body { margin-left: 0.7in; margin-right: 0.7in; margin-top: 0.75in; margin-bottom: 0.75in; }
-</style>
-    <table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
-        <col class="col0">
-        <col class="col1">
-        <col class="col2">
-        <col class="col3">
-        <col class="col4">
-        <col class="col5">
-        <col class="col6">
-        <col class="col7">
-        <col class="col8">
-        <col class="col9">
-        <col class="col10">
-        <col class="col11">
-        <col class="col12">
-        <col class="col13">
-        <col class="col14">
-        <col class="col15">
-        <col class="col16">
-        <col class="col17">
-        <tbody>
-          <!-- LAPORAN PERTAHUN -->
-              <!-- RUMUS BRUTO DOMESTIC -->
-              <?php 
-                  ini_set("error_reporting", 1);
-                  session_start();
-                  $thn = $_GET['thn'];
-                  require_once "koneksi.php";
-                  $localjan = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '1' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localjan = db2_fetch_assoc($localjan);
-                  $localfeb = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localfeb = db2_fetch_assoc($localfeb);
-                  $localmar = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '3' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localmar = db2_fetch_assoc($localmar);
-                  $localapr = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '4' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localapr = db2_fetch_assoc($localapr);
-                  $localmei = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '5' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localmei = db2_fetch_assoc($localmei);
-                  $localjun = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '6' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localjun = db2_fetch_assoc($localjun);
-                  $localjul = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '7' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localjul = db2_fetch_assoc($localjul);
-                  $localags = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '8' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localags = db2_fetch_assoc($localags);
-                  $localsep = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '9' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localsep = db2_fetch_assoc($localsep);
-                  $localokt = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '10' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localokt = db2_fetch_assoc($localokt);
-                  $localnov = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '11' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localnov = db2_fetch_assoc($localnov);
-                  $localdes = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '12' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_localdes = db2_fetch_assoc($localdes);
-              ?>
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalDes     = $tahunSebelumnya . '-12-01';
+          $tglAkhirDes    = $tahunSebelumnya . '-12-31';
 
-              <!-- RUMUS BRUTO EXPORT -->
-              <?php 
-                  ini_set("error_reporting", 1);
-                  session_start();
-                  require_once "koneksi.php";
-                  $expjan = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '1' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expjan = db2_fetch_assoc($expjan);
-                  $expfeb = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expfeb = db2_fetch_assoc($expfeb);
-                  $expmar = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '3' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expmar = db2_fetch_assoc($expmar);
-                  $expapr = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '4' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expapr = db2_fetch_assoc($expapr);
-                  $expmei = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '5' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expmei = db2_fetch_assoc($expmei);
-                  $expjun = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '6' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expjun = db2_fetch_assoc($expjun);
-                  $expjul = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '7' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expjul = db2_fetch_assoc($expjul);
-                  $expags = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '8' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expags = db2_fetch_assoc($expags);
-                  $expsep = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '9' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expsep = db2_fetch_assoc($expsep);
-                  $expokt = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '10' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expokt = db2_fetch_assoc($expokt);
-                  $expnov = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '11' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expnov = db2_fetch_assoc($expnov);
-                  $expdes = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '12' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_expdes = db2_fetch_assoc($expdes);
-              ?>
-              
-              <!-- RUMUS F/K (Flat Knit) KERAH -->
-              <?php 
-                  ini_set("error_reporting", 1);
-                  session_start();
-                  require_once "koneksi.php";
-                  $fkjan = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '1' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkjan = db2_fetch_assoc($fkjan);
-                  $fkfeb = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkfeb = db2_fetch_assoc($fkfeb);
-                  $fkmar = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '3' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkmar = db2_fetch_assoc($fkmar);
-                  $fkapr = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '4' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkapr = db2_fetch_assoc($fkapr);
-                  $fkmei = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '5' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkmei = db2_fetch_assoc($fkmei);
-                  $fkjun = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '6' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkjun = db2_fetch_assoc($fkjun);
-                  $fkjul = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '7' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkjul = db2_fetch_assoc($fkjul);
-                  $fkags = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '8' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkags = db2_fetch_assoc($fkags);
-                  $fksep = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '9' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fksep = db2_fetch_assoc($fksep);
-                  $fkokt = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '10' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkokt = db2_fetch_assoc($fkokt);
-                  $fknov = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '11' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fknov = db2_fetch_assoc($fknov);
-                  $fkdes = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'FKF' AND MONTH ( s.REQUIREDDUEDATE  ) = '12' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_fkdes = db2_fetch_assoc($fkdes);
-              ?>
-              
-              <!-- RUMUS BOOKING -->
-              <?php 
-                  ini_set("error_reporting", 1);
-                  session_start();
-                  require_once "koneksi.php";
-                  $opnjan = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '1' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnjan = db2_fetch_assoc($opnjan);
-                  $opnfeb = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnfeb = db2_fetch_assoc($opnfeb);
-                  $opnmar = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '3' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnmar = db2_fetch_assoc($opnmar);
-                  $opnapr = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '4' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnapr = db2_fetch_assoc($opnapr);
-                  $opnmei = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '5' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnmei = db2_fetch_assoc($opnmei);
-                  $opnjun = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '6' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnjun = db2_fetch_assoc($opnjun);
-                  $opnjul = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '7' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnjul = db2_fetch_assoc($opnjul);
-                  $opnags = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '8' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnags = db2_fetch_assoc($opnags);
-                  $opnsep = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '9' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnsep = db2_fetch_assoc($opnsep);
-                  $opnokt = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '10' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnokt = db2_fetch_assoc($opnokt);
-                  $opnnov = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '11' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opnnov = db2_fetch_assoc($opnnov);
-                  $opndes = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '12' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_opndes = db2_fetch_assoc($opndes);
-              ?>
-
-              <!-- RUMUS JASA -->
-              <?php 
-                  ini_set("error_reporting", 1);
-                  session_start();
-                  require_once "koneksi.php";
-                  $jasajan = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '1' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasajan = db2_fetch_assoc($jasajan);
-                  $jasafeb = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasafeb = db2_fetch_assoc($jasafeb);
-                  $jasamar = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasamar = db2_fetch_assoc($jasamar);
-                  $jasaapr = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasaapr = db2_fetch_assoc($jasaapr);
-                  $jasamei = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasamei = db2_fetch_assoc($jasamei);
-                  $jasajun = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasajun = db2_fetch_assoc($jasajun);
-                  $jasajul = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasajul = db2_fetch_assoc($jasajul);
-                  $jasaags = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasaags = db2_fetch_assoc($jasaags);
-                  $jasasep = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasasep = db2_fetch_assoc($jasasep);
-                  $jasaokt = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasaokt = db2_fetch_assoc($jasaokt);
-                  $jasanov = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasanov = db2_fetch_assoc($jasanov);
-                  $jasades = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE ) = '$thn' AND p.ORIGDLVSALORDLINESALORDCNTCOD = 'DOMESTIC' OR p.ORIGDLVSALORDLINESALORDCNTCOD = 'EXPORT' AND s.TEMPLATECODE = 'CWD' OR s.TEMPLATECODE = 'CWE'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_jasades = db2_fetch_assoc($jasades);
-              ?>
-
-              <!-- RUMUS PRINTING -->
-              <?php 
-                  ini_set("error_reporting", 1);
-                  session_start();
-                  $thn = $_GET['thn'];
-                  require_once "koneksi.php";
-                  $printingjan = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '1' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingjan = db2_fetch_assoc($printingjan);
-                  $printingfeb = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '2' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingfeb = db2_fetch_assoc($printingfeb);
-                  $printingmar = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '3' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingmar = db2_fetch_assoc($printingmar);
-                  $printingapr = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '4' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingapr = db2_fetch_assoc($printingapr);
-                  $printingmei = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '5' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingmei = db2_fetch_assoc($printingmei);
-                  $printingjun = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '6' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingjun = db2_fetch_assoc($printingjun);
-                  $printingjul = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '7' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingjul = db2_fetch_assoc($printingjul);
-                  $printingags = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '8' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingags = db2_fetch_assoc($printingags);
-                  $printingsep = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '9' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingsep = db2_fetch_assoc($printingsep);
-                  $printingokt = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '10' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingokt = db2_fetch_assoc($printingokt);
-                  $printingnov = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '11' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingnov = db2_fetch_assoc($printingnov);
-                  $printingdes = db2_exec($conn1, "SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE MONTH ( s.REQUIREDDUEDATE  ) = '12' AND YEAR ( s.REQUIREDDUEDATE  ) = '$thn' AND p.SUBCODE08 IS NOT NULL AND NOT p.SUBCODE08 = '-' AND NOT p.SUBCODE08 = '          '", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_printingdes = db2_fetch_assoc($printingdes);
-              ?>
-
-              <tr class="row0">
-                  <td class="column0 style7 s style9" colspan="3">BULAN</td>
-                  <td class="column3 style2 s" title="Production Demand: Bruto, KGF, DOMESTIC.">LOKAL</td>
-                  <td class="column4 style2 s">%LOKAL</td>
-                  <td class="column5 style2 s" title="Production Demand: Bruto, KGF, EXPORT.">EXPORT</td>
-                  <td class="column6 style2 s">%EXPORT</td>
-                  <td class="column7 style2 s" title="Production Demand: Bruto, KFK, DOMESTIC EXPORT.">F/K</td>
-                  <td class="column8 style7 s style9" colspan="2">TOTAL</td>
-                  <td class="column10 style17 s style19" colspan="3" title="Production Demand: Bruto, KGF, OPEN.">BOOKING</td>
-                  <td class="column13 style2 s">JASA</td>
-                  <td class="column14 style2 s">PRINTING</td>
-                  <td class="column15 style2 s">KIRIM</td>
-                  <td class="column16 style2 s">ON TIME</td>
-              </tr>
-              <tr class="row1">
-                  <td class="column0 style11 s style13" colspan="3">JANUARI</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localjan['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokaljan</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expjan['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expjan</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkjan['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localjan['TOTAL']+$rowdb2_expjan['TOTAL']+$rowdb2_fkjan['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnjan['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasajan['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingjan['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row2">
-                  <td class="column0 style11 s style13" colspan="3">FEBRUARI</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localfeb['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokalfeb</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expfeb['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expfeb</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkfeb['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localfeb['TOTAL']+$rowdb2_expfeb['TOTAL']+$rowdb2_fkfeb['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnfeb['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasafeb['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingfeb['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row3">
-                  <td class="column0 style11 s style13" colspan="3">MARET</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localmar['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokalmar</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expmar['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expmar</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkmar['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localmar['TOTAL']+$rowdb2_expmar['TOTAL']+$rowdb2_fkmar['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnmar['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasamar['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingmar['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row4">
-                  <td class="column0 style11 s style13" colspan="3">APRIL</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localapr['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokalapr</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expapr['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expapr</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkapr['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localapr['TOTAL']+$rowdb2_expapr['TOTAL']+$rowdb2_fkapr['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnapr['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasaapr['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingapr['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row5">
-                  <td class="column0 style11 s style13" colspan="3">MEI</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localmei['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokalmei</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expmei['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expmei</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkmei['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localmei['TOTAL']+$rowdb2_expmei['TOTAL']+$rowdb2_fkmei['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnmei['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasamei['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingmei['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row6">
-                  <td class="column0 style11 s style13" colspan="3">JUNI</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localjun['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokaljun</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expjun['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expjun</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkjun['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localjun['TOTAL']+$rowdb2_expjun['TOTAL']+$rowdb2_fkjun['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnjun['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasajun['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingjun['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row7">
-                  <td class="column0 style11 s style13" colspan="3">JULI</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localjul['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokaljul</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expjul['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expjul</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkjul['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localjul['TOTAL']+$rowdb2_expjul['TOTAL']+$rowdb2_fkjul['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnjul['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasajul['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingjul['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row8">
-                  <td class="column0 style11 s style13" colspan="3">AGUSTUS</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localags['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokalags</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expags['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expags</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkags['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localags['TOTAL']+$rowdb2_expags['TOTAL']+$rowdb2_fkags['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnags['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasaags['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingags['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row9">
-                  <td class="column0 style11 s style13" colspan="3">SEPTEMBER</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localsep['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokalsep</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expsep['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expsep</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fksep['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localsep['TOTAL']+$rowdb2_expsep['TOTAL']+$rowdb2_fksep['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnsep['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasasep['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingsep['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row10">
-                  <td class="column0 style11 s style13" colspan="3">OKTOBER</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localokt['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokalokt</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expokt['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expokt</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkokt['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localokt['TOTAL']+$rowdb2_expokt['TOTAL']+$rowdb2_fkokt['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnokt['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasaokt['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingokt['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row11">
-                  <td class="column0 style11 s style13" colspan="3">NOPEMBER</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localnov['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokalnov</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expnov['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expnov</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fknov['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localnov['TOTAL']+$rowdb2_expnov['TOTAL']+$rowdb2_fknov['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opnnov['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasanov['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingnov['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-              </tr>
-              <tr class="row12">
-                  <td class="column0 style11 s style13" colspan="3">DESEMBER</td>
-                  <td class="column3 style4 null"><?= number_format($rowdb2_localdes['TOTAL'],0); ?></td>
-                  <td class="column4 style4 null">%lokaldes</td>
-                  <td class="column5 style4 null"><?= number_format($rowdb2_expdes['TOTAL'],0); ?></td>
-                  <td class="column6 style4 null">%expdes</td>
-                  <td class="column7 style4 null"><?= number_format($rowdb2_fkdes['TOTAL'],0); ?></td>
-                  <td class="column8 style7 null style9" colspan="2"><?= number_format($rowdb2_localdes['TOTAL']+$rowdb2_expdes['TOTAL']+$rowdb2_fkdes['TOTAL'],0); ?></td>
-                  <td class="column10 style17 null style19" colspan="3"><?= number_format($rowdb2_opndes['TOTAL'],0); ?></td>
-                  <td class="column13 style4 null"><?= number_format($rowdb2_jasades['TOTAL'], 0); ?></td>
-                  <td class="column14 style4 null"><?= number_format($rowdb2_printingdes['TOTAL'], 0); ?></td>
-                  <td class="column15 style4 null"></td>
-                  <td class="column16 style4 null"></td>
-                  
-              </tr>
-          <!-- LAPORAN PERTAHUN -->
-
-          <!-- LAPORAN PERMINGGU BRUTO, AKJ-->
-              <!-- JANUARI -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguIjan   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-01-01' AND '$thn-01-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIjan   = db2_fetch_assoc($brto_mingguIjan);
-                      $brto_mingguIIjan  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-01-08' AND '$thn-01-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIjan  = db2_fetch_assoc($brto_mingguIIjan);
-                      $brto_mingguIIIjan = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-01-15' AND '$thn-01-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIIjan = db2_fetch_assoc($brto_mingguIIIjan);
-                      $brto_mingguIVjan  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-01-22' AND '$thn-01-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVjan  = db2_fetch_assoc($brto_mingguIVjan);
-                      // AKJ
-                      $akj_mingguIjan   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-01-01' AND '$thn-01-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIjan   = db2_fetch_assoc($akj_mingguIjan);
-                      $akj_mingguIIjan  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-01-08' AND '$thn-01-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIjan  = db2_fetch_assoc($akj_mingguIIjan);
-                      $akj_mingguIIIjan = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-01-15' AND '$thn-01-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIIjan = db2_fetch_assoc($akj_mingguIIIjan);
-                      $akj_mingguIVjan  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-01-22' AND '$thn-01-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVjan  = db2_fetch_assoc($akj_mingguIVjan);
-                  ?> 
-                  <tr class="row14">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                  </tr>
-                  <tr class="row15">
-                      <td class="column0 style4 s">JAN</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIjan['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIjan['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JAN</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row16">
-                      <td class="column0 style4 s">JAN</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIjan['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIjan['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JAN</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row17">
-                      <td class="column0 style4 s">JAN</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIIjan['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIIjan['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JAN</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row18">
-                      <td class="column0 style4 s">JAN</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVjan['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVjan['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JAN</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row19">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguIjan['TOTAL']+$rowdb2_brto_mingguIIjan['TOTAL']+$rowdb2_brto_mingguIIIjan['TOTAL']+$rowdb2_brto_mingguIVjan['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguIjan['TOTAL']+$rowdb2_akj_mingguIIjan['TOTAL']+$rowdb2_akj_mingguIIIjan['TOTAL']+$rowdb2_akj_mingguIVjan['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr> 
-              
-              <!-- FEBRUARI -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguIfeb   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-02-01' AND '$thn-02-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIfeb   = db2_fetch_assoc($brto_mingguIfeb);
-                      $brto_mingguIIfeb  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-02-08' AND '$thn-02-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIfeb  = db2_fetch_assoc($brto_mingguIIfeb);
-                      $brto_mingguIIIfeb = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-02-15' AND '$thn-02-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIIfeb = db2_fetch_assoc($brto_mingguIIIfeb);
-                      $brto_mingguIVfeb  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-02-22' AND '$thn-02-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVfeb  = db2_fetch_assoc($brto_mingguIVfeb);
-                      
-                      // AKJ
-                      $akj_mingguIfeb   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-02-01' AND '$thn-02-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIfeb   = db2_fetch_assoc($akj_mingguIfeb);
-                      $akj_mingguIIfeb  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-02-08' AND '$thn-02-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIfeb  = db2_fetch_assoc($akj_mingguIIfeb);
-                      $akj_mingguIIIfeb = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-02-15' AND '$thn-02-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIIfeb = db2_fetch_assoc($akj_mingguIIIfeb);
-                      $akj_mingguIVfeb  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-02-22' AND '$thn-02-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVfeb  = db2_fetch_assoc($akj_mingguIVfeb);
-                  ?>
-                  <tr class="row21">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                      
-                  </tr>
-                  <tr class="row22">
-                      <td class="column0 style4 s">FEB</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIfeb['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIfeb['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">FEB</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row23">
-                      <td class="column0 style4 s">FEB</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIfeb['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIfeb['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">FEB</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row24">
-                      <td class="column0 style4 s">FEB</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIIfeb['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIIfeb['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">FEB</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row25">
-                      <td class="column0 style4 s">FEB</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVfeb['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVfeb['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">FEB</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row26">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguIfeb['TOTAL']+$rowdb2_brto_mingguIIfeb['TOTAL']+$rowdb2_brto_mingguIIIfeb['TOTAL']+$rowdb2_brto_mingguIVfeb['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguIfeb['TOTAL']+$rowdb2_akj_mingguIIfeb['TOTAL']+$rowdb2_akj_mingguIIIfeb['TOTAL']+$rowdb2_akj_mingguIVfeb['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr>
-              <!-- MARET -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguImar   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-03-01' AND '$thn-03-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguImar   = db2_fetch_assoc($brto_mingguImar);
-                      $brto_mingguIImar  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-03-08' AND '$thn-03-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIImar  = db2_fetch_assoc($brto_mingguIImar);
-                      $brto_mingguIIImar = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-03-15' AND '$thn-03-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIImar = db2_fetch_assoc($brto_mingguIIImar);
-                      $brto_mingguIVmar  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-03-22' AND '$thn-03-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVmar  = db2_fetch_assoc($brto_mingguIVmar);
-                      // AKJ
-                      $akj_mingguImar   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-03-01'  AND '$thn-03-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguImar   = db2_fetch_assoc($akj_mingguImar);
-                      $akj_mingguIImar  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-03-08'  AND '$thn-03-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIImar  = db2_fetch_assoc($akj_mingguIImar);
-                      $akj_mingguIIImar = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-03-15'  AND '$thn-03-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIImar = db2_fetch_assoc($akj_mingguIIImar);
-                      $akj_mingguIVmar  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-03-22'  AND '$thn-03-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVmar  = db2_fetch_assoc($akj_mingguIVmar);
-                  ?>
-                  <tr class="row28">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                  </tr>
-                  <tr class="row29">
-                      <td class="column0 style4 s">MAR</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguImar['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguImar['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">MAR</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                      
-                  </tr>
-                  <tr class="row30">
-                      <td class="column0 style4 s">MAR</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIImar['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIImar['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">MAR</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                      
-                  </tr>
-                  <tr class="row31">
-                      <td class="column0 style4 s">MAR</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIImar['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIImar['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">MAR</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                      
-                  </tr>
-                  <tr class="row32">
-                      <td class="column0 style4 s">MAR</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVmar['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVmar['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">MAR</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                      
-                  </tr>
-                  <tr class="row33">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguImar['TOTAL']+$rowdb2_brto_mingguIImar['TOTAL']+$rowdb2_brto_mingguIIImar['TOTAL']+$rowdb2_brto_mingguIVmar['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguImar['TOTAL']+$rowdb2_akj_mingguIImar['TOTAL']+$rowdb2_akj_mingguIIImar['TOTAL']+$rowdb2_akj_mingguIVmar['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                      
-                  </tr>
-              <!-- APRIL -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguIapr   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-04-01' AND '$thn-04-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIapr   = db2_fetch_assoc($brto_mingguIapr);
-                      $brto_mingguIIapr  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-04-08' AND '$thn-04-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIapr  = db2_fetch_assoc($brto_mingguIIapr);
-                      $brto_mingguIIIapr = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-04-15' AND '$thn-04-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIIapr = db2_fetch_assoc($brto_mingguIIIapr);
-                      $brto_mingguIVapr  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-04-22' AND '$thn-04-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVapr  = db2_fetch_assoc($brto_mingguIVapr);
-                      // AKJ
-                      $akj_mingguIapr   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-04-01'  AND '$thn-04-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIapr   = db2_fetch_assoc($akj_mingguIapr);
-                      $akj_mingguIIapr  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-04-08'  AND '$thn-04-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIapr  = db2_fetch_assoc($akj_mingguIIapr);
-                      $akj_mingguIIIapr = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-04-15'  AND '$thn-04-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIIapr = db2_fetch_assoc($akj_mingguIIIapr);
-                      $akj_mingguIVapr  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-04-22'  AND '$thn-04-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVapr  = db2_fetch_assoc($akj_mingguIVapr);
-                  ?>
-                  <tr class="row35">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                  </tr>
-                  <tr class="row36">
-                      <td class="column0 style4 s">APR</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIapr['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIapr['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">APR</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row37">
-                      <td class="column0 style4 s">APR</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIapr['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIapr['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">APR</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row38">
-                      <td class="column0 style4 s">APR</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIIapr['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIIapr['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">APR</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row39">
-                      <td class="column0 style4 s">APR</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVapr['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVapr['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">APR</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row40">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguIapr['TOTAL']+$rowdb2_brto_mingguIIapr['TOTAL']+$rowdb2_brto_mingguIIIapr['TOTAL']+$rowdb2_brto_mingguIVapr['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguIapr['TOTAL']+$rowdb2_akj_mingguIIapr['TOTAL']+$rowdb2_akj_mingguIIIapr['TOTAL']+$rowdb2_akj_mingguIVapr['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr>
-              <!-- MEI -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguImei   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-05-01' AND '$thn-05-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguImei   = db2_fetch_assoc($brto_mingguImei);
-                      $brto_mingguIImei  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-05-08' AND '$thn-05-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIImei  = db2_fetch_assoc($brto_mingguIImei);
-                      $brto_mingguIIImei = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-05-15' AND '$thn-05-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIImei = db2_fetch_assoc($brto_mingguIIImei);
-                      $brto_mingguIVmei  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-05-22' AND '$thn-05-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVmei  = db2_fetch_assoc($brto_mingguIVmei);
-                      // AKJ
-                      $akj_mingguImei   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-05-01'  AND '$thn-05-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguImei   = db2_fetch_assoc($akj_mingguImei);
-                      $akj_mingguIImei  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-05-08'  AND '$thn-05-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIImei  = db2_fetch_assoc($akj_mingguIImei);
-                      $akj_mingguIIImei = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-05-15'  AND '$thn-05-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIImei = db2_fetch_assoc($akj_mingguIIImei);
-                      $akj_mingguIVmei  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-05-22'  AND '$thn-05-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVmei  = db2_fetch_assoc($akj_mingguIVmei);
-                  ?>
-                  <tr class="row42">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                  </tr>
-                  <tr class="row43">
-                      <td class="column0 style4 s">MEI</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguImei['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguImei['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">MEI</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row44">
-                      <td class="column0 style4 s">MEI</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIImei['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIImei['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">MEI</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row45">
-                      <td class="column0 style4 s">MEI</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIImei['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIImei['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">MEI</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row46">
-                      <td class="column0 style4 s">MEI</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVmei['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVmei['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">MEI</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row47">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguImei['TOTAL']+$rowdb2_brto_mingguIImei['TOTAL']+$rowdb2_brto_mingguIIImei['TOTAL']+$rowdb2_brto_mingguIVmei['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguImei['TOTAL']+$rowdb2_akj_mingguIImei['TOTAL']+$rowdb2_akj_mingguIIImei['TOTAL']+$rowdb2_akj_mingguIVmei['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr>
-              <!-- JUNI -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguIjun   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-06-01' AND '$thn-06-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIjun   = db2_fetch_assoc($brto_mingguIjun);
-                      $brto_mingguIIjun  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-06-08' AND '$thn-06-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIjun  = db2_fetch_assoc($brto_mingguIIjun);
-                      $brto_mingguIIIjun = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-06-15' AND '$thn-06-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIIjun = db2_fetch_assoc($brto_mingguIIIjun);
-                      $brto_mingguIVjun  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-06-22' AND '$thn-06-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVjun  = db2_fetch_assoc($brto_mingguIVjun);
-                      // AKJ
-                      $akj_mingguIjun   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-06-01'  AND '$thn-06-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIjun   = db2_fetch_assoc($akj_mingguIjun);
-                      $akj_mingguIIjun  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-06-08'  AND '$thn-06-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIjun  = db2_fetch_assoc($akj_mingguIIjun);
-                      $akj_mingguIIIjun = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-06-15'  AND '$thn-06-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIIjun = db2_fetch_assoc($akj_mingguIIIjun);
-                      $akj_mingguIVjun  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-06-22'  AND '$thn-06-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVjun  = db2_fetch_assoc($akj_mingguIVjun);
-                ?>
-                  <tr class="row49">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                      
-                  </tr>
-                  <tr class="row50">
-                      <td class="column0 style4 s">JUN</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIjun['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIjun['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JUN</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row51">
-                      <td class="column0 style4 s">JUN</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIjun['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIjun['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JUN</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row52">
-                      <td class="column0 style4 s">JUN</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIIjun['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIIjun['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JUN</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row53">
-                      <td class="column0 style4 s">JUN</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVjun['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVjun['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JUN</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row54">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguIjun['TOTAL']+$rowdb2_brto_mingguIIjun['TOTAL']+$rowdb2_brto_mingguIIIjun['TOTAL']+$rowdb2_brto_mingguIVjun['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguIjun['TOTAL']+$rowdb2_akj_mingguIIjun['TOTAL']+$rowdb2_akj_mingguIIIjun['TOTAL']+$rowdb2_akj_mingguIVjun['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr>
-              <!-- JULI -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguIjul   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-07-01' AND '$thn-07-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIjul   = db2_fetch_assoc($brto_mingguIjul);
-                      $brto_mingguIIjul  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-07-08' AND '$thn-07-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIjul  = db2_fetch_assoc($brto_mingguIIjul);
-                      $brto_mingguIIIjul = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-07-15' AND '$thn-07-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIIjul = db2_fetch_assoc($brto_mingguIIIjul);
-                      $brto_mingguIVjul  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-07-22' AND '$thn-07-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVjul  = db2_fetch_assoc($brto_mingguIVjul);
-                      // AKJ
-                      $akj_mingguIjul   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-07-01'  AND '$thn-07-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIjul   = db2_fetch_assoc($akj_mingguIjul);
-                      $akj_mingguIIjul  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-07-08'  AND '$thn-07-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIjul  = db2_fetch_assoc($akj_mingguIIjul);
-                      $akj_mingguIIIjul = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-07-15'  AND '$thn-07-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIIjul = db2_fetch_assoc($akj_mingguIIIjul);
-                      $akj_mingguIVjul  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-07-22'  AND '$thn-07-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVjul  = db2_fetch_assoc($akj_mingguIVjul);
-                  ?>
-                  <tr class="row56">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                  </tr>
-                  <tr class="row57">
-                      <td class="column0 style4 s">JUL</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIjul['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIjul['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JUL</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row58">
-                      <td class="column0 style4 s">JUL</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIjul['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIjul['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JUL</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row59">
-                      <td class="column0 style4 s">JUL</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIIjul['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIIjul['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JUL</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row60">
-                      <td class="column0 style4 s">JUL</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVjul['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVjul['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">JUL</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row61">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguIjul['TOTAL']+$rowdb2_brto_mingguIIjul['TOTAL']+$rowdb2_brto_mingguIIIjul['TOTAL']+$rowdb2_brto_mingguIVjul['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguIjul['TOTAL']+$rowdb2_akj_mingguIIjul['TOTAL']+$rowdb2_akj_mingguIIIjul['TOTAL']+$rowdb2_akj_mingguIVjul['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr>
-              <!-- AGUSTUS -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguIags   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-08-01' AND '$thn-08-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIags   = db2_fetch_assoc($brto_mingguIags);
-                      $brto_mingguIIags  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-08-08' AND '$thn-08-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIags  = db2_fetch_assoc($brto_mingguIIags);
-                      $brto_mingguIIIags = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-08-15' AND '$thn-08-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIIags = db2_fetch_assoc($brto_mingguIIIags);
-                      $brto_mingguIVags  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-08-22' AND '$thn-08-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVags  = db2_fetch_assoc($brto_mingguIVags);
-                      // AKJ
-                      $akj_mingguIags   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-08-01'  AND '$thn-08-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIags   = db2_fetch_assoc($akj_mingguIags);
-                      $akj_mingguIIags  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-08-08'  AND '$thn-08-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIags  = db2_fetch_assoc($akj_mingguIIags);
-                      $akj_mingguIIIags = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-08-15'  AND '$thn-08-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIIags = db2_fetch_assoc($akj_mingguIIIags);
-                      $akj_mingguIVags  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-08-22'  AND '$thn-08-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVags  = db2_fetch_assoc($akj_mingguIVags);
-                  ?>
-                  <tr class="row63">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                  </tr>
-                  <tr class="row64">
-                      <td class="column0 style4 s">AGS</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIags['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIags['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">AGS</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row65">
-                      <td class="column0 style4 s">AGS</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIags['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIags['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">AGS</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row66">
-                      <td class="column0 style4 s">AGS</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIIags['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIIags['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">AGS</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row67">
-                      <td class="column0 style4 s">AGS</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVags['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVags['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">AGS</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row68">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguIags['TOTAL']+$rowdb2_brto_mingguIIags['TOTAL']+$rowdb2_brto_mingguIIIags['TOTAL']+$rowdb2_brto_mingguIVags['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguIags['TOTAL']+$rowdb2_akj_mingguIIags['TOTAL']+$rowdb2_akj_mingguIIIags['TOTAL']+$rowdb2_akj_mingguIVags['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr>
-              <!-- SEPTEMBER -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguIsep   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-09-01' AND '$thn-09-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIsep   = db2_fetch_assoc($brto_mingguIsep);
-                      $brto_mingguIIsep  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-09-08' AND '$thn-09-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIsep  = db2_fetch_assoc($brto_mingguIIsep);
-                      $brto_mingguIIIsep = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-09-15' AND '$thn-09-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIIsep = db2_fetch_assoc($brto_mingguIIIsep);
-                      $brto_mingguIVsep  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-09-22' AND '$thn-09-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVsep  = db2_fetch_assoc($brto_mingguIVsep);
-                      // AKJ
-                      $akj_mingguIsep   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-09-01'  AND '$thn-09-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIsep   = db2_fetch_assoc($akj_mingguIsep);
-                      $akj_mingguIIsep  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-09-08'  AND '$thn-09-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIsep  = db2_fetch_assoc($akj_mingguIIsep);
-                      $akj_mingguIIIsep = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-09-15'  AND '$thn-09-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIIsep = db2_fetch_assoc($akj_mingguIIIsep);
-                      $akj_mingguIVsep  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-09-22'  AND '$thn-09-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVsep  = db2_fetch_assoc($akj_mingguIVsep);
-                  ?>
-                  <tr class="row70">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                  </tr>
-                  <tr class="row71">
-                      <td class="column0 style4 s">SEPT</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIsep['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIsep['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">SEPT</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row72">
-                      <td class="column0 style4 s">SEPT</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIsep['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIsep['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">SEPT</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row73">
-                      <td class="column0 style4 s">SEPT</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIIsep['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIIsep['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">SEPT</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row74">
-                      <td class="column0 style4 s">SEPT</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVsep['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVsep['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">SEPT</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row75">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguIsep['TOTAL']+$rowdb2_brto_mingguIIsep['TOTAL']+$rowdb2_brto_mingguIIIsep['TOTAL']+$rowdb2_brto_mingguIVsep['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguIsep['TOTAL']+$rowdb2_akj_mingguIIsep['TOTAL']+$rowdb2_akj_mingguIIIsep['TOTAL']+$rowdb2_akj_mingguIVsep['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr>
-              <!-- OKTOBER -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguIokt   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-10-01' AND '$thn-10-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIokt   = db2_fetch_assoc($brto_mingguIokt);
-                      $brto_mingguIIokt  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-10-08' AND '$thn-10-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIokt  = db2_fetch_assoc($brto_mingguIIokt);
-                      $brto_mingguIIIokt = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-10-15' AND '$thn-10-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIIokt = db2_fetch_assoc($brto_mingguIIIokt);
-                      $brto_mingguIVokt  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-10-22' AND '$thn-10-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVokt  = db2_fetch_assoc($brto_mingguIVokt);
-                      // AKJ
-                      $akj_mingguIokt   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-01'  AND '$thn-10-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIokt   = db2_fetch_assoc($akj_mingguIokt);
-                      $akj_mingguIIokt  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-08'  AND '$thn-10-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIokt  = db2_fetch_assoc($akj_mingguIIokt);
-                      $akj_mingguIIIokt = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-15'  AND '$thn-10-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIIokt = db2_fetch_assoc($akj_mingguIIIokt);
-                      $akj_mingguIVokt  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-22'  AND '$thn-10-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVokt  = db2_fetch_assoc($akj_mingguIVokt);
-                  ?>
-                  <tr class="row77">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                  </tr>
-                  <tr class="row78">
-                      <td class="column0 style4 s">OKT</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIokt['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIokt['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">OKT</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                      
-                  </tr>
-                  <tr class="row79">
-                      <td class="column0 style4 s">OKT</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIokt['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIokt['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">OKT</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row80">
-                      <td class="column0 style4 s">OKT</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIIokt['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIIokt['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">OKT</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row81">
-                      <td class="column0 style4 s">OKT</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVokt['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVokt['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">OKT</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row82">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguIokt['TOTAL']+$rowdb2_brto_mingguIIokt['TOTAL']+$rowdb2_brto_mingguIIIokt['TOTAL']+$rowdb2_brto_mingguIVokt['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguIokt['TOTAL']+$rowdb2_akj_mingguIIokt['TOTAL']+$rowdb2_akj_mingguIIIokt['TOTAL']+$rowdb2_akj_mingguIVokt['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr>
-              <!-- NOVEMBER -->
-                  <?php 
-                      ini_set("error_reporting", 1);
-                      session_start();
-                      require_once "koneksi.php";
-                      $brto_mingguInov   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-11-01' AND '$thn-11-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguInov   = db2_fetch_assoc($brto_mingguInov);
-                      $brto_mingguIInov  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-11-08' AND '$thn-11-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIInov  = db2_fetch_assoc($brto_mingguIInov);
-                      $brto_mingguIIInov = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-11-15' AND '$thn-11-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIInov = db2_fetch_assoc($brto_mingguIIInov);
-                      $brto_mingguIVnov  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-11-22' AND '$thn-11-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVnov  = db2_fetch_assoc($brto_mingguIVnov);
-                      // AKJ
-                      $akj_mingguInov   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-11-01'  AND '$thn-11-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguInov   = db2_fetch_assoc($akj_mingguInov);
-                      $akj_mingguIInov  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-11-08'  AND '$thn-11-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIInov  = db2_fetch_assoc($akj_mingguIInov);
-                      $akj_mingguIIInov = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-11-15'  AND '$thn-11-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIInov = db2_fetch_assoc($akj_mingguIIInov);
-                      $akj_mingguIVnov  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-11-22'  AND '$thn-11-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVnov  = db2_fetch_assoc($akj_mingguIVnov);
-                  ?>
-                  <tr class="row84">
-                      <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column3 style2 s">(BRUTO)</td>
-                      <td class="column4 style2 s">AKJ</td>
-                      <td class="column5 style2 s">SDH CELUP</td>
-                      <td class="column6 style3 s">BLM CELUP</td>
-                      <td class="column7 style2 s">P' BLM CLP</td>
-                      <td class="column8 style2 s">C' BLM CLP</td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                      <td class="column13 style2 s">TK</td>
-                      <td class="column14 style2 s">GREIGE READY</td>
-                      <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                      <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                  </tr>
-                  <tr class="row85">
-                      <td class="column0 style4 s">NOV</td>
-                      <td class="column1 style4 s">I</td>
-                      <td class="column2 style14 s">1 - 7</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguInov['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguInov['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">NOV</td>
-                      <td class="column11 style4 s">I</td>
-                      <td class="column12 style14 s">1 - 7</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row86">
-                      <td class="column0 style4 s">NOV</td>
-                      <td class="column1 style4 s">II</td>
-                      <td class="column2 style14 s">8 - 14</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIInov['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIInov['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">NOV</td>
-                      <td class="column11 style4 s">II</td>
-                      <td class="column12 style14 s">8 - 14</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row87">
-                      <td class="column0 style4 s">NOV</td>
-                      <td class="column1 style4 s">III</td>
-                      <td class="column2 style14 s">15 - 21</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIInov['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIInov['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">NOV</td>
-                      <td class="column11 style4 s">III</td>
-                      <td class="column12 style14 s">15 - 21</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row88">
-                      <td class="column0 style4 s">NOV</td>
-                      <td class="column1 style4 s">IV</td>
-                      <td class="column2 style14 s">22 - 31</td>
-                      <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVnov['TOTAL'],0); ?></td>
-                      <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVnov['TOTAL'],0); ?></td>
-                      <td class="column5 style4 null"></td>
-                      <td class="column6 style3 null"></td>
-                      <td class="column7 style4 null"></td>
-                      <td class="column8 style4 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style4 s">NOV</td>
-                      <td class="column11 style4 s">IV</td>
-                      <td class="column12 style14 s">22 - 31</td>
-                      <td class="column13 style4 null"></td>
-                      <td class="column14 style4 null"></td>
-                      <td class="column15 style4 null"></td>
-                      <td class="column16 style4 null"></td>
-                  </tr>
-                  <tr class="row89">
-                      <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguInov['TOTAL']+$rowdb2_brto_mingguIInov['TOTAL']+$rowdb2_brto_mingguIIInov['TOTAL']+$rowdb2_brto_mingguIVnov['TOTAL'],0); ?></td>
-                      <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguInov['TOTAL']+$rowdb2_akj_mingguIInov['TOTAL']+$rowdb2_akj_mingguIIInov['TOTAL']+$rowdb2_akj_mingguIVnov['TOTAL'],0); ?></td>
-                      <td class="column5 style2 null"></td>
-                      <td class="column6 style2 null"></td>
-                      <td class="column7 style2 null"></td>
-                      <td class="column8 style2 null"></td>
-                      <td class="column9 style16 null"></td>
-                      <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                      <td class="column13 style2 null"></td>
-                      <td class="column14 style2 null"></td>
-                      <td class="column15 style2 null"></td>
-                      <td class="column16 style2 null"></td>
-                  </tr>
-              <!-- DESEMBER -->
-                      <?php 
-                          ini_set("error_reporting", 1);
-                          session_start();
-                          require_once "koneksi.php";
-                          $brto_mingguIdes   = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-12-01' AND '$thn-12-07' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIdes   = db2_fetch_assoc($brto_mingguIdes);
-                          $brto_mingguIIdes  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-12-08' AND '$thn-12-14' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIdes  = db2_fetch_assoc($brto_mingguIIdes);
-                          $brto_mingguIIIdes = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-12-15' AND '$thn-12-21' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIIIdes = db2_fetch_assoc($brto_mingguIIIdes);
-                          $brto_mingguIVdes  = db2_exec($conn1,"SELECT sum(p.USERPRIMARYQUANTITY) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE s.REQUIREDDUEDATE BETWEEN '$thn-12-22' AND '$thn-12-31' AND p.ITEMTYPEAFICODE IN ('KGF','FKF') AND p.ORIGDLVSALORDLINESALORDCNTCOD IN ('DOMESTIC','EXPORT')", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_brto_mingguIVdes  = db2_fetch_assoc($brto_mingguIVdes);
-                          // AKJ
-                          $akj_mingguIdes   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-12-01'  AND '$thn-12-07' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIdes   = db2_fetch_assoc($akj_mingguIdes);
-                          $akj_mingguIIdes  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-12-08'  AND '$thn-12-14' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIdes  = db2_fetch_assoc($akj_mingguIIdes);
-                          $akj_mingguIIIdes = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-12-15'  AND '$thn-12-21' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIIIdes = db2_fetch_assoc($akj_mingguIIIdes);
-                          $akj_mingguIVdes  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE LEFT JOIN SALESORDERLINE s2 ON s2.PROJECTCODE = s.CODE LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-12-22'  AND '$thn-12-31' AND a.VALUESTRING LIKE '%AKJ%'", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_akj_mingguIVdes  = db2_fetch_assoc($akj_mingguIVdes);
-                      ?>
-                      <tr class="row91">
-                          <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                          <td class="column3 style2 s">(BRUTO)</td>
-                          <td class="column4 style2 s">AKJ</td>
-                          <td class="column5 style2 s">SDH CELUP</td>
-                          <td class="column6 style3 s">BLM CELUP</td>
-                          <td class="column7 style2 s">P' BLM CLP</td>
-                          <td class="column8 style2 s">C' BLM CLP</td>
-                          <td class="column9 style16 null"></td>
-                          <td class="column10 style6 s style6" colspan="3">DELIVERY</td>
-                          <td class="column13 style2 s">TK</td>
-                          <td class="column14 style2 s">GREIGE READY</td>
-                          <td class="column15 style20 s">SDH PRISET BLM CELUP</td>
-                          <td class="column16 style20 s">BELUM PRISET BLM CELUP</td>
-                          
-                      </tr>
-                      <tr class="row92">
-                          <td class="column0 style4 s">DES</td>
-                          <td class="column1 style4 s">I</td>
-                          <td class="column2 style14 s">1 - 7</td>
-                          <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIdes['TOTAL'],0); ?></td>
-                          <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIdes['TOTAL'],0); ?></td>
-                          <td class="column5 style4 null"></td>
-                          <td class="column6 style3 null"></td>
-                          <td class="column7 style4 null"></td>
-                          <td class="column8 style4 null"></td>
-                          <td class="column9 style16 null"></td>
-                          <td class="column10 style4 s">DES</td>
-                          <td class="column11 style4 s">I</td>
-                          <td class="column12 style14 s">1 - 7</td>
-                          <td class="column13 style4 null"></td>
-                          <td class="column14 style4 null"></td>
-                          <td class="column15 style4 null"></td>
-                          <td class="column16 style4 null"></td>
-                          
-                      </tr>
-                      <tr class="row93">
-                          <td class="column0 style4 s">DES</td>
-                          <td class="column1 style4 s">II</td>
-                          <td class="column2 style14 s">8 - 14</td>
-                          <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIdes['TOTAL'],0); ?></td>
-                          <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIdes['TOTAL'],0); ?></td>
-                          <td class="column5 style4 null"></td>
-                          <td class="column6 style3 null"></td>
-                          <td class="column7 style4 null"></td>
-                          <td class="column8 style4 null"></td>
-                          <td class="column9 style16 null"></td>
-                          <td class="column10 style4 s">DES</td>
-                          <td class="column11 style4 s">II</td>
-                          <td class="column12 style14 s">8 - 14</td>
-                          <td class="column13 style4 null"></td>
-                          <td class="column14 style4 null"></td>
-                          <td class="column15 style4 null"></td>
-                          <td class="column16 style4 null"></td>
-                          
-                      </tr>
-                      <tr class="row94">
-                          <td class="column0 style4 s">DES</td>
-                          <td class="column1 style4 s">III</td>
-                          <td class="column2 style14 s">15 - 21</td>
-                          <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIIIdes['TOTAL'],0); ?></td>
-                          <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIIIdes['TOTAL'],0); ?></td>
-                          <td class="column5 style4 null"></td>
-                          <td class="column6 style3 null"></td>
-                          <td class="column7 style4 null"></td>
-                          <td class="column8 style4 null"></td>
-                          <td class="column9 style16 null"></td>
-                          <td class="column10 style4 s">DES</td>
-                          <td class="column11 style4 s">III</td>
-                          <td class="column12 style14 s">15 - 21</td>
-                          <td class="column13 style4 null"></td>
-                          <td class="column14 style4 null"></td>
-                          <td class="column15 style4 null"></td>
-                          <td class="column16 style4 null"></td>
-                          
-                      </tr>
-                      <tr class="row95">
-                          <td class="column0 style4 s">DES</td>
-                          <td class="column1 style4 s">IV</td>
-                          <td class="column2 style14 s">22 - 31</td>
-                          <td class="column3 style4 null"><?= number_format($rowdb2_brto_mingguIVdes['TOTAL'],0); ?></td>
-                          <td class="column4 style4 null"><?= number_format($rowdb2_akj_mingguIVdes['TOTAL'],0); ?></td>
-                          <td class="column5 style4 null"></td>
-                          <td class="column6 style3 null"></td>
-                          <td class="column7 style4 null"></td>
-                          <td class="column8 style4 null"></td>
-                          <td class="column9 style16 null"></td>
-                          <td class="column10 style4 s">DES</td>
-                          <td class="column11 style4 s">IV</td>
-                          <td class="column12 style14 s">22 - 31</td>
-                          <td class="column13 style4 null"></td>
-                          <td class="column14 style4 null"></td>
-                          <td class="column15 style4 null"></td>
-                          <td class="column16 style4 null"></td>
-                      </tr>
-                      <tr class="row96">
-                          <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                          <td class="column3 style2 null"><?= number_format($rowdb2_brto_mingguIdes['TOTAL']+$rowdb2_brto_mingguIIdes['TOTAL']+$rowdb2_brto_mingguIIIdes['TOTAL']+$rowdb2_brto_mingguIVdes['TOTAL'],0); ?></td>
-                          <td class="column4 style2 null"><?= number_format($rowdb2_akj_mingguIdes['TOTAL']+$rowdb2_akj_mingguIIdes['TOTAL']+$rowdb2_akj_mingguIIIdes['TOTAL']+$rowdb2_akj_mingguIVdes['TOTAL'],0); ?></td>
-                          <td class="column5 style2 null"></td>
-                          <td class="column6 style2 null"></td>
-                          <td class="column7 style2 null"></td>
-                          <td class="column8 style2 null"></td>
-                          <td class="column9 style16 null"></td>
-                          <td class="column10 style6 s style6" colspan="3">TOTAL</td>
-                          <td class="column13 style2 null"></td>
-                          <td class="column14 style2 null"></td>
-                          <td class="column15 style2 null"></td>
-                          <td class="column16 style2 null"></td>
-                      </tr>
-          <!-- LAPORAN PERMINGGU -->
+          // LOKAL
+            $qDesThnSebelumnyaLokal = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnSebelumnyaLokal = db2_exec($conn1, $qDesThnSebelumnyaLokal);
+            $rowDesThnSebelumnyaLokal    = db2_fetch_assoc($resultDesThnSebelumnyaLokal);
+            $dataDesThnSebelumnyaLokal   = $rowDesThnSebelumnyaLokal['QTY'];
+          // LOKAL
           
-          <!-- LAPORAN PERMINGGU BOOKING & PRINTING -->
-            <!-- JANUARI -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguIjan   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-01-01' AND '$thn-01-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIjan   = db2_fetch_assoc($book_mingguIjan);
-                $book_mingguIIjan  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-01-08' AND '$thn-01-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIjan  = db2_fetch_assoc($book_mingguIIjan);
-                $book_mingguIIIjan = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-01-15' AND '$thn-01-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIIjan = db2_fetch_assoc($book_mingguIIIjan);
-                $book_mingguIVjan  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-01-22' AND '$thn-01-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVjan  = db2_fetch_assoc($book_mingguIVjan);
-              ?> 
-              <tr class="row97">
-                <td class="column0 style21 s style21" colspan="6">BOOKING</td>
-                <td class="column7 style22 s style22" colspan="9">PRINTING</td>
-              </tr>
-              <tr class="row98">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-                <td class="column9 style16 null"></td>
-                <td class="column7 style2 s">DELIVERY</td>
-                <td class="column8 style6 s style6" colspan="2">UBLIMATION</td>
-                <td class="column10 style6 s style6" colspan="3">DIPERSE</td>
-                <td class="column13 style2 s">REAKTIF</td>
-                <td class="column14 style2 s">PIGMENT</td>
-                <td class="column15 style2 s">SDH CELUP</td>
-                <td class="column16 style3 s">BELUM CELUP</td>
-              </tr>
-              <tr class="row99">
-                <td class="column0 style4 s">JAN</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIjan['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null"></td>
-                <td class="column7 style4 s">JAN</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row100">
-                <td class="column0 style4 s">JAN</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIjan['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null"></td>
-                <td class="column7 style4 s">FEB</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row101">
-                <td class="column0 style4 s">JAN</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIIjan['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null"></td>
-                <td class="column7 style4 s">MAR</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row102">
-                <td class="column0 style4 s">JAN</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVjan['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null"></td>
-                <td class="column7 style4 s">APR</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row103">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguIjan['TOTAL'] + $rowdb2_book_mingguIIjan['TOTAL'] + $rowdb2_book_mingguIIIjan['TOTAL'] + $rowdb2_book_mingguIVjan['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">MEI</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-            <!-- JANUARI -->
-            <!-- FEBRUARI -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguIfeb   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-02-01' AND '$thn-02-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIfeb   = db2_fetch_assoc($book_mingguIfeb);
-                $book_mingguIIfeb  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-02-08' AND '$thn-02-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIfeb  = db2_fetch_assoc($book_mingguIIfeb);
-                $book_mingguIIIfeb = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-02-15' AND '$thn-02-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIIfeb = db2_fetch_assoc($book_mingguIIIfeb);
-                $book_mingguIVfeb  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-02-22' AND '$thn-02-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVfeb  = db2_fetch_assoc($book_mingguIVfeb);
-              ?>
-              <tr class="row104">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-                <td class="column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">JUN</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row105">
-                <td class="column0 style4 s">FEB</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIfeb['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">JUL</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row106">
-                <td class="column0 style4 s">FEB</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIfeb['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">AGS</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row107">
-                <td class="column0 style4 s">FEB</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIIfeb['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">SEPT</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row108">
-                <td class="column0 style4 s">FEB</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVfeb['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">OKT</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row109">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguIfeb['TOTAL'] + $rowdb2_book_mingguIIfeb['TOTAL'] + $rowdb2_book_mingguIIIfeb['TOTAL'] + $rowdb2_book_mingguIVfeb['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">NOV</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-            <!-- FEBRUARI -->
-            <!-- MARET -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguImar   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-03-01' AND '$thn-03-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguImar   = db2_fetch_assoc($book_mingguImar);
-                $book_mingguIImar  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-03-08' AND '$thn-03-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIImar  = db2_fetch_assoc($book_mingguIImar);
-                $book_mingguIIImar = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-03-15' AND '$thn-03-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIImar = db2_fetch_assoc($book_mingguIIImar);
-                $book_mingguIVmar  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-03-22' AND '$thn-03-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVmar  = db2_fetch_assoc($book_mingguIVmar);
-              ?>
-              <tr class="row110">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-                <td class="column9 style16 null"></td>
-                <td class="column7 style4 s">DES</td>
-                <td class="column8 style10 null style10" colspan="2"></td>
-                <td class="column10 style10 null style10" colspan="3"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row111">
-                <td class="column0 style4 s">MAR</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguImar['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null"></td>
-                <td class="column7 style2 s">TOTAL</td>
-                <td class="column8 style6 null style6" colspan="2"></td>
-                <td class="column10 style6 null style6" colspan="3"></td>
-                <td class="column13 style2 null"></td>
-                <td class="column14 style2 null"></td>
-                <td class="column15 style2 null"></td>
-                <td class="column16 style3 null"></td>
-              </tr>
-              <tr class="row112">
-                <td class="column0 style4 s">MAR</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIImar['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null"></td>
-                <td class="column7 style21 s style21" colspan="10">YARN DYE</td>
-              </tr>
-              <tr class="row113">
-                <td class="column0 style4 s">MAR</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIImar['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style2 s">DELIVERY</td>
-                <td class="column8 style6 s style6" colspan="5">TOTAL ORDER</td>
-                <td class="column13 style6 s style6" colspan="2">SUDAH CELUP</td>
-                <td class="column15 style3 s">BELUM CELUP</td>                  
-              </tr>
-              <tr class="row114">
-                <td class="column0 style4 s">MAR</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVmar['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">JAN</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row115">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguImar['TOTAL']+$rowdb2_book_mingguIImar['TOTAL']+$rowdb2_book_mingguIIImar['TOTAL']+$rowdb2_book_mingguIVmar['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">FEB</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-            <!-- MARET -->
-            <!-- APRIL -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguIapr   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-04-01' AND '$thn-04-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIapr   = db2_fetch_assoc($book_mingguIapr);
-                $book_mingguIIapr  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-04-08' AND '$thn-04-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIapr  = db2_fetch_assoc($book_mingguIIapr);
-                $book_mingguIIIapr = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-04-15' AND '$thn-04-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIIapr = db2_fetch_assoc($book_mingguIIIapr);
-                $book_mingguIVapr  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-04-22' AND '$thn-04-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVapr  = db2_fetch_assoc($book_mingguIVapr);
-                
-              ?>
-              <tr class="row116">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">MAR</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row117">
-                <td class="column0 style4 s">APR</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIapr['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">APR</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row118">
-                <td class="column0 style4 s">APR</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIapr['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">MEI</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row119">
-                <td class="column0 style4 s">APR</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIIapr['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">JUN</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row120">
-                <td class="column0 style4 s">APR</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVapr['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">JUL</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row121">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguIapr['TOTAL']+$rowdb2_book_mingguIIapr['TOTAL']+$rowdb2_book_mingguIIIapr['TOTAL']+$rowdb2_book_mingguIVapr['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">AGS</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-            <!-- APRIL -->
-            <!-- MEI -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguImei   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-05-01' AND '$thn-05-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguImei   = db2_fetch_assoc($book_mingguImei);
-                $book_mingguIImei  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-05-08' AND '$thn-05-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIImei  = db2_fetch_assoc($book_mingguIImei);
-                $book_mingguIIImei = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-05-15' AND '$thn-05-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIImei = db2_fetch_assoc($book_mingguIIImei);
-                $book_mingguIVmei  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-05-22' AND '$thn-05-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVmei  = db2_fetch_assoc($book_mingguIVmei);              
-              ?>
-              <tr class="row122">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">SEPT</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row123">
-                <td class="column0 style4 s">MEI</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguImei['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">OKT</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row124">
-                <td class="column0 style4 s">MEI</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIImei['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">NOV</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row125">
-                <td class="column0 style4 s">MEI</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIImei['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">DES</td>
-                <td class="column8 style10 null style10" colspan="5"></td>
-                <td class="column13 style10 null style10" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row126">
-                <td class="column0 style4 s">MEI</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVmei['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class="column9 style16 null">&nbsp;</td>
-                <td class="column7 style2 s">TOTAL</td>
-                <td class="column8 style6 null style6" colspan="5"></td>
-                <td class="column13 style7 null style9" colspan="2"></td>
-                <td class="column15 style3 null"></td>
-              </tr>
-              <tr class="row127">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguImei['TOTAL']+$rowdb2_book_mingguIImei['TOTAL']+$rowdb2_book_mingguIIImei['TOTAL']+$rowdb2_book_mingguIVmei['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style23 s style23" colspan="9">GANTI KAIN INTERNAL + EXTERNAL + RETUR</td>
-              </tr>
-            <!-- MEI -->
-            <!-- JUNI -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguIjun   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-06-01' AND '$thn-06-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIjun   = db2_fetch_assoc($book_mingguIjun);
-                $book_mingguIIjun  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-06-08' AND '$thn-06-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIjun  = db2_fetch_assoc($book_mingguIIjun);
-                $book_mingguIIIjun = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-06-15' AND '$thn-06-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIIjun = db2_fetch_assoc($book_mingguIIIjun);
-                $book_mingguIVjun  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-06-22' AND '$thn-06-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVjun  = db2_fetch_assoc($book_mingguIVjun);              
-              ?>
-              <tr class="row128">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style2 s">BULAN</td>
-                <td class="column8 style2 s">INTERNAL</td>
-                <td class="column9 style6 s style6" colspan="4">EXTERNAL</td>
-                <td class="column13 style24 s">TOTAL IN + EXT</td>
-                <td class="column14 style2 s">OPER WARNA</td>
-                <td class="column15 style2 s">RETUR</td>
-              </tr>
-              <tr class="row129">
-                <td class="column0 style4 s">JUN</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIjun['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">JAN</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row130">
-                <td class="column0 style4 s">JUN</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIjun['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">FEB</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row131">
-                <td class="column0 style4 s">JUN</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIIjun['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">MAR</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row132">
-                <td class="column0 style4 s">JUN</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVjun['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">APR</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row133">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguIjun['TOTAL']+$rowdb2_book_mingguIIjun['TOTAL']+$rowdb2_book_mingguIIIjun['TOTAL']+$rowdb2_book_mingguIVjun['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">MEI</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-            <!-- JUNI -->
-            <!-- JULI -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguIjul   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-07-01' AND '$thn-07-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIjul   = db2_fetch_assoc($book_mingguIjul);
-                $book_mingguIIjul  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-07-08' AND '$thn-07-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIjul  = db2_fetch_assoc($book_mingguIIjul);
-                $book_mingguIIIjul = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-07-15' AND '$thn-07-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIIjul = db2_fetch_assoc($book_mingguIIIjul);
-                $book_mingguIVjul  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-07-22' AND '$thn-07-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVjul  = db2_fetch_assoc($book_mingguIVjul);
-              ?>
-              <tr class="row134">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">JUN</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row135">
-                <td class="column0 style4 s">JUL</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIjul['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">JUL</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row136">
-                <td class="column0 style4 s">JUL</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIjul['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">AGS</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row137">
-                <td class="column0 style4 s">JUL</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIIjul['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">SEPT</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row138">
-                <td class="column0 style4 s">JUL</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVjul['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">OKT</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row139">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguIjul['TOTAL']+$rowdb2_book_mingguIIjul['TOTAL']+$rowdb2_book_mingguIIIjul['TOTAL']+$rowdb2_book_mingguIVjul['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">NOV</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-            <!-- JULI -->
-            <!-- AGUSTUS -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguIags   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-08-01' AND '$thn-08-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIags   = db2_fetch_assoc($book_mingguIags);
-                $book_mingguIIags  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-08-08' AND '$thn-08-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIags  = db2_fetch_assoc($book_mingguIIags);
-                $book_mingguIIIags = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-08-15' AND '$thn-08-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIIags = db2_fetch_assoc($book_mingguIIIags);
-                $book_mingguIVags  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-08-22' AND '$thn-08-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVags  = db2_fetch_assoc($book_mingguIVags);
-              ?>
-              <tr class="row140">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 s">DES</td>
-                <td class="column8 style4 null"></td>
-                <td class="column9 style10 null style10" colspan="4"></td>
-                <td class="column13 style4 null"></td>
-                <td class="column14 style4 null"></td>
-                <td class="column15 style4 null"></td>
-              </tr>
-              <tr class="row141">
-                <td class="column0 style4 s">AGS</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIags['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row142">
-                <td class="column0 style4 s">AGS</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIags['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style4 null"></td>
-                <td class="column8 style25 s style25" colspan="3">BELUM CELUP</td>
-                <td class="column11 style25 s style25" colspan="3">KETERANGAN</td>
-                <td class="column14 style5 null"></td>
-                <td class="column15 style5 null"></td>
-              </tr>
-              <tr class="row143">
-                <td class="column0 style4 s">AGS</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIIags['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style26 s">LOKAL</td>
-                <td class="column8 style27 null style29" colspan="3"></td>
-                <td class="column11 style27 null style29" colspan="3"></td>
-              </tr>
-              <tr class="row144">
-                <td class="column0 style4 s">AGS</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVags['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style26 s">EXPORT</td>
-                <td class="column8 style27 null style29" colspan="3"></td>
-                <td class="column11 style27 null style29" colspan="3"></td>
-              </tr>
-              <tr class="row145">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguIags['TOTAL']+$rowdb2_book_mingguIIags['TOTAL']+$rowdb2_book_mingguIIIags['TOTAL']+$rowdb2_book_mingguIVags['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style26 s">BOOKING</td>
-                <td class="column8 style27 null style29" colspan="3"></td>
-                <td class="column11 style30 null style30" colspan="3"></td>
-              </tr>
-            <!-- AGUSTUS -->
-            <!-- SEPTEMBER -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguIsep   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-09-01' AND '$thn-09-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIsep   = db2_fetch_assoc($book_mingguIsep);
-                $book_mingguIIsep  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-09-08' AND '$thn-09-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIsep  = db2_fetch_assoc($book_mingguIIsep);
-                $book_mingguIIIsep = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-09-15' AND '$thn-09-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIIsep = db2_fetch_assoc($book_mingguIIIsep);
-                $book_mingguIVsep  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-09-22' AND '$thn-09-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVsep  = db2_fetch_assoc($book_mingguIVsep);
-              ?>
-              <tr class="row146">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-                <td class=" column9 style16 null">&nbsp;</td>
-                <td class="column7 style31 s">TOTAL</td>
-                <td class="column8 style32 null style32" colspan="3"></td>
-                <td class="column11 style15 null"></td>
-                <td class="column12 style15 null"></td>
-              </tr>
-              <tr class="row147">
-                <td class="column0 style4 s">SEPT</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIsep['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row148">
-                <td class="column0 style4 s">SEPT</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIsep['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row149">
-                <td class="column0 style4 s">SEPT</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIIsep['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row150">
-                <td class="column0 style4 s">SEPT</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVsep['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row151">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguIsep['TOTAL']+$rowdb2_book_mingguIIsep['TOTAL']+$rowdb2_book_mingguIIIsep['TOTAL']+$rowdb2_book_mingguIVsep['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-            <!-- SEPTEMBER -->
-            <!-- OKTOBER -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguIokt   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-01' AND '$thn-10-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIokt   = db2_fetch_assoc($book_mingguIokt);
-                $book_mingguIIokt  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-08' AND '$thn-10-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIokt  = db2_fetch_assoc($book_mingguIIokt);
-                $book_mingguIIIokt = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-15' AND '$thn-10-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIIokt = db2_fetch_assoc($book_mingguIIIokt);
-                $book_mingguIVokt  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-22' AND '$thn-10-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVokt  = db2_fetch_assoc($book_mingguIVokt);
-              ?>
-              <tr class="row152">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-              </tr>
-              <tr class="row153">
-                <td class="column0 style4 s">OKT</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIokt['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row154">
-                <td class="column0 style4 s">OKT</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIokt['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row155">
-                <td class="column0 style4 s">OKT</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIIokt['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row156">
-                <td class="column0 style4 s">OKT</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVokt['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row157">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguIokt['TOTAL']+$rowdb2_book_mingguIIokt['TOTAL']+$rowdb2_book_mingguIIIokt['TOTAL']+$rowdb2_book_mingguIVokt['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-            <!-- OKTOBER -->
-            <!-- NOVEMBER -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguInov   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-01' AND '$thn-10-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguInov   = db2_fetch_assoc($book_mingguInov);
-                $book_mingguIInov  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-08' AND '$thn-10-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIInov  = db2_fetch_assoc($book_mingguIInov);
-                $book_mingguIIInov = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-15' AND '$thn-10-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIInov = db2_fetch_assoc($book_mingguIIInov);
-                $book_mingguIVnov  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-10-22' AND '$thn-10-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVnov  = db2_fetch_assoc($book_mingguIVnov);
-              ?>
-              <tr class="row158">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-              </tr>
-              <tr class="row159">
-                <td class="column0 style4 s">NOV</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguInov['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row160">
-                <td class="column0 style4 s">DEC</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIInov['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row161">
-                <td class="column0 style4 s">JAN</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIInov['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row162">
-                <td class="column0 style4 s">FEB</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVnov['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row163">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguInov['TOTAL']+$rowdb2_book_mingguIInov['TOTAL']+$rowdb2_book_mingguIIInov['TOTAL']+$rowdb2_book_mingguIVnov['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-            <!-- NOVEMBER -->
-            <!-- DESEMBER -->
-              <?php 
-                ini_set("error_reporting", 1);
-                session_start();
-                require_once "koneksi.php";
-                $book_mingguIdes   = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-12-01' AND '$thn-12-07'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIdes   = db2_fetch_assoc($book_mingguIdes);
-                $book_mingguIIdes  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-12-08' AND '$thn-12-14'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIdes  = db2_fetch_assoc($book_mingguIIdes);
-                $book_mingguIIIdes = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-12-15' AND '$thn-12-21'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIIIdes = db2_fetch_assoc($book_mingguIIIdes);
-                $book_mingguIVdes  = db2_exec($conn1,"SELECT sum( p.USERPRIMARYQUANTITY ) TOTAL FROM PRODUCTIONDEMAND p LEFT JOIN SALESORDER s ON s.CODE = p.PROJECTCODE WHERE p.ITEMTYPEAFICODE = 'KGF' AND s.REQUIREDDUEDATE BETWEEN '$thn-12-22' AND '$thn-12-31'AND  p.ORIGDLVSALORDLINESALORDCNTCOD = 'OPEN' ", array('cursor'=>DB2_SCROLLABLE)); $rowdb2_book_mingguIVdes  = db2_fetch_assoc($book_mingguIVdes);
-              ?>
-              <tr class="row164">
-                <td class="column0 style6 s style6" colspan="3">DELIVERY</td>
-                <td class="column3 style2 s">(BRUTO)</td>
-                <td class="column4 style2 s">SDH CELUP</td>
-                <td class="column5 style3 s">BLM CELUP</td>
-              </tr>
-              <tr class="row165">
-                <td class="column0 style4 s">DES</td>
-                <td class="column1 style4 s">I</td>
-                <td class="column2 style14 s">1 - 7</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIdes['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row166">
-                <td class="column0 style4 s">DES</td>
-                <td class="column1 style4 s">II</td>
-                <td class="column2 style14 s">8 - 14</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIdes['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row167">
-                <td class="column0 style4 s">DES</td>
-                <td class="column1 style4 s">III</td>
-                <td class="column2 style14 s">15 - 21</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIIIdes['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row168">
-                <td class="column0 style4 s">DES</td>
-                <td class="column1 style4 s">IV</td>
-                <td class="column2 style14 s">22 - 31</td>
-                <td class="column3 style4 null"><?= number_format($rowdb2_book_mingguIVdes['TOTAL'],0); ?></td>
-                <td class="column4 style4 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-              <tr class="row169">
-                <td class="column0 style6 s style6" colspan="3">TOTAL</td>
-                <td class="column3 style2 null"><?= number_format($rowdb2_book_mingguIdes['TOTAL']+$rowdb2_book_mingguIIdes['TOTAL']+$rowdb2_book_mingguIIIdes['TOTAL']+$rowdb2_book_mingguIVdes['TOTAL'],0); ?></td>
-                <td class="column4 style2 null"></td>
-                <td class="column5 style3 null"></td>
-              </tr>
-            <!-- DESEMBER -->
-          <!-- LAPORAN BOOKING & PRINTING -->
-        </tbody>
-    </table>
-  </body>
-</html>
+          // EXPORT
+            $qDesThnSebelumnyaExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnSebelumnyaExport = db2_exec($conn1, $qDesThnSebelumnyaExport);
+            $rowDesThnSebelumnyaExport    = db2_fetch_assoc($resultDesThnSebelumnyaExport);
+            $dataDesThnSebelumnyaExport   = $rowDesThnSebelumnyaExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qDesThnSebelumnyaLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnSebelumnyaLokalExport_fkf = db2_exec($conn1, $qDesThnSebelumnyaLokalExport_fkf);
+            $rowDesThnSebelumnyaLokalExport_fkf    = db2_fetch_assoc($resultDesThnSebelumnyaLokalExport_fkf);
+            $dataDesThnSebelumnyaLokalExport_fkf   = $rowDesThnSebelumnyaLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qDesThnSebelumnyaBooking = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnSebelumnyaBooking = db2_exec($conn1, $qDesThnSebelumnyaBooking);
+            $rowDesThnSebelumnyaBooking    = db2_fetch_assoc($resultDesThnSebelumnyaBooking);
+            $dataDesThnSebelumnyaBooking   = $rowDesThnSebelumnyaBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qDesThnSebelumnyaJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnSebelumnyaJasa = db2_exec($conn1, $qDesThnSebelumnyaJasa);
+            $rowDesThnSebelumnyaJasa    = db2_fetch_assoc($resultDesThnSebelumnyaJasa);
+            $dataDesThnSebelumnyaJasa   = $rowDesThnSebelumnyaJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qDesThnSebelumnyaPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnSebelumnyaPrt = db2_exec($conn1, $qDesThnSebelumnyaPrt);
+            $rowDesThnSebelumnyaPrt    = db2_fetch_assoc($resultDesThnSebelumnyaPrt);
+            $dataDesThnSebelumnyaPrt   = $rowDesThnSebelumnyaPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_DesThnSebelumnya = $dataDesThnSebelumnyaLokal + $dataDesThnSebelumnyaExport + $dataDesThnSebelumnyaLokalExport_fkf;
+            $data_total_DesThnSebelumnya = $total_DesThnSebelumnya;
+          // TOTAL
+
+          // %LOKAL
+            $a_DesThnSebelumnya = $dataDesThnSebelumnyaLokal + $dataDesThnSebelumnyaLokalExport_fkf + $dataDesThnSebelumnyaPrt;
+            $b_DesThnSebelumnya = $data_total_DesThnSebelumnya;
+            $data_PersentageLokal_DesThnSebelumnya  = ROUND($a_DesThnSebelumnya / $b_DesThnSebelumnya * 100);
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_DesThnSebelumnya  = ROUND($dataDesThnSebelumnyaExport / $data_total_DesThnSebelumnya * 100);
+          // %EXPORT
+        ?>
+        <tr>
+          <td>DESEMBER '<?= substr($tahunSebelumnya, 2); ?></td>
+          <td><?= number_format($dataDesThnSebelumnyaLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_DesThnSebelumnya); ?> %</td>
+          <td><?= number_format($dataDesThnSebelumnyaExport); ?></td>
+          <td><?= number_format($data_PersentageExport_DesThnSebelumnya); ?> %</td>
+          <td><?= number_format($dataDesThnSebelumnyaLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_DesThnSebelumnya); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataDesThnSebelumnyaBooking); ?></td>
+          <td><?= number_format($dataDesThnSebelumnyaJasa); ?></td>
+          <td><?= number_format($dataDesThnSebelumnyaPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- DESEMBER 'TAHUN SEBELUMNYA -->
+
+      <!-- JANUARI -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalJan     = $tahunInput . '-01-01';
+          $tglAkhirJan    = $tahunInput . '-01-31';
+
+          // LOKAL
+            $qJanThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJanThnIniLokal = db2_exec($conn1, $qJanThnIniLokal);
+            $rowJanThnIniLokal    = db2_fetch_assoc($resultJanThnIniLokal);
+            $dataJanThnIniLokal   = $rowJanThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qJanThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJanThnIniExport = db2_exec($conn1, $qJanThnIniExport);
+            $rowJanThnIniExport    = db2_fetch_assoc($resultJanThnIniExport);
+            $dataJanThnIniExport   = $rowJanThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qJanThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJanThnIniLokalExport_fkf = db2_exec($conn1, $qJanThnIniLokalExport_fkf);
+            $rowJanThnIniLokalExport_fkf    = db2_fetch_assoc($resultJanThnIniLokalExport_fkf);
+            $dataJanThnIniLokalExport_fkf   = $rowJanThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qJanThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJanThnIniBooking = db2_exec($conn1, $qJanThnIniBooking);
+            $rowJanThnIniBooking    = db2_fetch_assoc($resultJanThnIniBooking);
+            $dataJanThnIniBooking   = $rowJanThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qJanThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJanThnIniJasa = db2_exec($conn1, $qJanThnIniJasa);
+            $rowJanThnIniJasa    = db2_fetch_assoc($resultJanThnIniJasa);
+            $dataJanThnIniJasa   = $rowJanThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qJanThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJanThnIniPrt = db2_exec($conn1, $qJanThnIniPrt);
+            $rowJanThnIniPrt    = db2_fetch_assoc($resultJanThnIniPrt);
+            $dataJanThnIniPrt   = $rowJanThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_JanThnIni = $dataJanThnIniLokal + $dataJanThnIniExport + $dataJanThnIniLokalExport_fkf;
+            $data_total_JanThnIni = $total_JanThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_JanThnIni = $dataJanThnIniLokal + $dataJanThnIniLokalExport_fkf + $dataJanThnIniPrt;
+            $b_JanThnIni = $data_total_JanThnIni;
+            $data_PersentageLokal_JanThnIni = $b_JanThnIni == 0 ? 0 : ($a_JanThnIni / $b_JanThnIni * 100);
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_JanThnIni = $data_total_JanThnIni == 0 ? 0 : ($dataJanThnIniExport / $data_total_JanThnIni * 100);
+          // %EXPORT
+        ?>
+        <tr>
+          <td>JANUARI</td>
+          <td><?= number_format($dataJanThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_JanThnIni); ?> %</td>
+          <td><?= number_format($dataJanThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_JanThnIni); ?> %</td>
+          <td><?= number_format($dataJanThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_JanThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataJanThnIniJasa); ?></td>
+          <td><?= number_format($dataJanThnIniBooking); ?></td>
+          <td><?= number_format($dataJanThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- JANUARI -->
+
+      <!-- FEBRUARI -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalFeb     = $tahunInput . '-02-01';
+          $tglAkhirFeb    = $tahunInput . '-02-28';
+
+          // LOKAL
+            $qFebThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultFebThnIniLokal = db2_exec($conn1, $qFebThnIniLokal);
+            $rowFebThnIniLokal    = db2_fetch_assoc($resultFebThnIniLokal);
+            $dataFebThnIniLokal   = $rowFebThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qFebThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultFebThnIniExport = db2_exec($conn1, $qFebThnIniExport);
+            $rowFebThnIniExport    = db2_fetch_assoc($resultFebThnIniExport);
+            $dataFebThnIniExport   = $rowFebThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qFebThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultFebThnIniLokalExport_fkf = db2_exec($conn1, $qFebThnIniLokalExport_fkf);
+            $rowFebThnIniLokalExport_fkf    = db2_fetch_assoc($resultFebThnIniLokalExport_fkf);
+            $dataFebThnIniLokalExport_fkf   = $rowFebThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qFebThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultFebThnIniBooking = db2_exec($conn1, $qFebThnIniBooking);
+            $rowFebThnIniBooking    = db2_fetch_assoc($resultFebThnIniBooking);
+            $dataFebThnIniBooking   = $rowFebThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qFebThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultFebThnIniJasa = db2_exec($conn1, $qFebThnIniJasa);
+            $rowFebThnIniJasa    = db2_fetch_assoc($resultFebThnIniJasa);
+            $dataFebThnIniJasa   = $rowFebThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qFebThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultFebThnIniPrt = db2_exec($conn1, $qFebThnIniPrt);
+            $rowFebThnIniPrt    = db2_fetch_assoc($resultFebThnIniPrt);
+            $dataFebThnIniPrt   = $rowFebThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_FebThnIni = $dataFebThnIniLokal + $dataFebThnIniExport + $dataFebThnIniLokalExport_fkf;
+            $data_total_FebThnIni = $total_FebThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_FebThnIni = $dataFebThnIniLokal + $dataFebThnIniLokalExport_fkf + $dataFebThnIniPrt;
+            $b_FebThnIni = $data_total_FebThnIni;
+            $data_PersentageLokal_FebThnIni = $b_FebThnIni == 0 ? 0 : ($a_FebThnIni / $b_FebThnIni * 100);
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_FebThnIni = $data_total_FebThnIni == 0 ? 0 : ($dataFebThnIniExport / $data_total_FebThnIni * 100);
+          // %EXPORT
+        ?>
+        <tr>
+          <td>FEBRUARI</td>
+          <td><?= number_format($dataFebThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_FebThnIni); ?> %</td>
+          <td><?= number_format($dataFebThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_FebThnIni); ?> %</td>
+          <td><?= number_format($dataFebThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_FebThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataFebThnIniJasa); ?></td>
+          <td><?= number_format($dataFebThnIniBooking); ?></td>
+          <td><?= number_format($dataFebThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- FEBRUARI -->
+      
+      <!-- MARET -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalMar     = $tahunInput . '-03-01';
+          $tglAkhirMar    = $tahunInput . '-03-31';
+
+          // LOKAL
+            $qMarThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMarThnIniLokal = db2_exec($conn1, $qMarThnIniLokal);
+            $rowMarThnIniLokal    = db2_fetch_assoc($resultMarThnIniLokal);
+            $dataMarThnIniLokal   = $rowMarThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qMarThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMarThnIniExport = db2_exec($conn1, $qMarThnIniExport);
+            $rowMarThnIniExport    = db2_fetch_assoc($resultMarThnIniExport);
+            $dataMarThnIniExport   = $rowMarThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qMarThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMarThnIniLokalExport_fkf = db2_exec($conn1, $qMarThnIniLokalExport_fkf);
+            $rowMarThnIniLokalExport_fkf    = db2_fetch_assoc($resultMarThnIniLokalExport_fkf);
+            $dataMarThnIniLokalExport_fkf   = $rowMarThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qMarThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMarThnIniBooking = db2_exec($conn1, $qMarThnIniBooking);
+            $rowMarThnIniBooking    = db2_fetch_assoc($resultMarThnIniBooking);
+            $dataMarThnIniBooking   = $rowMarThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qMarThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMarThnIniJasa = db2_exec($conn1, $qMarThnIniJasa);
+            $rowMarThnIniJasa    = db2_fetch_assoc($resultMarThnIniJasa);
+            $dataMarThnIniJasa   = $rowMarThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qMarThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMarThnIniPrt = db2_exec($conn1, $qMarThnIniPrt);
+            $rowMarThnIniPrt    = db2_fetch_assoc($resultMarThnIniPrt);
+            $dataMarThnIniPrt   = $rowMarThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_MarThnIni = $dataMarThnIniLokal + $dataMarThnIniExport + $dataMarThnIniLokalExport_fkf;
+            $data_total_MarThnIni = $total_MarThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_MarThnIni = $dataMarThnIniLokal + $dataMarThnIniLokalExport_fkf + $dataMarThnIniPrt;
+            $b_MarThnIni = $data_total_MarThnIni;
+            $data_PersentageLokal_MarThnIni = $b_MarThnIni == 0 ? 0 : ($a_MarThnIni / $b_MarThnIni * 100);
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_MarThnIni = $data_total_MarThnIni == 0 ? 0 : ($dataMarThnIniExport / $data_total_MarThnIni * 100);
+          // %EXPORT
+        ?>
+        <tr>
+          <td>MARET</td>
+          <td><?= number_format($dataMarThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_MarThnIni); ?> %</td>
+          <td><?= number_format($dataMarThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_MarThnIni); ?> %</td>
+          <td><?= number_format($dataMarThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_MarThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataMarThnIniJasa); ?></td>
+          <td><?= number_format($dataMarThnIniBooking); ?></td>
+          <td><?= number_format($dataMarThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- MARET -->
+      
+      <!-- APRIL -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalApr     = $tahunInput . '-04-01';
+          $tglAkhirApr    = $tahunInput . '-04-30';
+
+          // LOKAL
+            $qAprThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAprThnIniLokal = db2_exec($conn1, $qAprThnIniLokal);
+            $rowAprThnIniLokal    = db2_fetch_assoc($resultAprThnIniLokal);
+            $dataAprThnIniLokal   = $rowAprThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qAprThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAprThnIniExport = db2_exec($conn1, $qAprThnIniExport);
+            $rowAprThnIniExport    = db2_fetch_assoc($resultAprThnIniExport);
+            $dataAprThnIniExport   = $rowAprThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qAprThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAprThnIniLokalExport_fkf = db2_exec($conn1, $qAprThnIniLokalExport_fkf);
+            $rowAprThnIniLokalExport_fkf    = db2_fetch_assoc($resultAprThnIniLokalExport_fkf);
+            $dataAprThnIniLokalExport_fkf   = $rowAprThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qAprThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAprThnIniBooking = db2_exec($conn1, $qAprThnIniBooking);
+            $rowAprThnIniBooking    = db2_fetch_assoc($resultAprThnIniBooking);
+            $dataAprThnIniBooking   = $rowAprThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qAprThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAprThnIniJasa = db2_exec($conn1, $qAprThnIniJasa);
+            $rowAprThnIniJasa    = db2_fetch_assoc($resultAprThnIniJasa);
+            $dataAprThnIniJasa   = $rowAprThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qAprThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAprThnIniPrt = db2_exec($conn1, $qAprThnIniPrt);
+            $rowAprThnIniPrt    = db2_fetch_assoc($resultAprThnIniPrt);
+            $dataAprThnIniPrt   = $rowAprThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_AprThnIni = $dataAprThnIniLokal + $dataAprThnIniExport + $dataAprThnIniLokalExport_fkf;
+            $data_total_AprThnIni = $total_AprThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_AprThnIni = $dataAprThnIniLokal + $dataAprThnIniLokalExport_fkf + $dataAprThnIniPrt;
+            $b_AprThnIni = $data_total_AprThnIni;
+            $data_PersentageLokal_AprThnIni = $b_AprThnIni == 0 ? 0 : ($a_AprThnIni / $b_AprThnIni * 100);
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_AprThnIni = $data_total_AprThnIni == 0 ? 0 : ($dataAprThnIniExport / $data_total_AprThnIni * 100);
+          // %EXPORT
+        ?>
+        <tr>
+          <td>APRIL</td>
+          <td><?= number_format($dataAprThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_AprThnIni); ?> %</td>
+          <td><?= number_format($dataAprThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_AprThnIni); ?> %</td>
+          <td><?= number_format($dataAprThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_AprThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataAprThnIniJasa); ?></td>
+          <td><?= number_format($dataAprThnIniBooking); ?></td>
+          <td><?= number_format($dataAprThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- APRIL -->
+      
+      <!-- MEI -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalMei     = $tahunInput . '-05-01';
+          $tglAkhirMei    = $tahunInput . '-05-31';
+
+          // LOKAL
+            $qMeiThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMeiThnIniLokal = db2_exec($conn1, $qMeiThnIniLokal);
+            $rowMeiThnIniLokal    = db2_fetch_assoc($resultMeiThnIniLokal);
+            $dataMeiThnIniLokal   = $rowMeiThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qMeiThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMeiThnIniExport = db2_exec($conn1, $qMeiThnIniExport);
+            $rowMeiThnIniExport    = db2_fetch_assoc($resultMeiThnIniExport);
+            $dataMeiThnIniExport   = $rowMeiThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qMeiThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMeiThnIniLokalExport_fkf = db2_exec($conn1, $qMeiThnIniLokalExport_fkf);
+            $rowMeiThnIniLokalExport_fkf    = db2_fetch_assoc($resultMeiThnIniLokalExport_fkf);
+            $dataMeiThnIniLokalExport_fkf   = $rowMeiThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qMeiThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMeiThnIniBooking = db2_exec($conn1, $qMeiThnIniBooking);
+            $rowMeiThnIniBooking    = db2_fetch_assoc($resultMeiThnIniBooking);
+            $dataMeiThnIniBooking   = $rowMeiThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qMeiThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMeiThnIniJasa = db2_exec($conn1, $qMeiThnIniJasa);
+            $rowMeiThnIniJasa    = db2_fetch_assoc($resultMeiThnIniJasa);
+            $dataMeiThnIniJasa   = $rowMeiThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qMeiThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMeiThnIniPrt = db2_exec($conn1, $qMeiThnIniPrt);
+            $rowMeiThnIniPrt    = db2_fetch_assoc($resultMeiThnIniPrt);
+            $dataMeiThnIniPrt   = $rowMeiThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_MeiThnIni = $dataMeiThnIniLokal + $dataMeiThnIniExport + $dataMeiThnIniLokalExport_fkf;
+            $data_total_MeiThnIni = $total_MeiThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_MeiThnIni = $dataMeiThnIniLokal + $dataMeiThnIniLokalExport_fkf + $dataMeiThnIniPrt;
+            $b_MeiThnIni = $data_total_MeiThnIni;
+            $data_PersentageLokal_MeiThnIni = $b_MeiThnIni == 0 ? 0 : ($a_MeiThnIni / $b_MeiThnIni * 100);
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_MeiThnIni = $data_total_MeiThnIni == 0 ? 0 : ($dataMeiThnIniExport / $data_total_MeiThnIni * 100);
+          // %EXPORT
+        ?>
+        <tr>
+          <td>MEI</td>
+          <td><?= number_format($dataMeiThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_MeiThnIni); ?> %</td>
+          <td><?= number_format($dataMeiThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_MeiThnIni); ?> %</td>
+          <td><?= number_format($dataMeiThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_MeiThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataMeiThnIniJasa); ?></td>
+          <td><?= number_format($dataMeiThnIniBooking); ?></td>
+          <td><?= number_format($dataMeiThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- MEI -->
+      
+      <!-- JUNI -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalJun     = $tahunInput . '-06-01';
+          $tglAkhirJun    = $tahunInput . '-06-30';
+
+          // LOKAL
+            $qJunThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJunThnIniLokal = db2_exec($conn1, $qJunThnIniLokal);
+            $rowJunThnIniLokal    = db2_fetch_assoc($resultJunThnIniLokal);
+            $dataJunThnIniLokal   = $rowJunThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qJunThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJunThnIniExport = db2_exec($conn1, $qJunThnIniExport);
+            $rowJunThnIniExport    = db2_fetch_assoc($resultJunThnIniExport);
+            $dataJunThnIniExport   = $rowJunThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qJunThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJunThnIniLokalExport_fkf = db2_exec($conn1, $qJunThnIniLokalExport_fkf);
+            $rowJunThnIniLokalExport_fkf    = db2_fetch_assoc($resultJunThnIniLokalExport_fkf);
+            $dataJunThnIniLokalExport_fkf   = $rowJunThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qJunThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJunThnIniBooking = db2_exec($conn1, $qJunThnIniBooking);
+            $rowJunThnIniBooking    = db2_fetch_assoc($resultJunThnIniBooking);
+            $dataJunThnIniBooking   = $rowJunThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qJunThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJunThnIniJasa = db2_exec($conn1, $qJunThnIniJasa);
+            $rowJunThnIniJasa    = db2_fetch_assoc($resultJunThnIniJasa);
+            $dataJunThnIniJasa   = $rowJunThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qJunThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJunThnIniPrt = db2_exec($conn1, $qJunThnIniPrt);
+            $rowJunThnIniPrt    = db2_fetch_assoc($resultJunThnIniPrt);
+            $dataJunThnIniPrt   = $rowJunThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_JunThnIni = $dataJunThnIniLokal + $dataJunThnIniExport + $dataJunThnIniLokalExport_fkf;
+            $data_total_JunThnIni = $total_JunThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_JunThnIni = $dataJunThnIniLokal + $dataJunThnIniLokalExport_fkf + $dataJunThnIniPrt;
+            $b_JunThnIni = $data_total_JunThnIni;
+            $data_PersentageLokal_JunThnIni = $data_total_JulThb_JunThnIninIni == 0 ? 0 : ($a_JunThnIni / $b_JunThnIni * 100);
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_JunThnIni = $data_total_JunThnIni == 0 ? 0 : ($dataJunThnIniExport / $data_total_JunThnIni * 100);
+          // %EXPORT
+        ?>
+        <tr>
+          <td>JUNI</td>
+          <td><?= number_format($dataJunThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_JunThnIni); ?> %</td>
+          <td><?= number_format($dataJunThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_JunThnIni); ?> %</td>
+          <td><?= number_format($dataJunThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_JunThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataJunThnIniJasa); ?></td>
+          <td><?= number_format($dataJunThnIniBooking); ?></td>
+          <td><?= number_format($dataJunThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- JUNI -->
+      
+      <!-- JULI -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalJul     = $tahunInput . '-07-01';
+          $tglAkhirJul    = $tahunInput . '-07-31';
+
+          // LOKAL
+            $qJulThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJulThnIniLokal = db2_exec($conn1, $qJulThnIniLokal);
+            $rowJulThnIniLokal    = db2_fetch_assoc($resultJulThnIniLokal);
+            $dataJulThnIniLokal   = $rowJulThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qJulThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJulThnIniExport = db2_exec($conn1, $qJulThnIniExport);
+            $rowJulThnIniExport    = db2_fetch_assoc($resultJulThnIniExport);
+            $dataJulThnIniExport   = $rowJulThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qJulThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJulThnIniLokalExport_fkf = db2_exec($conn1, $qJulThnIniLokalExport_fkf);
+            $rowJulThnIniLokalExport_fkf    = db2_fetch_assoc($resultJulThnIniLokalExport_fkf);
+            $dataJulThnIniLokalExport_fkf   = $rowJulThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qJulThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJulThnIniBooking = db2_exec($conn1, $qJulThnIniBooking);
+            $rowJulThnIniBooking    = db2_fetch_assoc($resultJulThnIniBooking);
+            $dataJulThnIniBooking   = $rowJulThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qJulThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJulThnIniJasa = db2_exec($conn1, $qJulThnIniJasa);
+            $rowJulThnIniJasa    = db2_fetch_assoc($resultJulThnIniJasa);
+            $dataJulThnIniJasa   = $rowJulThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qJulThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJulThnIniPrt = db2_exec($conn1, $qJulThnIniPrt);
+            $rowJulThnIniPrt    = db2_fetch_assoc($resultJulThnIniPrt);
+            $dataJulThnIniPrt   = $rowJulThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_JulThnIni = $dataJulThnIniLokal + $dataJulThnIniExport + $dataJulThnIniLokalExport_fkf;
+            $data_total_JulThnIni = $total_JulThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_JulThnIni = $dataJulThnIniLokal + $dataJulThnIniLokalExport_fkf + $dataJulThnIniPrt;
+            $b_JulThnIni = $data_total_JulThnIni;
+            $data_PersentageLokal_JulThnIni = $b_JulThnIni == 0 ? 0 : ($a_JulThnIni / $b_JulThnIni * 100);
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_JulThnIni = $data_total_JulThnIni == 0 ? 0 : ($dataJulThnIniExport / $data_total_JulThnIni * 100);
+          // %EXPORT
+        ?>
+        <tr>
+          <td>JULI</td>
+          <td><?= number_format($dataJulThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_JulThnIni); ?> %</td>
+          <td><?= number_format($dataJulThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_JulThnIni); ?> %</td>
+          <td><?= number_format($dataJulThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_JulThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataJulThnIniJasa); ?></td>
+          <td><?= number_format($dataJulThnIniBooking); ?></td>
+          <td><?= number_format($dataJulThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- JULI -->
+      
+      <!-- AGUSTUS -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalAgs     = $tahunInput . '-08-01';
+          $tglAkhirAgs    = $tahunInput . '-08-31';
+
+          // LOKAL
+            $qAgsThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAgsThnIniLokal = db2_exec($conn1, $qAgsThnIniLokal);
+            $rowAgsThnIniLokal    = db2_fetch_assoc($resultAgsThnIniLokal);
+            $dataAgsThnIniLokal   = $rowAgsThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qAgsThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAgsThnIniExport = db2_exec($conn1, $qAgsThnIniExport);
+            $rowAgsThnIniExport    = db2_fetch_assoc($resultAgsThnIniExport);
+            $dataAgsThnIniExport   = $rowAgsThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qAgsThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAgsThnIniLokalExport_fkf = db2_exec($conn1, $qAgsThnIniLokalExport_fkf);
+            $rowAgsThnIniLokalExport_fkf    = db2_fetch_assoc($resultAgsThnIniLokalExport_fkf);
+            $dataAgsThnIniLokalExport_fkf   = $rowAgsThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qAgsThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAgsThnIniBooking = db2_exec($conn1, $qAgsThnIniBooking);
+            $rowAgsThnIniBooking    = db2_fetch_assoc($resultAgsThnIniBooking);
+            $dataAgsThnIniBooking   = $rowAgsThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qAgsThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAgsThnIniJasa = db2_exec($conn1, $qAgsThnIniJasa);
+            $rowAgsThnIniJasa    = db2_fetch_assoc($resultAgsThnIniJasa);
+            $dataAgsThnIniJasa   = $rowAgsThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qAgsThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAgsThnIniPrt = db2_exec($conn1, $qAgsThnIniPrt);
+            $rowAgsThnIniPrt    = db2_fetch_assoc($resultAgsThnIniPrt);
+            $dataAgsThnIniPrt   = $rowAgsThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_AgsThnIni = $dataAgsThnIniLokal + $dataAgsThnIniExport + $dataAgsThnIniLokalExport_fkf;
+            $data_total_AgsThnIni = $total_AgsThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_AgsThnIni = $dataAgsThnIniLokal + $dataAgsThnIniLokalExport_fkf + $dataAgsThnIniPrt;
+            $b_AgsThnIni = $data_total_AgsThnIni;
+            $data_PersentageLokal_AgsThnIni = $b_AgsThnIni == 0 ? 0 : ($a_AgsThnIni / $b_AgsThnIni * 100);
+
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_AgsThnIni = $data_total_AgsThnIni == 0 ? 0 : ($dataAgsThnIniExport / $data_total_AgsThnIni * 100);
+          // %EXPORT
+        ?>
+        <tr>
+          <td>AGUSTUS</td>
+          <td><?= number_format($dataAgsThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_AgsThnIni); ?> %</td>
+          <td><?= number_format($dataAgsThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_AgsThnIni); ?> %</td>
+          <td><?= number_format($dataAgsThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_AgsThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataAgsThnIniJasa); ?></td>
+          <td><?= number_format($dataAgsThnIniBooking); ?></td>
+          <td><?= number_format($dataAgsThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- AGUSTUS -->
+      
+      <!-- SEPTEMBER -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalSept     = $tahunInput . '-09-01';
+          $tglAkhirSept    = $tahunInput . '-09-30';
+
+          // LOKAL
+            $qSeptThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultSeptThnIniLokal = db2_exec($conn1, $qSeptThnIniLokal);
+            $rowSeptThnIniLokal    = db2_fetch_assoc($resultSeptThnIniLokal);
+            $dataSeptThnIniLokal   = $rowSeptThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qSeptThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultSeptThnIniExport = db2_exec($conn1, $qSeptThnIniExport);
+            $rowSeptThnIniExport    = db2_fetch_assoc($resultSeptThnIniExport);
+            $dataSeptThnIniExport   = $rowSeptThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qSeptThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultSeptThnIniLokalExport_fkf = db2_exec($conn1, $qSeptThnIniLokalExport_fkf);
+            $rowSeptThnIniLokalExport_fkf    = db2_fetch_assoc($resultSeptThnIniLokalExport_fkf);
+            $dataSeptThnIniLokalExport_fkf   = $rowSeptThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qSeptThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultSeptThnIniBooking = db2_exec($conn1, $qSeptThnIniBooking);
+            $rowSeptThnIniBooking    = db2_fetch_assoc($resultSeptThnIniBooking);
+            $dataSeptThnIniBooking   = $rowSeptThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qSeptThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultSeptThnIniJasa = db2_exec($conn1, $qSeptThnIniJasa);
+            $rowSeptThnIniJasa    = db2_fetch_assoc($resultSeptThnIniJasa);
+            $dataSeptThnIniJasa   = $rowSeptThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qSeptThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultSeptThnIniPrt = db2_exec($conn1, $qSeptThnIniPrt);
+            $rowSeptThnIniPrt    = db2_fetch_assoc($resultSeptThnIniPrt);
+            $dataSeptThnIniPrt   = $rowSeptThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_SeptThnIni = $dataSeptThnIniLokal + $dataSeptThnIniExport + $dataSeptThnIniLokalExport_fkf;
+            $data_total_SeptThnIni = $total_SeptThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_SeptThnIni = $dataSeptThnIniLokal + $dataSeptThnIniLokalExport_fkf + $dataSeptThnIniPrt;
+            $b_SeptThnIni = $data_total_SeptThnIni;
+            $data_PersentageLokal_SeptThnIni = $b_SeptThnIni == 0 ? 0 : ($a_SeptThnIni / $b_SeptThnIni) * 100;
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_SeptThnIni = $data_total_SeptThnIni == 0 ? 0 : ($dataSeptThnIniExport / $data_total_SeptThnIni) * 100;
+          // %EXPORT
+        ?>
+        <tr>
+          <td>SEPTEMBER</td>
+          <td><?= number_format($dataSeptThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_SeptThnIni); ?> %</td>
+          <td><?= number_format($dataSeptThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_SeptThnIni); ?> %</td>
+          <td><?= number_format($dataSeptThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_SeptThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataSeptThnIniJasa); ?></td>
+          <td><?= number_format($dataSeptThnIniBooking); ?></td>
+          <td><?= number_format($dataSeptThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- SEPTEMBER -->
+      
+      <!-- OKTOBER -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalOkt     = $tahunInput . '-10-01';
+          $tglAkhirOkt    = $tahunInput . '-10-31';
+
+          // LOKAL
+            $qOktThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultOktThnIniLokal = db2_exec($conn1, $qOktThnIniLokal);
+            $rowOktThnIniLokal    = db2_fetch_assoc($resultOktThnIniLokal);
+            $dataOktThnIniLokal   = $rowOktThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qOktThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultOktThnIniExport = db2_exec($conn1, $qOktThnIniExport);
+            $rowOktThnIniExport    = db2_fetch_assoc($resultOktThnIniExport);
+            $dataOktThnIniExport   = $rowOktThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qOktThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultOktThnIniLokalExport_fkf = db2_exec($conn1, $qOktThnIniLokalExport_fkf);
+            $rowOktThnIniLokalExport_fkf    = db2_fetch_assoc($resultOktThnIniLokalExport_fkf);
+            $dataOktThnIniLokalExport_fkf   = $rowOktThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qOktThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultOktThnIniBooking = db2_exec($conn1, $qOktThnIniBooking);
+            $rowOktThnIniBooking    = db2_fetch_assoc($resultOktThnIniBooking);
+            $dataOktThnIniBooking   = $rowOktThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qOktThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultOktThnIniJasa = db2_exec($conn1, $qOktThnIniJasa);
+            $rowOktThnIniJasa    = db2_fetch_assoc($resultOktThnIniJasa);
+            $dataOktThnIniJasa   = $rowOktThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qOktThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultOktThnIniPrt = db2_exec($conn1, $qOktThnIniPrt);
+            $rowOktThnIniPrt    = db2_fetch_assoc($resultOktThnIniPrt);
+            $dataOktThnIniPrt   = $rowOktThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_OktThnIni = $dataOktThnIniLokal + $dataOktThnIniExport + $dataOktThnIniLokalExport_fkf;
+            $data_total_OktThnIni = $total_OktThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_OktThnIni = $dataOktThnIniLokal + $dataOktThnIniLokalExport_fkf + $dataOktThnIniPrt;
+            $b_OktThnIni = $data_total_OktThnIni;
+            $data_PersentageLokal_OktThnIni = $b_OktThnIni == 0 ? 0 : ($a_OktThnIni / $b_OktThnIni) * 100;
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_OktThnIni = $data_total_OktThnIni == 0 ? 0 : ($dataOktThnIniExport / $data_total_OktThnIni) * 100;
+          // %EXPORT
+        ?>
+        <tr>
+          <td>OKTOBER</td>
+          <td><?= number_format($dataOktThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_OktThnIni); ?> %</td>
+          <td><?= number_format($dataOktThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_OktThnIni); ?> %</td>
+          <td><?= number_format($dataOktThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_OktThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataOktThnIniJasa); ?></td>
+          <td><?= number_format($dataOktThnIniBooking); ?></td>
+          <td><?= number_format($dataOktThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- OKTOBER -->
+      
+      <!-- NOVEMBER -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalNov     = $tahunInput . '-11-01';
+          $tglAkhirNov    = $tahunInput . '-11-30';
+
+          // LOKAL
+            $qNovThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultNovThnIniLokal = db2_exec($conn1, $qNovThnIniLokal);
+            $rowNovThnIniLokal    = db2_fetch_assoc($resultNovThnIniLokal);
+            $dataNovThnIniLokal   = $rowNovThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qNovThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultNovThnIniExport = db2_exec($conn1, $qNovThnIniExport);
+            $rowNovThnIniExport    = db2_fetch_assoc($resultNovThnIniExport);
+            $dataNovThnIniExport   = $rowNovThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qNovThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultNovThnIniLokalExport_fkf = db2_exec($conn1, $qNovThnIniLokalExport_fkf);
+            $rowNovThnIniLokalExport_fkf    = db2_fetch_assoc($resultNovThnIniLokalExport_fkf);
+            $dataNovThnIniLokalExport_fkf   = $rowNovThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qNovThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultNovThnIniBooking = db2_exec($conn1, $qNovThnIniBooking);
+            $rowNovThnIniBooking    = db2_fetch_assoc($resultNovThnIniBooking);
+            $dataNovThnIniBooking   = $rowNovThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qNovThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultNovThnIniJasa = db2_exec($conn1, $qNovThnIniJasa);
+            $rowNovThnIniJasa    = db2_fetch_assoc($resultNovThnIniJasa);
+            $dataNovThnIniJasa   = $rowNovThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qNovThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultNovThnIniPrt = db2_exec($conn1, $qNovThnIniPrt);
+            $rowNovThnIniPrt    = db2_fetch_assoc($resultNovThnIniPrt);
+            $dataNovThnIniPrt   = $rowNovThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_NovThnIni = $dataNovThnIniLokal + $dataNovThnIniExport + $dataNovThnIniLokalExport_fkf;
+            $data_total_NovThnIni = $total_NovThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_NovThnIni = $dataNovThnIniLokal + $dataNovThnIniLokalExport_fkf + $dataNovThnIniPrt;
+            $b_NovThnIni = $data_total_NovThnIni;
+            $data_PersentageLokal_NovThnIni = $b_NovThnIni == 0 ? 0 : ($a_NovThnIni / $b_NovThnIni) * 100;
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_NovThnIni = $data_total_NovThnIni == 0 ? 0 : ($dataNovThnIniExport / $data_total_NovThnIni) * 100;
+          // %EXPORT
+        ?>
+        <tr>
+          <td>NOVEMBER</td>
+          <td><?= number_format($dataNovThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_NovThnIni); ?> %</td>
+          <td><?= number_format($dataNovThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_NovThnIni); ?> %</td>
+          <td><?= number_format($dataNovThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_NovThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataNovThnIniJasa); ?></td>
+          <td><?= number_format($dataNovThnIniBooking); ?></td>
+          <td><?= number_format($dataNovThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- NOVEMBER -->
+      
+      <!-- DESEMBER -->
+        <?php
+          $tahunInput = date('Y', strtotime($tglInput));
+
+          // Bangun awal dan akhir bulan Desember tahun sebelumnya
+          $tglAwalDes     = $tahunInput . '-12-01';
+          $tglAkhirDes    = $tahunInput . '-12-31';
+
+          // LOKAL
+            $qDesThnIniLokal = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnIniLokal = db2_exec($conn1, $qDesThnIniLokal);
+            $rowDesThnIniLokal    = db2_fetch_assoc($resultDesThnIniLokal);
+            $dataDesThnIniLokal   = $rowDesThnIniLokal['QTY'];
+          // LOKAL
+          
+          // EXPORT
+            $qDesThnIniExport = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnIniExport = db2_exec($conn1, $qDesThnIniExport);
+            $rowDesThnIniExport    = db2_fetch_assoc($resultDesThnIniExport);
+            $dataDesThnIniExport   = $rowDesThnIniExport['QTY'];
+          // EXPORT
+          
+          // F/K
+            $qDesThnIniLokalExport_fkf = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnIniLokalExport_fkf = db2_exec($conn1, $qDesThnIniLokalExport_fkf);
+            $rowDesThnIniLokalExport_fkf    = db2_fetch_assoc($resultDesThnIniLokalExport_fkf);
+            $dataDesThnIniLokalExport_fkf   = $rowDesThnIniLokalExport_fkf['QTY'];
+          // F/K
+          
+          // BOOKING
+            $qDesThnIniBooking = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnIniBooking = db2_exec($conn1, $qDesThnIniBooking);
+            $rowDesThnIniBooking    = db2_fetch_assoc($resultDesThnIniBooking);
+            $dataDesThnIniBooking   = $rowDesThnIniBooking['QTY'];
+          // BOOKING
+          
+          // JASA
+            $qDesThnIniJasa = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnIniJasa = db2_exec($conn1, $qDesThnIniJasa);
+            $rowDesThnIniJasa    = db2_fetch_assoc($resultDesThnIniJasa);
+            $dataDesThnIniJasa   = $rowDesThnIniJasa['QTY'];
+          // JASA
+          
+          // PRINTING
+            $qDesThnIniPrt = "SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnIniPrt = db2_exec($conn1, $qDesThnIniPrt);
+            $rowDesThnIniPrt    = db2_fetch_assoc($resultDesThnIniPrt);
+            $dataDesThnIniPrt   = $rowDesThnIniPrt['QTY'];
+          // PRINTING
+
+          // TOTAL
+            $total_DesThnIni = $dataDesThnIniLokal + $dataDesThnIniExport + $dataDesThnIniLokalExport_fkf;
+            $data_total_DesThnIni = $total_DesThnIni;
+          // TOTAL
+
+          // %LOKAL
+            $a_DesThnIni = $dataDesThnIniLokal + $dataDesThnIniLokalExport_fkf + $dataDesThnIniPrt;
+            $b_DesThnIni = $data_total_DesThnIni;
+            $data_PersentageLokal_DesThnIni = $b_DesThnIni == 0 ? 0 : ($a_DesThnIni / $b_DesThnIni) * 100;
+          // %LOKAL
+
+          // %EXPORT
+            $data_PersentageExport_DesThnIni = $data_total_DesThnIni == 0 ? 0 : ($dataDesThnIniExport / $data_total_DesThnIni) * 100;
+          // %EXPORT
+        ?>
+        <tr>
+          <td>DESEMBER</td>
+          <td><?= number_format($dataDesThnIniLokal); ?></td>
+          <td><?= number_format($data_PersentageLokal_DesThnIni); ?> %</td>
+          <td><?= number_format($dataDesThnIniExport); ?></td>
+          <td><?= number_format($data_PersentageExport_DesThnIni); ?> %</td>
+          <td><?= number_format($dataDesThnIniLokalExport_fkf); ?></td>
+          <td><?= number_format($data_total_DesThnIni); ?></td>
+          <td style="background-color: yellow;"><?= number_format($dataDesThnIniJasa); ?></td>
+          <td><?= number_format($dataDesThnIniBooking); ?></td>
+          <td><?= number_format($dataDesThnIniPrt); ?></td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      <!-- DESEMBER -->
+    </tbody>
+</table>
+<br>
+
+<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
+    <thead>
+      <tr>
+        <th colspan="3">DELIVERY</th>
+        <th>(BRUTO)</th>
+        <th>AKJ</th>
+        <th>SDH CELUP</th>
+        <th>BLM CELUP</th>
+        <th>P' BLM BLP</th>
+        <th>C' BLM CLP</th>
+
+        <th colspan="3">DELIVERY</th>
+        <th>TK</th>
+        <th>GREIGE READY</th>
+        <th>SDH PRESET BLM CELUP</th>
+        <th>BELUM PRESET BLM CELUP</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php
+        // Ambil tahun dan bulan dari tanggal input
+        $tahunInput       = date('Y', strtotime($tglInput));
+        $bulanInput       = date('m', strtotime($tglInput));
+        $bulanSekarang    = date('m', strtotime($tglInput));
+
+        // Buat objek DateTime
+        $tanggalObj = new DateTime($tglInput);
+        $tanggalObj->modify('+1 month');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulan      = $namaBulanIndo[$bulanSekarang];
+
+        // BRUTO
+          function ambilQtyBrutoPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryBruto = "WITH QTY_BRUTO AS (
+                        SELECT
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE,
+                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                          SUM(i.USERSECONDARYQUANTITY) AS FKF
+                        FROM
+                          ITXVIEWKGBRUTOBONORDER2 i
+                        GROUP BY 
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE
+                      )
+                      SELECT
+                        SUM(COALESCE(qb.KFF, 0)) AS QTY
+                      FROM
+                        SALESORDER s
+                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      WHERE
+                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                        AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'";
+        
+            $resultBruto = db2_exec($conn, $queryBruto);
+            $rowBruto = db2_fetch_assoc($resultBruto);
+            $qtyBruto = $rowBruto['QTY'];
+
+            return [
+                'qty' => $qtyBruto,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $databrutoI = ambilQtyBrutoPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $databrutoII = ambilQtyBrutoPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $databrutoIII = ambilQtyBrutoPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $databrutoIV = ambilQtyBrutoPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        // BRUTO
+        
+        // AKJ
+          function ambilQtyAKJPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryAKJ = "WITH QTY_BRUTO AS (
+                        SELECT
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE,
+                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                          SUM(i.USERSECONDARYQUANTITY) AS FKF
+                        FROM
+                          ITXVIEWKGBRUTOBONORDER2 i
+                        GROUP BY 
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE
+                      )
+                      SELECT
+                        SUM(COALESCE(qb.KFF, 0)) AS QTY
+                      FROM
+                        SALESORDER s
+                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                      LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID AND a.FIELDNAME = 'KainAKJ'
+                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      WHERE
+                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                        AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                        AND a.VALUESTRING = 1";
+        
+            $resultAKJ = db2_exec($conn, $queryAKJ);
+            $rowAKJ = db2_fetch_assoc($resultAKJ);
+            $qtyAKJ = $rowAKJ['QTY'];
+
+            return [
+                'qty' => $qtyAKJ,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataAKJI = ambilQtyAKJPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $dataAKJII = ambilQtyAKJPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $dataAKJIII = ambilQtyAKJPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $dataAKJIV = ambilQtyAKJPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        // AKJ
+        
+        // SDH CELUP
+          function ambilQtySdhCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $querySdhCelup = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              ),
+                              CELUP_DYEING AS(
+                                SELECT DISTINCT 
+                                  p.ORIGDLVSALORDLINESALORDERCODE,
+                                  p.CODE,
+                                  p2.PROGRESSSTATUS 
+                                FROM
+                                  PRODUCTIONDEMAND p
+                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                WHERE
+                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                              )
+                              SELECT	
+                                SUM(COALESCE(qb.KFF, 0)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                AND cd.PROGRESSSTATUS = '3'";
+        
+            $resultSdhCelup = db2_exec($conn, $querySdhCelup);
+            $rowSdhCelup = db2_fetch_assoc($resultSdhCelup);
+            $qtySdhCelup = $rowSdhCelup['QTY'];
+
+            return [
+                'qty' => $qtySdhCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataSdhCelupI = ambilQtySdhCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $dataSdhCelupII = ambilQtySdhCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $dataSdhCelupIII = ambilQtySdhCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $dataSdhCelupIV = ambilQtySdhCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        // SDH CELUP
+        
+        // BLM CELUP
+          function ambilQtyBlmCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryBlmCelup = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              ),
+                              CELUP_DYEING AS(
+                                SELECT DISTINCT 
+                                  p.ORIGDLVSALORDLINESALORDERCODE,
+                                  p.CODE,
+                                  p2.PROGRESSSTATUS 
+                                FROM
+                                  PRODUCTIONDEMAND p
+                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                WHERE
+                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                              )
+                              SELECT	
+                                SUM(COALESCE(qb.KFF, 0)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                AND cd.PROGRESSSTATUS IN ('0','1','2')";
+        
+            $resultBlmCelup = db2_exec($conn, $queryBlmCelup);
+            $rowBlmCelup = db2_fetch_assoc($resultBlmCelup);
+            $qtyBlmCelup = $rowBlmCelup['QTY'];
+
+            return [
+                'qty' => $qtyBlmCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataBlmCelupI = ambilQtyBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $dataBlmCelupII = ambilQtyBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $dataBlmCelupIII = ambilQtyBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $dataBlmCelupIV = ambilQtyBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        // BLM CELUP
+        
+        // P'BLM CELUP
+          function ambilQtyPBlmCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryPBlmCelup = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              ),
+                              CELUP_DYEING AS(
+                                SELECT DISTINCT 
+                                  p.ORIGDLVSALORDLINESALORDERCODE,
+                                  p.CODE,
+                                  p2.PROGRESSSTATUS 
+                                FROM
+                                  PRODUCTIONDEMAND p
+                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                WHERE
+                                  p2.OPERATIONCODE IN ('DYE2')
+                              )
+                              SELECT	
+                                SUM(COALESCE(qb.KFF, 0)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                AND cd.PROGRESSSTATUS IN ('0')";
+        
+            $resultPBlmCelup = db2_exec($conn, $queryPBlmCelup);
+            $rowPBlmCelup = db2_fetch_assoc($resultPBlmCelup);
+            $qtyPBlmCelup = $rowPBlmCelup['QTY'];
+
+            return [
+                'qty' => $qtyPBlmCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataPBlmCelupI = ambilQtyPBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $dataPBlmCelupII = ambilQtyPBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $dataPBlmCelupIII = ambilQtyPBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $dataPBlmCelupIV = ambilQtyPBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        // P'BLM CELUP
+
+        // C'BLM CELUP
+          $dataCBlmCelupI   = $dataBlmCelupI['qty'] - $dataPBlmCelupI['qty'];
+          $dataCBlmCelupII  = $dataBlmCelupII['qty'] - $dataPBlmCelupII['qty'];
+          $dataCBlmCelupIII = $dataBlmCelupIII['qty'] - $dataPBlmCelupIII['qty'];
+          $dataCBlmCelupIV  = $dataBlmCelupIV['qty'] - $dataPBlmCelupIV['qty'];
+        // C'BLM CELUP
+
+        // TK
+          function ambilTKPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryTK = "SELECT
+                          SUM(p2.USERPRIMARYQUANTITY) AS QTY
+                        FROM
+                          SALESORDER s
+                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
+                        LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
+                                      AND p2.ITEMTYPEAFICODE = 'KGF'
+                                      AND p2.SUBCODE01 = p.SUBCODE01
+                                      AND p2.SUBCODE02 = p.SUBCODE02
+                                      AND p2.SUBCODE03 = p.SUBCODE03
+                                      AND p2.SUBCODE04 = p.SUBCODE04
+                        WHERE
+                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                          AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                          AND NOT TRIM(p2.PROGRESSSTATUS) = '6'";
+        
+            $resultTK = db2_exec($conn, $queryTK);
+            $rowTK = db2_fetch_assoc($resultTK);
+            $qtyTK = $rowTK['QTY'];
+
+            return [
+                'qty' => $qtyTK,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataTKI   = ambilTKPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $dataTKII  = ambilTKPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $dataTKIII = ambilTKPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $dataTKIV  = ambilTKPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        // TK
+
+        // GREIGE READY 
+          $dataGreigeReadyI   = $dataBlmCelupI['qty'] - $dataTKI['qty'];
+          $dataGreigeReadyII  = $dataBlmCelupII['qty'] - $dataTKII['qty'];
+          $dataGreigeReadyIII = $dataBlmCelupIII['qty'] - $dataTKIII['qty'];
+          $dataGreigeReadyIV  = $dataBlmCelupIV['qty'] - $dataTKIV['qty'];
+        // GREIGE READY 
+
+        // SUDAH PRESET, BELUM CELUP
+          function ambilQtySudahPresetBlmCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $querySudahPresetBlmCelup = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  ),
+                                  CELUP_DYEING AS (
+                                    SELECT DISTINCT 
+                                      p.ORIGDLVSALORDLINESALORDERCODE,
+                                      p.CODE,
+                                      p2.PROGRESSSTATUS 
+                                    FROM
+                                      PRODUCTIONDEMAND p
+                                    LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                    WHERE
+                                      p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
+                                  ),
+                                  SUDAH_PRESET AS (
+                                    SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('PRE1')
+                                  )
+                                  SELECT	
+                                    SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                  LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
+                                AND sp.PROGRESSSTATUS = '3' -- SUDAH PRESET";
+        
+            $resultSudahPresetBlmCelup = db2_exec($conn, $querySudahPresetBlmCelup);
+            $rowSudahPresetBlmCelup = db2_fetch_assoc($resultSudahPresetBlmCelup);
+            $qtySudahPresetBlmCelup = $rowSudahPresetBlmCelup['QTY'];
+
+            return [
+                'qty' => $qtySudahPresetBlmCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataSudahPresetBlmCelupI   = ambilQtySudahPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $dataSudahPresetBlmCelupII  = ambilQtySudahPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $dataSudahPresetBlmCelupIII = ambilQtySudahPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $dataSudahPresetBlmCelupIV  = ambilQtySudahPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        // SUDAH PRESET, BELUM CELUP
+        
+        // BELUM PRESET, BELUM CELUP
+          function ambilQtyBelumPresetBlmCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryBelumPresetBlmCelup = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  ),
+                                  CELUP_DYEING AS (
+                                    SELECT DISTINCT 
+                                      p.ORIGDLVSALORDLINESALORDERCODE,
+                                      p.CODE,
+                                      p2.PROGRESSSTATUS 
+                                    FROM
+                                      PRODUCTIONDEMAND p
+                                    LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                    WHERE
+                                      p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
+                                  ),
+                                  SUDAH_PRESET AS (
+                                    SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('PRE1')
+                                  )
+                                  SELECT	
+                                    SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                  LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
+                                AND sp.PROGRESSSTATUS IN ('0','1','2') -- BELUM PRESET";
+        
+            $resultBelumPresetBlmCelup = db2_exec($conn, $queryBelumPresetBlmCelup);
+            $rowBelumPresetBlmCelup = db2_fetch_assoc($resultBelumPresetBlmCelup);
+            $qtyBelumPresetBlmCelup = $rowBelumPresetBlmCelup['QTY'];
+
+            return [
+                'qty' => $qtyBelumPresetBlmCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataBelumPresetBlmCelupI   = ambilQtyBelumPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $dataBelumPresetBlmCelupII  = ambilQtyBelumPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $dataBelumPresetBlmCelupIII = ambilQtyBelumPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $dataBelumPresetBlmCelupIV  = ambilQtyBelumPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        // BELUM PRESET, BELUM CELUP
+      ?>
+      <!-- MINGGU 1 -->
+        <tr>
+          <td><?= $bulan; ?></td>
+          <td>I</td>
+          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+
+          <td><?= number_format($databrutoI['qty']); ?></td>
+          <td><?= number_format($dataAKJI['qty']); ?></td>
+          <td><?= number_format($dataSdhCelupI['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupI['qty']); ?></td>
+          <td><?= number_format($dataPBlmCelupI['qty']); ?></td>
+          <td><?= number_format($dataCBlmCelupI); ?></td>
+          
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulan; ?></td>
+          <td>I</td>
+          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+
+          <td><?= number_format($dataTKI['qty']); ?></td>
+          <td><?= number_format($dataGreigeReadyI); ?></td>
+          <td><?= number_format($dataSudahPresetBlmCelupI['qty']); ?></td>
+          <td><?= number_format($dataBelumPresetBlmCelupI['qty']); ?></td>
+        </tr>
+      <!-- MINGGU 1 -->
+
+      <!-- MINGGU 2 -->
+        <tr>
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulan; ?></td>
+          <td>II</td>
+          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+
+          <td><?= number_format($databrutoII['qty']); ?></td>
+          <td><?= number_format($dataAKJII['qty']); ?></td>
+          <td><?= number_format($dataSdhCelupII['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupII['qty']); ?></td>
+          <td><?= number_format($dataPBlmCelupII['qty']); ?></td>
+          <td><?= number_format($dataCBlmCelupII); ?></td>
+          
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulan; ?></td>
+          <td>II</td>
+          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+
+          <td><?= number_format($dataTKII['qty']); ?></td>
+          <td><?= number_format($dataGreigeReadyII); ?></td>
+          <td><?= number_format($dataSudahPresetBlmCelupII['qty']); ?></td>
+          <td><?= number_format($dataBelumPresetBlmCelupII['qty']); ?></td>
+        </tr>
+      <!-- MINGGU 2 -->
+
+      <!-- MINGGU 3 -->
+        <tr>
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulan; ?></td>
+          <td>III</td>
+          <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
+
+          <td><?= number_format($databrutoIII['qty']); ?></td>
+          <td><?= number_format($dataAKJII['qty']); ?></td>
+          <td><?= number_format($dataSdhCelupIII['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupIII['qty']); ?></td>
+          <td><?= number_format($dataPBlmCelupIII['qty']); ?></td>
+          <td><?= number_format($dataCBlmCelupIII); ?></td>
+          
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulan; ?></td>
+          <td>III</td>
+          <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
+
+          <td><?= number_format($dataTKIII['qty']); ?></td>
+          <td><?= number_format($dataGreigeReadyIII); ?></td>
+          <td><?= number_format($dataSudahPresetBlmCelupIII['qty']); ?></td>
+          <td><?= number_format($dataBelumPresetBlmCelupIII['qty']); ?></td>
+        </tr>
+      <!-- MINGGU 3 -->
+       
+      <!-- MINGGU 4 -->
+        <tr>
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulan; ?></td>
+          <td>IV</td>
+          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+
+          <td><?= number_format($databrutoIV['qty']); ?></td>
+          <td><?= number_format($dataAKJIV['qty']); ?></td>
+          <td><?= number_format($dataSdhCelupIV['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupIV['qty']); ?></td>
+          <td><?= number_format($dataPBlmCelupIV['qty']); ?></td>
+          <td><?= number_format($dataCBlmCelupIV); ?></td>
+          
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulan; ?></td>
+          <td>IV</td>
+          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+
+          <td><?= number_format($dataTKIV['qty']); ?></td>
+          <td><?= number_format($dataGreigeReadyIV); ?></td>
+          <td><?= number_format($dataSudahPresetBlmCelupIV['qty']); ?></td>
+          <td><?= number_format($dataBelumPresetBlmCelupIV['qty']); ?></td>
+        </tr>
+      <!-- MINGGU 4 -->
+</table>
+<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
+    <thead>
+      <tr>
+        <th colspan="3">DELIVERY</th>
+        <th>(BRUTO)</th>
+        <th>AKJ</th>
+        <th>SDH CELUP</th>
+        <th>BLM CELUP</th>
+        <th>P' BLM BLP</th>
+        <th>C' BLM CLP</th>
+
+        <th colspan="3">DELIVERY</th>
+        <th>TK</th>
+        <th>GREIGE READY</th>
+        <th>SDH PRESET BLM CELUP</th>
+        <th>BELUM PRESET BLM CELUP</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php
+        // Tambah 1 bulan
+        $dt = new DateTime($tglInput);
+        $dt->modify('+1 month');
+        $tglInput_bulandepan = $dt->format('Y-m-d');
+
+        // Ambil tahun dan bulan dari tanggal input
+        $tahunInput       = date('Y', strtotime($tglInput_bulandepan));
+        $bulanInput       = date('m', strtotime($tglInput_bulandepan));
+        $bulanSekarang    = date('m', strtotime($tglInput_bulandepan));
+
+        // Buat objek DateTime
+        $bulanDepanAngka = $dt->format('m');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulanDepan = $namaBulanIndo[$bulanDepanAngka];
+
+        // BRUTO
+          function ambilQtyBrutoPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryBruto = "WITH QTY_BRUTO AS (
+                        SELECT
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE,
+                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                          SUM(i.USERSECONDARYQUANTITY) AS FKF
+                        FROM
+                          ITXVIEWKGBRUTOBONORDER2 i
+                        GROUP BY 
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE
+                      )
+                      SELECT
+                        SUM(COALESCE(qb.KFF, 0)) AS QTY
+                      FROM
+                        SALESORDER s
+                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      WHERE
+                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                        AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'";
+        
+            $resultBruto = db2_exec($conn, $queryBruto);
+            $rowBruto = db2_fetch_assoc($resultBruto);
+            $qtyBruto = $rowBruto['QTY'];
+
+            return [
+                'qty' => $qtyBruto,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $databrutoI = ambilQtyBrutoPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+          $databrutoII = ambilQtyBrutoPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+          $databrutoIII = ambilQtyBrutoPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+          $databrutoIV = ambilQtyBrutoPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+        // BRUTO
+        
+        // AKJ
+          function ambilQtyAKJPeriodeBulanDepanBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryAKJ = "WITH QTY_BRUTO AS (
+                        SELECT
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE,
+                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                          SUM(i.USERSECONDARYQUANTITY) AS FKF
+                        FROM
+                          ITXVIEWKGBRUTOBONORDER2 i
+                        GROUP BY 
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE
+                      )
+                      SELECT
+                        SUM(COALESCE(qb.KFF, 0)) AS QTY
+                      FROM
+                        SALESORDER s
+                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                      LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID AND a.FIELDNAME = 'KainAKJ'
+                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      WHERE
+                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                        AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                        AND a.VALUESTRING = 1";
+        
+            $resultAKJ = db2_exec($conn, $queryAKJ);
+            $rowAKJ = db2_fetch_assoc($resultAKJ);
+            $qtyAKJ = $rowAKJ['QTY'];
+
+            return [
+                'qty' => $qtyAKJ,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataAKJI = ambilQtyAKJPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+          $dataAKJII = ambilQtyAKJPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+          $dataAKJIII = ambilQtyAKJPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+          $dataAKJIV = ambilQtyAKJPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+        // AKJ
+        
+        // SDH CELUP
+          function ambilQtySdhCelupPeriodeBulanDepanBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $querySdhCelup = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              ),
+                              CELUP_DYEING AS(
+                                SELECT DISTINCT 
+                                  p.ORIGDLVSALORDLINESALORDERCODE,
+                                  p.CODE,
+                                  p2.PROGRESSSTATUS 
+                                FROM
+                                  PRODUCTIONDEMAND p
+                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                WHERE
+                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                              )
+                              SELECT	
+                                SUM(COALESCE(qb.KFF, 0)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                AND cd.PROGRESSSTATUS = '3'";
+        
+            $resultSdhCelup = db2_exec($conn, $querySdhCelup);
+            $rowSdhCelup = db2_fetch_assoc($resultSdhCelup);
+            $qtySdhCelup = $rowSdhCelup['QTY'];
+
+            return [
+                'qty' => $qtySdhCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataSdhCelupI = ambilQtySdhCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+          $dataSdhCelupII = ambilQtySdhCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+          $dataSdhCelupIII = ambilQtySdhCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+          $dataSdhCelupIV = ambilQtySdhCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+        // SDH CELUP
+        
+        // BLM CELUP
+          function ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryBlmCelup = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              ),
+                              CELUP_DYEING AS(
+                                SELECT DISTINCT 
+                                  p.ORIGDLVSALORDLINESALORDERCODE,
+                                  p.CODE,
+                                  p2.PROGRESSSTATUS 
+                                FROM
+                                  PRODUCTIONDEMAND p
+                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                WHERE
+                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                              )
+                              SELECT	
+                                SUM(COALESCE(qb.KFF, 0)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                AND cd.PROGRESSSTATUS IN ('0','1','2')";
+        
+            $resultBlmCelup = db2_exec($conn, $queryBlmCelup);
+            $rowBlmCelup = db2_fetch_assoc($resultBlmCelup);
+            $qtyBlmCelup = $rowBlmCelup['QTY'];
+
+            return [
+                'qty' => $qtyBlmCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataBlmCelupI = ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+          $dataBlmCelupII = ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+          $dataBlmCelupIII = ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+          $dataBlmCelupIV = ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+        // BLM CELUP
+        
+        // P'BLM CELUP
+          function ambilQtyPBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryPBlmCelup = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              ),
+                              CELUP_DYEING AS(
+                                SELECT DISTINCT 
+                                  p.ORIGDLVSALORDLINESALORDERCODE,
+                                  p.CODE,
+                                  p2.PROGRESSSTATUS 
+                                FROM
+                                  PRODUCTIONDEMAND p
+                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                WHERE
+                                  p2.OPERATIONCODE IN ('DYE2')
+                              )
+                              SELECT	
+                                SUM(COALESCE(qb.KFF, 0)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                AND cd.PROGRESSSTATUS IN ('0')";
+        
+            $resultPBlmCelup = db2_exec($conn, $queryPBlmCelup);
+            $rowPBlmCelup = db2_fetch_assoc($resultPBlmCelup);
+            $qtyPBlmCelup = $rowPBlmCelup['QTY'];
+
+            return [
+                'qty' => $qtyPBlmCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataPBlmCelupI = ambilQtyPBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+          $dataPBlmCelupII = ambilQtyPBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+          $dataPBlmCelupIII = ambilQtyPBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+          $dataPBlmCelupIV = ambilQtyPBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+        // P'BLM CELUP
+
+        // C'BLM CELUP
+          $dataCBlmCelupI   = $dataBlmCelupI['qty'] - $dataPBlmCelupI['qty'];
+          $dataCBlmCelupII  = $dataBlmCelupII['qty'] - $dataPBlmCelupII['qty'];
+          $dataCBlmCelupIII = $dataBlmCelupIII['qty'] - $dataPBlmCelupIII['qty'];
+          $dataCBlmCelupIV  = $dataBlmCelupIV['qty'] - $dataPBlmCelupIV['qty'];
+        // C'BLM CELUP
+
+        // TK
+          function ambilTKPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryTK = "SELECT
+                          SUM(p2.USERPRIMARYQUANTITY) AS QTY
+                        FROM
+                          SALESORDER s
+                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
+                        LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
+                                      AND p2.ITEMTYPEAFICODE = 'KGF'
+                                      AND p2.SUBCODE01 = p.SUBCODE01
+                                      AND p2.SUBCODE02 = p.SUBCODE02
+                                      AND p2.SUBCODE03 = p.SUBCODE03
+                                      AND p2.SUBCODE04 = p.SUBCODE04
+                        WHERE
+                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                          AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                          AND NOT TRIM(p2.PROGRESSSTATUS) = '6'";
+        
+            $resultTK = db2_exec($conn, $queryTK);
+            $rowTK = db2_fetch_assoc($resultTK);
+            $qtyTK = $rowTK['QTY'];
+
+            return [
+                'qty' => $qtyTK,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataTKI   = ambilTKPeriodeBulanDepan($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $dataTKII  = ambilTKPeriodeBulanDepan($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $dataTKIII = ambilTKPeriodeBulanDepan($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $dataTKIV  = ambilTKPeriodeBulanDepan($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        // TK
+
+      // GREIGE READY 
+        $dataGreigeReadyI   = $dataBlmCelupI['qty'] - $dataTKI['qty'];
+        $dataGreigeReadyII  = $dataBlmCelupII['qty'] - $dataTKII['qty'];
+        $dataGreigeReadyIII = $dataBlmCelupIII['qty'] - $dataTKIII['qty'];
+        $dataGreigeReadyIV  = $dataBlmCelupIV['qty'] - $dataTKIV['qty'];
+      // GREIGE READY
+
+      // SUDAH PRESET, BELUM CELUP
+        function ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+      
+          $querySudahPresetBlmCelup = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                ),
+                                CELUP_DYEING AS (
+                                  SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
+                                ),
+                                SUDAH_PRESET AS (
+                                  SELECT DISTINCT 
+                                  p.ORIGDLVSALORDLINESALORDERCODE,
+                                  p.CODE,
+                                  p2.PROGRESSSTATUS 
+                                FROM
+                                  PRODUCTIONDEMAND p
+                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                WHERE
+                                  p2.OPERATIONCODE IN ('PRE1')
+                                )
+                                SELECT	
+                                  SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
+                              AND sp.PROGRESSSTATUS = '3' -- SUDAH PRESET";
+      
+          $resultSudahPresetBlmCelup = db2_exec($conn, $querySudahPresetBlmCelup);
+          $rowSudahPresetBlmCelup = db2_fetch_assoc($resultSudahPresetBlmCelup);
+          $qtySudahPresetBlmCelup = $rowSudahPresetBlmCelup['QTY'];
+
+          return [
+              'qty' => $qtySudahPresetBlmCelup,
+              'tgl_awal' => (int)$tanggalAwal,
+              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+          ];
+        }
+        $dataSudahPresetBlmCelupI = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+        $dataSudahPresetBlmCelupII = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+        $dataSudahPresetBlmCelupIII = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+        $dataSudahPresetBlmCelupIV = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+      // SUDAH PRESET, BELUM CELUP
+      
+      // BELUM PRESET, BELUM CELUP
+        function ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+      
+          $queryBelumPresetBlmCelup = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                ),
+                                CELUP_DYEING AS (
+                                  SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
+                                ),
+                                SUDAH_PRESET AS (
+                                  SELECT DISTINCT 
+                                  p.ORIGDLVSALORDLINESALORDERCODE,
+                                  p.CODE,
+                                  p2.PROGRESSSTATUS 
+                                FROM
+                                  PRODUCTIONDEMAND p
+                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                WHERE
+                                  p2.OPERATIONCODE IN ('PRE1')
+                                )
+                                SELECT	
+                                  SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
+                              AND sp.PROGRESSSTATUS IN ('0','1','2') -- BELUM PRESET";
+      
+          $resultBelumPresetBlmCelup = db2_exec($conn, $queryBelumPresetBlmCelup);
+          $rowBelumPresetBlmCelup = db2_fetch_assoc($resultBelumPresetBlmCelup);
+          $qtyBelumPresetBlmCelup = $rowBelumPresetBlmCelup['QTY'];
+
+          return [
+              'qty' => $qtyBelumPresetBlmCelup,
+              'tgl_awal' => (int)$tanggalAwal,
+              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+          ];
+        }
+        $dataBelumPresetBlmCelupI   = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+        $dataBelumPresetBlmCelupII  = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+        $dataBelumPresetBlmCelupIII = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+        $dataBelumPresetBlmCelupIV  = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+      // BELUM PRESET, BELUM CELUP
+      ?>
+      <!-- MINGGU 1 -->
+        <tr>
+          <td><?= $bulanDepan; ?></td>
+          <td>I</td>
+          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+
+          <td><?= number_format($databrutoI['qty']); ?></td>
+          <td><?= number_format($dataAKJI['qty']); ?></td>
+          <td><?= number_format($dataSdhCelupI['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupI['qty']); ?></td>
+          <td><?= number_format($dataPBlmCelupI['qty']); ?></td>
+          <td><?= number_format($dataCBlmCelupI); ?></td>
+          
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulanDepan; ?></td>
+          <td>I</td>
+          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+
+          <td><?= number_format($dataTKI['qty']); ?></td>
+          <td><?= number_format($dataGreigeReadyI); ?></td>
+          <td><?= number_format($dataSudahPresetBlmCelupI['qty']); ?></td>
+          <td><?= number_format($dataBelumPresetBlmCelupI['qty']); ?></td>
+        </tr>
+      <!-- MINGGU 1 -->
+
+      <!-- MINGGU 2 -->
+        <tr>
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulanDepan; ?></td>
+          <td>II</td>
+          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+
+          <td><?= number_format($databrutoII['qty']); ?></td>
+          <td><?= number_format($dataAKJII['qty']); ?></td>
+          <td><?= number_format($dataSdhCelupII['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupII['qty']); ?></td>
+          <td><?= number_format($dataPBlmCelupII['qty']); ?></td>
+          <td><?= number_format($dataCBlmCelupII); ?></td>
+          
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulanDepan; ?></td>
+          <td>II</td>
+          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+
+          <td><?= number_format($dataTKII['qty']); ?></td>
+          <td><?= number_format($dataGreigeReadyII); ?></td>
+          <td><?= number_format($dataSudahPresetBlmCelupII['qty']); ?></td>
+          <td><?= number_format($dataBelumPresetBlmCelupII['qty']); ?></td>
+        </tr>
+      <!-- MINGGU 2 -->
+
+      <!-- MINGGU 3 -->
+        <tr>
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulanDepan; ?></td>
+          <td>III</td>
+          <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
+
+          <td><?= number_format($databrutoIII['qty']); ?></td>
+          <td><?= number_format($dataAKJII['qty']); ?></td>
+          <td><?= number_format($dataSdhCelupIII['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupIII['qty']); ?></td>
+          <td><?= number_format($dataPBlmCelupIII['qty']); ?></td>
+          <td><?= number_format($dataCBlmCelupIII); ?></td>
+          
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulanDepan; ?></td>
+          <td>III</td>
+          <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
+
+          <td><?= number_format($dataTKIII['qty']); ?></td>
+          <td><?= number_format($dataGreigeReadyIII); ?></td>
+          <td><?= number_format($dataSudahPresetBlmCelupIII['qty']); ?></td>
+          <td><?= number_format($dataBelumPresetBlmCelupIII['qty']); ?></td>
+        </tr>
+      <!-- MINGGU 3 -->
+
+      <!-- MINGGU 4 -->
+        <tr>
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulanDepan; ?></td>
+          <td>IV</td>
+          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+
+          <td><?= number_format($databrutoIV['qty']); ?></td>
+          <td><?= number_format($dataAKJIV['qty']); ?></td>
+          <td><?= number_format($dataSdhCelupIV['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupIV['qty']); ?></td>
+          <td><?= number_format($dataPBlmCelupIV['qty']); ?></td>
+          <td><?= number_format($dataCBlmCelupIV); ?></td>
+          
+          <!-- KOLOM DELIVERY -->
+          <td><?= $bulanDepan; ?></td>
+          <td>IV</td>
+          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+
+          <td><?= number_format($dataTKIV['qty']); ?></td>
+          <td><?= number_format($dataGreigeReadyIV); ?></td>
+          <td><?= number_format($dataSudahPresetBlmCelupIV['qty']); ?></td>
+          <td><?= number_format($dataBelumPresetBlmCelupIV['qty']); ?></td>
+        </tr>
+      <!-- MINGGU 4 -->
+</table>
+
+<br>
+<center><h4>BOOKING</h4></center>
+<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
+  <thead>
+    <tr>
+      <th colspan="3">DELIVERY</th>
+      <th>(BRUTO)</th>
+      <th>SDH CELUP</th>
+      <th>BLM CELUP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+      // Ambil tahun dan bulan dari tanggal input
+      $tahunInput       = date('Y', strtotime($tglInput));
+      $bulanInput       = date('m', strtotime($tglInput));
+      $bulanSekarang    = date('m', strtotime($tglInput));
+
+      // Buat objek DateTime
+      $tanggalObj = new DateTime($tglInput);
+      $tanggalObj->modify('+1 month');
+
+      $namaBulanIndo = [
+          '01' => 'JAN',
+          '02' => 'FEB',
+          '03' => 'MAR',
+          '04' => 'APR',
+          '05' => 'MEI',
+          '06' => 'JUN',
+          '07' => 'JUL',
+          '08' => 'AGS',
+          '09' => 'SEPT',
+          '10' => 'OKT',
+          '11' => 'NOV',
+          '12' => 'DES'
+      ];
+    
+      // Nama bulan sekarang dan bulan depan
+      $bulan      = $namaBulanIndo[$bulanSekarang];
+
+      // BRUTO
+        function ambilQtyBookingBrutoPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+      
+          $queryBrutoBooking = "WITH QTY_BRUTO AS (
+                      SELECT
+                        i.ORIGDLVSALORDLINESALORDERCODE,
+                        i.ORIGDLVSALORDERLINEORDERLINE,
+                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                        SUM(i.USERSECONDARYQUANTITY) AS FKF
+                      FROM
+                        ITXVIEWKGBRUTOBONORDER2 i
+                      GROUP BY 
+                        i.ORIGDLVSALORDLINESALORDERCODE,
+                        i.ORIGDLVSALORDERLINEORDERLINE
+                    )
+                    SELECT
+                      SUM(COALESCE(qb.KFF, 0)) AS QTY
+                    FROM
+                      SALESORDER s
+                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                    WHERE
+                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                      AND s.TEMPLATECODE IN ('OPN')  
+                      AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'";
+      
+          $resultBrutoBooking = db2_exec($conn, $queryBrutoBooking);
+          $rowBrutoBooking = db2_fetch_assoc($resultBrutoBooking);
+          $qtyBrutoBooking = $rowBrutoBooking['QTY'];
+
+          return [
+              'qty' => $qtyBrutoBooking,
+              'tgl_awal' => (int)$tanggalAwal,
+              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+          ];
+        }
+        $databrutoBookingI   = ambilQtyBookingBrutoPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+        $databrutoBookingII  = ambilQtyBookingBrutoPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+        $databrutoBookingIII = ambilQtyBookingBrutoPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+        $databrutoBookingIV  = ambilQtyBookingBrutoPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+      // BRUTO
+
+      // SDH CELUP
+        function ambilQtyBookingSdhCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+      
+          $queryBookingSdhCelup = "WITH QTY_BRUTO AS (
+                              SELECT
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE,
+                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                SUM(i.USERSECONDARYQUANTITY) AS FKF
+                              FROM
+                                ITXVIEWKGBRUTOBONORDER2 i
+                              GROUP BY 
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE
+                            ),
+                            CELUP_DYEING AS(
+                              SELECT DISTINCT 
+                                p.ORIGDLVSALORDLINESALORDERCODE,
+                                p.CODE,
+                                p2.PROGRESSSTATUS 
+                              FROM
+                                PRODUCTIONDEMAND p
+                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                              WHERE
+                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                            )
+                            SELECT	
+                              SUM(COALESCE(qb.KFF, 0)) AS QTY
+                            FROM
+                              SALESORDER s
+                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                            WHERE
+                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                              AND s.TEMPLATECODE IN ('OPN')  
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND cd.PROGRESSSTATUS = '3'";
+      
+          $resultBookingSdhCelup = db2_exec($conn, $queryBookingSdhCelup);
+          $rowBookingSdhCelup = db2_fetch_assoc($resultBookingSdhCelup);
+          $qtyBookingSdhCelup = $rowBookingSdhCelup['QTY'];
+
+          return [
+              'qty' => $qtyBookingSdhCelup,
+              'tgl_awal' => (int)$tanggalAwal,
+              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+          ];
+        }
+        $dataBookingSdhCelupI    = ambilQtyBookingSdhCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+        $dataBookingSdhCelupII   = ambilQtyBookingSdhCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+        $dataBookingSdhCelupIII  = ambilQtyBookingSdhCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+        $dataBookingSdhCelupIV   = ambilQtyBookingSdhCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+      // SDH CELUP
+
+      // BLM CELUP
+        function ambilQtyBookingBlmCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+      
+          $queryBookingBlmCelup = "WITH QTY_BRUTO AS (
+                              SELECT
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE,
+                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                SUM(i.USERSECONDARYQUANTITY) AS FKF
+                              FROM
+                                ITXVIEWKGBRUTOBONORDER2 i
+                              GROUP BY 
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE
+                            ),
+                            CELUP_DYEING AS(
+                              SELECT DISTINCT 
+                                p.ORIGDLVSALORDLINESALORDERCODE,
+                                p.CODE,
+                                p2.PROGRESSSTATUS 
+                              FROM
+                                PRODUCTIONDEMAND p
+                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                              WHERE
+                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                            )
+                            SELECT	
+                              SUM(COALESCE(qb.KFF, 0)) AS QTY
+                            FROM
+                              SALESORDER s
+                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                            WHERE
+                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                              AND s.TEMPLATECODE IN ('OPN')  
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND cd.PROGRESSSTATUS IN ('0','1','2')";
+      
+          $resultBookingBlmCelup = db2_exec($conn, $queryBookingBlmCelup);
+          $rowBookingBlmCelup = db2_fetch_assoc($resultBookingBlmCelup);
+          $qtyBookingBlmCelup = $rowBookingBlmCelup['QTY'];
+
+          return [
+              'qty' => $qtyBookingBlmCelup,
+              'tgl_awal' => (int)$tanggalAwal,
+              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+          ];
+        }
+        $dataBookingBlmCelupI   = ambilQtyBookingBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+        $dataBookingBlmCelupII  = ambilQtyBookingBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+        $dataBookingBlmCelupIII = ambilQtyBookingBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+        $dataBookingBlmCelupIV  = ambilQtyBookingBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+      // BLM CELUP
+    ?>
+    <!-- MINGGU 1 -->
+      <tr>
+        <!-- KOLOM DELIVERY -->
+        <td><?= $bulan; ?></td>
+        <td>I</td>
+        <td><?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
+
+        <td><?= number_format($databrutoBookingI['qty']); ?></td>
+        <td><?= number_format($dataBookingSdhCelupI['qty']); ?></td>
+        <td><?= number_format($dataBookingBlmCelupI['qty']); ?></td>
+      </tr>
+    <!-- MINGGU 1 -->
+
+    <!-- MINGGU 2 -->        
+      <tr>
+        <!-- KOLOM DELIVERY -->
+        <td><?= $bulan; ?></td>
+        <td>II</td>
+        <td><?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
+
+        <td><?= number_format($databrutoBookingII['qty'])  ?></td>
+        <td><?= number_format($dataBookingSdhCelupII['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupII['qty'])  ?></td>
+      </tr>
+    <!-- MINGGU 2 -->  
+
+    <!-- MINGGU 3 -->
+      <tr>
+        <!-- KOLOM DELIVERY -->
+        <td><?= $bulan; ?></td>
+        <td>III</td>
+        <td><?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
+
+        <td><?= number_format($databrutoBookingIII['qty'])  ?></td>
+        <td><?= number_format($dataBookingSdhCelupIII['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupIII['qty'])  ?></td>
+      </tr>
+    <!-- MINGGU 3 -->
+
+    <!-- MINGGU 4 -->        
+      <tr>
+        <!-- KOLOM DELIVERY -->
+        <td><?= $bulan; ?></td>
+        <td>IV</td>
+        <td><?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
+
+        <td><?= number_format($databrutoBookingIV['qty'])  ?></td>
+        <td><?= number_format($dataBookingSdhCelupIV['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupIV['qty'])  ?></td>
+      </tr>
+    <!-- MINGGU 4 -->        
+  </tbody>
+</table>
+<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
+  <thead>
+    <tr>
+      <th colspan="3">DELIVERY</th>
+      <th>(BRUTO)</th>
+      <th>SDH CELUP</th>
+      <th>BLM CELUP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+      // Tambah 1 bulan
+      $dt = new DateTime($tglInput);
+      $dt->modify('+1 month');
+      $tglInput_bulandepan = $dt->format('Y-m-d');
+
+      // Ambil tahun dan bulan dari tanggal input
+      $tahunInput       = date('Y', strtotime($tglInput_bulandepan));
+      $bulanInput       = date('m', strtotime($tglInput_bulandepan));
+      $bulanSekarang    = date('m', strtotime($tglInput_bulandepan));
+
+      // Buat objek DateTime
+      $bulanDepanAngka = $dt->format('m');
+
+      $namaBulanIndo = [
+          '01' => 'JAN',
+          '02' => 'FEB',
+          '03' => 'MAR',
+          '04' => 'APR',
+          '05' => 'MEI',
+          '06' => 'JUN',
+          '07' => 'JUL',
+          '08' => 'AGS',
+          '09' => 'SEPT',
+          '10' => 'OKT',
+          '11' => 'NOV',
+          '12' => 'DES'
+      ];
+    
+      // Nama bulan sekarang dan bulan depan
+      $bulanDepan = $namaBulanIndo[$bulanDepanAngka];
+
+      // BRUTO
+        function ambilQtyBookingBrutoPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+      
+          $queryBrutoBooking = "WITH QTY_BRUTO AS (
+                      SELECT
+                        i.ORIGDLVSALORDLINESALORDERCODE,
+                        i.ORIGDLVSALORDERLINEORDERLINE,
+                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                        SUM(i.USERSECONDARYQUANTITY) AS FKF
+                      FROM
+                        ITXVIEWKGBRUTOBONORDER2 i
+                      GROUP BY 
+                        i.ORIGDLVSALORDLINESALORDERCODE,
+                        i.ORIGDLVSALORDERLINEORDERLINE
+                    )
+                    SELECT
+                      SUM(COALESCE(qb.KFF, 0)) AS QTY
+                    FROM
+                      SALESORDER s
+                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                    WHERE
+                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                      AND s.TEMPLATECODE IN ('OPN')  
+                      AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'";
+      
+          $resultBrutoBooking = db2_exec($conn, $queryBrutoBooking);
+          $rowBrutoBooking = db2_fetch_assoc($resultBrutoBooking);
+          $qtyBrutoBooking = $rowBrutoBooking['QTY'];
+
+          return [
+              'qty' => $qtyBrutoBooking,
+              'tgl_awal' => (int)$tanggalAwal,
+              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+          ];
+        }
+        $databrutoBookingI   = ambilQtyBookingBrutoPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+        $databrutoBookingII  = ambilQtyBookingBrutoPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+        $databrutoBookingIII = ambilQtyBookingBrutoPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+        $databrutoBookingIV  = ambilQtyBookingBrutoPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+      // BRUTO
+
+      // SDH CELUP
+        function ambilQtyBookingSdhCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+      
+          $queryBookingSdhCelup = "WITH QTY_BRUTO AS (
+                              SELECT
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE,
+                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                SUM(i.USERSECONDARYQUANTITY) AS FKF
+                              FROM
+                                ITXVIEWKGBRUTOBONORDER2 i
+                              GROUP BY 
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE
+                            ),
+                            CELUP_DYEING AS(
+                              SELECT DISTINCT 
+                                p.ORIGDLVSALORDLINESALORDERCODE,
+                                p.CODE,
+                                p2.PROGRESSSTATUS 
+                              FROM
+                                PRODUCTIONDEMAND p
+                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                              WHERE
+                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                            )
+                            SELECT	
+                              SUM(COALESCE(qb.KFF, 0)) AS QTY
+                            FROM
+                              SALESORDER s
+                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                            WHERE
+                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                              AND s.TEMPLATECODE IN ('OPN')  
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND cd.PROGRESSSTATUS = '3'";
+      
+          $resultBookingSdhCelup = db2_exec($conn, $queryBookingSdhCelup);
+          $rowBookingSdhCelup = db2_fetch_assoc($resultBookingSdhCelup);
+          $qtyBookingSdhCelup = $rowBookingSdhCelup['QTY'];
+
+          return [
+              'qty' => $qtyBookingSdhCelup,
+              'tgl_awal' => (int)$tanggalAwal,
+              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+          ];
+        }
+        $dataBookingSdhCelupI    = ambilQtyBookingSdhCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+        $dataBookingSdhCelupII   = ambilQtyBookingSdhCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+        $dataBookingSdhCelupIII  = ambilQtyBookingSdhCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+        $dataBookingSdhCelupIV   = ambilQtyBookingSdhCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+      // SDH CELUP
+
+      // BLM CELUP
+        function ambilQtyBookingBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+      
+          $queryBookingBlmCelup = "WITH QTY_BRUTO AS (
+                              SELECT
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE,
+                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                SUM(i.USERSECONDARYQUANTITY) AS FKF
+                              FROM
+                                ITXVIEWKGBRUTOBONORDER2 i
+                              GROUP BY 
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE
+                            ),
+                            CELUP_DYEING AS(
+                              SELECT DISTINCT 
+                                p.ORIGDLVSALORDLINESALORDERCODE,
+                                p.CODE,
+                                p2.PROGRESSSTATUS 
+                              FROM
+                                PRODUCTIONDEMAND p
+                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                              WHERE
+                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                            )
+                            SELECT	
+                              SUM(COALESCE(qb.KFF, 0)) AS QTY
+                            FROM
+                              SALESORDER s
+                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                            WHERE
+                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                              AND s.TEMPLATECODE IN ('OPN')  
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND cd.PROGRESSSTATUS IN ('0','1','2')";
+      
+          $resultBookingBlmCelup = db2_exec($conn, $queryBookingBlmCelup);
+          $rowBookingBlmCelup = db2_fetch_assoc($resultBookingBlmCelup);
+          $qtyBookingBlmCelup = $rowBookingBlmCelup['QTY'];
+
+          return [
+              'qty' => $qtyBookingBlmCelup,
+              'tgl_awal' => (int)$tanggalAwal,
+              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+          ];
+        }
+        $dataBookingBlmCelupI   = ambilQtyBookingBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+        $dataBookingBlmCelupII  = ambilQtyBookingBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+        $dataBookingBlmCelupIII = ambilQtyBookingBlmCelupPeriodeBulanDepan($conn1, $tgltglInput_bulandepanInput, $tahunInput, $bulanInput, 15, 21);
+        $dataBookingBlmCelupIV  = ambilQtyBookingBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+      // BLM CELUP
+    ?>
+    <!-- MINGGU 1 -->
+      <tr>
+        <!-- KOLOM DELIVERY -->
+        <td><?= $bulanDepan; ?></td>
+        <td>I</td>
+        <td><?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
+
+        <td><?= number_format($databrutoBookingI['qty']); ?></td>
+        <td><?= number_format($dataBookingSdhCelupI['qty']); ?></td>
+        <td><?= number_format($dataBookingBlmCelupI['qty']); ?></td>
+      </tr>
+    <!-- MINGGU 1 -->
+
+    <!-- MINGGU 2 -->        
+      <tr>
+        <!-- KOLOM DELIVERY -->
+        <td><?= $bulanDepan; ?></td>
+        <td>II</td>
+        <td><?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
+
+        <td><?= number_format($databrutoBookingII['qty'])  ?></td>
+        <td><?= number_format($dataBookingSdhCelupII['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupII['qty'])  ?></td>
+      </tr>
+    <!-- MINGGU 2 -->  
+
+    <!-- MINGGU 3 -->
+      <tr>
+        <!-- KOLOM DELIVERY -->
+        <td><?= $bulanDepan; ?></td>
+        <td>III</td>
+        <td><?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
+
+        <td><?= number_format($databrutoBookingIII['qty'])  ?></td>
+        <td><?= number_format($dataBookingSdhCelupIII['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupIII['qty'])  ?></td>
+      </tr>
+    <!-- MINGGU 3 -->
+
+    <!-- MINGGU 4 -->        
+      <tr>
+        <!-- KOLOM DELIVERY -->
+        <td><?= $bulanDepan; ?></td>
+        <td>IV</td>
+        <td><?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
+
+        <td><?= number_format($databrutoBookingIV['qty'])  ?></td>
+        <td><?= number_format($dataBookingSdhCelupIV['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupIV['qty'])  ?></td>
+      </tr>
+    <!-- MINGGU 4 -->        
+  </tbody>
+</table>
+
+<br>
+<center><h4>PRINTING</h4></center>
+<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
+  <thead>
+    <tr>
+      <th>DELIVERY</th>
+      <th>SUBLIMATION</th>
+      <th>REAKTIF</th>
+      <th>PIGMENT</th>
+      <th>SDH CELUP</th>
+      <th>BLM CELUP</th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php
+    // PRINTING - 1 BULAN
+      $dtBulanLalu = new DateTime($tglInput);
+      $dtBulanLalu->modify('-1 month');
+      $tglInput_bulanlalu = $dtBulanLalu->format('Y-m-d');
+
+      // Buat objek DateTime
+      $bulanLaluAngka = $dtBulanLalu->format('m');
+
+      $namaBulanIndo = [
+          '01' => 'JAN',
+          '02' => 'FEB',
+          '03' => 'MAR',
+          '04' => 'APR',
+          '05' => 'MEI',
+          '06' => 'JUN',
+          '07' => 'JUL',
+          '08' => 'AGS',
+          '09' => 'SEPT',
+          '10' => 'OKT',
+          '11' => 'NOV',
+          '12' => 'DES'
+      ];
+    
+      // Nama bulan sekarang dan bulan depan
+      $bulanLalu = $namaBulanIndo[$bulanLaluAngka];
+
+      $tglAwalBulanLalu  = $dtBulanLalu->format('Y-m-01');
+      $tglAkhirBulanLalu = $dtBulanLalu->format('Y-m-t');
+
+      $qPrintingBulanLalu = "WITH QTY_BRUTO AS (
+                        SELECT
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE,
+                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                          SUM(i.USERSECONDARYQUANTITY) AS FKF
+                        FROM
+                          ITXVIEWKGBRUTOBONORDER2 i
+                        GROUP BY 
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE
+                      )
+                      SELECT
+                        SUM(COALESCE(qb.KFF, 0)) AS QTY
+                      FROM
+                        SALESORDER s
+                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
+                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      WHERE
+                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
+                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                        AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'";
+      $resultPrintingBulanLalu  = db2_exec($conn1, $qPrintingBulanLalu);
+      $rowPrintingBulanLalu     = db2_fetch_assoc($resultPrintingBulanLalu);
+      $qtyPrintingBulanLalu     = $rowPrintingBulanLalu['QTY'];
+    // PRINTING - 1 BULAN
+
+    // PRINTING - BULAN SAAT INI
+      // Buat objek DateTime dari tanggal input
+      $dtBulanIni = new DateTime($tglInput);
+      $tglInput_bulanIni = $dtBulanIni->format('Y-m-d');
+
+      // Ambil angka bulan dan konversi ke nama bulan Indonesia
+      $bulanIniAngka = $dtBulanIni->format('m');
+
+      $namaBulanIndo = [
+          '01' => 'JAN',
+          '02' => 'FEB',
+          '03' => 'MAR',
+          '04' => 'APR',
+          '05' => 'MEI',
+          '06' => 'JUN',
+          '07' => 'JUL',
+          '08' => 'AGS',
+          '09' => 'SEPT',
+          '10' => 'OKT',
+          '11' => 'NOV',
+          '12' => 'DES'
+      ];
+
+      $bulanIni = $namaBulanIndo[$bulanIniAngka];
+
+      // Ambil awal dan akhir bulan dari tanggal input
+      $tglAwalBulanIni  = $dtBulanIni->format('Y-m-01');
+      $tglAkhirBulanIni = $dtBulanIni->format('Y-m-t');
+
+      $qPrintingBulanIni = "WITH QTY_BRUTO AS (
+                        SELECT
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE,
+                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                          SUM(i.USERSECONDARYQUANTITY) AS FKF
+                        FROM
+                          ITXVIEWKGBRUTOBONORDER2 i
+                        GROUP BY 
+                          i.ORIGDLVSALORDLINESALORDERCODE,
+                          i.ORIGDLVSALORDERLINEORDERLINE
+                      )
+                      SELECT
+                        SUM(COALESCE(qb.KFF, 0)) AS QTY
+                      FROM
+                        SALESORDER s
+                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
+                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                      WHERE
+                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
+                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                        AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'";
+      $resultPrintingBulanIni  = db2_exec($conn1, $qPrintingBulanIni);
+      $rowPrintingBulanIni     = db2_fetch_assoc($resultPrintingBulanIni);
+      $qtyPrintingBulanIni     = $rowPrintingBulanIni['QTY'];
+
+    // PRINTING - BULAN SAAT INI
+
+    // TOTAL SUBLIMATION
+      $totalSublimation = $qtyPrintingBulanLalu + $qtyPrintingBulanIni;
+    // TOTAL SUBLIMATION
+
+    // SDH CELUP PRINTING - 1 BULAN
+      $qSdhCelupPrintingBlnLalu = "WITH QTY_BRUTO AS (
+                                      SELECT
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE,
+                                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                        SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                      FROM
+                                        ITXVIEWKGBRUTOBONORDER2 i
+                                      GROUP BY
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE
+                                    ),
+                                    CELUP_DYEING AS(
+                                      SELECT DISTINCT 
+                                        p.ORIGDLVSALORDLINESALORDERCODE,
+                                        p.CODE,
+                                        p2.PROGRESSSTATUS 
+                                      FROM
+                                        PRODUCTIONDEMAND p
+                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                      WHERE
+                                        p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                                    )
+                                    SELECT
+                                      SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                    FROM
+                                      SALESORDER s
+                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
+                                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')  AND NOT TRIM(p.SUBCODE07) = '-'
+                                    LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                    WHERE
+                                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
+                                      AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                      AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
+                                      AND cd.PROGRESSSTATUS = '3'";
+      $resultSdhCelupPrintingBlnLalu  = db2_exec($conn1, $qSdhCelupPrintingBlnLalu);
+      $rowSdhCelupPrintingBlnLalu     = db2_fetch_assoc($resultSdhCelupPrintingBlnLalu);
+      $qtySdhCelupPrintingBlnLalu     = $rowSdhCelupPrintingBlnLalu['QTY'];
+    // SDH CELUP PRINTING - 1 BULAN
+    
+    // SDH CELUP PRINTING - BULAN SAAT INI
+      $qSdhCelupPrintingBlnIni = "WITH QTY_BRUTO AS (
+                                      SELECT
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE,
+                                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                        SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                      FROM
+                                        ITXVIEWKGBRUTOBONORDER2 i
+                                      GROUP BY
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE
+                                    ),
+                                    CELUP_DYEING AS(
+                                      SELECT DISTINCT 
+                                        p.ORIGDLVSALORDLINESALORDERCODE,
+                                        p.CODE,
+                                        p2.PROGRESSSTATUS 
+                                      FROM
+                                        PRODUCTIONDEMAND p
+                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                      WHERE
+                                        p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                                    )
+                                    SELECT
+                                      SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                    FROM
+                                      SALESORDER s
+                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
+                                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')  AND NOT TRIM(p.SUBCODE07) = '-'
+                                    LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                    WHERE
+                                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
+                                      AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                      AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
+                                      AND cd.PROGRESSSTATUS = '3'";
+      $resultSdhCelupPrintingBlnIni  = db2_exec($conn1, $qSdhCelupPrintingBlnIni);
+      $rowSdhCelupPrintingBlnIni     = db2_fetch_assoc($resultSdhCelupPrintingBlnIni);
+      $qtySdhCelupPrintingBlnIni     = $rowSdhCelupPrintingBlnIni['QTY'];
+    // SDH CELUP PRINTING - BULAN SAAT INI
+    ?>
+    <tr>
+      <td><?= $bulanLalu; ?></td>
+      <td><?= number_format($qtyPrintingBulanLalu); ?></td>
+      <td>0</td>
+      <td>0</td>
+      <td><?= number_format($qtySdhCelupPrintingBlnLalu); ?></td>
+      <td>BLM CELUP...</td>
+    </tr>
+    
+    <tr>
+      <td><?= $bulanIni; ?></td>
+      <td><?= number_format($qtyPrintingBulanIni); ?></td>
+      <td>0</td>
+      <td>0</td>
+      <td><?= number_format($qtySdhCelupPrintingBlnIni); ?></td>
+      <td>BLM CELUP...</td>
+    </tr>
+    
+    <tr>
+      <td>TOTAL</td>
+      <td><?= number_format($totalSublimation); ?></td>
+      <td>0</td>
+      <td>0</td>
+      <td>TOTAL SDH CELUP...</td>
+      <td>TOTAL BLM CELUP...</td>
+    </tr>
+  </tbody>
+</table>
