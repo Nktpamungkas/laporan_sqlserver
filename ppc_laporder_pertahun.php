@@ -3,7 +3,7 @@
 // header("content-disposition:attachment;filename=TerimaOrder.xls");
 // header('Cache-Control: max-age=0');
 require_once 'koneksi.php';
-$tglInput = '2025-05-15';
+$tglInput = $_GET['tgl'];
 ?>
 <center><h4>LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025</h4></center>
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
@@ -200,12 +200,24 @@ $tglInput = '2025-05-15';
           // %LOKAL
             $a_DesThnSebelumnya = $dataDesThnSebelumnyaLokal + $dataDesThnSebelumnyaLokalExport_fkf + $dataDesThnSebelumnyaPrt;
             $b_DesThnSebelumnya = $data_total_DesThnSebelumnya;
-            $data_PersentageLokal_DesThnSebelumnya  = ROUND($a_DesThnSebelumnya / $b_DesThnSebelumnya * 100);
+            $data_PersentageLokal_DesThnSebelumnya = ($b_DesThnSebelumnya != 0) ? ROUND($a_DesThnSebelumnya / $b_DesThnSebelumnya * 100) : 0;
           // %LOKAL
 
           // %EXPORT
-            $data_PersentageExport_DesThnSebelumnya  = ROUND($dataDesThnSebelumnyaExport / $data_total_DesThnSebelumnya * 100);
+            $data_PersentageExport_DesThnSebelumnya = ($data_total_DesThnSebelumnya != 0) ? ROUND($dataDesThnSebelumnyaExport / $data_total_DesThnSebelumnya * 100) : 0;
           // %EXPORT
+
+          // KIRIM
+            $qQtyPengirimanThnSebelumnya = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalDes' AND '$tglAkhirDes'";
+            $resultQtyPengirimanThnSebelumnya = sqlsrv_query($con_nowprd, $qQtyPengirimanThnSebelumnya);
+            $rowQtyPengirimanThnSebelumnya    = sqlsrv_fetch_array($resultQtyPengirimanThnSebelumnya);
+            $dataDesThnSebelumnyaKirim        = $rowQtyPengirimanThnSebelumnya['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>DESEMBER '<?= substr($tahunSebelumnya, 2); ?></td>
@@ -218,7 +230,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataDesThnSebelumnyaBooking); ?></td>
           <td><?= number_format($dataDesThnSebelumnyaJasa); ?></td>
           <td><?= number_format($dataDesThnSebelumnyaPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataDesThnSebelumnyaKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- DESEMBER 'TAHUN SEBELUMNYA -->
@@ -401,6 +413,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_JanThnIni = $data_total_JanThnIni == 0 ? 0 : ($dataJanThnIniExport / $data_total_JanThnIni * 100);
           // %EXPORT
+          
+          // KIRIM
+            $qQtyJanPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalJan' AND '$tglAkhirJan'";
+            $resultQtyJanPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyJanPengirimanThnIni);
+            $rowQtyJanPengirimanThnIni         = sqlsrv_fetch_array($resultQtyJanPengirimanThnIni);
+            $dataQtyJanPengirimanThnIniKirim   = $rowQtyJanPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>JANUARI</td>
@@ -413,7 +437,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataJanThnIniJasa); ?></td>
           <td><?= number_format($dataJanThnIniBooking); ?></td>
           <td><?= number_format($dataJanThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyJanPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- JANUARI -->
@@ -596,6 +620,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_FebThnIni = $data_total_FebThnIni == 0 ? 0 : ($dataFebThnIniExport / $data_total_FebThnIni * 100);
           // %EXPORT
+
+          // KIRIM
+            $qQtyFebPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb'";
+            $resultQtyFebPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyFebPengirimanThnIni);
+            $rowQtyFebPengirimanThnIni         = sqlsrv_fetch_array($resultQtyFebPengirimanThnIni);
+            $dataQtyFebPengirimanThnIniKirim   = $rowQtyFebPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>FEBRUARI</td>
@@ -608,7 +644,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataFebThnIniJasa); ?></td>
           <td><?= number_format($dataFebThnIniBooking); ?></td>
           <td><?= number_format($dataFebThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyFebPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- FEBRUARI -->
@@ -791,6 +827,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_MarThnIni = $data_total_MarThnIni == 0 ? 0 : ($dataMarThnIniExport / $data_total_MarThnIni * 100);
           // %EXPORT
+
+          // KIRIM
+            $qQtyMarPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalMar' AND '$tglAkhirMar'";
+            $resultQtyMarPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyMarPengirimanThnIni);
+            $rowQtyMarPengirimanThnIni         = sqlsrv_fetch_array($resultQtyMarPengirimanThnIni);
+            $dataQtyMarPengirimanThnIniKirim   = $rowQtyMarPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>MARET</td>
@@ -803,7 +851,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataMarThnIniJasa); ?></td>
           <td><?= number_format($dataMarThnIniBooking); ?></td>
           <td><?= number_format($dataMarThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyMarPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- MARET -->
@@ -986,6 +1034,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_AprThnIni = $data_total_AprThnIni == 0 ? 0 : ($dataAprThnIniExport / $data_total_AprThnIni * 100);
           // %EXPORT
+
+          // KIRIM
+            $qQtyAprPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalApr' AND '$tglAkhirApr'";
+            $resultQtyAprPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyAprPengirimanThnIni);
+            $rowQtyAprPengirimanThnIni         = sqlsrv_fetch_array($resultQtyAprPengirimanThnIni);
+            $dataQtyAprPengirimanThnIniKirim   = $rowQtyAprPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>APRIL</td>
@@ -998,7 +1058,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataAprThnIniJasa); ?></td>
           <td><?= number_format($dataAprThnIniBooking); ?></td>
           <td><?= number_format($dataAprThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyAprPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- APRIL -->
@@ -1181,6 +1241,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_MeiThnIni = $data_total_MeiThnIni == 0 ? 0 : ($dataMeiThnIniExport / $data_total_MeiThnIni * 100);
           // %EXPORT
+
+          // KIRIM
+            $qQtyMeiPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalMei' AND '$tglAkhirMei'";
+            $resultQtyMeiPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyMeiPengirimanThnIni);
+            $rowQtyMeiPengirimanThnIni         = sqlsrv_fetch_array($resultQtyMeiPengirimanThnIni);
+            $dataQtyMeiPengirimanThnIniKirim   = $rowQtyMeiPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>MEI</td>
@@ -1193,7 +1265,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataMeiThnIniJasa); ?></td>
           <td><?= number_format($dataMeiThnIniBooking); ?></td>
           <td><?= number_format($dataMeiThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyMeiPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- MEI -->
@@ -1376,6 +1448,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_JunThnIni = $data_total_JunThnIni == 0 ? 0 : ($dataJunThnIniExport / $data_total_JunThnIni * 100);
           // %EXPORT
+
+          // KIRIM
+            $qQtyJunPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalJun' AND '$tglAkhirJun'";
+            $resultQtyJunPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyJunPengirimanThnIni);
+            $rowQtyJunPengirimanThnIni         = sqlsrv_fetch_array($resultQtyJunPengirimanThnIni);
+            $dataQtyJunPengirimanThnIniKirim   = $rowQtyJunPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>JUNI</td>
@@ -1388,7 +1472,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataJunThnIniJasa); ?></td>
           <td><?= number_format($dataJunThnIniBooking); ?></td>
           <td><?= number_format($dataJunThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyJunPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- JUNI -->
@@ -1571,6 +1655,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_JulThnIni = $data_total_JulThnIni == 0 ? 0 : ($dataJulThnIniExport / $data_total_JulThnIni * 100);
           // %EXPORT
+
+          // KIRIM
+            $qQtyJulPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalJul' AND '$tglAkhirJul'";
+            $resultQtyJulPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyJulPengirimanThnIni);
+            $rowQtyJulPengirimanThnIni         = sqlsrv_fetch_array($resultQtyJulPengirimanThnIni);
+            $dataQtyJulPengirimanThnIniKirim   = $rowQtyJulPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>JULI</td>
@@ -1583,7 +1679,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataJulThnIniJasa); ?></td>
           <td><?= number_format($dataJulThnIniBooking); ?></td>
           <td><?= number_format($dataJulThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyJulPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- JULI -->
@@ -1767,6 +1863,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_AgsThnIni = $data_total_AgsThnIni == 0 ? 0 : ($dataAgsThnIniExport / $data_total_AgsThnIni * 100);
           // %EXPORT
+
+          // KIRIM
+            $qQtyAgsPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs'";
+            $resultQtyAgsPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyAgsPengirimanThnIni);
+            $rowQtyAgsPengirimanThnIni         = sqlsrv_fetch_array($resultQtyAgsPengirimanThnIni);
+            $dataQtyAgsPengirimanThnIniKirim   = $rowQtyAgsPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>AGUSTUS</td>
@@ -1779,7 +1887,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataAgsThnIniJasa); ?></td>
           <td><?= number_format($dataAgsThnIniBooking); ?></td>
           <td><?= number_format($dataAgsThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyAgsPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- AGUSTUS -->
@@ -1962,6 +2070,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_SeptThnIni = $data_total_SeptThnIni == 0 ? 0 : ($dataSeptThnIniExport / $data_total_SeptThnIni) * 100;
           // %EXPORT
+
+          // KIRIM
+            $qQtySeptPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalSept' AND '$tglAkhirSept'";
+            $resultQtySeptPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtySeptPengirimanThnIni);
+            $rowQtySeptPengirimanThnIni         = sqlsrv_fetch_array($resultQtySeptPengirimanThnIni);
+            $dataQtySeptPengirimanThnIniKirim   = $rowQtySeptPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>SEPTEMBER</td>
@@ -1974,7 +2094,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataSeptThnIniJasa); ?></td>
           <td><?= number_format($dataSeptThnIniBooking); ?></td>
           <td><?= number_format($dataSeptThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtySeptPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- SEPTEMBER -->
@@ -2157,6 +2277,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_OktThnIni = $data_total_OktThnIni == 0 ? 0 : ($dataOktThnIniExport / $data_total_OktThnIni) * 100;
           // %EXPORT
+
+          // KIRIM
+            $qQtyOktPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt'";
+            $resultQtyOktPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyOktPengirimanThnIni);
+            $rowQtyOktPengirimanThnIni         = sqlsrv_fetch_array($resultQtyOktPengirimanThnIni);
+            $dataQtyOktPengirimanThnIniKirim   = $rowQtyOktPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>OKTOBER</td>
@@ -2169,7 +2301,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataOktThnIniJasa); ?></td>
           <td><?= number_format($dataOktThnIniBooking); ?></td>
           <td><?= number_format($dataOktThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyOktPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- OKTOBER -->
@@ -2352,6 +2484,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_NovThnIni = $data_total_NovThnIni == 0 ? 0 : ($dataNovThnIniExport / $data_total_NovThnIni) * 100;
           // %EXPORT
+
+          // KIRIM
+            $qQtyNovPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalNov' AND '$tglAkhirNov'";
+            $resultQtyNovPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyNovPengirimanThnIni);
+            $rowQtyNovPengirimanThnIni         = sqlsrv_fetch_array($resultQtyNovPengirimanThnIni);
+            $dataQtyNovPengirimanThnIniKirim   = $rowQtyNovPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>NOVEMBER</td>
@@ -2364,7 +2508,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataNovThnIniJasa); ?></td>
           <td><?= number_format($dataNovThnIniBooking); ?></td>
           <td><?= number_format($dataNovThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyNovPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- NOVEMBER -->
@@ -2547,6 +2691,18 @@ $tglInput = '2025-05-15';
           // %EXPORT
             $data_PersentageExport_DesThnIni = $data_total_DesThnIni == 0 ? 0 : ($dataDesThnIniExport / $data_total_DesThnIni) * 100;
           // %EXPORT
+
+          // KIRIM
+            $qQtyDesPengirimanThnIni = "SELECT 
+                                              SUM(qty) AS qty
+                                            FROM
+                                              [nowprd].[tbl_summary] 
+                                            WHERE
+                                              tanggal BETWEEN '$tglAwalDes' AND '$tglAkhirDes'";
+            $resultQtyDesPengirimanThnIni      = sqlsrv_query($con_nowprd, $qQtyDesPengirimanThnIni);
+            $rowQtyDesPengirimanThnIni         = sqlsrv_fetch_array($resultQtyDesPengirimanThnIni);
+            $dataQtyDesPengirimanThnIniKirim   = $rowQtyDesPengirimanThnIni['qty'];
+          // KIRIM
         ?>
         <tr>
           <td>DESEMBER</td>
@@ -2559,7 +2715,7 @@ $tglInput = '2025-05-15';
           <td style="background-color: yellow;"><?= number_format($dataDesThnIniJasa); ?></td>
           <td><?= number_format($dataDesThnIniBooking); ?></td>
           <td><?= number_format($dataDesThnIniPrt); ?></td>
-          <td>...</td>
+          <td><?= number_format($dataQtyDesPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
       <!-- DESEMBER -->
@@ -4592,6 +4748,92 @@ $tglInput = '2025-05-15';
       $rowSdhCelupPrintingBlnIni     = db2_fetch_assoc($resultSdhCelupPrintingBlnIni);
       $qtySdhCelupPrintingBlnIni     = $rowSdhCelupPrintingBlnIni['QTY'];
     // SDH CELUP PRINTING - BULAN SAAT INI
+
+    // BLM CELUP PRINTING - 1 BULAN
+      $qBlmCelupPrintingBlnLalu = "WITH QTY_BRUTO AS (
+                                      SELECT
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE,
+                                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                        SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                      FROM
+                                        ITXVIEWKGBRUTOBONORDER2 i
+                                      GROUP BY
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE
+                                    ),
+                                    CELUP_DYEING AS(
+                                      SELECT DISTINCT 
+                                        p.ORIGDLVSALORDLINESALORDERCODE,
+                                        p.CODE,
+                                        p2.PROGRESSSTATUS 
+                                      FROM
+                                        PRODUCTIONDEMAND p
+                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                      WHERE
+                                        p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                                    )
+                                    SELECT
+                                      SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                    FROM
+                                      SALESORDER s
+                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
+                                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')  AND NOT TRIM(p.SUBCODE07) = '-'
+                                    LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                    WHERE
+                                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
+                                      AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                      AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
+                                      AND cd.PROGRESSSTATUS IN ('0','1','2')";
+      $resultBlmCelupPrintingBlnLalu  = db2_exec($conn1, $qBlmCelupPrintingBlnLalu);
+      $rowBlmCelupPrintingBlnLalu     = db2_fetch_assoc($resultBlmCelupPrintingBlnLalu);
+      $qtyBlmCelupPrintingBlnLalu     = $rowBlmCelupPrintingBlnLalu['QTY'];
+    // BLM CELUP PRINTING - 1 BULAN
+
+    // BLM CELUP PRINTING - BULAN SAAT INI
+      $qBlmCelupPrintingBlnIni = "WITH QTY_BRUTO AS (
+                                      SELECT
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE,
+                                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                        SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                      FROM
+                                        ITXVIEWKGBRUTOBONORDER2 i
+                                      GROUP BY
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE
+                                    ),
+                                    CELUP_DYEING AS(
+                                      SELECT DISTINCT 
+                                        p.ORIGDLVSALORDLINESALORDERCODE,
+                                        p.CODE,
+                                        p2.PROGRESSSTATUS 
+                                      FROM
+                                        PRODUCTIONDEMAND p
+                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                      WHERE
+                                        p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                                    )
+                                    SELECT
+                                      SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                    FROM
+                                      SALESORDER s
+                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
+                                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')  AND NOT TRIM(p.SUBCODE07) = '-'
+                                    LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                    WHERE
+                                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
+                                      AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                      AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
+                                      AND cd.PROGRESSSTATUS IN ('0','1','2')";
+      $resultBlmCelupPrintingBlnIni  = db2_exec($conn1, $qBlmCelupPrintingBlnIni);
+      $rowBlmCelupPrintingBlnIni     = db2_fetch_assoc($resultBlmCelupPrintingBlnIni);
+      $qtyBlmCelupPrintingBlnIni     = $rowBlmCelupPrintingBlnIni['QTY'];
+    // BLM CELUP PRINTING - BULAN SAAT INI
     ?>
     <tr>
       <td><?= $bulanLalu; ?></td>
@@ -4599,7 +4841,7 @@ $tglInput = '2025-05-15';
       <td>0</td>
       <td>0</td>
       <td><?= number_format($qtySdhCelupPrintingBlnLalu); ?></td>
-      <td>BLM CELUP...</td>
+      <td><?= number_format($qtyBlmCelupPrintingBlnLalu); ?></td>
     </tr>
     
     <tr>
@@ -4608,7 +4850,7 @@ $tglInput = '2025-05-15';
       <td>0</td>
       <td>0</td>
       <td><?= number_format($qtySdhCelupPrintingBlnIni); ?></td>
-      <td>BLM CELUP...</td>
+      <td><?= number_format($qtyBlmCelupPrintingBlnIni); ?></td>
     </tr>
     
     <tr>
@@ -4618,6 +4860,548 @@ $tglInput = '2025-05-15';
       <td>0</td>
       <td>TOTAL SDH CELUP...</td>
       <td>TOTAL BLM CELUP...</td>
+    </tr>
+  </tbody>
+</table>
+
+<br>
+<center><h4>YARN DYE</h4></center>
+<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
+  <thead>
+    <tr>
+      <th>DELIVERY</th>
+      <th>TOTAL ORDER</th>
+      <th>SUDAH CELUP</th>
+      <th>BELUM CELUP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+      // TOTAL ORDER - 1 BULAN LALU
+        $dtBulanLalu = new DateTime($tglInput);
+        $dtBulanLalu->modify('-1 month');
+        $tglInput_bulanlalu = $dtBulanLalu->format('Y-m-d');
+
+        // Buat objek DateTime
+        $bulanLaluAngka = $dtBulanLalu->format('m');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulanLalu = $namaBulanIndo[$bulanLaluAngka];
+
+        $tglAwalBulanLalu  = $dtBulanLalu->format('Y-m-01');
+        $tglAkhirBulanLalu = $dtBulanLalu->format('Y-m-t');
+
+        $qTotalOrderYndBlnLalu = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(p.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND p.TEMPLATECODE = '100'
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'";
+        $resultTotalOrderYndBlnLalu  = db2_exec($conn1, $qTotalOrderYndBlnLalu);
+        $rowTotalOrderYndBlnLalu     = db2_fetch_assoc($resultTotalOrderYndBlnLalu);
+        $qtyTotalOrderYndBlnLalu     = $rowTotalOrderYndBlnLalu['QTY'];
+      // TOTAL ORDER - 1 BULAN LALU
+
+      // SUDAH CELUP - 1 BULAN LALU
+        $dtBulanLalu = new DateTime($tglInput);
+        $dtBulanLalu->modify('-1 month');
+        $tglInput_bulanlalu = $dtBulanLalu->format('Y-m-d');
+
+        // Buat objek DateTime
+        $bulanLaluAngka = $dtBulanLalu->format('m');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulanLalu = $namaBulanIndo[$bulanLaluAngka];
+
+        $tglAwalBulanLalu  = $dtBulanLalu->format('Y-m-01');
+        $tglAkhirBulanLalu = $dtBulanLalu->format('Y-m-t');
+
+        $qTotalOrderSdhCelupYndBlnLalu = "SELECT 
+                                        SUM(QTY) AS QTY
+                                      FROM 
+                                      (SELECT
+                                        s.CODE,
+                                        s3.DELIVERYDATE,
+                                        ROUND(SUM(p.USERPRIMARYQUANTITY)) AS QTY
+                                      FROM
+                                        SALESORDER s
+                                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE AND p2.OPERATIONCODE = 'YDY1'
+                                      WHERE
+                                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                        AND p.TEMPLATECODE = '100'
+                                        AND NOT s3.DELIVERYDATE IS NULL
+                                        AND TRIM(p2.PROGRESSSTATUS) = '3'
+                                      GROUP BY
+                                        s.CODE,
+                                        s3.DELIVERYDATE)
+                                      WHERE
+                                        DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'";
+        $resultTotalOrderSdhCelupYndBlnLalu  = db2_exec($conn1, $qTotalOrderSdhCelupYndBlnLalu);
+        $rowTotalOrderSdhCelupYndBlnLalu     = db2_fetch_assoc($resultTotalOrderSdhCelupYndBlnLalu);
+        $qtyTotalOrderSdhCelupYndBlnLalu     = $rowTotalOrderSdhCelupYndBlnLalu['QTY'];
+      // SUDAH CELUP - 1 BULAN LALU
+
+      // BELUM CELUP - 1 BULAN LALU
+        $qtyTotalOrderBlmCelupYndBlnLalu = $qtyTotalOrderYndBlnLalu - $qtyTotalOrderSdhCelupYndBlnLalu;
+      // BELUM CELUP - 1 BULAN LALU
+
+      // TOTAL ORDER - BULAN SAAT INI
+        $dtBulanIni = new DateTime($tglInput);
+        $tglInput_bulanIni = $dtBulanIni->format('Y-m-d');
+
+        // Buat objek DateTime
+        $bulanIniAngka = $dtBulanIni->format('m');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulanIni = $namaBulanIndo[$bulanIniAngka];
+
+        $tglAwalBulanIni  = $dtBulanIni->format('Y-m-01');
+        $tglAkhirBulanIni = $dtBulanIni->format('Y-m-t');
+
+        $qTotalOrderYndBlnIni = "SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(p.USERPRIMARYQUANTITY)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND p.TEMPLATECODE = '100'
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'";
+        $resultTotalOrderYndBlnIni  = db2_exec($conn1, $qTotalOrderYndBlnIni);
+        $rowTotalOrderYndBlnIni     = db2_fetch_assoc($resultTotalOrderYndBlnIni);
+        $qtyTotalOrderYndBlnIni     = $rowTotalOrderYndBlnIni['QTY'];
+      // TOTAL ORDER - BULAN SAAT INI
+
+      // SUDAH CELUP - BULAN SAAT INI
+        $dtBulanIni = new DateTime($tglInput);
+        $tglInput_bulanIni = $dtBulanIni->format('Y-m-d');
+
+        // Buat objek DateTime
+        $bulanIniAngka = $dtBulanIni->format('m');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulanIni = $namaBulanIndo[$bulanIniAngka];
+
+        $tglAwalBulanIni  = $dtBulanIni->format('Y-m-01');
+        $tglAkhirBulanIni = $dtBulanIni->format('Y-m-t');
+
+        $qTotalOrderSdhCelupYndBlnIni = "SELECT 
+                                        SUM(QTY) AS QTY
+                                      FROM 
+                                      (SELECT
+                                        s.CODE,
+                                        s3.DELIVERYDATE,
+                                        ROUND(SUM(p.USERPRIMARYQUANTITY)) AS QTY
+                                      FROM
+                                        SALESORDER s
+                                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE AND p2.OPERATIONCODE = 'YDY1'
+                                      WHERE
+                                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                        AND p.TEMPLATECODE = '100'
+                                        AND NOT s3.DELIVERYDATE IS NULL
+                                        AND TRIM(p2.PROGRESSSTATUS) = '3'
+                                      GROUP BY
+                                        s.CODE,
+                                        s3.DELIVERYDATE)
+                                      WHERE
+                                        DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'";
+        $resultTotalOrderSdhCelupYndBlnIni  = db2_exec($conn1, $qTotalOrderSdhCelupYndBlnIni);
+        $rowTotalOrderSdhCelupYndBlnIni     = db2_fetch_assoc($resultTotalOrderSdhCelupYndBlnIni);
+        $qtyTotalOrderSdhCelupYndBlnIni     = $rowTotalOrderSdhCelupYndBlnIni['QTY'];
+      // SUDAH CELUP - BULAN SAAT INI
+
+      // BELUM CELUP - BULAN SAAT INI
+        $qtyTotalOrderBlmCelupYndBlnIni = $qtyTotalOrderYndBlnIni - $qtyTotalOrderSdhCelupYndBlnIni;
+      // BELUM CELUP - BULAN SAAT INI
+    ?>
+    <tr>
+      <td><?= $bulanLalu; ?></td>
+      <td><?= number_format($qtyTotalOrderYndBlnLalu); ?></td>
+      <td><?= number_format($qtyTotalOrderSdhCelupYndBlnLalu); ?></td>
+      <td><?= number_format($qtyTotalOrderBlmCelupYndBlnLalu); ?></td>
+    </tr>
+    
+    <tr>
+      <td><?= $bulanIni; ?></td>
+      <td><?= number_format($qtyTotalOrderYndBlnIni); ?></td>
+      <td><?= number_format($qtyTotalOrderSdhCelupYndBlnIni); ?></td>
+      <td><?= number_format($qtyTotalOrderBlmCelupYndBlnIni); ?></td>
+    </tr>
+  </tbody>
+</table>
+
+<br>
+<center><h4>GANTI KAIN INTERNAL+EXTERNAL+RETUR</h4></center>
+<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
+  <thead>
+    <tr>
+      <th>BULAN</th>
+      <th>INTERNAL</th>
+      <th>EXTERNAL</th>
+      <th>TOTAL INT+EXT</th>
+      <th>OPER WARNA</th>
+      <th>RETUR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+      // GI INTERNAL - 1 BULAN LALU
+        $dtBulanLalu = new DateTime($tglInput);
+        $dtBulanLalu->modify('-1 month');
+        $tglInput_bulanlalu = $dtBulanLalu->format('Y-m-d');
+
+        // Buat objek DateTime
+        $bulanLaluAngka = $dtBulanLalu->format('m');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulanLalu = $namaBulanIndo[$bulanLaluAngka];
+
+        $tglAwalBulanLalu  = $dtBulanLalu->format('Y-m-01');
+        $tglAkhirBulanLalu = $dtBulanLalu->format('Y-m-t');
+
+        $qGIInternalBulanLalu = "WITH QTY_BRUTO AS (
+                          SELECT
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE,
+                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                          FROM
+                            ITXVIEWKGBRUTOBONORDER2 i
+                          GROUP BY 
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE
+                        )
+                        SELECT
+                          SUM(COALESCE(qb.KFF, 0)) AS QTY
+                        FROM
+                          SALESORDER s
+                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DefectNote'
+                        WHERE
+                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
+                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                          AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
+                          AND a.VALUESTRING LIKE '%GI%'";
+        $resultGIInternalBulanLalu  = db2_exec($conn1, $qGIInternalBulanLalu);
+        $rowGIInternalBulanLalu     = db2_fetch_assoc($resultGIInternalBulanLalu);
+        $qtyGIInternalBulanLalu     = $rowGIInternalBulanLalu['QTY'];
+      // GI INTERNAL - 1 BULAN LALU
+
+      // GI EXTERNAL - 1 BULAN LALU
+        $dtBulanLalu = new DateTime($tglInput);
+        $dtBulanLalu->modify('-1 month');
+        $tglInput_bulanlalu = $dtBulanLalu->format('Y-m-d');
+
+        // Buat objek DateTime
+        $bulanLaluAngka = $dtBulanLalu->format('m');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulanLalu = $namaBulanIndo[$bulanLaluAngka];
+
+        $tglAwalBulanLalu  = $dtBulanLalu->format('Y-m-01');
+        $tglAkhirBulanLalu = $dtBulanLalu->format('Y-m-t');
+
+        $qGIExternalBulanLalu = "WITH QTY_BRUTO AS (
+                          SELECT
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE,
+                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                          FROM
+                            ITXVIEWKGBRUTOBONORDER2 i
+                          GROUP BY 
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE
+                        )
+                        SELECT
+                          SUM(COALESCE(qb.KFF, 0)) AS QTY
+                        FROM
+                          SALESORDER s
+                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DefectNote'
+                        WHERE
+                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
+                          AND s.TEMPLATECODE IN ('RFD', 'RFE')  
+                          AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
+                          AND a.VALUESTRING LIKE '%GI%'";
+        $resultGIExternalBulanLalu  = db2_exec($conn1, $qGIExternalBulanLalu);
+        $rowGIExternalBulanLalu     = db2_fetch_assoc($resultGIExternalBulanLalu);
+        $qtyGIExternalBulanLalu     = $rowGIExternalBulanLalu['QTY'];
+      // GI EXTERNAL - 1 BULAN LALU
+
+      // TOTAL INT + EXT - 1 BULAN LALU
+        $totalGIInternalExternalBulanLalu = $qtyGIInternalBulanLalu + $qtyGIExternalBulanLalu;
+      // TOTAL INT + EXT - 1 BULAN LALU
+
+      // GI INTERNAL - BULAN SAAT INI
+        $dtBulanIni = new DateTime($tglInput);
+        $dtBulanIni->modify('-1 month');
+        $tglInput_bulanIni = $dtBulanIni->format('Y-m-d');
+
+        // Buat objek DateTime
+        $bulanIniAngka = $dtBulanIni->format('m');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulanIni = $namaBulanIndo[$bulanIniAngka];
+
+        $tglAwalBulanIni  = $dtBulanIni->format('Y-m-01');
+        $tglAkhirBulanIni = $dtBulanIni->format('Y-m-t');
+
+        $qGIInternalBulanIni = "WITH QTY_BRUTO AS (
+                          SELECT
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE,
+                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                          FROM
+                            ITXVIEWKGBRUTOBONORDER2 i
+                          GROUP BY 
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE
+                        )
+                        SELECT
+                          SUM(COALESCE(qb.KFF, 0)) AS QTY
+                        FROM
+                          SALESORDER s
+                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DefectNote'
+                        WHERE
+                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
+                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                          AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
+                          AND a.VALUESTRING LIKE '%GI%'";
+        $resultGIInternalBulanIni  = db2_exec($conn1, $qGIInternalBulanIni);
+        $rowGIInternalBulanIni     = db2_fetch_assoc($resultGIInternalBulanIni);
+        $qtyGIInternalBulanIni     = $rowGIInternalBulanIni['QTY'];
+      // GI INTERNAL - BULAN SAAT INI
+
+      // GI EXTERNAL - BULAN SAAT INI
+        $dtBulanIni = new DateTime($tglInput);
+        $dtBulanIni->modify('-1 month');
+        $tglInput_bulanIni = $dtBulanIni->format('Y-m-d');
+
+        // Buat objek DateTime
+        $bulanIniAngka = $dtBulanIni->format('m');
+
+        $namaBulanIndo = [
+            '01' => 'JAN',
+            '02' => 'FEB',
+            '03' => 'MAR',
+            '04' => 'APR',
+            '05' => 'MEI',
+            '06' => 'JUN',
+            '07' => 'JUL',
+            '08' => 'AGS',
+            '09' => 'SEPT',
+            '10' => 'OKT',
+            '11' => 'NOV',
+            '12' => 'DES'
+        ];
+      
+        // Nama bulan sekarang dan bulan depan
+        $bulanIni = $namaBulanIndo[$bulanIniAngka];
+
+        $tglAwalBulanIni  = $dtBulanIni->format('Y-m-01');
+        $tglAkhirBulanIni = $dtBulanIni->format('Y-m-t');
+
+        $qGIExternalBulanIni = "WITH QTY_BRUTO AS (
+                          SELECT
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE,
+                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                          FROM
+                            ITXVIEWKGBRUTOBONORDER2 i
+                          GROUP BY 
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE
+                        )
+                        SELECT
+                          SUM(COALESCE(qb.KFF, 0)) AS QTY
+                        FROM
+                          SALESORDER s
+                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DefectNote'
+                        WHERE
+                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
+                          AND s.TEMPLATECODE IN ('RFD', 'RFE')  
+                          AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
+                          AND a.VALUESTRING LIKE '%GI%'";
+        $resultGIExternalBulanIni  = db2_exec($conn1, $qGIExternalBulanIni);
+        $rowGIExternalBulanIni     = db2_fetch_assoc($resultGIExternalBulanIni);
+        $qtyGIExternalBulanIni     = $rowGIExternalBulanIni['QTY'];
+      // GI EXTERNAL - BULAN SAAT INI
+
+      // TOTAL INT + EXT - BULAN SAAT INI
+        $totalGIInternalExternalBulanIni = $qtyGIInternalBulanIni + $qtyGIExternalBulanIni;
+      // TOTAL INT + EXT - BULAN SAAT INI
+    ?>
+    <tr>
+      <td><?= $bulanLalu; ?></td>
+      <td><?= number_format($qtyGIInternalBulanLalu); ?></td>
+      <td><?= number_format($qtyGIExternalBulanLalu); ?></td>
+      <td><?= number_format($totalGIInternalExternalBulanLalu); ?></td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    
+    <tr>
+      <td><?= $bulanIni; ?></td>
+      <td><?= number_format($qtyGIInternalBulanIni); ?></td>
+      <td><?= number_format($qtyGIExternalBulanIni); ?></td>
+      <td><?= number_format($totalGIInternalExternalBulanIni); ?></td>
+      <td>N/A</td>
+      <td>N/A</td>
     </tr>
   </tbody>
 </table>
