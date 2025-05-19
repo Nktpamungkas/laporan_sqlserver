@@ -12,8 +12,8 @@
     //     $where_date = "";
     // }
 
-    $start = new DateTime('2025-01-10');
-    $end = new DateTime('2025-01-11');
+    $start = new DateTime('2024-12-01');
+    $end = new DateTime('2025-05-18');
 
     $dept = 'PPC';
 
@@ -213,9 +213,9 @@
         }
 
         // Cek apakah data dengan tanggal tersebut sudah ada
-        $checkQuery = "SELECT COUNT(*) AS jumlah FROM dbo.tbl_summary WHERE tanggal = ?";
+        $checkQuery = "SELECT COUNT(*) AS jumlah FROM nowprd.tbl_summary WHERE tanggal = ?";
         $params = [$tanggal_kemarin];
-        $checkStmt = sqlsrv_query($con_db_ppc, $checkQuery, $params);
+        $checkStmt = sqlsrv_query($con_nowprd, $checkQuery, $params);
 
         // Pastikan query berhasil
         if ($checkStmt === false) {
@@ -229,9 +229,9 @@
 
         // Jika belum ada, lakukan insert
         if ($jumlah == 0) {
-            $insertQuery = "INSERT INTO dbo.tbl_summary (tanggal, qty) VALUES (?, ?)";
+            $insertQuery = "INSERT INTO nowprd.tbl_summary (tanggal, qty) VALUES (?, ?)";
             $insertParams = [$tanggal_kemarin, $total_qty_kg];
-            $insertStmt = sqlsrv_query($con_db_ppc, $insertQuery, $insertParams);
+            $insertStmt = sqlsrv_query($con_nowprd, $insertQuery, $insertParams);
 
             if ($insertStmt === false) {
                 die(print_r(sqlsrv_errors(), true));
