@@ -135,11 +135,11 @@
                                             Memo Penting
                                         </a>
                                     </li>
-                                    <!-- <li <?= ($current_page == 'ppc_filter_order_perminggu.php') ? $style_active_ppc : ''; ?>>
+                                    <li <?= ($current_page == 'ppc_filter_order_perminggu.php') ? $style_active_ppc : ''; ?>>
                                         <a href="ppc_filter_order_perminggu.php" data-i18n="nav.animations.main">
-                                            Laporan Order
+                                            Laporan Terima Order
                                         </a>
-                                    </li> -->
+                                    </li>
                                     <li <?= ($current_page == 'ppc_filter_persediaan_kain_jadi.php') ? $style_active_ppc : ''; ?>>
                                         <a href="ppc_filter_persediaan_kain_jadi.php" data-i18n="nav.animations.main">
                                             Lap. Persediaan Kain Jadi
