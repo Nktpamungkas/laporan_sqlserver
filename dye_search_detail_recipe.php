@@ -76,6 +76,13 @@
     .table-responsive {
         position: relative;
     }
+
+    .bg-blue-soft {
+        background-color: #e3f2fd;
+        /* color: #0d47a1; */
+        padding: 1rem;
+        border-radius: 0.25rem;
+    }
 </style>
 
 </head>
@@ -84,7 +91,7 @@
 <body>
 
     <div class="pcoded-content">
-        <div class="pcoded-inner-content">
+        <div class="pcoded-inner-content bg-blue-soft">
             <div class="main-body">
                 <div class="page-wrapper">
                     <div class="page-body">
@@ -178,14 +185,14 @@
                                             <table border="1" id='detail_recipe' style='font-family:"Microsoft Sans Serif"' width="100%">
                                                 <thead>
                                                     <tr>
-                                                        <th>Code</th>
-                                                        <th>Commentline</th>
-                                                        <th>Subcode</th>
-                                                        <th>Description</th>
-                                                        <th>Consumption</th>
-                                                        <th>UoM</th>
-                                                        <th>Qty</th>
-                                                        <th>UoM</th>
+                                                        <th class="text-center">Code</th>
+                                                        <th class="text-center">Commentline</th>
+                                                        <th class="text-center">Subcode</th>
+                                                        <th class="text-center">Description</th>
+                                                        <th class="text-center">Consumption</th>
+                                                        <th class="text-center">UoM</th>
+                                                        <th class="text-center">Qty</th>
+                                                        <th class="text-center">UoM</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -355,14 +362,14 @@ function fillTableRecipe(data) {
         data.forEach(function(item) {
             var row = document.createElement('tr');
             row.innerHTML = `
-                <td>${item.CODE || ''}</td>
-                <td>${item.COMMENTLINE || ''}</td>
-                <td>${item.SUBCODE || ''}</td>
-                <td>${item.LONGDESCRIPTION || ''}</td>
-                <td>${item.CONSUMPTION || ''}</td>
-                <td>${item.CONSUMPTIONTYPE || ''}</td>
-                <td>${item.QUANTITY || ''}</td>
-                <td>${item.CONSUMPTIONTYPEQTY || ''}</td>
+                <td style="padding-left: 8px;">${item.CODE || ''}</td>
+                <td style="padding-left: 8px;">${item.COMMENTLINE || ''}</td>
+                <td class="text-center">${item.SUBCODE || ''}</td>
+                <td style="padding-left: 8px;">${item.LONGDESCRIPTION || ''}</td>
+                <td class="text-center">${item.CONSUMPTION || ''}</td>
+                <td class="text-center">${item.CONSUMPTIONTYPE || ''}</td>
+                <td class="text-center">${item.QUANTITY || ''}</td>
+                <td class="text-center">${item.CONSUMPTIONTYPEQTY || ''}</td>
             `;
             tbody.appendChild(row);
         });
