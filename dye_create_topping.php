@@ -3,8 +3,8 @@
     include "utils/helper.php";
     $date = date('Y-m-d H:i:s');
 
-    $recipe_code    = $_POST['recipe_code'] ?? null;
-    $suffix         = $_POST['suffix'] ?? null;
+    $recipe_code    = $_POST['recipecode'] ?? null;
+    $suffix         = $_POST['suffixcode'] ?? null;
 
     $queryMainRecipe    = "SELECT * FROM RECIPE r WHERE SUBCODE01 = '$recipe_code' AND SUFFIXCODE = '$suffix'";
     $execMainRecipe     = db2_exec($conn1, $queryMainRecipe);
@@ -33,6 +33,10 @@
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+
 </head>
 <style>
     #recipeComponents_table {
@@ -84,8 +88,8 @@
                                         <div class="row">
                                             <div class="col-sm-6 m-auto">
                                                 <div class="input-group input-group-button input-group-sm">
-                                                    <input type="text" name="recipe_code" id="recipe_code" placeholder="Masukan Recipe Code" class="form-control form-control-sm form-txt-primary" value="<?php if (isset($_POST['submit'])){ echo $_POST['recipe_code']; } ?>" autofocus>
-                                                    <input type="text" name="suffix" id="suffix" placeholder="Masukan Suffix" class="form-control form-control-sm form-txt-primary" value="<?php if (isset($_POST['submit'])){ echo $_POST['suffix']; } ?>">
+                                                    <input type="text" name="recipecode" id="recipecode" placeholder="Masukan Recipe Code" class="form-control form-control-sm form-txt-primary" value="<?php if (isset($_POST['submit'])){ echo $_POST['recipe_code']; } ?>" autofocus>
+                                                    <input type="text" name="suffixcode" id="suffixcode" placeholder="Masukan Suffix" class="form-control form-control-sm form-txt-primary" value="<?php if (isset($_POST['submit'])){ echo $_POST['suffix']; } ?>">
                                                     <span class="input-group-addon btn btn-primary" id="basic-addon10">
                                                         <span class="">Cari data</span>
                                                     </span>
@@ -135,7 +139,13 @@
                                                 </form>
                                             </div>
                                         </div>
-
+                                        <div class="col-sm-6">
+                                                <div class="btn-group" id="before">
+                                                    <button type="button" class="btn btn-warning btn-xs btn-flat" onclick=addNewRow()>
+                                                        <i class="feather icon-plus"></i> Add Row Recipe
+                                                    </button>
+                                                </div> ▐&nbsp;
+                                        </div>
                                         <table class="table table-striped table-bordered" id="recipeComponents_table">
                                             <thead>
                                                 <tr>
@@ -150,6 +160,7 @@
                                                     <th>Cons type</th>
                                                     <th>UoM</th>
                                                     <th>Cons</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -179,6 +190,14 @@
     </div>
 </body>
 <?php require_once 'footer.php'; ?>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!-- Bootstrap 4 theme for Select2 (optional) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css">
+
+<!-- Script Untuk Save Header -->
 <script>
     $(document).ready(function() {
         $('#confirmCheck').on('change', function() {
@@ -262,105 +281,358 @@
             info: false,
         });
     });
+</script>
 
+<!-- Untuk Bon Resep Gatau buat apa nni-->
+<script>
     function cekBonResep() {
-        // var recipecode  = document.getElementById('recipecode_before').value.trim();
-        // var suffix      = document.getElementById('suffix_before').value.trim();
-        // var long        = document.getElementById('long_new').value.trim();
-        // var short       = document.getElementById('short_new').value.trim();
-        // var search      = document.getElementById('search_new').value.trim();
-        // if (recipecode === '' || suffix === '' || long === '' || short === '' || search === '') {
-        //     Swal.fire({
-        //         title: 'Peringatan!',
-        //         text: 'Harap isi dulu Recipe Code dan Suffix sebelum melanjutkan.',
-        //         icon: 'warning',
-        //         confirmButtonText: 'OK'
-        //     }).then(() => {
-        //         // Setelah klik OK, fokuskan kembali ke input bon_resep
-        //         document.getElementById('recipecode_new').focus();
-        //     });
-        // }
-    }
+            // var recipecode  = document.getElementById('recipecode_before').value.trim();
+            // var suffix      = document.getElementById('suffix_before').value.trim();
+            // var long        = document.getElementById('long_new').value.trim();
+            // var short       = document.getElementById('short_new').value.trim();
+            // var search      = document.getElementById('search_new').value.trim();
+            // if (recipecode === '' || suffix === '' || long === '' || short === '' || search === '') {
+            //     Swal.fire({
+            //         title: 'Peringatan!',
+            //         text: 'Harap isi dulu Recipe Code dan Suffix sebelum melanjutkan.',
+            //         icon: 'warning',
+            //         confirmButtonText: 'OK'
+            //     }).then(() => {
+            //         // Setelah klik OK, fokuskan kembali ke input bon_resep
+            //         document.getElementById('recipecode_new').focus();
+            //     });
+            // }
+        }
+</script>
 
-    document.getElementById('basic-addon10').addEventListener('click', function() {
-        var recipeCode = document.getElementById('recipe_code').value.trim();
-        var suffix = document.getElementById('suffix').value.trim();
+<!-- Script Untuk FetchData -->
+<script>
+        document.getElementById('basic-addon10').addEventListener('click', function () {
+        const recipeCode = document.getElementById('recipecode').value.trim();
+        const suffix = document.getElementById('suffixcode').value.trim();
 
         if (recipeCode === '' || suffix === '') {
             Swal.fire('Error', 'Recipe Code dan Suffix harus diisi!', 'error');
             return;
         }
 
-        fetch('fetch_data_recipe.php', {
+        Swal.fire({
+            title: 'Memuat...',
+            text: 'Mengambil data...',
+            didOpen: () => { Swal.showLoading(); },
+            allowOutsideClick: false
+        });
+
+        fetch('ajax/fetch_rff.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'recipe_code=' + encodeURIComponent(recipeCode) + '&suffix=' + encodeURIComponent(suffix)
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'recipecode=' + encodeURIComponent(recipeCode) + '&suffixcode=' + encodeURIComponent(suffix)
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('recipecode_before').value = data.recipecode_before;
-                document.getElementById('suffix_before').value = data.suffix_before;
-                document.getElementById('lr_new').value = data.lr_before;
-                document.getElementById('long_new').value = data.longdescription;
-                document.getElementById('short_new').value = data.shortdescription;
-                document.getElementById('search_new').value = data.searchdescription;
-                console.log(data.recipecomponent);
+        .then(response => {if (!response.ok) throw new Error('Jaringan bermasalah atau server error');return response.json();})
+        .then(datas => {
+            Swal.close();
 
-                // Isi tabel RecipeComponent
-                const tableBody = $('#recipeComponents_table tbody');
-                tableBody.empty(); // Clear existing rows
+            if (datas.success) {
+                document.getElementById('recipecode_before').value = datas.recipecode_before;
+                document.getElementById('suffix_before').value = datas.suffix_before;
+                document.getElementById('lr_new').value = datas.lr_before;
+                document.getElementById('long_new').value = datas.longdescription;
+                document.getElementById('short_new').value = datas.shortdescription;
+                document.getElementById('search_new').value = datas.searchdescription;
+                data = datas.data.map(item => ({
+                    Gr: parseInt(item.GROUPNUMBER),
+                    GrTp: item.GROUPTYPECODE,
+                    Sq: parseInt(item.SEQUENCE),
+                    SubSq: parseInt(item.SUBSEQUENCE),
+                    IT: item.ITEMTYPEAFICODE,
+                    ItemCode: item.ITEMCODE,
+                    Subcode01: item.SUBCODE01,
+                    Subcode02: item.SUBCODE02,
+                    Subcode03: item.SUBCODE03,
+                    SuffixCode: item.SUFFIXCODE,
+                    Description: item.LONGDESCRIPTION,
+                    ConsType: item.CONSUMPTIONTYPE,
+                    Comment: item.COMMENTLINE,
+                    UoM: item.COMPONENTUOMCODE,
+                    Cons: formatDecimal(item.CONSUMPTION)
+                }));
+                populateTable();
 
-                data.recipecomponent.forEach(row => {
-                    let itemCode = '';
-                    if (row.ITEMTYPEAFICODE === 'RFF') {
-                        itemCode = row.SUBCODE01 ?? '';
-                    } else if (row.ITEMTYPEAFICODE === 'DYC'){
-                        itemCode = `${row.SUBCODE01 ?? ''}-${row.SUBCODE02 ?? ''}-${row.SUBCODE03 ?? ''}`;
-                    }else{
-                        itemCode = ``;
-                    }
-
-                    let consumtiontype = '';
-                    if(row.CONSUMPTIONTYPE === '1'){
-                        consumtiontype = 'Quantity';
-                    }else if(row.CONSUMPTIONTYPE === '2'){
-                        consumtiontype = 'Percentage';
-                    }
-
-                    let UoM = '';
-                    if(row.COMPONENTUOMCODE === 'g'){
-                        UoM = 'gram';
-                    }else{
-                        UoM = '';
-                    }
-
-                    tableBody.append(`
-                        <tr>
-                            <td>${row.GROUPNUMBER ?? ''}</td>
-                            <td>${row.GROUPTYPECODE ?? ''}</td>
-                            <td>${row.SEQUENCE ?? ''}</td>
-                            <td>${row.SUBSEQUENCE ?? ''}</td>
-                            <td>${row.ITEMTYPEAFICODE ?? ''}</td>
-                            <td>${itemCode}</td>
-                            <td>${row.COMMENTLINE ?? ''}</td>
-                            <td>${row.LONGDESCRIPTION ?? ''}</td>
-                            <td>${consumtiontype}</td>
-                            <td>${UoM}</td>
-                            <td>${(row.CONSUMPTION ?? '') !== '' ? Number(row.CONSUMPTION).toFixed(5) : ''}</td>
-                        </tr>
-                    `);
-                });
+                Swal.fire('Berhasil', 'Data berhasil dimuat', 'success');
             } else {
-                Swal.fire('Error', 'Data tidak ditemukan!', 'error');
+                Swal.fire('Gagal', data.message || 'Data tidak ditemukan!', 'error');
             }
         })
         .catch(error => {
+            Swal.close();
             console.error('Error:', error);
-            Swal.fire('Error', 'Terjadi kesalahan saat mengambil data.', 'error');
+            Swal.fire('Error', 'Terjadi kesalahan saat mengambil data: ' + error.message, 'error');
         });
     });
+</script>
 
+<!-- Buat manipulasi tampilan supaya ada angka 0 di depan -->
+<script>
+    function formatDecimal(val) {
+        if (val == null ) return '';
+        if (typeof val === 'string' && val.startsWith('.')) {
+            return '0' + val;
+        }
+        if (!isNaN(val)) {
+            return parseFloat(val).toFixed(5);
+        }
+        return val;
+    }
+</script>
+
+<!-- Untuk addrow -->
+<script>
+    function addNewRow() {
+    const maxGr = Math.max(0, ...data.map(row => row.Gr));
+    const newRow = {
+        Gr: maxGr + 1,
+        GrTp: '201',
+        Sq: 10,
+        SubSq: 10,
+        IT: 'RFF',
+        ItemCode: '',
+        Subcode01: '',
+        Subcode02: '',
+        Subcode03: '',
+        SuffixCode: '',
+        Description: '',
+        ConsType: '',
+        Comment: '',
+        UoM: '',
+        Cons: ''
+    };
+
+    data.push(newRow);
+    populateTable();
+    }
+</script>
+
+<!-- Untuk Update GroupType -->
+<script>
+    function updateGrTp(selectEl, gr) {
+        const value = selectEl.value;
+        const index = data.findIndex(item => item.Gr === gr);
+        if (index !== -1) {
+            data[index].GrTp = value;
+            data[index].IT =
+                value === '100' ? "" :
+                value === '010' ? "DYC" :
+                value === '201' ? "RFF" :
+                value === '001' ? "DYC" : "";
+            populateTable();
+        }
+    }
+</script>
+
+<!-- Untuk Create Table -->
+<script>
+    function populateTable() {
+    const tableBody = document.querySelector("#recipeComponents_table tbody");
+    tableBody.innerHTML = "";
+
+    // Pastikan .Gr berupa number agar sort bisa berfungsi benar
+    data.sort((a, b) => parseInt(a.Gr) - parseInt(b.Gr));
+
+    data.forEach((row, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value)"></td>
+            <td>
+                <select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
+                    <option value="100" ${row.GrTp === '100' ? "selected" : ""}>100</option>
+                    <option value="010" ${row.GrTp === '010' ? "selected" : ""}>010</option>
+                    <option value="201" ${row.GrTp === '201' ? "selected" : ""}>201</option>
+                    <option value="001" ${row.GrTp === '001' ? "selected" : ""}>001</option>
+                </select>
+            </td>
+            <td><input type="number" value="${row.Sq}" onchange="updateField(${row.Gr}, 'Sq', this.value)"></td>
+            <td><input type="number" value="${row.SubSq}" onchange="updateField(${row.Gr}, 'SubSq', this.value)"></td>
+            <td><input type="text" value="${row.IT}" readonly></td>
+            <td>
+                <select class="select2-itemcode" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
+                    ${row.ItemCode ? `<option value="${row.ItemCode}" selected>${row.ItemCode}</option>` : ''}
+                </select>
+            </td>
+            <td>${row.Comment ?? ''}</td>
+            <td>${row.Description ?? ''}</td>
+            <td>
+                <select onchange="updateField(${row.Gr}, 'ConsType', this.value)">
+                    <option value="" ${row.ConsType === '' ? "selected" : ""}></option>
+                    <option value="Quantity" ${row.ConsType === 'Quantity' ? "selected" : ""}>Quantity</option>
+                    <option value="Percentage" ${row.ConsType === 'Percentage' ? "selected" : ""}>Percentage</option>
+                </select>
+            </td>
+            <td>${row.UoM}</td>
+            <td><input type="number" value="${row.Cons}" onchange="updateField(${row.Gr}, 'Cons', this.value)"></td>
+            <td>
+                <button class="btn btn-sm btn-danger" onclick="deleteRow(${row.Gr})">Delete</button>
+            </td>
+        `;
+
+        tableBody.appendChild(tr);
+        initSelect2ForItemCode(tr.querySelector(".select2-itemcode"), index);
+
+        if (row.IT === 'RFF') {
+            loadRffDetail(row.ItemCode, row.SuffixCode, row.Gr, tr);
+        }
+    });
+    }
+</script>
+
+<!-- Untuk Urutin berdasarkan Gr -->
+<script>
+    function updateGr(oldGr, newGr) {
+    const index = data.findIndex(item => item.Gr === oldGr);
+    if (index !== -1) {
+        data[index].Gr = parseInt(newGr);
+        populateTable();
+    }
+    }
+</script>
+
+<!-- Untuk Select2 Item -->
+<script>
+    function initSelect2ForItemCode(selectElement, rowIndex) {
+    $(selectElement).select2({
+        theme: 'bootstrap4',
+        placeholder: 'Pilih Item Code',
+        allowClear: true,
+        minimumInputLength: 1,
+        ajax: {
+            url: 'ajax/search_recipe.php',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                const row = data[rowIndex];
+                const groupTypeCode = row?.GrTp || '';
+                console.log('Kirim GROUPTYPECODE:', groupTypeCode, 'Row Index:', params.term);
+                return {
+                    q: params.term,
+                    GROUPTYPECODE: groupTypeCode
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+
+    $(selectElement).on('select2:select', function (e) {
+        const selected = e.params.data;
+        const row = data[rowIndex];
+        if (!row) return;
+
+        row.ItemCode = '';
+        row.Subcode01 = '';
+        row.Subcode02 = '';
+        row.Subcode03 = '';
+        row.SuffixCode = '';
+        row.Description = '';
+        row.Comment = '';
+        row.UoM = '';
+        row.Cons = '0.00000';
+
+        row.ItemCode = selected.id;
+        row.Subcode01 = selected.subcode01;
+        row.Subcode02 = selected.subcode02 || '';
+        row.Subcode03 = selected.subcode03 || '';
+        row.SuffixCode = selected.suffixcode;
+        row.Description = selected.longdescription || '';
+        row.Comment = selected.commentline || '';
+        row.UoM = selected.uom || '';
+        row.Cons = formatDecimal(selected.consumption) || '';
+
+        populateTable();
+    });
+
+    $(selectElement).on('select2:unselect', function () {
+        const row = data[rowIndex];
+        if (row) {
+            row.ItemCode = '';
+            row.Subcode01 = '';
+            row.Subcode02 = '';
+            row.Subcode03 = '';
+            row.SuffixCode = '';
+            row.Description = '';
+            row.Comment = '';
+            row.UoM = '';
+            row.Cons = '0.00000';
+            populateTable();
+        }
+    });   
+    }
+</script>
+
+<!-- Script Untuk Load RFF Detail Each Item -->
+<script>
+    function loadRffDetail(subcode01, suffixcode, grNumber, insertAfterRow) {
+    fetch('ajax/fetch_detail_rff.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `subcode01=${encodeURIComponent(subcode01)}&suffixcode=${encodeURIComponent(suffixcode)}`
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            result.data.forEach(detail => {
+                const detailRow = document.createElement("tr");
+                detailRow.style.backgroundColor = "#f3f3f3";
+                detailRow.innerHTML = `
+                    <td>${grNumber}</td>
+                    <td>${detail.GROUPTYPECODE}</td>
+                    <td>${detail.SEQUENCE}</td>
+                    <td>${detail.SUBSEQUENCE}</td>
+                    <td>${detail.ITEMTYPEAFICODE}</td>
+                    <td>${detail.ITEMCODE}</td>
+                    <td>${detail.COMMENTLINE}</td>
+                    <td>${detail.LONGDESCRIPTION ?? ''}</td>
+                    <td>${detail.CONSUMPTIONTYPE}</td>
+                    <td>${detail.COMPONENTUOMCODE}</td>
+                    <td>${formatDecimal(detail.CONSUMPTION)??''}</td>
+                    <td></td>
+                `;
+                insertAfterRow.parentNode.insertBefore(detailRow, insertAfterRow.nextSibling);
+                insertAfterRow = detailRow;
+            });
+        }
+    });
+    }
+</script>
+
+<!-- Script Untuk Delete Row -->
+<script>
+    function deleteRow(gr) {
+        Swal.fire({
+            title: 'Yakin?',
+            text: 'Data ini akan dihapus dari tabel!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                data = data.filter(row => row.Gr !== gr);
+                populateTable(); 
+                Swal.fire(
+                    'Dihapus!',
+                    'Data telah dihapus.',
+                    'success'
+                );
+            } else {
+                Swal.fire(
+                    'Batal!',
+                    'Data tidak jadi dihapus.',
+                    'error'
+                );
+            }
+        });
+    }
 </script>
