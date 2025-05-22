@@ -192,6 +192,18 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                             } ?>>Sertakan KK OKE</option>
                                                     </select>
                                                 </div>
+                                                <div class="col-sm-12 col-xl-2 m-b-30">
+                                                    <h4 class="sub-title">Tanggal mulai Scan KK OKE</h4>
+                                                    <input type="date" name="tgl1_kkoke" class="form-control" value="<?php if (isset($_POST['submit'])) {
+                                                                                                                            echo $_POST['tgl1_kkoke'];
+                                                                                                                        } ?>">
+                                                </div>
+                                                <div class="col-sm-12 col-xl-2 m-b-30">
+                                                    <h4 class="sub-title">Tanggal selesai Scan KK OKE</h4>
+                                                    <input type="date" name="tgl2_kkoke" class="form-control" value="<?php if (isset($_POST['submit'])) {
+                                                                                                                            echo $_POST['tgl2_kkoke'];
+                                                                                                                        } ?>">
+                                                </div>
                                                 <div class="col-sm-12 col-xl-12 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
                                                     <a class="btn btn-warning" href="ppc_filter.php"><i class="icofont icofont-refresh"></i> Reset</a>
@@ -272,6 +284,8 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                         $article_code   = $_POST['article_code'] ?? '';
                                                         $nama_warna     = $_POST['nama_warna'] ?? '';
                                                         $kkoke          = $_POST['kkoke'] ?? $_GET['kkoke'] ?? '';
+                                                        $tgl1_kkoke     = $_POST['tgl1_kkoke'] ?? '';
+                                                        $tgl2_kkoke     = $_POST['tgl2_kkoke'] ?? '';
 
                                                         $conditions = [];
                                                         $conditions2 = [];
@@ -303,6 +317,9 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                         }
                                                         if ($kkoke === 'tidak') {
                                                             $conditions2[] = "NOT PROGRESSSTATUS = '6' AND NOT PROGRESSSTATUS_DEMAND = '6'";
+                                                        }
+                                                        if ($tgl1_kkoke && $tgl2_kkoke) {
+                                                            $conditions[] = "LASTUPDATEUSER LIKE '10.%' AND CAST(LASTUPDATEDATETIME AS DATE) BETWEEN '$tgl1_kkoke' AND '$tgl2_kkoke'";
                                                         }
 
                                                         // Menyusun string kondisi
@@ -342,7 +359,9 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                 cek($row_itxviewmemo['KETERANGAN']),
                                                                 $_SERVER['REMOTE_ADDR'],
                                                                 date('Y-m-d H:i:s'),
-                                                                'MEMO'
+                                                                'MEMO',
+                                                                cek($row_itxviewmemo['LASTUPDATEUSER']),
+                                                                cek(addslashes($row_itxviewmemo['LASTUPDATEDATETIME']))
                                                             ];
                                                         }
 
@@ -353,9 +372,9 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                         ORDERDATE, PELANGGAN, NO_ORDER, NO_PO, ARTICLE_GROUP, ARTICLE_CODE,
                                                                         KETERANGAN_PRODUCT, WARNA, NO_WARNA, DELIVERY, QTY_BAGIKAIN, NETTO,
                                                                         DELAY, NO_KK, DEMAND, LOT, ORDERLINE, PROGRESSSTATUS, PROGRESSSTATUS_DEMAND,
-                                                                        KETERANGAN, IPADDRESS, CREATEDATETIME, ACCESS_TO
+                                                                        KETERANGAN, IPADDRESS, CREATEDATETIME, ACCESS_TO, LASTUPDATEUSER, LASTUPDATEDATETIME
                                                                     ) VALUES (
-                                                                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                                                                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                                                                     )
                                                                 ";
 
@@ -394,6 +413,8 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                         $no_po2         = $_POST['no_po'] ?? '';
                                                         $article_group2 = $_POST['article_group'] ?? '';
                                                         $article_code2  = $_POST['article_code'] ?? '';
+                                                        $tgl1_kkoke_2     = $_POST['tgl1_kkoke'] ?? '';
+                                                        $tgl2_kkoke_2     = $_POST['tgl2_kkoke'] ?? '';
 
                                                         $conditions = [];
 
@@ -417,6 +438,9 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                         }
                                                         if ($article_group2 & $article_code2) {
                                                             $conditions[] = "ARTICLE_GROUP = '$article_group2' AND ARTICLE_CODE = '$article_code2'";
+                                                        }
+                                                        if ($tgl1_kkoke_2 && $tgl2_kkoke_2) {
+                                                            $conditions[] = "LASTUPDATEUSER LIKE '10.%' AND CAST(LASTUPDATEDATETIME AS DATE) BETWEEN '$tgl1_kkoke_2' AND '$tgl2_kkoke_2'";
                                                         }
 
                                                         // Menyusun string kondisi
@@ -1195,4 +1219,65 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
         </div>
     </div>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tglMulai = document.querySelector('input[name="tgl1_kkoke"]');
+        const tglSelesai = document.querySelector('input[name="tgl2_kkoke"]');
+        const selectKK = document.querySelector('select[name="kkoke"]');
+        const form = tglMulai.closest('form');
+
+        // Set batas maksimal tanggal selesai = hari ini
+        const today = new Date().toISOString().split('T')[0];
+        tglSelesai.setAttribute('max', today);
+
+        // Saat tanggal mulai diubah
+        tglMulai.addEventListener("change", function () {
+            if (tglMulai.value) {
+                // Otomatis pilih "Sertakan KK OKE"
+                selectKK.value = "ya";
+
+                // Hitung batas maksimal tanggal selesai = tanggal mulai + 2 hari
+                const startDate = new Date(tglMulai.value);
+                const maxEndDate = new Date(startDate);
+                maxEndDate.setDate(startDate.getDate() + 2);
+
+                // Jangan melebihi hari ini
+                const finalMaxDate = maxEndDate > new Date() ? new Date() : maxEndDate;
+                const maxDateStr = finalMaxDate.toISOString().split('T')[0];
+
+                // Set batas maksimal input selesai
+                tglSelesai.setAttribute('max', maxDateStr);
+
+                // Jika tanggal selesai sekarang melebihi batas, kosongkan
+                if (tglSelesai.value && tglSelesai.value > maxDateStr) {
+                    tglSelesai.value = '';
+                }
+            }
+        });
+
+        // Validasi sebelum submit
+        form.addEventListener("submit", function (e) {
+            if (tglMulai.value && !tglSelesai.value) {
+                e.preventDefault();
+                alert("Tanggal selesai Scan KK OKE harus diisi jika tanggal mulai diisi.");
+                tglSelesai.focus();
+                return;
+            }
+
+            if (tglMulai.value && tglSelesai.value) {
+                const start = new Date(tglMulai.value);
+                const end = new Date(tglSelesai.value);
+                const diff = (end - start) / (1000 * 60 * 60 * 24);
+                if (diff > 2 || diff < 0) {
+                    e.preventDefault();
+                    alert("Tanggal selesai harus dalam rentang maksimal 2 hari setelah tanggal mulai.");
+                    tglSelesai.focus();
+                }
+            }
+        });
+    });
+</script>
+
+
+
 <?php require_once 'footer.php'; ?>
