@@ -3175,10 +3175,10 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         // SDH CELUP
         
         // BLM CELUP
-          $dataBlmCelupI    = $databrutoI['qty'] - $dataAKJI['qty'] - $dataSdhCelupI['qty'];
-          $dataBlmCelupII   = $databrutoII['qty'] - $dataAKJII['qty'] - $dataSdhCelupII['qty'];
-          $dataBlmCelupIII  = $databrutoIII['qty'] - $dataAKJIII['qty'] - $dataSdhCelupIII['qty'];
-          $dataBlmCelupIV   = $databrutoIV['qty'] - $dataAKJIV['qty'] - $dataSdhCelupIV['qty'];
+          $dataBlmCelupI    = round($databrutoI['qty']) - round($dataAKJI['qty']) - round($dataSdhCelupI['qty']);
+          $dataBlmCelupII   = round($databrutoII['qty']) - round($dataAKJII['qty']) - round($dataSdhCelupII['qty']);
+          $dataBlmCelupIII  = round($databrutoIII['qty']) - round($dataAKJIII['qty']) - round($dataSdhCelupIII['qty']);
+          $dataBlmCelupIV   = round($databrutoIV['qty']) - round($dataAKJIV['qty']) - round($dataSdhCelupIV['qty']);
         // BLM CELUP
         
         // P'BLM CELUP
@@ -3265,10 +3265,10 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         // P'BLM CELUP
 
         // C'BLM CELUP
-          $dataCBlmCelupI   = $dataBlmCelupI - $dataPBlmCelupI['qty'];
-          $dataCBlmCelupII  = $dataBlmCelupII - $dataPBlmCelupII['qty'];
-          $dataCBlmCelupIII = $dataBlmCelupIII - $dataPBlmCelupIII['qty'];
-          $dataCBlmCelupIV  = $dataBlmCelupIV - $dataPBlmCelupIV['qty'];
+          $dataCBlmCelupI   = round($dataBlmCelupI) - round($dataPBlmCelupI['qty']);
+          $dataCBlmCelupII  = round($dataBlmCelupII) - round($dataPBlmCelupII['qty']);
+          $dataCBlmCelupIII = round($dataBlmCelupIII) - round($dataPBlmCelupIII['qty']);
+          $dataCBlmCelupIV  = round($dataBlmCelupIV) - round($dataPBlmCelupIV['qty']);
         // C'BLM CELUP
 
         // TK
@@ -3327,10 +3327,10 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         // TK
 
         // GREIGE READY 
-          $dataGreigeReadyI   = $dataBlmCelupI - $dataTKI['qty'];
-          $dataGreigeReadyII  = $dataBlmCelupII - $dataTKII['qty'];
-          $dataGreigeReadyIII = $dataBlmCelupIII - $dataTKIII['qty'];
-          $dataGreigeReadyIV  = $dataBlmCelupIV - $dataTKIV['qty'];
+          $dataGreigeReadyI   = round($dataBlmCelupI) - round($dataTKI['qty']);
+          $dataGreigeReadyII  = round($dataBlmCelupII) - round($dataTKII['qty']);
+          $dataGreigeReadyIII = round($dataBlmCelupIII) - round($dataTKIII['qty']);
+          $dataGreigeReadyIV  = round($dataBlmCelupIV) - round($dataTKIV['qty']);
         // GREIGE READY 
 
         // SUDAH PRESET, BELUM CELUP
@@ -3511,7 +3511,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         <tr>
           <td><?= $bulan; ?></td>
           <td>I</td>
-          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoI['qty']); ?></td>
           <td><?= number_format($dataAKJI['qty']); ?></td>
@@ -3523,7 +3523,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>I</td>
-          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKI['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyI); ?></td>
@@ -3537,7 +3537,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>II</td>
-          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoII['qty']); ?></td>
           <td><?= number_format($dataAKJII['qty']); ?></td>
@@ -3549,7 +3549,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>II</td>
-          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKII['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyII); ?></td>
@@ -3575,7 +3575,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>III</td>
-          <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKIII['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyIII); ?></td>
@@ -3589,7 +3589,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>IV</td>
-          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoIV['qty']); ?></td>
           <td><?= number_format($dataAKJIV['qty']); ?></td>
@@ -3601,7 +3601,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>IV</td>
-          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKIV['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyIV); ?></td>
@@ -3911,10 +3911,10 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         // SDH CELUP
         
         // BLM CELUP
-          $dataBlmCelupI    = $databrutoI['qty'] - $dataAKJI['qty'] - $dataSdhCelupI['qty'];
-          $dataBlmCelupII   = $databrutoII['qty'] - $dataAKJII['qty'] - $dataSdhCelupII['qty'];
-          $dataBlmCelupIII  = $databrutoIII['qty'] - $dataAKJIII['qty'] - $dataSdhCelupIII['qty'];
-          $dataBlmCelupIV   = $databrutoIV['qty'] - $dataAKJIV['qty'] - $dataSdhCelupIV['qty'];
+          $dataBlmCelupI    = round($databrutoI['qty']) - round($dataAKJI['qty']) - round($dataSdhCelupI['qty']);
+          $dataBlmCelupII   = round($databrutoII['qty']) - round($dataAKJII['qty']) - round($dataSdhCelupII['qty']);
+          $dataBlmCelupIII  = round($databrutoIII['qty']) - round($dataAKJIII['qty']) - round($dataSdhCelupIII['qty']);
+          $dataBlmCelupIV   = round($databrutoIV['qty']) - round($dataAKJIV['qty']) - round($dataSdhCelupIV['qty']);
         // BLM CELUP
         
         // P'BLM CELUP
@@ -3990,10 +3990,10 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         // P'BLM CELUP
 
         // C'BLM CELUP
-          $dataCBlmCelupI   = $dataBlmCelupI - $dataPBlmCelupI['qty'];
-          $dataCBlmCelupII  = $dataBlmCelupII - $dataPBlmCelupII['qty'];
-          $dataCBlmCelupIII = $dataBlmCelupIII - $dataPBlmCelupIII['qty'];
-          $dataCBlmCelupIV  = $dataBlmCelupIV - $dataPBlmCelupIV['qty'];
+          $dataCBlmCelupI   = round($dataBlmCelupI) - round($dataPBlmCelupI['qty']);
+          $dataCBlmCelupII  = round($dataBlmCelupII) - round($dataPBlmCelupII['qty']);
+          $dataCBlmCelupIII = round($dataBlmCelupIII) - round($dataPBlmCelupIII['qty']);
+          $dataCBlmCelupIV  = round($dataBlmCelupIV) - round($dataPBlmCelupIV['qty']);
         // C'BLM CELUP
 
         // TK
@@ -4052,10 +4052,10 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         // TK
 
         // GREIGE READY 
-          $dataGreigeReadyI   = $dataBlmCelupI - $dataTKI['qty'];
-          $dataGreigeReadyII  = $dataBlmCelupII - $dataTKII['qty'];
-          $dataGreigeReadyIII = $dataBlmCelupIII - $dataTKIII['qty'];
-          $dataGreigeReadyIV  = $dataBlmCelupIV - $dataTKIV['qty'];
+          $dataGreigeReadyI   = round($dataBlmCelupI) - round($dataTKI['qty']);
+          $dataGreigeReadyII  = round($dataBlmCelupII) - round($dataTKII['qty']);
+          $dataGreigeReadyIII = round($dataBlmCelupIII) - round($dataTKIII['qty']);
+          $dataGreigeReadyIV  = round($dataBlmCelupIV) - round($dataTKIV['qty']);
         // GREIGE READY
 
         // SUDAH PRESET, BELUM CELUP
@@ -4236,7 +4236,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         <tr>
           <td><?= $bulanDepan; ?></td>
           <td>I</td>
-          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoI['qty']); ?></td>
           <td><?= number_format($dataAKJI['qty']); ?></td>
@@ -4248,7 +4248,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>I</td>
-          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKI['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyI); ?></td>
@@ -4262,7 +4262,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>II</td>
-          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoII['qty']); ?></td>
           <td><?= number_format($dataAKJII['qty']); ?></td>
@@ -4274,7 +4274,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>II</td>
-          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKII['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyII); ?></td>
@@ -4300,7 +4300,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>III</td>
-          <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKIII['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyIII); ?></td>
@@ -4314,7 +4314,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>IV</td>
-          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoIV['qty']); ?></td>
           <td><?= number_format($dataAKJIV['qty']); ?></td>
@@ -4326,7 +4326,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>IV</td>
-          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKIV['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyIV); ?></td>
@@ -4542,10 +4542,10 @@ BOOKING
       // SDH CELUP
 
       // BLM CELUP
-        $dataBookingBlmCelupI   = $databrutoBookingI['qty'] - $dataBookingSdhCelupI['qty'];
-        $dataBookingBlmCelupII  = $databrutoBookingII['qty'] - $dataBookingSdhCelupII['qty'];
-        $dataBookingBlmCelupIII = $databrutoBookingIII['qty'] - $dataBookingSdhCelupIII['qty'];
-        $dataBookingBlmCelupIV  = $databrutoBookingIV['qty'] - $dataBookingSdhCelupIV['qty'];
+        $dataBookingBlmCelupI   = round($databrutoBookingI['qty']) - round($dataBookingSdhCelupI['qty']);
+        $dataBookingBlmCelupII  = round($databrutoBookingII['qty']) - round($dataBookingSdhCelupII['qty']);
+        $dataBookingBlmCelupIII = round($databrutoBookingIII['qty']) - round($dataBookingSdhCelupIII['qty']);
+        $dataBookingBlmCelupIV  = round($databrutoBookingIV['qty']) - round($dataBookingSdhCelupIV['qty']);
       // BLM CELUP
     ?>
     <!-- MINGGU 1 -->
@@ -4553,7 +4553,7 @@ BOOKING
         <!-- KOLOM DELIVERY -->
         <td><?= $bulan; ?></td>
         <td>I</td>
-        <td><?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingI['qty']); ?></td>
         <td><?= number_format($dataBookingSdhCelupI['qty']); ?></td>
@@ -4566,7 +4566,7 @@ BOOKING
         <!-- KOLOM DELIVERY -->
         <td><?= $bulan; ?></td>
         <td>II</td>
-        <td><?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingII['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupII['qty'])  ?></td>
@@ -4579,7 +4579,7 @@ BOOKING
         <!-- KOLOM DELIVERY -->
         <td><?= $bulan; ?></td>
         <td>III</td>
-        <td><?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingIII['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupIII['qty'])  ?></td>
@@ -4592,7 +4592,7 @@ BOOKING
         <!-- KOLOM DELIVERY -->
         <td><?= $bulan; ?></td>
         <td>IV</td>
-        <td><?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingIV['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupIV['qty'])  ?></td>
@@ -4810,10 +4810,10 @@ BOOKING
       // SDH CELUP
 
       // BLM CELUP
-        $dataBookingBlmCelupI   = $databrutoBookingI['qty'] - $dataBookingSdhCelupI['qty'];
-        $dataBookingBlmCelupII  = $databrutoBookingII['qty'] - $dataBookingSdhCelupII['qty'];
-        $dataBookingBlmCelupIII = $databrutoBookingIII['qty'] - $dataBookingSdhCelupIII['qty'];
-        $dataBookingBlmCelupIV  = $databrutoBookingIV['qty'] - $dataBookingSdhCelupIV['qty'];
+        $dataBookingBlmCelupI   = round($databrutoBookingI['qty']) - round($dataBookingSdhCelupI['qty']);
+        $dataBookingBlmCelupII  = round($databrutoBookingII['qty']) - round($dataBookingSdhCelupII['qty']);
+        $dataBookingBlmCelupIII = round($databrutoBookingIII['qty']) - round($dataBookingSdhCelupIII['qty']);
+        $dataBookingBlmCelupIV  = round($databrutoBookingIV['qty']) - round($dataBookingSdhCelupIV['qty']);
       // BLM CELUP
     ?>
     <!-- MINGGU 1 -->
@@ -4821,7 +4821,7 @@ BOOKING
         <!-- KOLOM DELIVERY -->
         <td><?= $bulanDepan; ?></td>
         <td>I</td>
-        <td><?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingI['qty']); ?></td>
         <td><?= number_format($dataBookingSdhCelupI['qty']); ?></td>
@@ -4834,7 +4834,7 @@ BOOKING
         <!-- KOLOM DELIVERY -->
         <td><?= $bulanDepan; ?></td>
         <td>II</td>
-        <td><?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingII['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupII['qty'])  ?></td>
@@ -4847,7 +4847,7 @@ BOOKING
         <!-- KOLOM DELIVERY -->
         <td><?= $bulanDepan; ?></td>
         <td>III</td>
-        <td><?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingIII['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupIII['qty'])  ?></td>
@@ -4860,7 +4860,7 @@ BOOKING
         <!-- KOLOM DELIVERY -->
         <td><?= $bulanDepan; ?></td>
         <td>IV</td>
-        <td><?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingIV['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupIV['qty'])  ?></td>
@@ -5206,11 +5206,11 @@ PRINTING
     // SDH CELUP PRINTING - BULAN SAAT INI
 
     // BLM CELUP PRINTING - 1 BULAN
-      $qtyBlmCelupPrintingBlnLalu     = $qtyPrintingBulanLalu - $qtySdhCelupPrintingBlnLalu;
+      $qtyBlmCelupPrintingBlnLalu     = round($qtyPrintingBulanLalu) - round($qtySdhCelupPrintingBlnLalu);
     // BLM CELUP PRINTING - 1 BULAN
 
     // BLM CELUP PRINTING - BULAN SAAT INI
-      $qtyBlmCelupPrintingBlnIni     = $qtyPrintingBulanIni - $qtySdhCelupPrintingBlnIni;
+      $qtyBlmCelupPrintingBlnIni     = round($qtyPrintingBulanIni) - round($qtySdhCelupPrintingBlnIni);
     // BLM CELUP PRINTING - BULAN SAAT INI
 
     // TOTAL SDH CELUP PRINTING
@@ -5383,7 +5383,7 @@ YARN DYE
       // SUDAH CELUP - 1 BULAN LALU
 
       // BELUM CELUP - 1 BULAN LALU
-        $qtyTotalOrderBlmCelupYndBlnLalu = $qtyTotalOrderYndBlnLalu - $qtyTotalOrderSdhCelupYndBlnLalu;
+        $qtyTotalOrderBlmCelupYndBlnLalu = round($qtyTotalOrderYndBlnLalu) - round($qtyTotalOrderSdhCelupYndBlnLalu);
       // BELUM CELUP - 1 BULAN LALU
 
       // TOTAL ORDER - BULAN SAAT INI
@@ -5505,7 +5505,7 @@ YARN DYE
       // SUDAH CELUP - BULAN SAAT INI
 
       // BELUM CELUP - BULAN SAAT INI
-        $qtyTotalOrderBlmCelupYndBlnIni = $qtyTotalOrderYndBlnIni - $qtyTotalOrderSdhCelupYndBlnIni;
+        $qtyTotalOrderBlmCelupYndBlnIni = round($qtyTotalOrderYndBlnIni) - round($qtyTotalOrderSdhCelupYndBlnIni);
       // BELUM CELUP - BULAN SAAT INI
     ?>
     <tr>
