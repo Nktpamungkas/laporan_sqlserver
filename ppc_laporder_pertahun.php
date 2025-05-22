@@ -5,8 +5,7 @@ header('Cache-Control: max-age=0');
 require_once 'koneksi.php';
 $tglInput = $_GET['tgl'];
 ?>
-
-<center><h4>LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025</h4></center>
+LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
     <thead>
       <tr>
@@ -2878,7 +2877,6 @@ $tglInput = $_GET['tgl'];
       <!-- DESEMBER -->
     </tbody>
 </table>
-<br>
 
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
     <thead>
@@ -4338,8 +4336,7 @@ $tglInput = $_GET['tgl'];
       <!-- MINGGU 4 -->
 </table>
 
-<br>
-<center><h4>BOOKING</h4></center>
+BOOKING
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
   <thead>
     <tr>
@@ -4873,8 +4870,7 @@ $tglInput = $_GET['tgl'];
   </tbody>
 </table>
 
-<br>
-<center><h4>PRINTING</h4></center>
+PRINTING
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
   <thead>
     <tr>
@@ -5254,8 +5250,7 @@ $tglInput = $_GET['tgl'];
   </tbody>
 </table>
 
-<br>
-<center><h4>YARN DYE</h4></center>
+YARN DYE
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;"> 
   <thead>
     <tr>
@@ -5529,8 +5524,7 @@ $tglInput = $_GET['tgl'];
   </tbody>
 </table>
 
-<br>
-<center><h4>GANTI KAIN INTERNAL+EXTERNAL+RETUR</h4></center>
+GANTI KAIN INTERNAL+EXTERNAL+RETUR
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
   <thead>
     <tr>
