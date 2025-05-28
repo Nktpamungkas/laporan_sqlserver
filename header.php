@@ -175,6 +175,11 @@
                                             Scan KK OKE
                                         </a>
                                     </li>
+                                    <li <?= ($current_page == 'ppc_status_greige.php') ? $style_active_ppc : ''; ?>>
+                                        <a href="ppc_status_greige.php" data-i18n="nav.animations.main">
+                                            Status Greige
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                             <li class="pcoded-hasmenu">
