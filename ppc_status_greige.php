@@ -157,8 +157,6 @@ include "utils/helper.php";
                                                                                 )
                                                                                 SELECT 
                                                                                     MAX(p2.ORIGDLVSALORDERLINEORDERLINE) AS ORDERLINE,
-                                                                                    LISTAGG( DISTINCT TRIM(p.PRODUCTIONDEMANDCODE),',') as DEMAND_ANJAY,
-                                                                                    p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER,
                                                                                     p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER,
                                                                                     TRIM(p2.SUBCODE02) || '-' || TRIM(p2.SUBCODE03) AS HANGER,
                                                                                     i.WARNA,
@@ -318,83 +316,46 @@ include "utils/helper.php";
                                                                         <td><?= rtrim(rtrim($rowMain['QTY_RAJUT_READY'] ?? 0, '0'), '.') ?></td>
                                                                         <!-- Tanggal Delivery -->
                                                                         <td><?php 
-                                                                                    $demandArray = explode(",", $rowMain['DEMAND_ANJAY']);
-                                                                                    $DATE_AKTUAL='';
-                                                                                    $DATE_AKTUAL2='';
-                                                                                    $DATE_AKTUAL3='';
-                                                                                    $DATE_AKTUAL4='';
-                                                                                    $DATE_AKTUAL5='';
-                                                                                    $DATE_AKTUAL6='';
-                                                                                    $DATE_AKTUAL7='';
-                                                                                    $DATE_AKTUAL_TO='';
-                                                                                    $DATE_AKTUAL_TO2='';
-                                                                                    $DATE_AKTUAL_TO3='';
-                                                                                    $DATE_AKTUAL_TO4='';
-                                                                                    $DATE_AKTUAL_TO5='';
-                                                                                    $DATE_AKTUAL_TO6='';
-                                                                                    $DATE_AKTUAL_TO7='';
-                                                                                    foreach($demandArray as $data_demand){
-                                                                                        $demand = trim($data_demand);
-                                                                                        $query_tgl = "SELECT 
-                                                                                            DATE_AKTUAL,
-                                                                                            DATE_AKTUAL2,
-                                                                                            DATE_AKTUAL3,
-                                                                                            DATE_AKTUAL4,
-                                                                                            DATE_AKTUAL5,
-                                                                                            DATE_AKTUAL6,
-                                                                                            DATE_AKTUAL7,
-                                                                                            DATE_AKTUAL_TO,
-                                                                                            DATE_AKTUAL_TO2,
-                                                                                            DATE_AKTUAL_TO3,
-                                                                                            DATE_AKTUAL_TO4,
-                                                                                            DATE_AKTUAL_TO5,
-                                                                                            DATE_AKTUAL_TO6,
-                                                                                            DATE_AKTUAL_TO7
-                                                                                        FROM 
-                                                                                            ITXVIEWBONORDER i 
-                                                                                        WHERE 
-                                                                                            i.DEMAND = '$demand'";
+                                                                            $query_tgl = "SELECT DISTINCT 
+                                                                                                DATE_AKTUAL,
+                                                                                                DATE_AKTUAL2,
+                                                                                                DATE_AKTUAL3,
+                                                                                                DATE_AKTUAL4,
+                                                                                                DATE_AKTUAL5,
+                                                                                                DATE_AKTUAL6,
+                                                                                                DATE_AKTUAL7,
+                                                                                                DATE_AKTUAL_TO,
+                                                                                                DATE_AKTUAL_TO2,
+                                                                                                DATE_AKTUAL_TO3,
+                                                                                                DATE_AKTUAL_TO4,
+                                                                                                DATE_AKTUAL_TO5,
+                                                                                                DATE_AKTUAL_TO6,
+                                                                                                DATE_AKTUAL_TO7
+                                                                                                SALESORDERCODE,
+                                                                                                ORDERLINE
+                                                                                            FROM
+                                                                                                ITXVIEWBONORDER i
+                                                                                            WHERE 
+                                                                                                i.SALESORDERCODE = '$rowMain[NO_ORDER]'
+                                                                                                AND i.ORDERLINE ='$rowMain[ORDERLINE]'
+                                                                                            ";
                                                                                         $stmt_tgl = db2_exec($conn1, $query_tgl);
                                                                                         $data_tgl = db2_fetch_assoc($stmt_tgl);
-                                                                                        $DATE_AKTUAL= $data_tgl['DATE_AKTUAL'] ;
-                                                                                        $DATE_AKTUAL2=$data_tgl['DATE_AKTUAL2'] ;
-                                                                                        $DATE_AKTUAL3=$data_tgl['DATE_AKTUAL3'] ;
-                                                                                        $DATE_AKTUAL4=$data_tgl['DATE_AKTUAL4'] ;
-                                                                                        $DATE_AKTUAL5=$data_tgl['DATE_AKTUAL5'] ;
-                                                                                        $DATE_AKTUAL6=$data_tgl['DATE_AKTUAL6'] ;
-                                                                                        $DATE_AKTUAL7=$data_tgl['DATE_AKTUAL7'] ;
-                                                                                        $DATE_AKTUAL_TO=$data_tgl['DATE_AKTUAL_TO'] ;
-                                                                                        $DATE_AKTUAL_TO2=$data_tgl['DATE_AKTUAL_TO2'] ;
-                                                                                        $DATE_AKTUAL_TO3=$data_tgl['DATE_AKTUAL_TO3'] ;
-                                                                                        $DATE_AKTUAL_TO4=$data_tgl['DATE_AKTUAL_TO4'] ;
-                                                                                        $DATE_AKTUAL_TO5=$data_tgl['DATE_AKTUAL_TO5'] ;
-                                                                                        $DATE_AKTUAL_TO6=$data_tgl['DATE_AKTUAL_TO6'] ;
-                                                                                        $DATE_AKTUAL_TO7=$data_tgl['DATE_AKTUAL_TO7'] ;
-                                                                                    }
-                                                                                    echo $DATE_AKTUAL. 'Date1';
-                                                                                    echo $DATE_AKTUAL2 . 'Date2';
-                                                                                    echo $DATE_AKTUAL3. 'Date3';
-                                                                                    echo $DATE_AKTUAL4. 'Date4';
-                                                                                    echo $DATE_AKTUAL5.'Date5';
-                                                                                    echo $DATE_AKTUAL6 . 'Date6';
-                                                                                    echo $DATE_AKTUAL7. 'Date7';
-                                                                                    echo $DATE_AKTUAL_TO. 'DateTo1';
-                                                                                    echo $DATE_AKTUAL_TO2 . 'DateTo2';
-                                                                                    echo $DATE_AKTUAL_TO3. 'DateTo3';
-                                                                                    echo $DATE_AKTUAL_TO4. 'DateTo4';
-                                                                                    echo $DATE_AKTUAL_TO5.'DateTo5';
-                                                                                    echo $DATE_AKTUAL_TO6 . 'DateTo6';
-                                                                                    echo $DATE_AKTUAL_TO7. 'DateTo7';
-                                                                                    // $query_tgl="SELECT 
-                                                                                    //             LISTAGG( DISTINCT TRIM(p.PRODUCTIONDEMANDCODE),',') as DATA_TANGGAL 
-                                                                                    //         FROM 
-                                                                                    //             ITXVIEWBONORDER i 
-                                                                                    //         WHERE 
-                                                                                    //             i.DEMAND ='00351058'
-                                                                                    //         GROUP BY ";
-                                                                                    // $stmt_tgl= db2_exec($conn1, $query_tgl);
-                                                                                    // $data_tgl= db2_fetch_assoc($stmt_tgl);
-                                                                                    // echo $data_tgl['DATA_TANGGAL'];
+                                                                                        // Bikin if not empty logic nya munculin data dibawah
+                                                                                        echo $data_tgl['DATE_AKTUAL'] . 'Date1';
+                                                                                        echo $data_tgl['DATE_AKTUAL2'] . 'Date2';
+                                                                                        echo $data_tgl['DATE_AKTUAL3'] . 'Date3';
+                                                                                        echo $data_tgl['DATE_AKTUAL4'] . 'Date4';
+                                                                                        echo $data_tgl['DATE_AKTUAL5'] .'Date5';
+                                                                                        echo $data_tgl['DATE_AKTUAL6'] . 'Date6';
+                                                                                        echo $data_tgl['DATE_AKTUAL7'] . 'Date7';
+                                                                                        echo $data_tgl['DATE_AKTUAL_TO'] . 'DateTo1';
+                                                                                        echo $data_tgl['DATE_AKTUAL_TO2'] . 'DateTo2';
+                                                                                        echo $data_tgl['DATE_AKTUAL_TO3'] . 'DateTo3';
+                                                                                        echo $data_tgl['DATE_AKTUAL_TO4'] . 'DateTo4';
+                                                                                        echo $data_tgl['DATE_AKTUAL_TO5'] .'DateTo5';
+                                                                                        echo $data_tgl['DATE_AKTUAL_TO6'] . 'DateTo6';
+                                                                                        echo $data_tgl['DATE_AKTUAL_TO7'] . 'DateTo7';
                                                                         ?></td>
                                                                         <!-- End -->
                                                                         <td><?= $rowMain['ACTUAL_DELIVERY'] ?></td>
