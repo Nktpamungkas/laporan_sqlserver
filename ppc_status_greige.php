@@ -156,6 +156,9 @@ include "utils/helper.php";
                                                                                         b.LOGICALWAREHOUSECODE
                                                                                 )
                                                                                 SELECT 
+                                                                                    MAX(p2.ORIGDLVSALORDERLINEORDERLINE) AS ORDERLINE,
+                                                                                    LISTAGG( DISTINCT TRIM(p.PRODUCTIONDEMANDCODE),',') as DEMAND_ANJAY,
+                                                                                    p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER,
                                                                                     p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER,
                                                                                     TRIM(p2.SUBCODE02) || '-' || TRIM(p2.SUBCODE03) AS HANGER,
                                                                                     i.WARNA,
@@ -290,9 +293,110 @@ include "utils/helper.php";
                                                                             ($rowMain['QTY_BOOKING_BLMREADY6'] ?? 0);
                                                                         ?>
 
-                                                                        <td><!-- <?= rtrim(rtrim($qtyTotal, '0'), '.') ?> --></td>
+                                                                        <td><?php $query_qty_br="SELECT 
+                                                                                                    ROUND(SUM(USERPRIMARYQUANTITY),2) AS QTY_BRUTO,
+                                                                                                    MAX(USERPRIMARYUOMCODE) AS UOMCODE,
+                                                                                                    MAX(i.ORIGDLVSALORDLINESALORDERCODE),
+                                                                                                    MAX(i.ORIGDLVSALORDERLINEORDERLINE) 
+                                                                                                FROM ITXVIEWKGBRUTOBONORDER2 i 
+                                                                                                WHERE 
+                                                                                                    i.ORIGDLVSALORDLINESALORDERCODE ='$rowMain[NO_ORDER]'
+                                                                                                    AND i.ORIGDLVSALORDERLINEORDERLINE= '$rowMain[ORDERLINE]'
+                                                                                                    GROUP BY
+                                                                                                    i.ITEMTYPE_DEMAND,
+                                                                                                    i.SUBCODE01,
+                                                                                                    i.SUBCODE02,
+                                                                                                    i.SUBCODE03,
+                                                                                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                                                                                    i.ORIGDLVSALORDLINESALORDERCODE";
+                                                                                        $stmt_kg = db2_exec($conn1, $query_qty_br);
+                                                                                        $data_kg = db2_fetch_assoc($stmt_kg);
+                                                                                    // echo $data_kg['QTY_BRUTO']. ' '. $data_kg['UOMCODE']; 
+                                                                                    echo $data_kg['QTY_BRUTO'];
+                                                                            ?>
+                                                                            <!-- <?= rtrim(rtrim($qtyTotal, '0'), '.') ?> --></td>
                                                                         <td><?= rtrim(rtrim($rowMain['QTY_RAJUT_READY'] ?? 0, '0'), '.') ?></td>
-                                                                        <td><?= $rowMain[''] ?></td>
+                                                                        <!-- Tanggal Delivery -->
+                                                                        <td><?php 
+                                                                                    $demandArray = explode(",", $rowMain['DEMAND_ANJAY']);
+                                                                                    $DATE_AKTUAL='';
+                                                                                    $DATE_AKTUAL2='';
+                                                                                    $DATE_AKTUAL3='';
+                                                                                    $DATE_AKTUAL4='';
+                                                                                    $DATE_AKTUAL5='';
+                                                                                    $DATE_AKTUAL6='';
+                                                                                    $DATE_AKTUAL7='';
+                                                                                    $DATE_AKTUAL_TO='';
+                                                                                    $DATE_AKTUAL_TO2='';
+                                                                                    $DATE_AKTUAL_TO3='';
+                                                                                    $DATE_AKTUAL_TO4='';
+                                                                                    $DATE_AKTUAL_TO5='';
+                                                                                    $DATE_AKTUAL_TO6='';
+                                                                                    $DATE_AKTUAL_TO7='';
+                                                                                    foreach($demandArray as $data_demand){
+                                                                                        $demand = trim($data_demand);
+                                                                                        $query_tgl = "SELECT 
+                                                                                            DATE_AKTUAL,
+                                                                                            DATE_AKTUAL2,
+                                                                                            DATE_AKTUAL3,
+                                                                                            DATE_AKTUAL4,
+                                                                                            DATE_AKTUAL5,
+                                                                                            DATE_AKTUAL6,
+                                                                                            DATE_AKTUAL7,
+                                                                                            DATE_AKTUAL_TO,
+                                                                                            DATE_AKTUAL_TO2,
+                                                                                            DATE_AKTUAL_TO3,
+                                                                                            DATE_AKTUAL_TO4,
+                                                                                            DATE_AKTUAL_TO5,
+                                                                                            DATE_AKTUAL_TO6,
+                                                                                            DATE_AKTUAL_TO7
+                                                                                        FROM 
+                                                                                            ITXVIEWBONORDER i 
+                                                                                        WHERE 
+                                                                                            i.DEMAND = '$demand'";
+                                                                                        $stmt_tgl = db2_exec($conn1, $query_tgl);
+                                                                                        $data_tgl = db2_fetch_assoc($stmt_tgl);
+                                                                                        $DATE_AKTUAL= $data_tgl['DATE_AKTUAL'] ;
+                                                                                        $DATE_AKTUAL2=$data_tgl['DATE_AKTUAL2'] ;
+                                                                                        $DATE_AKTUAL3=$data_tgl['DATE_AKTUAL3'] ;
+                                                                                        $DATE_AKTUAL4=$data_tgl['DATE_AKTUAL4'] ;
+                                                                                        $DATE_AKTUAL5=$data_tgl['DATE_AKTUAL5'] ;
+                                                                                        $DATE_AKTUAL6=$data_tgl['DATE_AKTUAL6'] ;
+                                                                                        $DATE_AKTUAL7=$data_tgl['DATE_AKTUAL7'] ;
+                                                                                        $DATE_AKTUAL_TO=$data_tgl['DATE_AKTUAL_TO'] ;
+                                                                                        $DATE_AKTUAL_TO2=$data_tgl['DATE_AKTUAL_TO2'] ;
+                                                                                        $DATE_AKTUAL_TO3=$data_tgl['DATE_AKTUAL_TO3'] ;
+                                                                                        $DATE_AKTUAL_TO4=$data_tgl['DATE_AKTUAL_TO4'] ;
+                                                                                        $DATE_AKTUAL_TO5=$data_tgl['DATE_AKTUAL_TO5'] ;
+                                                                                        $DATE_AKTUAL_TO6=$data_tgl['DATE_AKTUAL_TO6'] ;
+                                                                                        $DATE_AKTUAL_TO7=$data_tgl['DATE_AKTUAL_TO7'] ;
+                                                                                    }
+                                                                                    echo $DATE_AKTUAL. 'Date1';
+                                                                                    echo $DATE_AKTUAL2 . 'Date2';
+                                                                                    echo $DATE_AKTUAL3. 'Date3';
+                                                                                    echo $DATE_AKTUAL4. 'Date4';
+                                                                                    echo $DATE_AKTUAL5.'Date5';
+                                                                                    echo $DATE_AKTUAL6 . 'Date6';
+                                                                                    echo $DATE_AKTUAL7. 'Date7';
+                                                                                    echo $DATE_AKTUAL_TO. 'DateTo1';
+                                                                                    echo $DATE_AKTUAL_TO2 . 'DateTo2';
+                                                                                    echo $DATE_AKTUAL_TO3. 'DateTo3';
+                                                                                    echo $DATE_AKTUAL_TO4. 'DateTo4';
+                                                                                    echo $DATE_AKTUAL_TO5.'DateTo5';
+                                                                                    echo $DATE_AKTUAL_TO6 . 'DateTo6';
+                                                                                    echo $DATE_AKTUAL_TO7. 'DateTo7';
+                                                                                    // $query_tgl="SELECT 
+                                                                                    //             LISTAGG( DISTINCT TRIM(p.PRODUCTIONDEMANDCODE),',') as DATA_TANGGAL 
+                                                                                    //         FROM 
+                                                                                    //             ITXVIEWBONORDER i 
+                                                                                    //         WHERE 
+                                                                                    //             i.DEMAND ='00351058'
+                                                                                    //         GROUP BY ";
+                                                                                    // $stmt_tgl= db2_exec($conn1, $query_tgl);
+                                                                                    // $data_tgl= db2_fetch_assoc($stmt_tgl);
+                                                                                    // echo $data_tgl['DATA_TANGGAL'];
+                                                                        ?></td>
+                                                                        <!-- End -->
                                                                         <td><?= $rowMain['ACTUAL_DELIVERY'] ?></td>
                                                                         <td><?= $rowMain[''] ?></td>
                                                                         <td><?= $rowMain[''] ?></td>
