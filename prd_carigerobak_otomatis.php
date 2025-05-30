@@ -125,6 +125,7 @@
                                                 $where_demand
                                                 AND p2.CREATIONDATETIME >= '2023-11-01'
                                                 AND NOT p.PRODUCTIONORDERCODE IS NULL
+												AND p.OPERATIONCODE <> 'WAIT17'
                                                 AND (TRIM(p2.DESTINATIONORDER) = '1' OR NOT p2.PROJECTCODE IS NULL)
                                                 )
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = ABSUNIQUEID_OPERATION AND a.FIELDNAME = 'Gerobak'
