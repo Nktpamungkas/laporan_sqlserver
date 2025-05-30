@@ -193,7 +193,10 @@ include "utils/helper.php";
                                                                                     p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER,
                                                                                     TRIM(p2.SUBCODE02) || '-' || TRIM(p2.SUBCODE03) AS HANGER,
                                                                                     i.WARNA,
-                                                                                    s.CONFIRMEDDELIVERYDATE AS ACTUAL_DELIVERY,
+                                                                                    CASE 
+                                                                                        WHEN s.CONFIRMEDDELIVERYDATE <> NULL THEN s.CONFIRMEDDELIVERYDATE
+                                                                                        ELSE MAX(s2.CONFIRMEDDUEDATE)
+                                                                                    END AS ACTUAL_DELIVERY,
                                                                                     p3.SUBCODE04 AS VARIAN,
                                                                                     r.PROJECTCODE AS PROJECTCODE_RAJUT,
                                                                                     r.QTY_RAJUT_READY,
@@ -334,7 +337,8 @@ include "utils/helper.php";
                                                                                     DATE_AKTUAL_TO6,
                                                                                     DATE_AKTUAL_TO7,
                                                                                     SALESORDERCODE,
-                                                                                    ORDERLINE
+                                                                                    ORDERLINE,
+                                                                                    ADDITIONALDATA
                                                                                 FROM ITXVIEWBONORDER i
                                                                                 WHERE 
                                                                                     i.SALESORDERCODE = '$rowMain[NO_ORDER]'
@@ -356,13 +360,26 @@ include "utils/helper.php";
 
                                                                                 // Hapus tanggal duplikat
                                                                                 $uniqueDates = array_unique($allDates);
-
                                                                                 // Tampilkan
                                                                                 // foreach ($uniqueDates as $tanggal) {
                                                                                 //     echo $tanggal . '<br>';
                                                                                 // }
-                                                                                if (!empty($uniqueDates)) {
-                                                                                    echo min($uniqueDates);
+                                                                                if(!empty($data_tgl['ADDITIONALDATA'])){
+                                                                                    if (!empty($uniqueDates)) {
+                                                                                        echo min($uniqueDates);
+                                                                                    }
+                                                                                }else{
+                                                                                    $query_tgl2 = "SELECT 
+                                                                                                    TGLPOGREIGE, 
+                                                                                                    * 
+                                                                                                FROM 
+                                                                                                        ITXVIEW_RAJUT ir 
+                                                                                                WHERE 
+                                                                                                    ORIGDLVSALORDLINESALORDERCODE ='$rowMain[NO_ORDER]'
+                                                                                                    AND ORIGDLVSALORDERLINEORDERLINE = '$rowMain[ORDERLINE]'";
+                                                                                    $stmt_tgl2 = db2_exec($conn1, $query_tgl2);
+                                                                                    $data_tgl2 = db2_fetch_assoc($stmt_tgl2);
+                                                                                    echo $data_tgl2['TGLPOGREIGE'];
                                                                                 }
                                                                                 ?>
                                                                         </td>
