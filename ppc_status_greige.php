@@ -27,6 +27,8 @@ include "utils/helper.php";
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <!-- Daterangepicker CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <style>
         .button-container {
             position: relative;
@@ -64,21 +66,51 @@ include "utils/helper.php";
                                                     <!-- <h5 class="mb-0">Hasil Pencarian</h5> -->
                                                 </div>
                                                 <div class="card-block">
+                                                    <div class="form-group row mb-3">
+                                                        <label class="col-sm-2 col-form-label">Range Tanggal:</label>
+                                                        <div class="col-sm-4">
+                                                            <input type="text" name="daterange" class="form-control" id="daterange" />
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <button type="submit" class="btn btn-primary">Filter</button>
+                                                        </div>
+                                                    </div>
+
+                                                    <?php
+                                                        function formatQty($value) {
+                                                            return ((float)$value != 0) ? number_format((float)$value, 2) : '';
+                                                        }
+                                                    ?>
+
                                                     <div class="table-responsive">
                                                         <table id="excel-status-greige" class="table table-striped table-bordered nowrap">
                                                             <thead class="thead-light">
                                                                 <tr>
                                                                     <th>SALES ORDER</th>
+                                                                    <th style="width: 220px;">PRODUCTION DEMAND KFF</th>
                                                                     <th>HANGER</th>
                                                                     <th>VARIAN</th>
                                                                     <th>WARNA</th>
-                                                                    <!-- <th>PROJECT GREIGE</th> -->
+                                                                    <th>DELIVERY GREIGE<br>(BON ORDER)</th>
+                                                                    <th>DELIVERY KAIN JADI<br>(ACTUAL)</th>
                                                                     <th>GREIGE NEEDS</th>
-                                                                    <th>GREIGE READY</th>
-                                                                    <th>DELIVERY GREIGE (BON ORDER)</th>
-                                                                    <th>DELIVERY KAIN JADI (ACTUAL)</th>
-                                                                    <th>STATUS RAJUT</th>
-                                                                    <th>STATUS PPC</th>
+                                                                     <th>PROJECT CODE RAJUT</th>
+                                                                     <th>QTY RAJUT READY</th>
+                                                                     <th class="text-center">PROJECT CODE BOOKING<br>BLMREADY 1</th>
+                                                                     <th class="text-center">QTY BOOKING<br>BLM READY 1</th>
+                                                                     <th class="text-center">PROJECT CODE BOOKING<br>BLM READY 2</th>
+                                                                     <th class="text-center">QTY BOOKING<br>BLM READY 2</th>
+                                                                     <th class="text-center">PROJECT CODE BOOKING<br>BLM READY 3</th>
+                                                                     <th class="text-center">QTY BOOKING<br>BLM READY 3</th>
+                                                                     <th class="text-center">PROJECT CODE BOOKING<br>BLM READY 4</th>
+                                                                     <th class="text-center">QTY BOOKING<br>BLM READY 4</th>
+                                                                     <th class="text-center">PROJECT CODE BOOKING<br>BLM READY 5</th>
+                                                                     <th class="text-center">QTY BOOKING<br>BLM READY 5</th>
+                                                                     <th class="text-center">PROJECT CODE BOOKING<br>BLM READY 6</th>
+                                                                     <th class="text-center">QTY BOOKING<br>BLM READY 6</th>
+                                                                     <th class="text-center">PROJECT CODE BOOKING<br>BLM READY 7</th>
+                                                                     <th class="text-center">QTY BOOKING<br>BLM READY 7</th>
+                                                                    <th>STATUS</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -155,7 +187,8 @@ include "utils/helper.php";
                                                                                         b.DECOSUBCODE04,
                                                                                         b.LOGICALWAREHOUSECODE
                                                                                 )
-                                                                                SELECT 
+                                                                                SELECT DISTINCT
+                                                                                    LISTAGG( DISTINCT TRIM(p.PRODUCTIONDEMANDCODE),',') as DEMAND_KFF,
                                                                                     MAX(p2.ORIGDLVSALORDERLINEORDERLINE) AS ORDERLINE,
                                                                                     p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER,
                                                                                     TRIM(p2.SUBCODE02) || '-' || TRIM(p2.SUBCODE03) AS HANGER,
@@ -176,8 +209,8 @@ include "utils/helper.php";
                                                                                     r5.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY5,
                                                                                     r6.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY6,
                                                                                     r6.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY6,
-                                                                                    ibn.ONLY_PROJECTCODE AS PROJECTCODE_READY1,
-                                                                                    ibn.QTY_ALOKASI_BRUTO AS QTY_READY1
+                                                                                    ibn.ONLY_PROJECTCODE AS PROJECTCODE_READY1
+                                                                                    -- ibn.QTY_ALOKASI_BRUTO AS QTY_READY1
                                                                                 FROM
                                                                                     PRODUCTIONDEMANDSTEP p 
                                                                                 LEFT JOIN PRODUCTIONDEMAND p2 ON p2.CODE = p.PRODUCTIONDEMANDCODE 
@@ -277,22 +310,65 @@ include "utils/helper.php";
                                                                 <?php while ($rowMain   = db2_fetch_assoc($execMain))  : ?>
                                                                     <tr>
                                                                         <td><?= $rowMain['NO_ORDER'] ?></td>
+                                                                        <td style="width: 220px; white-space: normal; overflow-wrap: break-word; word-break: break-word;">
+                                                                            <?= htmlspecialchars($rowMain['DEMAND_KFF']) ?>
+                                                                        </td>
                                                                         <td><?= $rowMain['HANGER'] ?></td>
                                                                         <td><?= $rowMain['VARIAN'] ?></td>
                                                                         <td><?= $rowMain['WARNA'] ?></td>
-                                                                        <!-- <td><?= $rowMain['PROJECTCODE_RAJUT'] ?? $rowMain['PROJECTCODE_BOOKING_BLMREADY1'] ?? $rowMain['PROJECTCODE_BOOKING_BLMREADY3'] ?? $rowMain['PROJECTCODE_BOOKING_BLMREADY4'] ?? $rowMain['PROJECTCODE_BOOKING_BLMREADY5'] ?? $rowMain['PROJECTCODE_BOOKING_BLMREADY6'] ?></td> -->
-                                                                        <?php
-                                                                        $qtyTotal = 
-                                                                            ($rowMain['QTY_BOOKING_BLMREADY1'] ?? 0) + 
-                                                                            ($rowMain['QTY_BOOKING_BLMREADY2'] ?? 0) + 
-                                                                            ($rowMain['QTY_BOOKING_BLMREADY3'] ?? 0) + 
-                                                                            ($rowMain['QTY_BOOKING_BLMREADY4'] ?? 0) + 
-                                                                            ($rowMain['QTY_BOOKING_BLMREADY5'] ?? 0) + 
-                                                                            ($rowMain['QTY_BOOKING_BLMREADY6'] ?? 0);
-                                                                        ?>
+                                                                        <td>
+                                                                            <?php 
+                                                                                $query_tgl = "SELECT DISTINCT 
+                                                                                    DATE_AKTUAL,
+                                                                                    DATE_AKTUAL2,
+                                                                                    DATE_AKTUAL3,
+                                                                                    DATE_AKTUAL4,
+                                                                                    DATE_AKTUAL5,
+                                                                                    DATE_AKTUAL6,
+                                                                                    DATE_AKTUAL7,
+                                                                                    DATE_AKTUAL_TO,
+                                                                                    DATE_AKTUAL_TO2,
+                                                                                    DATE_AKTUAL_TO3,
+                                                                                    DATE_AKTUAL_TO4,
+                                                                                    DATE_AKTUAL_TO5,
+                                                                                    DATE_AKTUAL_TO6,
+                                                                                    DATE_AKTUAL_TO7,
+                                                                                    SALESORDERCODE,
+                                                                                    ORDERLINE
+                                                                                FROM ITXVIEWBONORDER i
+                                                                                WHERE 
+                                                                                    i.SALESORDERCODE = '$rowMain[NO_ORDER]'
+                                                                                    AND i.ORDERLINE = '$rowMain[ORDERLINE]'";
 
+                                                                                $stmt_tgl = db2_exec($conn1, $query_tgl);
+                                                                                $data_tgl = db2_fetch_assoc($stmt_tgl);
+
+                                                                                $allDates = [];
+
+                                                                                if ($data_tgl) {
+                                                                                    foreach ($data_tgl as $key => $val) {
+                                                                                        // Ambil hanya yang kolom tanggal
+                                                                                        if (strpos($key, 'DATE_AKTUAL') !== false && !empty($val)) {
+                                                                                            $allDates[] = trim($val);
+                                                                                        }
+                                                                                    }
+                                                                                }
+
+                                                                                // Hapus tanggal duplikat
+                                                                                $uniqueDates = array_unique($allDates);
+
+                                                                                // Tampilkan
+                                                                                // foreach ($uniqueDates as $tanggal) {
+                                                                                //     echo $tanggal . '<br>';
+                                                                                // }
+                                                                                if (!empty($uniqueDates)) {
+                                                                                    echo min($uniqueDates);
+                                                                                }
+                                                                                ?>
+                                                                        </td>
+                                                                        <td><?= $rowMain['ACTUAL_DELIVERY'] ?></td>
                                                                         <td><?php $query_qty_br="SELECT 
-                                                                                                    ROUND(SUM(USERPRIMARYQUANTITY),2) AS QTY_BRUTO,
+                                                                                                    SUM(USERPRIMARYQUANTITY) AS QTY_BRUTO,
                                                                                                     MAX(USERPRIMARYUOMCODE) AS UOMCODE,
                                                                                                     MAX(i.ORIGDLVSALORDLINESALORDERCODE),
                                                                                                     MAX(i.ORIGDLVSALORDERLINEORDERLINE) 
@@ -310,56 +386,25 @@ include "utils/helper.php";
                                                                                         $stmt_kg = db2_exec($conn1, $query_qty_br);
                                                                                         $data_kg = db2_fetch_assoc($stmt_kg);
                                                                                     // echo $data_kg['QTY_BRUTO']. ' '. $data_kg['UOMCODE']; 
-                                                                                    echo $data_kg['QTY_BRUTO'];
+                                                                                    echo formatQty((float)($data_kg['QTY_BRUTO'] ?? 0), 2);
                                                                             ?>
-                                                                            <!-- <?= rtrim(rtrim($qtyTotal, '0'), '.') ?> --></td>
-                                                                        <td><?= rtrim(rtrim($rowMain['QTY_RAJUT_READY'] ?? 0, '0'), '.') ?></td>
-                                                                        <!-- Tanggal Delivery -->
-                                                                        <td><?php 
-                                                                            $query_tgl = "SELECT DISTINCT 
-                                                                                                DATE_AKTUAL,
-                                                                                                DATE_AKTUAL2,
-                                                                                                DATE_AKTUAL3,
-                                                                                                DATE_AKTUAL4,
-                                                                                                DATE_AKTUAL5,
-                                                                                                DATE_AKTUAL6,
-                                                                                                DATE_AKTUAL7,
-                                                                                                DATE_AKTUAL_TO,
-                                                                                                DATE_AKTUAL_TO2,
-                                                                                                DATE_AKTUAL_TO3,
-                                                                                                DATE_AKTUAL_TO4,
-                                                                                                DATE_AKTUAL_TO5,
-                                                                                                DATE_AKTUAL_TO6,
-                                                                                                DATE_AKTUAL_TO7
-                                                                                                SALESORDERCODE,
-                                                                                                ORDERLINE
-                                                                                            FROM
-                                                                                                ITXVIEWBONORDER i
-                                                                                            WHERE 
-                                                                                                i.SALESORDERCODE = '$rowMain[NO_ORDER]'
-                                                                                                AND i.ORDERLINE ='$rowMain[ORDERLINE]'
-                                                                                            ";
-                                                                                        $stmt_tgl = db2_exec($conn1, $query_tgl);
-                                                                                        $data_tgl = db2_fetch_assoc($stmt_tgl);
-                                                                                        // Bikin if not empty logic nya munculin data dibawah
-                                                                                        echo $data_tgl['DATE_AKTUAL'] . 'Date1';
-                                                                                        echo $data_tgl['DATE_AKTUAL2'] . 'Date2';
-                                                                                        echo $data_tgl['DATE_AKTUAL3'] . 'Date3';
-                                                                                        echo $data_tgl['DATE_AKTUAL4'] . 'Date4';
-                                                                                        echo $data_tgl['DATE_AKTUAL5'] .'Date5';
-                                                                                        echo $data_tgl['DATE_AKTUAL6'] . 'Date6';
-                                                                                        echo $data_tgl['DATE_AKTUAL7'] . 'Date7';
-                                                                                        echo $data_tgl['DATE_AKTUAL_TO'] . 'DateTo1';
-                                                                                        echo $data_tgl['DATE_AKTUAL_TO2'] . 'DateTo2';
-                                                                                        echo $data_tgl['DATE_AKTUAL_TO3'] . 'DateTo3';
-                                                                                        echo $data_tgl['DATE_AKTUAL_TO4'] . 'DateTo4';
-                                                                                        echo $data_tgl['DATE_AKTUAL_TO5'] .'DateTo5';
-                                                                                        echo $data_tgl['DATE_AKTUAL_TO6'] . 'DateTo6';
-                                                                                        echo $data_tgl['DATE_AKTUAL_TO7'] . 'DateTo7';
-                                                                        ?></td>
-                                                                        <!-- End -->
-                                                                        <td><?= $rowMain['ACTUAL_DELIVERY'] ?></td>
-                                                                        <td><?= $rowMain[''] ?></td>
+                                                                        </td>
+                                                                        <td><?= $rowMain['PROJECTCODE_RAJUT'] ?></td>
+                                                                        <td><?= formatQty((float)($rowMain['QTY_RAJUT_READY'] ?? 0), 2) ?></td>
+                                                                        <td><?= $rowMain['PROJECTCODE_BOOKING_BLMREADY1'] ?></td>
+                                                                        <td><?= formatQty((float)($rowMain['QTY_BOOKING_BLMREADY1'] ?? 0), 2) ?></td>
+                                                                        <td><?= $rowMain['PROJECTCODE_BOOKING_BLMREADY2'] ?></td>
+                                                                        <td><?= formatQty((float)($rowMain['QTY_BOOKING_BLMREADY2'] ?? 0), 2) ?></td>
+                                                                        <td><?= $rowMain['PROJECTCODE_BOOKING_BLMREADY3'] ?></td>
+                                                                        <td><?= formatQty((float)($rowMain['QTY_BOOKING_BLMREADY3'] ?? 0), 2) ?></td>
+                                                                        <td><?= $rowMain['PROJECTCODE_BOOKING_BLMREADY4'] ?></td>
+                                                                        <td><?= formatQty((float)($rowMain['QTY_BOOKING_BLMREADY4'] ?? 0), 2) ?></td>
+                                                                        <td><?= $rowMain['PROJECTCODE_BOOKING_BLMREADY5'] ?></td>
+                                                                        <td><?= formatQty((float)($rowMain['QTY_BOOKING_BLMREADY5'] ?? 0), 2) ?></td>
+                                                                        <td><?= $rowMain['PROJECTCODE_BOOKING_BLMREADY6'] ?></td>
+                                                                        <td><?= formatQty((float)($rowMain['QTY_BOOKING_BLMREADY6'] ?? 0), 2) ?></td>
+                                                                        <td><?= $rowMain['PROJECTCODE_BOOKING_BLMREADY7'] ?></td>
+                                                                        <td><?= formatQty((float)($rowMain['QTY_BOOKING_BLMREADY7'] ?? 0), 2) ?></td>
                                                                         <td><?= $rowMain[''] ?></td>
                                                                     </tr>
                                                                 <?php endwhile; ?>
@@ -380,9 +425,26 @@ include "utils/helper.php";
 </body>
 <script src="files\assets\js\pcoded.min.js"></script>
 <script type="text/javascript" src="files\assets\js\script.js"></script>
+
+<!-- Moment.js dan Daterangepicker JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+    $(function () {
+        $('#daterange').daterangepicker({
+            locale: {
+                format: 'YYYY-MM-DD'
+            },
+            startDate: moment().subtract(30, 'days'),
+            endDate: moment()
+        });
+    });
+</script>
 <?php require_once 'footer.php'; ?>
 <script>
     $('#excel-status-greige').DataTable({
+        scrollX: true,
+        fixedHeader: true,  
         dom: 'Bfrtip',
         text: '<i class="fa fa-file-excel-o"></i> Export Excel',
         className: 'btn btn-success',
