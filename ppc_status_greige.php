@@ -153,6 +153,8 @@ include "utils/helper.php";
                                                                                 ),
                                                                                 BOOKING_BLM_READY1 AS (
                                                                                     SELECT 
+                                                                                        -- LISTAGG(DISTINCT PRODUCTIONDEMAND.TGLPOGREIGE, ', ') AS TGLPOGREIGE,
+                                                                                        -- MAX(PRODUCTIONDEMAND.TGLPOGREIGE) AS TGLPOGREIGE,
                                                                                         b.PROJECTCODE,
                                                                                         b.DECOSUBCODE01,
                                                                                         b.DECOSUBCODE02,
@@ -167,8 +169,11 @@ include "utils/helper.php";
                                                                                             p.SUBCODE02,
                                                                                             p.SUBCODE03,
                                                                                             p.SUBCODE04
+                                                                                            -- i.TGLPOGREIGE
                                                                                         FROM
                                                                                             PRODUCTIONDEMAND p 
+                                                                                        -- JOIN 
+                                                                                        --     ITXVIEW_RAJUT i ON i.CODE = p.CODE
                                                                                         WHERE
                                                                                             p.ITEMTYPEAFICODE = 'KGF'
                                                                                             ) PRODUCTIONDEMAND
@@ -188,6 +193,15 @@ include "utils/helper.php";
                                                                                         b.LOGICALWAREHOUSECODE
                                                                                 )
                                                                                 SELECT DISTINCT
+                                                                                    -- CASE 
+                                                                                    --     WHEN MAX(r1.TGLPOGREIGE) IS NOT NULL THEN MAX(r1.TGLPOGREIGE)
+                                                                                    --     WHEN MAX(r2.TGLPOGREIGE) IS NOT NULL THEN MAX(r2.TGLPOGREIGE)
+                                                                                    --     WHEN MAX(r3.TGLPOGREIGE) IS NOT NULL THEN MAX(r3.TGLPOGREIGE)
+                                                                                    --     WHEN MAX(r4.TGLPOGREIGE) IS NOT NULL THEN MAX(r4.TGLPOGREIGE)
+                                                                                    --     WHEN MAX(r5.TGLPOGREIGE) IS NOT NULL THEN MAX(r5.TGLPOGREIGE)
+                                                                                    --     WHEN MAX(r6.TGLPOGREIGE) IS NOT NULL THEN MAX(r6.TGLPOGREIGE)
+                                                                                    --     ELSE NULL
+                                                                                    -- END AS TGLPOGREIGE,
                                                                                     LISTAGG( DISTINCT TRIM(p.PRODUCTIONDEMANDCODE),',') as DEMAND_KFF,
                                                                                     MAX(p2.ORIGDLVSALORDERLINEORDERLINE) AS ORDERLINE,
                                                                                     p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER,
@@ -197,6 +211,9 @@ include "utils/helper.php";
                                                                                         WHEN s.CONFIRMEDDELIVERYDATE <> NULL THEN s.CONFIRMEDDELIVERYDATE
                                                                                         ELSE MAX(s2.CONFIRMEDDUEDATE)
                                                                                     END AS ACTUAL_DELIVERY,
+                                                                                    MAX(p2.SUBCODE01) AS SUBCODE01 ,
+                                                                                    p2.SUBCODE02,
+                                                                                    p2.SUBCODE03,
                                                                                     p3.SUBCODE04 AS VARIAN,
                                                                                     r.PROJECTCODE AS PROJECTCODE_RAJUT,
                                                                                     r.QTY_RAJUT_READY,
@@ -323,6 +340,9 @@ include "utils/helper.php";
                                                                         <td><?= $rowMain['WARNA'] ?></td>
                                                                         <td>
                                                                             <?php 
+                                                                            // if(!empty($rowMain['TGLPOGREIGE'])){
+                                                                            //     echo $rowMain['TGLPOGREIGE'];
+                                                                            // }else{
                                                                                 $query_tgl = "SELECT DISTINCT 
                                                                                     DATE_AKTUAL,
                                                                                     DATE_AKTUAL2,
@@ -344,7 +364,8 @@ include "utils/helper.php";
                                                                                 FROM ITXVIEWBONORDER i
                                                                                 WHERE 
                                                                                     i.SALESORDERCODE = '$rowMain[NO_ORDER]'
-                                                                                    AND i.ORDERLINE = '$rowMain[ORDERLINE]'";
+                                                                                    AND i.ORDERLINE = '$rowMain[ORDERLINE]'
+                                                                                    ";
 
                                                                                 $stmt_tgl = db2_exec($conn1, $query_tgl);
                                                                                 $data_tgl = db2_fetch_assoc($stmt_tgl);
@@ -378,11 +399,17 @@ include "utils/helper.php";
                                                                                                         ITXVIEW_RAJUT ir 
                                                                                                 WHERE 
                                                                                                     ORIGDLVSALORDLINESALORDERCODE ='$rowMain[NO_ORDER]'
-                                                                                                    AND ORIGDLVSALORDERLINEORDERLINE = '$rowMain[ORDERLINE]'";
+                                                                                                    -- AND ORIGDLVSALORDERLINEORDERLINE = '$rowMain[ORDERLINE]'
+                                                                                                    AND SUBCODE01 ='$rowMain[SUBCODE01]'
+                                                                                                    AND SUBCODE02 ='$rowMain[SUBCODE02]'
+                                                                                                    AND SUBCODE03 ='$rowMain[SUBCODE03]'
+                                                                                                    AND SUBCODE04 ='$rowMain[VARIAN]'
+                                                                                                    AND ITEMTYPEAFICODE='KGF'";
                                                                                     $stmt_tgl2 = db2_exec($conn1, $query_tgl2);
                                                                                     $data_tgl2 = db2_fetch_assoc($stmt_tgl2);
                                                                                     echo $data_tgl2['TGLPOGREIGE'];
                                                                                 }
+                                                                            // }
                                                                                 ?>
                                                                         </td>
                                                                         <td><?= $rowMain['ACTUAL_DELIVERY'] ?></td>
