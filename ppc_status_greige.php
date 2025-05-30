@@ -34,17 +34,26 @@ include "utils/helper.php";
             position: relative;
             display: inline-block;
         }
+        table.dataTable thead tr {
+            height: auto !important;
+        }
+    </style>
+    <style>
+        .status-complete {
+            color: green;
+            font-weight: bold;
+            animation: blink 1s step-start 0s infinite;
+        }
 
-        .new-label {
-            background-color: yellow; /* Warna latar belakang label */
-            color: black; /* Warna teks label */
-            padding: 5px 10px; /* Padding untuk label */
-            border-radius: 5px; /* Sudut melengkung */
-            position: absolute; /* Posisi absolut untuk label */
-            top: -10px; /* Atur posisi vertikal */
-            right: -10px; /* Atur posisi horizontal */
-            font-weight: bold; /* Tebal */
-            font-size: 12px; /* Ukuran font */
+        .status-progress {
+            color: orange;
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -66,15 +75,6 @@ include "utils/helper.php";
                                                     <!-- <h5 class="mb-0">Hasil Pencarian</h5> -->
                                                 </div>
                                                 <div class="card-block">
-                                                    <div class="form-group row mb-3">
-                                                        <label class="col-sm-2 col-form-label">Range Tanggal:</label>
-                                                        <div class="col-sm-4">
-                                                            <input type="text" name="daterange" class="form-control" id="daterange" />
-                                                        </div>
-                                                        <div class="col-sm-2">
-                                                            <button type="submit" class="btn btn-primary">Filter</button>
-                                                        </div>
-                                                    </div>
 
                                                     <?php
                                                         function formatQty($value) {
@@ -83,11 +83,11 @@ include "utils/helper.php";
                                                     ?>
 
                                                     <div class="table-responsive">
-                                                        <table id="excel-status-greige" class="table table-striped table-bordered nowrap">
+                                                        <table id="excel-status-greige" class="table table-striped table-bordered">
                                                             <thead class="thead-light">
-                                                                <tr>
+                                                                <tr style="height: unset !important;">
                                                                     <th>SALES ORDER</th>
-                                                                    <th style="width: 220px;">PRODUCTION DEMAND KFF</th>
+                                                                    <th>PRODUCTION DEMAND KFF</th>
                                                                     <th>HANGER</th>
                                                                     <th>VARIAN</th>
                                                                     <th>WARNA</th>
@@ -212,6 +212,8 @@ include "utils/helper.php";
                                                                                     r5.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY5,
                                                                                     r6.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY6,
                                                                                     r6.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY6,
+                                                                                    r6.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY7,
+                                                                                    r6.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY7,
                                                                                     ibn.ONLY_PROJECTCODE AS PROJECTCODE_READY1
                                                                                     -- ibn.QTY_ALOKASI_BRUTO AS QTY_READY1
                                                                                 FROM
@@ -422,7 +424,26 @@ include "utils/helper.php";
                                                                         <td><?= formatQty((float)($rowMain['QTY_BOOKING_BLMREADY6'] ?? 0), 2) ?></td>
                                                                         <td><?= $rowMain['PROJECTCODE_BOOKING_BLMREADY7'] ?></td>
                                                                         <td><?= formatQty((float)($rowMain['QTY_BOOKING_BLMREADY7'] ?? 0), 2) ?></td>
-                                                                        <td><?= $rowMain[''] ?></td>
+
+                                                                        <?php
+                                                                            // Hitung semua qty ready
+                                                                            $qtyRajut = (float)($rowMain['QTY_RAJUT_READY'] ?? 0);
+                                                                            $qty1 = (float)($rowMain['QTY_BOOKING_BLMREADY1'] ?? 0);
+                                                                            $qty2 = (float)($rowMain['QTY_BOOKING_BLMREADY2'] ?? 0);
+                                                                            $qty3 = (float)($rowMain['QTY_BOOKING_BLMREADY3'] ?? 0);
+                                                                            $qty4 = (float)($rowMain['QTY_BOOKING_BLMREADY4'] ?? 0);
+                                                                            $qty5 = (float)($rowMain['QTY_BOOKING_BLMREADY5'] ?? 0);
+                                                                            $qty6 = (float)($rowMain['QTY_BOOKING_BLMREADY6'] ?? 0);
+                                                                            $qty7 = (float)($rowMain['QTY_BOOKING_BLMREADY7'] ?? 0);
+
+                                                                            $qtyReadyTotal = $qtyRajut + $qty1 + $qty2 + $qty3 + $qty4 + $qty5 + $qty6 + $qty7;
+                                                                            $qtyBruto = (float)($data_kg['QTY_BRUTO'] ?? 0);
+
+                                                                            $status = ($qtyReadyTotal >= $qtyBruto && $qtyBruto > 0) ? 'COMPLETE' : 'ON PROGRESS';
+                                                                            $statusClass = 'status-blink ';
+                                                                            $statusClass .= ($status === 'COMPLETE') ? 'status-complete' : 'status-progress';
+                                                                        ?>
+                                                                        <td class="<?= $statusClass ?>"><?= $status ?></td>
                                                                     </tr>
                                                                 <?php endwhile; ?>
                                                             </tbody>
@@ -461,10 +482,8 @@ include "utils/helper.php";
 <script>
     $('#excel-status-greige').DataTable({
         scrollX: true,
-        fixedHeader: true,  
+        autoWidth: false,
         dom: 'Bfrtip',
-        text: '<i class="fa fa-file-excel-o"></i> Export Excel',
-        className: 'btn btn-success',
         buttons: [{
             extend: 'excelHtml5',
             customize: function (xlsx) {
@@ -475,7 +494,10 @@ include "utils/helper.php";
                     }
                 });
             }
-        }]
+        }],
+        columnDefs: [
+            { width: '220px', targets: 1 },
+        ]
     });
 
     function getCurrentDateTimeForDB2() {
