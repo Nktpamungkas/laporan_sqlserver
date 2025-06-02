@@ -441,35 +441,36 @@
 
     data.forEach((row, index) => {
         const tr = document.createElement("tr");
+        // Hilangin dulu yang option row.GrTp Instruction 
+        // <option value="100" ${row.GrTp === '100' ? 'selected' : ''}>100 (Instruction)</option>
         tr.innerHTML = `
-            <td><input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value)"></td>
-            <td>
-                <select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
-                    <option value="100" ${row.GrTp === '100' ? "selected" : ""}>100 (Instruction)</option>
-                    <option value="010" ${row.GrTp === '010' ? "selected" : ""}>010 (Binder-Filler)</option>
-                    <option value="201" ${row.GrTp === '201' ? "selected" : ""}>201 (Sub Recipe - Fabric Dye)</option>
-                    <option value="001" ${row.GrTp === '001' ? "selected" : ""}>001 (Dyestuff/Chemical)</option>
-                </select>
+            <td>${row.IT === ''? row.Gr: `<input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value)">`}
             </td>
-            <td><input type="number" value="${row.Sq}" onchange="updateField(${row.Gr}, 'Sq', this.value)"></td>
-            <td><input type="number" value="${row.SubSq}" onchange="updateField(${row.Gr}, 'SubSq', this.value)"></td>
-            <td><input type="text" value="${row.IT}" readonly></td>
-            <td>
-                <select class="select2-itemcode" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
-                    ${row.ItemCode ? `<option value="${row.ItemCode}" selected>${row.ItemCode}</option>` : ''}
-                </select>
+            <td>${
+                row.IT === ''
+                ? row.GrTp
+                : `<select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
+                    <option value="010" ${row.GrTp === '010' ? 'selected' : ''}>010 (Binder-Filler)</option>
+                    <option value="201" ${row.GrTp === '201' ? 'selected' : ''}>201 (Sub Recipe - Fabric Dye)</option>
+                    <option value="001" ${row.GrTp === '001' ? 'selected' : ''}>001 (Dyestuff/Chemical)</option>
+                    </select>`}
+            </td>
+            <td>${row.IT === ''? row.Sq: `<input type="number" value="${row.Sq}" onchange="updateField(${row.Gr}, 'Sq', this.value)">`}</td>
+            <td>${row.IT === ''? row.SubSq: `<input type="number" value="${row.SubSq}" onchange="updateField(${row.Gr}, 'SubSq', this.value)">`}</td>
+            <td>${row.IT === ''? row.IT: `<input type="text" value="${row.IT}" readonly>`}</td>
+            <td>${row.IT === ''? row.ItemCode: `<select class="select2-itemcode" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
+                                ${row.ItemCode ? `<option value="${row.ItemCode}" selected>${row.ItemCode}</option>` : ''}</select>`}
             </td>
             <td>${row.Comment ?? ''}</td>
             <td>${row.Description ?? ''}</td>
-            <td>
-                 <select onchange="updateField(${row.Gr}, 'ConsType', this.value)" ${row.IT !== 'DYC' ? 'disabled' : ''}>
+            <td>${row.IT !== 'DYC'? '': `<select onchange="updateField(${row.Gr}, 'ConsType', this.value)" ${row.IT !== 'DYC' ? 'disabled' : ''}>
                     <option value="" ${row.ConsType === '' ? "selected" : ""}></option>
                     <option value="Quantity" ${row.ConsType === 'Quantity' ? "selected" : ""}>Quantity</option>
                     <option value="Percentage" ${row.ConsType === 'Percentage' ? "selected" : ""}>Percentage</option>
-                </select>
+                </select>`}
             </td>
             <td>${row.UoM}</td>
-            <td><input type="number" value="${row.Cons}" onchange="updateField(${row.Gr}, 'Cons', this.value)" ${row.IT !== 'DYC' ? 'disabled' : ''}></td>
+            <td>${row.IT !== 'DYC'? row.Cons: `<input type="number" value="${row.Cons}" onchange="updateField(${row.Gr}, 'Cons', this.value)" ${row.IT !== 'DYC' ? 'disabled' : ''}>`}</td>
             <td>
                 <button class="btn btn-sm btn-danger" onclick="deleteRow(${row.Gr}, ${row.Sq}, ${row.SubSq})">Delete</button>
             </td>

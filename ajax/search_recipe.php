@@ -30,6 +30,8 @@ switch ($grouptype) {
         $whereLike = "AND TRIM(r2.COMMENTLINE) LIKE '%$search%'";
         break;
     case '001':
+        $whereLike = "AND TRIM(r2.SUBCODE01) || '-' || TRIM(r2.SUBCODE02) || '-' || TRIM(r2.SUBCODE03) LIKE '%$search%'";
+        break;
     case '010':
         $whereLike = "AND TRIM(r2.SUBCODE01) || '-' || TRIM(r2.SUBCODE02) || '-' || TRIM(r2.SUBCODE03) LIKE '%$search%'";
         break;
@@ -90,6 +92,9 @@ $result = db2_exec($conn1, $query);
 
 $data = [];
 while ($row = db2_fetch_assoc($result)) {
+    if($grouptype == '100' OR $grouptype == '001'){
+        $row['COMPONENTUOMCODE'] = 'g';
+    }
     $data[] = [
         'id' => $row['ITEMCODE2'], // untuk value select2
         'text' => $row['ITEMCODE'], // untuk tampilan select2
