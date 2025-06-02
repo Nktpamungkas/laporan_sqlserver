@@ -153,8 +153,6 @@ include "utils/helper.php";
                                                                                 ),
                                                                                 BOOKING_BLM_READY1 AS (
                                                                                     SELECT 
-                                                                                        -- LISTAGG(DISTINCT PRODUCTIONDEMAND.TGLPOGREIGE, ', ') AS TGLPOGREIGE,
-                                                                                        -- MAX(PRODUCTIONDEMAND.TGLPOGREIGE) AS TGLPOGREIGE,
                                                                                         b.PROJECTCODE,
                                                                                         b.DECOSUBCODE01,
                                                                                         b.DECOSUBCODE02,
@@ -169,11 +167,8 @@ include "utils/helper.php";
                                                                                             p.SUBCODE02,
                                                                                             p.SUBCODE03,
                                                                                             p.SUBCODE04
-                                                                                            -- i.TGLPOGREIGE
                                                                                         FROM
                                                                                             PRODUCTIONDEMAND p 
-                                                                                        -- JOIN 
-                                                                                        --     ITXVIEW_RAJUT i ON i.CODE = p.CODE
                                                                                         WHERE
                                                                                             p.ITEMTYPEAFICODE = 'KGF'
                                                                                             ) PRODUCTIONDEMAND
@@ -193,25 +188,12 @@ include "utils/helper.php";
                                                                                         b.LOGICALWAREHOUSECODE
                                                                                 )
                                                                                 SELECT DISTINCT
-                                                                                    -- CASE 
-                                                                                    --     WHEN MAX(r1.TGLPOGREIGE) IS NOT NULL THEN MAX(r1.TGLPOGREIGE)
-                                                                                    --     WHEN MAX(r2.TGLPOGREIGE) IS NOT NULL THEN MAX(r2.TGLPOGREIGE)
-                                                                                    --     WHEN MAX(r3.TGLPOGREIGE) IS NOT NULL THEN MAX(r3.TGLPOGREIGE)
-                                                                                    --     WHEN MAX(r4.TGLPOGREIGE) IS NOT NULL THEN MAX(r4.TGLPOGREIGE)
-                                                                                    --     WHEN MAX(r5.TGLPOGREIGE) IS NOT NULL THEN MAX(r5.TGLPOGREIGE)
-                                                                                    --     WHEN MAX(r6.TGLPOGREIGE) IS NOT NULL THEN MAX(r6.TGLPOGREIGE)
-                                                                                    --     ELSE NULL
-                                                                                    -- END AS TGLPOGREIGE,
                                                                                     LISTAGG( DISTINCT TRIM(p.PRODUCTIONDEMANDCODE),',') as DEMAND_KFF,
-                                                                                    MAX(p2.ORIGDLVSALORDERLINEORDERLINE) AS ORDERLINE,
+                                                                                    (p2.ORIGDLVSALORDERLINEORDERLINE) AS ORDERLINE,
                                                                                     p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER,
                                                                                     TRIM(p2.SUBCODE02) || '-' || TRIM(p2.SUBCODE03) AS HANGER,
                                                                                     i.WARNA,
-                                                                                    CASE 
-                                                                                        WHEN s.CONFIRMEDDELIVERYDATE <> NULL THEN s.CONFIRMEDDELIVERYDATE
-                                                                                        ELSE MAX(s2.CONFIRMEDDUEDATE)
-                                                                                    END AS ACTUAL_DELIVERY,
-                                                                                    MAX(p2.SUBCODE01) AS SUBCODE01 ,
+                                                                                    p2.SUBCODE01,
                                                                                     p2.SUBCODE02,
                                                                                     p2.SUBCODE03,
                                                                                     p3.SUBCODE04 AS VARIAN,
@@ -231,12 +213,19 @@ include "utils/helper.php";
                                                                                     r6.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY6,
                                                                                     r6.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY7,
                                                                                     r6.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY7,
-                                                                                    ibn.ONLY_PROJECTCODE AS PROJECTCODE_READY1
-                                                                                    -- ibn.QTY_ALOKASI_BRUTO AS QTY_READY1
+                                                                                    ibn.ONLY_PROJECTCODE AS PROJECTCODE_READY1,
+                                                                                    a2.VALUESTRING AS ADDITIONALDATA1,
+                                                                                    a3.VALUESTRING AS ADDITIONALDATA2,
+                                                                                    a4.VALUESTRING AS ADDITIONALDATA3,
+                                                                                    a5.VALUESTRING AS ADDITIONALDATA4,
+                                                                                    a6.VALUESTRING AS ADDITIONALDATA5,
+                                                                                    a7.VALUESTRING AS ADDITIONALDATA6
                                                                                 FROM
                                                                                     PRODUCTIONDEMANDSTEP p 
                                                                                 LEFT JOIN PRODUCTIONDEMAND p2 ON p2.CODE = p.PRODUCTIONDEMANDCODE 
                                                                                 LEFT JOIN SALESORDER s2 ON s2.CODE = p2.ORIGDLVSALORDLINESALORDERCODE 
+                                                                                LEFT JOIN SALESORDERLINE s3 ON s3.SALESORDERCODE = p2.ORIGDLVSALORDLINESALORDERCODE 
+                                                                                                        AND s3.ORDERLINE = p2.ORIGDLVSALORDERLINEORDERLINE 
                                                                                 LEFT JOIN PRODUCTIONRESERVATION p3 ON p3.ITEMTYPEAFICODE = 'KGF' AND p3.ORDERCODE = p2.CODE 
                                                                                 LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p2.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
                                                                                 LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p2.ABSUNIQUEID AND a2.FIELDNAME = 'ProAllow'
@@ -256,8 +245,6 @@ include "utils/helper.php";
                                                                                                         AND i.SUBCODE08 = p2.SUBCODE08 
                                                                                                         AND i.SUBCODE09 = p2.SUBCODE09 
                                                                                                         AND i.SUBCODE10 = p2.SUBCODE10
-                                                                                LEFT JOIN SALESORDERDELIVERY s ON s.SALESORDERLINESALESORDERCODE = p2.ORIGDLVSALORDLINESALORDERCODE 
-                                                                                                            AND s.SALESORDERLINEORDERLINE = p2.ORIGDLVSALORDERLINEORDERLINE
                                                                                 LEFT JOIN RAJUT r ON r.PROJECTCODE = p2.ORIGDLVSALORDLINESALORDERCODE 
                                                                                                 AND r.DECOSUBCODE01 = p3.SUBCODE01
                                                                                                 AND r.DECOSUBCODE02 = p3.SUBCODE02
@@ -304,12 +291,15 @@ include "utils/helper.php";
                                                                                     AND NOT p2.ORIGDLVSALORDLINESALORDERCODE IS NULL
                                                                                     AND p3.ITEMTYPEAFICODE = 'KGF'
                                                                                     AND s2.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                                                                    AND s3.LINESTATUS = '1'
+                                                                                    -- AND p2.ORIGDLVSALORDLINESALORDERCODE = 'SME2500244'
                                                                                 GROUP BY
+                                                                                    p2.ORIGDLVSALORDERLINEORDERLINE,
                                                                                     p2.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                    p2.SUBCODE01,
                                                                                     p2.SUBCODE02,
                                                                                     p2.SUBCODE03,
                                                                                     i.WARNA,
-                                                                                    s.CONFIRMEDDELIVERYDATE,
                                                                                     p3.SUBCODE04,
                                                                                     r.PROJECTCODE,
                                                                                     r.QTY_RAJUT_READY,
@@ -326,10 +316,333 @@ include "utils/helper.php";
                                                                                     r6.PROJECTCODE,
                                                                                     r6.QTY_RAJUT_READY,
                                                                                     ibn.ONLY_PROJECTCODE,
-                                                                                    ibn.QTY_ALOKASI_BRUTO";
+                                                                                    ibn.QTY_ALOKASI_BRUTO,
+                                                                                    a2.VALUESTRING,
+                                                                                    a3.VALUESTRING,
+                                                                                    a4.VALUESTRING,
+                                                                                    a5.VALUESTRING,
+                                                                                    a6.VALUESTRING,
+                                                                                    a7.VALUESTRING";
                                                                     $execMain   = db2_exec($conn1, $qDataMain);
                                                                 ?>
                                                                 <?php while ($rowMain   = db2_fetch_assoc($execMain))  : ?>
+                                                                    <?php
+                                                                        // DELIVERY GREIGE (BON ORDER)
+                                                                            $qDelGreige1 = "SELECT DISTINCT
+                                                                                                SALESORDERCODE,
+                                                                                                ORDERLINE,
+                                                                                                DATE_AKTUAL,
+                                                                                                DATE_AKTUAL2,
+                                                                                                DATE_AKTUAL3,
+                                                                                                DATE_AKTUAL4,
+                                                                                                DATE_AKTUAL5,
+                                                                                                DATE_AKTUAL6,
+                                                                                                DATE_AKTUAL7,
+                                                                                                DATE_AKTUAL_TO,
+                                                                                                DATE_AKTUAL_TO2,
+                                                                                                DATE_AKTUAL_TO3,
+                                                                                                DATE_AKTUAL_TO4,
+                                                                                                DATE_AKTUAL_TO5,
+                                                                                                DATE_AKTUAL_TO6,
+                                                                                                DATE_AKTUAL_TO7,
+                                                                                                ADDITIONALDATA
+                                                                                            FROM ITXVIEWBONORDER i
+                                                                                            WHERE 
+                                                                                                i.SALESORDERCODE = '$rowMain[NO_ORDER]'
+                                                                                                AND i.ORDERLINE = '$rowMain[ORDERLINE]'";
+                                                                            $execDelGreige1 = db2_exec($conn1, $qDelGreige1);
+                                                                            $rowDelGreige1 = db2_fetch_assoc($execDelGreige1);
+                                                                            
+                                                                            $qDelGreige2 = "SELECT 
+                                                                                                a7.VALUEDATE AS TGLRENCANA,
+                                                                                                a8.VALUEDATE AS TGLPOGREIGE
+                                                                                            FROM(
+                                                                                                SELECT DISTINCT 
+                                                                                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                                    p.SUBCODE01,
+                                                                                                    p.SUBCODE02,
+                                                                                                    p.SUBCODE03,
+                                                                                                    p.SUBCODE04,
+                                                                                                    p.ABSUNIQUEID
+                                                                                                FROM
+                                                                                                    PRODUCTIONDEMAND p 
+                                                                                                WHERE
+                                                                                                    p.ITEMTYPEAFICODE = 'KGF'
+                                                                                                    ) PRODUCTIONDEMAND
+                                                                                            LEFT JOIN BALANCE b ON b.DECOSUBCODE01 = PRODUCTIONDEMAND.SUBCODE01 
+                                                                                                                AND b.DECOSUBCODE02 = PRODUCTIONDEMAND.SUBCODE02 
+                                                                                                                AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
+                                                                                                                AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
+                                                                                                                AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                            LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
+                                                                                            LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
+                                                                                            AND 
+                                                                                                LOGICALWAREHOUSECODE = 'M021'
+                                                                                            WHERE
+                                                                                                b.PROJECTCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
+                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                            GROUP BY
+                                                                                                a7.VALUEDATE,
+                                                                                                a8.VALUEDATE ";
+                                                                            $execDelGreige2 = db2_exec($conn1, $qDelGreige2);
+                                                                            $rowDelGreige2 = db2_fetch_assoc($execDelGreige2);
+                                                                            
+                                                                            $qDelGreige3 = "SELECT 
+                                                                                                a7.VALUEDATE AS TGLRENCANA,
+                                                                                                a8.VALUEDATE AS TGLPOGREIGE
+                                                                                            FROM(
+                                                                                                SELECT DISTINCT 
+                                                                                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                                    p.SUBCODE01,
+                                                                                                    p.SUBCODE02,
+                                                                                                    p.SUBCODE03,
+                                                                                                    p.SUBCODE04,
+                                                                                                    p.ABSUNIQUEID
+                                                                                                FROM
+                                                                                                    PRODUCTIONDEMAND p 
+                                                                                                WHERE
+                                                                                                    p.ITEMTYPEAFICODE = 'KGF'
+                                                                                                    ) PRODUCTIONDEMAND
+                                                                                            LEFT JOIN BALANCE b ON b.DECOSUBCODE01 = PRODUCTIONDEMAND.SUBCODE01 
+                                                                                                                AND b.DECOSUBCODE02 = PRODUCTIONDEMAND.SUBCODE02 
+                                                                                                                AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
+                                                                                                                AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
+                                                                                                                AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                            LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
+                                                                                            LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
+                                                                                            AND 
+                                                                                                LOGICALWAREHOUSECODE = 'M021'
+                                                                                            WHERE
+                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA1]'
+                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
+                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                            GROUP BY
+                                                                                                a7.VALUEDATE,
+                                                                                                a8.VALUEDATE ";
+                                                                            $execDelGreige3 = db2_exec($conn1, $qDelGreige3);
+                                                                            $rowDelGreige3 = db2_fetch_assoc($execDelGreige3);
+                                                                            
+                                                                            $qDelGreige32 = "SELECT 
+                                                                                                a7.VALUEDATE AS TGLRENCANA,
+                                                                                                a8.VALUEDATE AS TGLPOGREIGE
+                                                                                            FROM(
+                                                                                                SELECT DISTINCT 
+                                                                                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                                    p.SUBCODE01,
+                                                                                                    p.SUBCODE02,
+                                                                                                    p.SUBCODE03,
+                                                                                                    p.SUBCODE04,
+                                                                                                    p.ABSUNIQUEID
+                                                                                                FROM
+                                                                                                    PRODUCTIONDEMAND p 
+                                                                                                WHERE
+                                                                                                    p.ITEMTYPEAFICODE = 'KGF'
+                                                                                                    ) PRODUCTIONDEMAND
+                                                                                            LEFT JOIN BALANCE b ON b.DECOSUBCODE01 = PRODUCTIONDEMAND.SUBCODE01 
+                                                                                                                AND b.DECOSUBCODE02 = PRODUCTIONDEMAND.SUBCODE02 
+                                                                                                                AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
+                                                                                                                AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
+                                                                                                                AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                            LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
+                                                                                            LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
+                                                                                            AND 
+                                                                                                LOGICALWAREHOUSECODE = 'M021'
+                                                                                            WHERE
+                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA2]'
+                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
+                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                            GROUP BY
+                                                                                                a7.VALUEDATE,
+                                                                                                a8.VALUEDATE ";
+                                                                            $execDelGreige32 = db2_exec($conn1, $qDelGreige32);
+                                                                            $rowDelGreige32 = db2_fetch_assoc($execDelGreige32);
+                                                                            
+                                                                            $qDelGreige33 = "SELECT 
+                                                                                                a7.VALUEDATE AS TGLRENCANA,
+                                                                                                a8.VALUEDATE AS TGLPOGREIGE
+                                                                                            FROM(
+                                                                                                SELECT DISTINCT 
+                                                                                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                                    p.SUBCODE01,
+                                                                                                    p.SUBCODE02,
+                                                                                                    p.SUBCODE03,
+                                                                                                    p.SUBCODE04,
+                                                                                                    p.ABSUNIQUEID
+                                                                                                FROM
+                                                                                                    PRODUCTIONDEMAND p 
+                                                                                                WHERE
+                                                                                                    p.ITEMTYPEAFICODE = 'KGF'
+                                                                                                    ) PRODUCTIONDEMAND
+                                                                                            LEFT JOIN BALANCE b ON b.DECOSUBCODE01 = PRODUCTIONDEMAND.SUBCODE01 
+                                                                                                                AND b.DECOSUBCODE02 = PRODUCTIONDEMAND.SUBCODE02 
+                                                                                                                AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
+                                                                                                                AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
+                                                                                                                AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                            LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
+                                                                                            LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
+                                                                                            AND 
+                                                                                                LOGICALWAREHOUSECODE = 'M021'
+                                                                                            WHERE
+                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA3]'
+                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
+                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                            GROUP BY
+                                                                                                a7.VALUEDATE,
+                                                                                                a8.VALUEDATE ";
+                                                                            $execDelGreige33 = db2_exec($conn1, $qDelGreige33);
+                                                                            $rowDelGreige33 = db2_fetch_assoc($execDelGreige33);
+                                                                            
+                                                                            $qDelGreige34 = "SELECT 
+                                                                                                a7.VALUEDATE AS TGLRENCANA,
+                                                                                                a8.VALUEDATE AS TGLPOGREIGE
+                                                                                            FROM(
+                                                                                                SELECT DISTINCT 
+                                                                                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                                    p.SUBCODE01,
+                                                                                                    p.SUBCODE02,
+                                                                                                    p.SUBCODE03,
+                                                                                                    p.SUBCODE04,
+                                                                                                    p.ABSUNIQUEID
+                                                                                                FROM
+                                                                                                    PRODUCTIONDEMAND p 
+                                                                                                WHERE
+                                                                                                    p.ITEMTYPEAFICODE = 'KGF'
+                                                                                                    ) PRODUCTIONDEMAND
+                                                                                            LEFT JOIN BALANCE b ON b.DECOSUBCODE01 = PRODUCTIONDEMAND.SUBCODE01 
+                                                                                                                AND b.DECOSUBCODE02 = PRODUCTIONDEMAND.SUBCODE02 
+                                                                                                                AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
+                                                                                                                AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
+                                                                                                                AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                            LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
+                                                                                            LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
+                                                                                            AND 
+                                                                                                LOGICALWAREHOUSECODE = 'M021'
+                                                                                            WHERE
+                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA4]'
+                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
+                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                            GROUP BY
+                                                                                                a7.VALUEDATE,
+                                                                                                a8.VALUEDATE ";
+                                                                            $execDelGreige34 = db2_exec($conn1, $qDelGreige34);
+                                                                            $rowDelGreige34 = db2_fetch_assoc($execDelGreige34);
+                                                                            
+                                                                            $qDelGreige35 = "SELECT 
+                                                                                                a7.VALUEDATE AS TGLRENCANA,
+                                                                                                a8.VALUEDATE AS TGLPOGREIGE
+                                                                                            FROM(
+                                                                                                SELECT DISTINCT 
+                                                                                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                                    p.SUBCODE01,
+                                                                                                    p.SUBCODE02,
+                                                                                                    p.SUBCODE03,
+                                                                                                    p.SUBCODE04,
+                                                                                                    p.ABSUNIQUEID
+                                                                                                FROM
+                                                                                                    PRODUCTIONDEMAND p 
+                                                                                                WHERE
+                                                                                                    p.ITEMTYPEAFICODE = 'KGF'
+                                                                                                    ) PRODUCTIONDEMAND
+                                                                                            LEFT JOIN BALANCE b ON b.DECOSUBCODE01 = PRODUCTIONDEMAND.SUBCODE01 
+                                                                                                                AND b.DECOSUBCODE02 = PRODUCTIONDEMAND.SUBCODE02 
+                                                                                                                AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
+                                                                                                                AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
+                                                                                                                AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                            LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
+                                                                                            LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
+                                                                                            AND 
+                                                                                                LOGICALWAREHOUSECODE = 'M021'
+                                                                                            WHERE
+                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA5]'
+                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
+                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                            GROUP BY
+                                                                                                a7.VALUEDATE,
+                                                                                                a8.VALUEDATE ";
+                                                                            $execDelGreige35 = db2_exec($conn1, $qDelGreige35);
+                                                                            $rowDelGreige35 = db2_fetch_assoc($execDelGreige35);
+
+                                                                            $qDelGreige36 = "SELECT 
+                                                                                                a7.VALUEDATE AS TGLRENCANA,
+                                                                                                a8.VALUEDATE AS TGLPOGREIGE
+                                                                                            FROM(
+                                                                                                SELECT DISTINCT 
+                                                                                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                                    p.SUBCODE01,
+                                                                                                    p.SUBCODE02,
+                                                                                                    p.SUBCODE03,
+                                                                                                    p.SUBCODE04,
+                                                                                                    p.ABSUNIQUEID
+                                                                                                FROM
+                                                                                                    PRODUCTIONDEMAND p 
+                                                                                                WHERE
+                                                                                                    p.ITEMTYPEAFICODE = 'KGF'
+                                                                                                    ) PRODUCTIONDEMAND
+                                                                                            LEFT JOIN BALANCE b ON b.DECOSUBCODE01 = PRODUCTIONDEMAND.SUBCODE01 
+                                                                                                                AND b.DECOSUBCODE02 = PRODUCTIONDEMAND.SUBCODE02 
+                                                                                                                AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
+                                                                                                                AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
+                                                                                                                AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                            LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
+                                                                                            LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
+                                                                                            AND 
+                                                                                                LOGICALWAREHOUSECODE = 'M021'
+                                                                                            WHERE
+                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA6]'
+                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
+                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                            GROUP BY
+                                                                                                a7.VALUEDATE,
+                                                                                                a8.VALUEDATE ";
+                                                                            $execDelGreige36 = db2_exec($conn1, $qDelGreige36);
+                                                                            $rowDelGreige36 = db2_fetch_assoc($execDelGreige36);
+                                                                        // DELIVERY GREIGE (BON ORDER)
+
+                                                                        // DELIVERY KAIN JADI (ACTUAL)
+                                                                            $qDelKainJadiActual = "SELECT DISTINCT 
+                                                                                                        CASE 
+                                                                                                            WHEN s2.CONFIRMEDDELIVERYDATE IS NULL THEN s.CONFIRMEDDUEDATE
+                                                                                                            ELSE s2.CONFIRMEDDELIVERYDATE 
+                                                                                                        END AS ACTUAL_DELIVERY
+                                                                                                    FROM
+                                                                                                        ITXVIEWBONORDER i
+                                                                                                    LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = i.SALESORDERCODE AND s2.SALESORDERLINEORDERLINE = i.ORDERLINE 
+                                                                                                    LEFT JOIN SALESORDER s ON s.CODE = s2.SALESORDERLINESALESORDERCODE
+                                                                                                    WHERE 
+                                                                                                        i.SALESORDERCODE = 'DOM2500360'
+                                                                                                        AND i.ORDERLINE = '40'
+                                                                                                    GROUP BY
+                                                                                                        i.SUBCODE02,
+                                                                                                        i.SUBCODE03,
+                                                                                                        s2.CONFIRMEDDELIVERYDATE,
+                                                                                                        s.CONFIRMEDDUEDATE";
+                                                                            $execDelKainJadiActual  = db2_exec($conn1, $qDelKainJadiActual);
+                                                                            $rowDelKainJadiActual   = db2_fetch_assoc($execDelKainJadiActual);
+                                                                            $dataDelKainJadiActual  = $rowDelKainJadiActual['ACTUAL_DELIVERY'] ?? '';
+                                                                        // DELIVERY KAIN JADI (ACTUAL)
+                                                                    ?>
                                                                     <tr>
                                                                         <td><?= $rowMain['NO_ORDER'] ?></td>
                                                                         <td style="width: 220px; white-space: normal; overflow-wrap: break-word; word-break: break-word;">
@@ -339,80 +652,28 @@ include "utils/helper.php";
                                                                         <td><?= $rowMain['VARIAN'] ?></td>
                                                                         <td><?= $rowMain['WARNA'] ?></td>
                                                                         <td>
-                                                                            <?php 
-                                                                            // if(!empty($rowMain['TGLPOGREIGE'])){
-                                                                            //     echo $rowMain['TGLPOGREIGE'];
-                                                                            // }else{
-                                                                                $query_tgl = "SELECT DISTINCT 
-                                                                                    DATE_AKTUAL,
-                                                                                    DATE_AKTUAL2,
-                                                                                    DATE_AKTUAL3,
-                                                                                    DATE_AKTUAL4,
-                                                                                    DATE_AKTUAL5,
-                                                                                    DATE_AKTUAL6,
-                                                                                    DATE_AKTUAL7,
-                                                                                    DATE_AKTUAL_TO,
-                                                                                    DATE_AKTUAL_TO2,
-                                                                                    DATE_AKTUAL_TO3,
-                                                                                    DATE_AKTUAL_TO4,
-                                                                                    DATE_AKTUAL_TO5,
-                                                                                    DATE_AKTUAL_TO6,
-                                                                                    DATE_AKTUAL_TO7,
-                                                                                    SALESORDERCODE,
-                                                                                    ORDERLINE,
-                                                                                    ADDITIONALDATA
-                                                                                FROM ITXVIEWBONORDER i
-                                                                                WHERE 
-                                                                                    i.SALESORDERCODE = '$rowMain[NO_ORDER]'
-                                                                                    AND i.ORDERLINE = '$rowMain[ORDERLINE]'
-                                                                                    ";
+                                                                            <!-- 1 -->
+                                                                            <?= ($rowDelGreige1['DATE_AKTUAL'] ? $rowDelGreige1['DATE_AKTUAL'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO'] ?> &nbsp;
+                                                                            <?= ($rowDelGreige1['DATE_AKTUAL2'] ? $rowDelGreige1['DATE_AKTUAL2'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO2'] ?> &nbsp;
+                                                                            <?= ($rowDelGreige1['DATE_AKTUAL3'] ? $rowDelGreige1['DATE_AKTUAL3'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO3'] ?> &nbsp;
+                                                                            <?= ($rowDelGreige1['DATE_AKTUAL4'] ? $rowDelGreige1['DATE_AKTUAL4'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO4'] ?> &nbsp;
+                                                                            <?= ($rowDelGreige1['DATE_AKTUAL5'] ? $rowDelGreige1['DATE_AKTUAL5'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO5'] ?> &nbsp;
+                                                                            <?= ($rowDelGreige1['DATE_AKTUAL6'] ? $rowDelGreige1['DATE_AKTUAL6'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO6'] ?> &nbsp;
+                                                                            <?= ($rowDelGreige1['DATE_AKTUAL7'] ? $rowDelGreige1['DATE_AKTUAL7'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO7'] ?> &nbsp;
 
-                                                                                $stmt_tgl = db2_exec($conn1, $query_tgl);
-                                                                                $data_tgl = db2_fetch_assoc($stmt_tgl);
+                                                                            <!-- 2 -->
+                                                                            <?= $rowDelGreige2['TGLRENCANA'] . $rowDelGreige2['TGLPOGREIGE'] ?> &nbsp;
 
-                                                                                $allDates = [];
+                                                                            <!-- 3 -->
+                                                                            <?= $rowDelGreige3['TGLRENCANA'] . $rowDelGreige3['TGLPOGREIGE'] ?> &nbsp;
+                                                                            <?= $rowDelGreige32['TGLRENCANA'] . $rowDelGreige32['TGLPOGREIGE'] ?> &nbsp;
+                                                                            <?= $rowDelGreige33['TGLRENCANA'] . $rowDelGreige33['TGLPOGREIGE'] ?> &nbsp;
+                                                                            <?= $rowDelGreige34['TGLRENCANA'] . $rowDelGreige34['TGLPOGREIGE'] ?> &nbsp;
+                                                                            <?= $rowDelGreige35['TGLRENCANA'] . $rowDelGreige35['TGLPOGREIGE'] ?> &nbsp;
+                                                                            <?= $rowDelGreige36['TGLRENCANA'] . $rowDelGreige36['TGLPOGREIGE'] ?> &nbsp;
 
-                                                                                if ($data_tgl) {
-                                                                                    foreach ($data_tgl as $key => $val) {
-                                                                                        // Ambil hanya yang kolom tanggal
-                                                                                        if (strpos($key, 'DATE_AKTUAL') !== false && !empty($val)) {
-                                                                                            $allDates[] = trim($val);
-                                                                                        }
-                                                                                    }
-                                                                                }
-
-                                                                                // Hapus tanggal duplikat
-                                                                                $uniqueDates = array_unique($allDates);
-                                                                                // Tampilkan
-                                                                                // foreach ($uniqueDates as $tanggal) {
-                                                                                //     echo $tanggal . '<br>';
-                                                                                // }
-                                                                                if(!empty($data_tgl['ADDITIONALDATA'])){
-                                                                                    if (!empty($uniqueDates)) {
-                                                                                        echo min($uniqueDates);
-                                                                                    }
-                                                                                }else{
-                                                                                    $query_tgl2 = "SELECT 
-                                                                                                    TGLPOGREIGE, 
-                                                                                                    * 
-                                                                                                FROM 
-                                                                                                        ITXVIEW_RAJUT ir 
-                                                                                                WHERE 
-                                                                                                    ORIGDLVSALORDLINESALORDERCODE ='$rowMain[NO_ORDER]'
-                                                                                                    -- AND ORIGDLVSALORDERLINEORDERLINE = '$rowMain[ORDERLINE]'
-                                                                                                    AND SUBCODE01 ='$rowMain[SUBCODE01]'
-                                                                                                    AND SUBCODE02 ='$rowMain[SUBCODE02]'
-                                                                                                    AND SUBCODE03 ='$rowMain[SUBCODE03]'
-                                                                                                    AND SUBCODE04 ='$rowMain[VARIAN]'
-                                                                                                    AND ITEMTYPEAFICODE='KGF'";
-                                                                                    $stmt_tgl2 = db2_exec($conn1, $query_tgl2);
-                                                                                    $data_tgl2 = db2_fetch_assoc($stmt_tgl2);
-                                                                                    echo $data_tgl2['TGLPOGREIGE'];
-                                                                                }
-                                                                            // }
-                                                                                ?>
                                                                         </td>
-                                                                        <td><?= $rowMain['ACTUAL_DELIVERY'] ?></td>
+                                                                        <td><?= $dataDelKainJadiActual; ?></td>
                                                                         <td><?php $query_qty_br="SELECT 
                                                                                                     SUM(USERPRIMARYQUANTITY) AS QTY_BRUTO,
                                                                                                     MAX(USERPRIMARYUOMCODE) AS UOMCODE,
