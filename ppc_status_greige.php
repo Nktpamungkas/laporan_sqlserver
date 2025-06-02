@@ -117,11 +117,11 @@ include "utils/helper.php";
                                                                 <?php
                                                                     $qDataMain  = "WITH RAJUT AS (
                                                                                     SELECT 
-                                                                                        b.PROJECTCODE,
-                                                                                        b.DECOSUBCODE01,
-                                                                                        b.DECOSUBCODE02,
-                                                                                        b.DECOSUBCODE03,
-                                                                                        b.DECOSUBCODE04,
+                                                                                        PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                        PRODUCTIONDEMAND.SUBCODE01,
+                                                                                        PRODUCTIONDEMAND.SUBCODE02,
+                                                                                        PRODUCTIONDEMAND.SUBCODE03,
+                                                                                        PRODUCTIONDEMAND.SUBCODE04,
                                                                                         b.LOGICALWAREHOUSECODE,
                                                                                         SUM(b.BASEPRIMARYQUANTITYUNIT) AS QTY_RAJUT_READY
                                                                                     FROM(
@@ -144,20 +144,20 @@ include "utils/helper.php";
                                                                                     AND 
                                                                                         LOGICALWAREHOUSECODE = 'M021'
                                                                                     GROUP BY
-                                                                                        b.PROJECTCODE,
-                                                                                        b.DECOSUBCODE01,
-                                                                                        b.DECOSUBCODE02,
-                                                                                        b.DECOSUBCODE03,
-                                                                                        b.DECOSUBCODE04,
+                                                                                        PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                        PRODUCTIONDEMAND.SUBCODE01,
+                                                                                        PRODUCTIONDEMAND.SUBCODE02,
+                                                                                        PRODUCTIONDEMAND.SUBCODE03,
+                                                                                        PRODUCTIONDEMAND.SUBCODE04,
                                                                                         b.LOGICALWAREHOUSECODE
                                                                                 ),
                                                                                 BOOKING_BLM_READY1 AS (
                                                                                     SELECT 
-                                                                                        b.PROJECTCODE,
-                                                                                        b.DECOSUBCODE01,
-                                                                                        b.DECOSUBCODE02,
-                                                                                        b.DECOSUBCODE03,
-                                                                                        b.DECOSUBCODE04,
+                                                                                        PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                        PRODUCTIONDEMAND.SUBCODE01,
+                                                                                        PRODUCTIONDEMAND.SUBCODE02,
+                                                                                        PRODUCTIONDEMAND.SUBCODE03,
+                                                                                        PRODUCTIONDEMAND.SUBCODE04,
                                                                                         b.LOGICALWAREHOUSECODE,
                                                                                         SUM(b.BASEPRIMARYQUANTITYUNIT) AS QTY_RAJUT_READY
                                                                                     FROM(
@@ -180,11 +180,11 @@ include "utils/helper.php";
                                                                                     AND 
                                                                                         LOGICALWAREHOUSECODE = 'M021'
                                                                                     GROUP BY
-                                                                                        b.PROJECTCODE,
-                                                                                        b.DECOSUBCODE01,
-                                                                                        b.DECOSUBCODE02,
-                                                                                        b.DECOSUBCODE03,
-                                                                                        b.DECOSUBCODE04,
+                                                                                        PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                        PRODUCTIONDEMAND.SUBCODE01,
+                                                                                        PRODUCTIONDEMAND.SUBCODE02,
+                                                                                        PRODUCTIONDEMAND.SUBCODE03,
+                                                                                        PRODUCTIONDEMAND.SUBCODE04,
                                                                                         b.LOGICALWAREHOUSECODE
                                                                                 )
                                                                                 SELECT DISTINCT
@@ -193,25 +193,26 @@ include "utils/helper.php";
                                                                                     p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER,
                                                                                     TRIM(p2.SUBCODE02) || '-' || TRIM(p2.SUBCODE03) AS HANGER,
                                                                                     i.WARNA,
+                                                                                    p2.ITEMTYPEAFICODE,
                                                                                     p2.SUBCODE01,
                                                                                     p2.SUBCODE02,
                                                                                     p2.SUBCODE03,
                                                                                     p3.SUBCODE04 AS VARIAN,
-                                                                                    r.PROJECTCODE AS PROJECTCODE_RAJUT,
+                                                                                    r.ORIGDLVSALORDLINESALORDERCODE AS PROJECTCODE_RAJUT,
                                                                                     r.QTY_RAJUT_READY,
-                                                                                    r1.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY1,
+                                                                                    r1.ORIGDLVSALORDLINESALORDERCODE AS PROJECTCODE_BOOKING_BLMREADY1,
                                                                                     r1.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY1,
-                                                                                    r2.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY2,
+                                                                                    r2.ORIGDLVSALORDLINESALORDERCODE AS PROJECTCODE_BOOKING_BLMREADY2,
                                                                                     r2.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY2,
-                                                                                    r3.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY3,
+                                                                                    r3.ORIGDLVSALORDLINESALORDERCODE AS PROJECTCODE_BOOKING_BLMREADY3,
                                                                                     r3.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY3,
-                                                                                    r4.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY4,
+                                                                                    r4.ORIGDLVSALORDLINESALORDERCODE AS PROJECTCODE_BOOKING_BLMREADY4,
                                                                                     r4.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY4,
-                                                                                    r5.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY5,
+                                                                                    r5.ORIGDLVSALORDLINESALORDERCODE AS PROJECTCODE_BOOKING_BLMREADY5,
                                                                                     r5.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY5,
-                                                                                    r6.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY6,
+                                                                                    r6.ORIGDLVSALORDLINESALORDERCODE AS PROJECTCODE_BOOKING_BLMREADY6,
                                                                                     r6.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY6,
-                                                                                    r6.PROJECTCODE AS PROJECTCODE_BOOKING_BLMREADY7,
+                                                                                    r6.ORIGDLVSALORDLINESALORDERCODE AS PROJECTCODE_BOOKING_BLMREADY7,
                                                                                     r6.QTY_RAJUT_READY AS QTY_BOOKING_BLMREADY7,
                                                                                     ibn.ONLY_PROJECTCODE AS PROJECTCODE_READY1,
                                                                                     a2.VALUESTRING AS ADDITIONALDATA1,
@@ -245,41 +246,41 @@ include "utils/helper.php";
                                                                                                         AND i.SUBCODE08 = p2.SUBCODE08 
                                                                                                         AND i.SUBCODE09 = p2.SUBCODE09 
                                                                                                         AND i.SUBCODE10 = p2.SUBCODE10
-                                                                                LEFT JOIN RAJUT r ON r.PROJECTCODE = p2.ORIGDLVSALORDLINESALORDERCODE 
-                                                                                                AND r.DECOSUBCODE01 = p3.SUBCODE01
-                                                                                                AND r.DECOSUBCODE02 = p3.SUBCODE02
-                                                                                                AND r.DECOSUBCODE03 = p3.SUBCODE03
-                                                                                                AND r.DECOSUBCODE04 = p3.SUBCODE04
-                                                                                LEFT JOIN BOOKING_BLM_READY1 r1 ON r1.PROJECTCODE = a2.VALUESTRING 
-                                                                                                AND r1.DECOSUBCODE01 = p3.SUBCODE01
-                                                                                                AND r1.DECOSUBCODE02 = p3.SUBCODE02
-                                                                                                AND r1.DECOSUBCODE03 = p3.SUBCODE03
-                                                                                                AND r1.DECOSUBCODE04 = p3.SUBCODE04
-                                                                                LEFT JOIN BOOKING_BLM_READY1 r2 ON r2.PROJECTCODE = a3.VALUESTRING 
-                                                                                                AND r2.DECOSUBCODE01 = p3.SUBCODE01
-                                                                                                AND r2.DECOSUBCODE02 = p3.SUBCODE02
-                                                                                                AND r2.DECOSUBCODE03 = p3.SUBCODE03
-                                                                                                AND r2.DECOSUBCODE04 = p3.SUBCODE04
-                                                                                LEFT JOIN BOOKING_BLM_READY1 r3 ON r3.PROJECTCODE = a4.VALUESTRING 
-                                                                                                AND r3.DECOSUBCODE01 = p3.SUBCODE01
-                                                                                                AND r3.DECOSUBCODE02 = p3.SUBCODE02
-                                                                                                AND r3.DECOSUBCODE03 = p3.SUBCODE03
-                                                                                                AND r3.DECOSUBCODE04 = p3.SUBCODE04
-                                                                                LEFT JOIN BOOKING_BLM_READY1 r4 ON r4.PROJECTCODE = a5.VALUESTRING 
-                                                                                                AND r4.DECOSUBCODE01 = p3.SUBCODE01
-                                                                                                AND r4.DECOSUBCODE02 = p3.SUBCODE02
-                                                                                                AND r4.DECOSUBCODE03 = p3.SUBCODE03
-                                                                                                AND r4.DECOSUBCODE04 = p3.SUBCODE04
-                                                                                LEFT JOIN BOOKING_BLM_READY1 r5 ON r5.PROJECTCODE = a6.VALUESTRING 
-                                                                                                AND r5.DECOSUBCODE01 = p3.SUBCODE01
-                                                                                                AND r5.DECOSUBCODE02 = p3.SUBCODE02
-                                                                                                AND r5.DECOSUBCODE03 = p3.SUBCODE03
-                                                                                                AND r5.DECOSUBCODE04 = p3.SUBCODE04
-                                                                                LEFT JOIN BOOKING_BLM_READY1 r6 ON r6.PROJECTCODE = a7.VALUESTRING 
-                                                                                                AND r6.DECOSUBCODE01 = p3.SUBCODE01
-                                                                                                AND r6.DECOSUBCODE02 = p3.SUBCODE02
-                                                                                                AND r6.DECOSUBCODE03 = p3.SUBCODE03
-                                                                                                AND r6.DECOSUBCODE04 = p3.SUBCODE04
+                                                                                LEFT JOIN RAJUT r ON r.ORIGDLVSALORDLINESALORDERCODE = p2.ORIGDLVSALORDLINESALORDERCODE 
+                                                                                                AND r.SUBCODE01 = p3.SUBCODE01
+                                                                                                AND r.SUBCODE02 = p3.SUBCODE02
+                                                                                                AND r.SUBCODE03 = p3.SUBCODE03
+                                                                                                AND r.SUBCODE04 = p3.SUBCODE04
+                                                                                LEFT JOIN BOOKING_BLM_READY1 r1 ON r1.ORIGDLVSALORDLINESALORDERCODE = a2.VALUESTRING 
+                                                                                                AND r1.SUBCODE01 = p3.SUBCODE01
+                                                                                                AND r1.SUBCODE02 = p3.SUBCODE02
+                                                                                                AND r1.SUBCODE03 = p3.SUBCODE03
+                                                                                                AND r1.SUBCODE04 = p3.SUBCODE04
+                                                                                LEFT JOIN BOOKING_BLM_READY1 r2 ON r2.ORIGDLVSALORDLINESALORDERCODE = a3.VALUESTRING 
+                                                                                                AND r2.SUBCODE01 = p3.SUBCODE01
+                                                                                                AND r2.SUBCODE02 = p3.SUBCODE02
+                                                                                                AND r2.SUBCODE03 = p3.SUBCODE03
+                                                                                                AND r2.SUBCODE04 = p3.SUBCODE04
+                                                                                LEFT JOIN BOOKING_BLM_READY1 r3 ON r3.ORIGDLVSALORDLINESALORDERCODE = a4.VALUESTRING 
+                                                                                                AND r3.SUBCODE01 = p3.SUBCODE01
+                                                                                                AND r3.SUBCODE02 = p3.SUBCODE02
+                                                                                                AND r3.SUBCODE03 = p3.SUBCODE03
+                                                                                                AND r3.SUBCODE04 = p3.SUBCODE04
+                                                                                LEFT JOIN BOOKING_BLM_READY1 r4 ON r4.ORIGDLVSALORDLINESALORDERCODE = a5.VALUESTRING 
+                                                                                                AND r4.SUBCODE01 = p3.SUBCODE01
+                                                                                                AND r4.SUBCODE02 = p3.SUBCODE02
+                                                                                                AND r4.SUBCODE03 = p3.SUBCODE03
+                                                                                                AND r4.SUBCODE04 = p3.SUBCODE04
+                                                                                LEFT JOIN BOOKING_BLM_READY1 r5 ON r5.ORIGDLVSALORDLINESALORDERCODE = a6.VALUESTRING 
+                                                                                                AND r5.SUBCODE01 = p3.SUBCODE01
+                                                                                                AND r5.SUBCODE02 = p3.SUBCODE02
+                                                                                                AND r5.SUBCODE03 = p3.SUBCODE03
+                                                                                                AND r5.SUBCODE04 = p3.SUBCODE04
+                                                                                LEFT JOIN BOOKING_BLM_READY1 r6 ON r6.ORIGDLVSALORDLINESALORDERCODE = a7.VALUESTRING 
+                                                                                                AND r6.SUBCODE01 = p3.SUBCODE01
+                                                                                                AND r6.SUBCODE02 = p3.SUBCODE02
+                                                                                                AND r6.SUBCODE03 = p3.SUBCODE03
+                                                                                                AND r6.SUBCODE04 = p3.SUBCODE04
                                                                                 LEFT JOIN ITXVIEW_BOOKING_NEW ibn ON ibn.SALESORDERCODE = p2.ORIGDLVSALORDLINESALORDERCODE AND ibn.ORDERLINE = p2.ORIGDLVSALORDERLINEORDERLINE 
                                                                                 WHERE
                                                                                     p.OPERATIONCODE = 'BAT1'
@@ -296,24 +297,25 @@ include "utils/helper.php";
                                                                                 GROUP BY
                                                                                     p2.ORIGDLVSALORDERLINEORDERLINE,
                                                                                     p2.ORIGDLVSALORDLINESALORDERCODE,
+                                                                                    p2.ITEMTYPEAFICODE,
                                                                                     p2.SUBCODE01,
                                                                                     p2.SUBCODE02,
                                                                                     p2.SUBCODE03,
                                                                                     i.WARNA,
                                                                                     p3.SUBCODE04,
-                                                                                    r.PROJECTCODE,
+                                                                                    r.ORIGDLVSALORDLINESALORDERCODE,
                                                                                     r.QTY_RAJUT_READY,
-                                                                                    r1.PROJECTCODE,
+                                                                                    r1.ORIGDLVSALORDLINESALORDERCODE,
                                                                                     r1.QTY_RAJUT_READY,
-                                                                                    r2.PROJECTCODE,
+                                                                                    r2.ORIGDLVSALORDLINESALORDERCODE,
                                                                                     r2.QTY_RAJUT_READY,
-                                                                                    r3.PROJECTCODE,
+                                                                                    r3.ORIGDLVSALORDLINESALORDERCODE,
                                                                                     r3.QTY_RAJUT_READY,
-                                                                                    r4.PROJECTCODE,
+                                                                                    r4.ORIGDLVSALORDLINESALORDERCODE,
                                                                                     r4.QTY_RAJUT_READY,
-                                                                                    r5.PROJECTCODE,
+                                                                                    r5.ORIGDLVSALORDLINESALORDERCODE,
                                                                                     r5.QTY_RAJUT_READY,
-                                                                                    r6.PROJECTCODE,
+                                                                                    r6.ORIGDLVSALORDLINESALORDERCODE,
                                                                                     r6.QTY_RAJUT_READY,
                                                                                     ibn.ONLY_PROJECTCODE,
                                                                                     ibn.QTY_ALOKASI_BRUTO,
@@ -374,17 +376,15 @@ include "utils/helper.php";
                                                                                                                 AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
                                                                                                                 AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
                                                                                                                 AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
-                                                                                            AND 
-                                                                                                LOGICALWAREHOUSECODE = 'M021'
                                                                                             WHERE
-                                                                                                b.PROJECTCODE = '$rowMain[PROJECTCODE_RAJUT]'
-                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
-                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
-                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
-                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
-                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE04 = '$rowMain[VARIAN]'
                                                                                             GROUP BY
                                                                                                 a7.VALUEDATE,
                                                                                                 a8.VALUEDATE ";
@@ -412,17 +412,15 @@ include "utils/helper.php";
                                                                                                                 AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
                                                                                                                 AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
                                                                                                                 AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
-                                                                                            AND 
-                                                                                                LOGICALWAREHOUSECODE = 'M021'
                                                                                             WHERE
-                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA1]'
-                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
-                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
-                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
-                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
-                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE04 = '$rowMain[VARIAN]'
                                                                                             GROUP BY
                                                                                                 a7.VALUEDATE,
                                                                                                 a8.VALUEDATE ";
@@ -450,17 +448,15 @@ include "utils/helper.php";
                                                                                                                 AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
                                                                                                                 AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
                                                                                                                 AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
-                                                                                            AND 
-                                                                                                LOGICALWAREHOUSECODE = 'M021'
                                                                                             WHERE
-                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA2]'
-                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
-                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
-                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
-                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
-                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE04 = '$rowMain[VARIAN]'
                                                                                             GROUP BY
                                                                                                 a7.VALUEDATE,
                                                                                                 a8.VALUEDATE ";
@@ -488,17 +484,15 @@ include "utils/helper.php";
                                                                                                                 AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
                                                                                                                 AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
                                                                                                                 AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
-                                                                                            AND 
-                                                                                                LOGICALWAREHOUSECODE = 'M021'
                                                                                             WHERE
-                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA3]'
-                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
-                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
-                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
-                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
-                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE04 = '$rowMain[VARIAN]'
                                                                                             GROUP BY
                                                                                                 a7.VALUEDATE,
                                                                                                 a8.VALUEDATE ";
@@ -526,17 +520,15 @@ include "utils/helper.php";
                                                                                                                 AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
                                                                                                                 AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
                                                                                                                 AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
-                                                                                            AND 
-                                                                                                LOGICALWAREHOUSECODE = 'M021'
                                                                                             WHERE
-                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA4]'
-                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
-                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
-                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
-                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
-                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE04 = '$rowMain[VARIAN]'
                                                                                             GROUP BY
                                                                                                 a7.VALUEDATE,
                                                                                                 a8.VALUEDATE ";
@@ -564,17 +556,15 @@ include "utils/helper.php";
                                                                                                                 AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
                                                                                                                 AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
                                                                                                                 AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
-                                                                                            AND 
-                                                                                                LOGICALWAREHOUSECODE = 'M021'
                                                                                             WHERE
-                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA5]'
-                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
-                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
-                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
-                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
-                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE04 = '$rowMain[VARIAN]'
                                                                                             GROUP BY
                                                                                                 a7.VALUEDATE,
                                                                                                 a8.VALUEDATE ";
@@ -602,17 +592,15 @@ include "utils/helper.php";
                                                                                                                 AND b.DECOSUBCODE03 = PRODUCTIONDEMAND.SUBCODE03 
                                                                                                                 AND b.DECOSUBCODE04 = PRODUCTIONDEMAND.SUBCODE04
                                                                                                                 AND b.PROJECTCODE = PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE
+                                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
-                                                                                            AND 
-                                                                                                LOGICALWAREHOUSECODE = 'M021'
                                                                                             WHERE
-                                                                                                b.PROJECTCODE = '$rowMain[ADDITIONALDATA6]'
-                                                                                                AND b.DECOSUBCODE01 = '$rowMain[SUBCODE01]'
-                                                                                                AND b.DECOSUBCODE02 = '$rowMain[SUBCODE02]'
-                                                                                                AND b.DECOSUBCODE03 = '$rowMain[SUBCODE03]'
-                                                                                                AND b.DECOSUBCODE04 = '$rowMain[VARIAN]'
-                                                                                                AND b.LOGICALWAREHOUSECODE = 'M021'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
+                                                                                                AND PRODUCTIONDEMAND.SUBCODE04 = '$rowMain[VARIAN]'
                                                                                             GROUP BY
                                                                                                 a7.VALUEDATE,
                                                                                                 a8.VALUEDATE ";
