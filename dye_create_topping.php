@@ -176,6 +176,7 @@
                                             <button type="button" id="exsecute" class="btn btn-danger btn-sm text-black" disabled>
                                                 <strong>SUBMIT FOR IMPORT TO NOW ! <i class="fa fa-save"></i></strong>
                                             </button>
+                                            <!-- <button class="btn btn-primary" onclick="insertAllToDB()">Simpan Semua</button> -->
                                         </center>
 
 
@@ -444,10 +445,10 @@
             <td><input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value)"></td>
             <td>
                 <select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
-                    <option value="100" ${row.GrTp === '100' ? "selected" : ""}>100</option>
-                    <option value="010" ${row.GrTp === '010' ? "selected" : ""}>010</option>
-                    <option value="201" ${row.GrTp === '201' ? "selected" : ""}>201</option>
-                    <option value="001" ${row.GrTp === '001' ? "selected" : ""}>001</option>
+                    <option value="100" ${row.GrTp === '100' ? "selected" : ""}>100 (Instruction)</option>
+                    <option value="010" ${row.GrTp === '010' ? "selected" : ""}>010 (Binder-Filler)</option>
+                    <option value="201" ${row.GrTp === '201' ? "selected" : ""}>201 (Sub Recipe - Fabric Dye)</option>
+                    <option value="001" ${row.GrTp === '001' ? "selected" : ""}>001 (Dyestuff/Chemical)</option>
                 </select>
             </td>
             <td><input type="number" value="${row.Sq}" onchange="updateField(${row.Gr}, 'Sq', this.value)"></td>
@@ -461,16 +462,16 @@
             <td>${row.Comment ?? ''}</td>
             <td>${row.Description ?? ''}</td>
             <td>
-                <select onchange="updateField(${row.Gr}, 'ConsType', this.value)">
+                 <select onchange="updateField(${row.Gr}, 'ConsType', this.value)" ${row.IT !== 'DYC' ? 'disabled' : ''}>
                     <option value="" ${row.ConsType === '' ? "selected" : ""}></option>
                     <option value="Quantity" ${row.ConsType === 'Quantity' ? "selected" : ""}>Quantity</option>
                     <option value="Percentage" ${row.ConsType === 'Percentage' ? "selected" : ""}>Percentage</option>
                 </select>
             </td>
             <td>${row.UoM}</td>
-            <td><input type="number" value="${row.Cons}" onchange="updateField(${row.Gr}, 'Cons', this.value)"></td>
+            <td><input type="number" value="${row.Cons}" onchange="updateField(${row.Gr}, 'Cons', this.value)" ${row.IT !== 'DYC' ? 'disabled' : ''}></td>
             <td>
-                <button class="btn btn-sm btn-danger" onclick="deleteRow(${row.Gr})">Delete</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteRow(${row.Gr}, ${row.Sq}, ${row.SubSq})">Delete</button>
             </td>
         `;
 
@@ -500,7 +501,7 @@
     function initSelect2ForItemCode(selectElement, rowIndex) {
     $(selectElement).select2({
         theme: 'bootstrap4',
-        placeholder: 'Pilih Item Code',
+        placeholder: '',
         allowClear: true,
         minimumInputLength: 1,
         ajax: {
@@ -609,7 +610,7 @@
 
 <!-- Script Untuk Delete Row -->
 <script>
-    function deleteRow(gr) {
+    function deleteRow(gr, sq, subSq) {
         Swal.fire({
             title: 'Yakin?',
             text: 'Data ini akan dihapus dari tabel!',
@@ -619,20 +620,41 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                data = data.filter(row => row.Gr !== gr);
-                populateTable(); 
-                Swal.fire(
-                    'Dihapus!',
-                    'Data telah dihapus.',
-                    'success'
-                );
+                // Filter untuk hapus berdasarkan Gr, Sq, dan SubSq
+                data = data.filter(row => !(row.Gr === gr && row.Sq === sq && row.SubSq === subSq));
+                populateTable(); // Update tabel
+                Swal.fire('Dihapus!', 'Data telah dihapus.', 'success');
             } else {
-                Swal.fire(
-                    'Batal!',
-                    'Data tidak jadi dihapus.',
-                    'error'
-                );
+                Swal.fire('Batal!', 'Data tidak jadi dihapus.', 'error');
             }
         });
     }
+</script>
+
+<!-- Script Untuk Insert Ke DB -->
+<script>
+function insertAllToDB() {
+    if (!data || data.length === 0) {
+        Swal.fire('Kosong!', 'Tidak ada data untuk disimpan.', 'warning');
+        return;
+    }
+
+    fetch('ajax/insert_recipe.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ components: data })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            Swal.fire('Sukses!', 'Data berhasil disimpan ke database.', 'success');
+        } else {
+            Swal.fire('Gagal!', result.message || 'Terjadi kesalahan.', 'error');
+        }
+    })
+    .catch(error => {
+        Swal.fire('Error!', 'Koneksi ke server gagal.', 'error');
+        console.error('Insert Error:', error);
+    });
+}
 </script>
