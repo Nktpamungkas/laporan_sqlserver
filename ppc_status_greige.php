@@ -416,7 +416,7 @@ include "utils/helper.php";
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
                                                                                             WHERE
-                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[ADDITIONALDATA1]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
@@ -452,7 +452,7 @@ include "utils/helper.php";
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
                                                                                             WHERE
-                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[ADDITIONALDATA2]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
@@ -488,7 +488,7 @@ include "utils/helper.php";
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
                                                                                             WHERE
-                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[ADDITIONALDATA3]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
@@ -524,7 +524,7 @@ include "utils/helper.php";
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
                                                                                             WHERE
-                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[ADDITIONALDATA4]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
@@ -560,7 +560,7 @@ include "utils/helper.php";
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
                                                                                             WHERE
-                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[ADDITIONALDATA5]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
@@ -596,7 +596,7 @@ include "utils/helper.php";
                                                                                             LEFT JOIN ADSTORAGE a7 ON a7.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a7.FIELDNAME = 'RMPReqDate'
                                                                                             LEFT JOIN ADSTORAGE a8 ON a8.UNIQUEID = PRODUCTIONDEMAND.ABSUNIQUEID AND a8.FIELDNAME = 'RMPGreigeReqDateTo'
                                                                                             WHERE
-                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[PROJECTCODE_RAJUT]'
+                                                                                                PRODUCTIONDEMAND.ORIGDLVSALORDLINESALORDERCODE = '$rowMain[ADDITIONALDATA6]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE01 = '$rowMain[SUBCODE01]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE02 = '$rowMain[SUBCODE02]'
                                                                                                 AND PRODUCTIONDEMAND.SUBCODE03 = '$rowMain[SUBCODE03]'
@@ -619,8 +619,8 @@ include "utils/helper.php";
                                                                                                     LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = i.SALESORDERCODE AND s2.SALESORDERLINEORDERLINE = i.ORDERLINE 
                                                                                                     LEFT JOIN SALESORDER s ON s.CODE = s2.SALESORDERLINESALESORDERCODE
                                                                                                     WHERE 
-                                                                                                        i.SALESORDERCODE = 'DOM2500360'
-                                                                                                        AND i.ORDERLINE = '40'
+                                                                                                        i.SALESORDERCODE = '$rowMain[NO_ORDER]'
+                                                                                                        AND i.ORDERLINE = '$rowMain[ORDERLINE]'
                                                                                                     GROUP BY
                                                                                                         i.SUBCODE02,
                                                                                                         i.SUBCODE03,
@@ -640,26 +640,40 @@ include "utils/helper.php";
                                                                         <td><?= $rowMain['VARIAN'] ?></td>
                                                                         <td><?= $rowMain['WARNA'] ?></td>
                                                                         <td>
-                                                                            <!-- 1 -->
-                                                                            <?= ($rowDelGreige1['DATE_AKTUAL'] ? $rowDelGreige1['DATE_AKTUAL'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO'] ?> &nbsp;
-                                                                            <?= ($rowDelGreige1['DATE_AKTUAL2'] ? $rowDelGreige1['DATE_AKTUAL2'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO2'] ?> &nbsp;
-                                                                            <?= ($rowDelGreige1['DATE_AKTUAL3'] ? $rowDelGreige1['DATE_AKTUAL3'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO3'] ?> &nbsp;
-                                                                            <?= ($rowDelGreige1['DATE_AKTUAL4'] ? $rowDelGreige1['DATE_AKTUAL4'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO4'] ?> &nbsp;
-                                                                            <?= ($rowDelGreige1['DATE_AKTUAL5'] ? $rowDelGreige1['DATE_AKTUAL5'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO5'] ?> &nbsp;
-                                                                            <?= ($rowDelGreige1['DATE_AKTUAL6'] ? $rowDelGreige1['DATE_AKTUAL6'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO6'] ?> &nbsp;
-                                                                            <?= ($rowDelGreige1['DATE_AKTUAL7'] ? $rowDelGreige1['DATE_AKTUAL7'] . ' - ' : '') . $rowDelGreige1['DATE_AKTUAL_TO7'] ?> &nbsp;
+                                                                            <?php
+                                                                                // Menampilkan DATE_AKTUAL dan DATE_AKTUAL_TO
+                                                                                for ($i = 1; $i <= 7; $i++) {
+                                                                                    $start = $i == 1 ? $rowDelGreige1['DATE_AKTUAL'] : $rowDelGreige1["DATE_AKTUAL$i"];
+                                                                                    $end   = $i == 1 ? $rowDelGreige1['DATE_AKTUAL_TO'] : $rowDelGreige1["DATE_AKTUAL_TO$i"];
 
-                                                                            <!-- 2 -->
-                                                                            <?= $rowDelGreige2['TGLRENCANA'] . $rowDelGreige2['TGLPOGREIGE'] ?> &nbsp;
+                                                                                    if ($start || $end) {
+                                                                                        echo '<span>' . ($start ? $start . ' - ' : '') . $end . '</span>&nbsp;';
+                                                                                    }
+                                                                                }
 
-                                                                            <!-- 3 -->
-                                                                            <?= $rowDelGreige3['TGLRENCANA'] . $rowDelGreige3['TGLPOGREIGE'] ?> &nbsp;
-                                                                            <?= $rowDelGreige32['TGLRENCANA'] . $rowDelGreige32['TGLPOGREIGE'] ?> &nbsp;
-                                                                            <?= $rowDelGreige33['TGLRENCANA'] . $rowDelGreige33['TGLPOGREIGE'] ?> &nbsp;
-                                                                            <?= $rowDelGreige34['TGLRENCANA'] . $rowDelGreige34['TGLPOGREIGE'] ?> &nbsp;
-                                                                            <?= $rowDelGreige35['TGLRENCANA'] . $rowDelGreige35['TGLPOGREIGE'] ?> &nbsp;
-                                                                            <?= $rowDelGreige36['TGLRENCANA'] . $rowDelGreige36['TGLPOGREIGE'] ?> &nbsp;
+                                                                                // Menampilkan TGLRENCANA + TGLPOGREIGE untuk rowDelGreige2
+                                                                                if (!empty($rowDelGreige2['TGLRENCANA']) || !empty($rowDelGreige2['TGLPOGREIGE'])) {
+                                                                                    echo '<span>' 
+                                                                                        . ($rowDelGreige2['TGLRENCANA'] ?? '') 
+                                                                                        . (!empty($rowDelGreige2['TGLRENCANA']) && !empty($rowDelGreige2['TGLPOGREIGE']) ? ' - ' : '') 
+                                                                                        . ($rowDelGreige2['TGLPOGREIGE'] ?? '') 
+                                                                                        . '</span>&nbsp;';
+                                                                                }
 
+                                                                                // List data greige lainnya (rowDelGreige3, rowDelGreige32, ...)
+                                                                                $greigeRows = ['rowDelGreige3', 'rowDelGreige32', 'rowDelGreige33', 'rowDelGreige34', 'rowDelGreige35', 'rowDelGreige36'];
+
+                                                                                foreach ($greigeRows as $rowName) {
+                                                                                    $row = $$rowName;
+                                                                                    if (!empty($row['TGLRENCANA']) || !empty($row['TGLPOGREIGE'])) {
+                                                                                        echo '<span>' 
+                                                                                            . ($row['TGLRENCANA'] ?? '') 
+                                                                                            . (!empty($row['TGLRENCANA']) && !empty($row['TGLPOGREIGE']) ? ' - ' : '') 
+                                                                                            . ($row['TGLPOGREIGE'] ?? '') 
+                                                                                            . '</span>&nbsp;';
+                                                                                    }
+                                                                                }
+                                                                            ?>
                                                                         </td>
                                                                         <td><?= $dataDelKainJadiActual; ?></td>
                                                                         <td><?php $query_qty_br="SELECT 
