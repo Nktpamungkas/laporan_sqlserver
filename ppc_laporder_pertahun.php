@@ -1,11 +1,11 @@
 <?php
-// header("content-type:application/vnd-ms-excel");
-// header("content-disposition:attachment;filename=TerimaOrder.xls");
-// header('Cache-Control: max-age=0');
+header("content-type:application/vnd-ms-excel");
+header("content-disposition:attachment;filename=TerimaOrder.xls");
+header('Cache-Control: max-age=0');
 require_once 'koneksi.php';
 $tglInput = $_GET['tgl'];
 ?>
-<center><h4>LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025</h4></center>
+LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
     <thead>
       <tr>
@@ -48,10 +48,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -74,10 +76,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -100,10 +104,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -126,10 +132,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -152,10 +160,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -178,10 +188,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -255,10 +267,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -281,10 +295,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -307,10 +323,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -333,10 +351,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -359,10 +379,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -385,10 +407,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -462,10 +486,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -488,10 +514,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -514,10 +542,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -540,10 +570,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -566,10 +598,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -592,10 +626,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -669,10 +705,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -695,10 +733,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -721,10 +761,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -747,10 +789,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -773,10 +817,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -799,10 +845,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -876,10 +924,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -902,10 +952,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -928,10 +980,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -954,10 +1008,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -980,10 +1036,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1006,10 +1064,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1083,10 +1143,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1109,10 +1171,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1135,10 +1199,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1161,10 +1227,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1187,10 +1255,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1213,10 +1283,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1290,10 +1362,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1316,10 +1390,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1342,10 +1418,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1368,10 +1446,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1394,10 +1474,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1420,10 +1502,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1497,10 +1581,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1523,10 +1609,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1549,10 +1637,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1575,10 +1665,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1601,10 +1693,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1627,10 +1721,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1704,10 +1800,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'   
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1730,10 +1828,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1756,10 +1856,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1782,10 +1884,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1808,10 +1912,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1834,10 +1940,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1912,10 +2020,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1938,10 +2048,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1964,10 +2076,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1990,10 +2104,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2016,10 +2132,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2042,10 +2160,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2119,10 +2239,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2145,10 +2267,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2171,10 +2295,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2197,10 +2323,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2223,10 +2351,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2249,10 +2379,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2326,10 +2458,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2352,10 +2486,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2378,10 +2514,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2404,10 +2542,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2430,10 +2570,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2456,10 +2598,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2533,10 +2677,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2559,10 +2705,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2585,10 +2733,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2611,10 +2761,12 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND s.TEMPLATECODE IN ('OPN')
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2637,10 +2789,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2663,10 +2817,12 @@ $tglInput = $_GET['tgl'];
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
                                           AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2721,7 +2877,6 @@ $tglInput = $_GET['tgl'];
       <!-- DESEMBER -->
     </tbody>
 </table>
-<br>
 
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
     <thead>
@@ -2778,29 +2933,64 @@ $tglInput = $_GET['tgl'];
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
             $queryBruto = "WITH QTY_BRUTO AS (
-                        SELECT
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE,
-                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                          SUM(i.USERSECONDARYQUANTITY) AS FKF
-                        FROM
-                          ITXVIEWKGBRUTOBONORDER2 i
-                        GROUP BY 
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE
-                      )
-                      SELECT
-                        SUM(COALESCE(qb.KFF, 0)) AS QTY
-                      FROM
-                        SALESORDER s
-                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      WHERE
-                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                        AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'";
+                            SELECT
+                              i.CODE,
+                              i.ORIGDLVSALORDLINESALORDERCODE,
+                              i.ORIGDLVSALORDERLINEORDERLINE,
+                              SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                              SUM(i.USERSECONDARYQUANTITY) AS FKF
+                            FROM
+                              ITXVIEWKGBRUTOBONORDER2 i
+                            GROUP BY 
+                            i.CODE,
+                              i.ORIGDLVSALORDLINESALORDERCODE,
+                              i.ORIGDLVSALORDERLINEORDERLINE
+                          ),
+                          CELUP_DYEING AS(
+                            SELECT DISTINCT 
+                              p.ORIGDLVSALORDLINESALORDERCODE,
+                              p.CODE,
+                              p2.PROGRESSSTATUS 
+                            FROM
+                              PRODUCTIONDEMAND p
+                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                            WHERE
+                              p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                          )
+                          SELECT 
+                            SUM(QTY) AS QTY
+                          FROM (
+                            SELECT
+                              COALESCE(qb.KFF, 0) AS QTY,
+                              s.CODE,
+                              p.CODE,
+                              s2.ORDERLINE           
+                            FROM
+                              SALESORDER s
+                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                            LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                            LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                            WHERE
+                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
+                        --      AND s.TEMPLATECODE IN ('CWD')
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND NOT a.VALUESTRING IS NULL
+                              AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                        --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                        --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                            GROUP BY
+                              qb.KFF,
+                              s.CODE,
+                              p.CODE,
+                              s2.ORDERLINE)";
         
             $resultBruto = db2_exec($conn, $queryBruto);
             $rowBruto = db2_fetch_assoc($resultBruto);
@@ -2826,31 +3016,64 @@ $tglInput = $_GET['tgl'];
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
             $queryAKJ = "WITH QTY_BRUTO AS (
-                        SELECT
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE,
-                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                          SUM(i.USERSECONDARYQUANTITY) AS FKF
-                        FROM
-                          ITXVIEWKGBRUTOBONORDER2 i
-                        GROUP BY 
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE
-                      )
-                      SELECT
-                        SUM(COALESCE(qb.KFF, 0)) AS QTY
-                      FROM
-                        SALESORDER s
-                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                      LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID AND a.FIELDNAME = 'KainAKJ'
-                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      WHERE
-                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                        AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                        AND a.VALUESTRING = 1";
+                          SELECT
+                            i.CODE,
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE,
+                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                          FROM
+                            ITXVIEWKGBRUTOBONORDER2 i
+                          GROUP BY 
+                          i.CODE,
+                            i.ORIGDLVSALORDLINESALORDERCODE,
+                            i.ORIGDLVSALORDERLINEORDERLINE
+                        ),
+                        CELUP_DYEING AS(
+                          SELECT DISTINCT 
+                            p.ORIGDLVSALORDLINESALORDERCODE,
+                            p.CODE,
+                            p2.PROGRESSSTATUS 
+                          FROM
+                            PRODUCTIONDEMAND p
+                          LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                          WHERE
+                            p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                        )
+                        SELECT 
+                          SUM(QTY) AS QTY
+                        FROM (
+                          SELECT
+                            COALESCE(qb.KFF, 0) AS QTY,
+                            s.CODE,
+                            p.CODE,
+                            s2.ORDERLINE           
+                          FROM
+                            SALESORDER s
+                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                          LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                          LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                          LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                          WHERE
+                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
+                      --      AND s.TEMPLATECODE IN ('CWD')
+                            AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                            AND NOT a.VALUESTRING IS NULL
+                            AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                           AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                      --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                      --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                      --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                          GROUP BY
+                            qb.KFF,
+                            s.CODE,
+                            p.CODE,
+                            s2.ORDERLINE)";
         
             $resultAKJ = db2_exec($conn, $queryAKJ);
             $rowAKJ = db2_fetch_assoc($resultAKJ);
@@ -2877,6 +3100,7 @@ $tglInput = $_GET['tgl'];
         
             $querySdhCelup = "WITH QTY_BRUTO AS (
                                 SELECT
+                                  i.CODE,
                                   i.ORIGDLVSALORDLINESALORDERCODE,
                                   i.ORIGDLVSALORDERLINEORDERLINE,
                                   SUM(i.USERPRIMARYQUANTITY) AS KFF,
@@ -2884,6 +3108,7 @@ $tglInput = $_GET['tgl'];
                                 FROM
                                   ITXVIEWKGBRUTOBONORDER2 i
                                 GROUP BY 
+                                i.CODE,
                                   i.ORIGDLVSALORDLINESALORDERCODE,
                                   i.ORIGDLVSALORDERLINEORDERLINE
                               ),
@@ -2896,22 +3121,42 @@ $tglInput = $_GET['tgl'];
                                   PRODUCTIONDEMAND p
                                 LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
                                 WHERE
-                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
                               )
-                              SELECT	
-                                SUM(COALESCE(qb.KFF, 0)) AS QTY
-                              FROM
-                                SALESORDER s
-                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                              WHERE
-                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                                AND cd.PROGRESSSTATUS = '3'";
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM (
+                                SELECT
+                                  COALESCE(qb.KFF, 0) AS QTY,
+                                  s.CODE,
+                                  p.CODE,
+                                  s2.ORDERLINE           
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                  AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
+                            --      AND s.TEMPLATECODE IN ('CWD')
+                                  AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                            --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                                 AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                            --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                            --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                GROUP BY
+                                  qb.KFF,
+                                  s.CODE,
+                                  p.CODE,
+                                  s2.ORDERLINE)";
         
             $resultSdhCelup = db2_exec($conn, $querySdhCelup);
             $rowSdhCelup = db2_fetch_assoc($resultSdhCelup);
@@ -2930,64 +3175,10 @@ $tglInput = $_GET['tgl'];
         // SDH CELUP
         
         // BLM CELUP
-          function ambilQtyBlmCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
-            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
-            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
-            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
-            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
-        
-            $queryBlmCelup = "WITH QTY_BRUTO AS (
-                                SELECT
-                                  i.ORIGDLVSALORDLINESALORDERCODE,
-                                  i.ORIGDLVSALORDERLINEORDERLINE,
-                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                FROM
-                                  ITXVIEWKGBRUTOBONORDER2 i
-                                GROUP BY 
-                                  i.ORIGDLVSALORDLINESALORDERCODE,
-                                  i.ORIGDLVSALORDERLINEORDERLINE
-                              ),
-                              CELUP_DYEING AS(
-                                SELECT DISTINCT 
-                                  p.ORIGDLVSALORDLINESALORDERCODE,
-                                  p.CODE,
-                                  p2.PROGRESSSTATUS 
-                                FROM
-                                  PRODUCTIONDEMAND p
-                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                WHERE
-                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                              )
-                              SELECT	
-                                SUM(COALESCE(qb.KFF, 0)) AS QTY
-                              FROM
-                                SALESORDER s
-                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                              WHERE
-                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                                AND cd.PROGRESSSTATUS IN ('0','1','2')";
-        
-            $resultBlmCelup = db2_exec($conn, $queryBlmCelup);
-            $rowBlmCelup = db2_fetch_assoc($resultBlmCelup);
-            $qtyBlmCelup = $rowBlmCelup['QTY'];
-
-            return [
-                'qty' => $qtyBlmCelup,
-                'tgl_awal' => (int)$tanggalAwal,
-                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
-            ];
-          }
-          $dataBlmCelupI = ambilQtyBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
-          $dataBlmCelupII = ambilQtyBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
-          $dataBlmCelupIII = ambilQtyBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
-          $dataBlmCelupIV = ambilQtyBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+          $dataBlmCelupI    = round($databrutoI['qty']) - round($dataAKJI['qty']) - round($dataSdhCelupI['qty']);
+          $dataBlmCelupII   = round($databrutoII['qty']) - round($dataAKJII['qty']) - round($dataSdhCelupII['qty']);
+          $dataBlmCelupIII  = round($databrutoIII['qty']) - round($dataAKJIII['qty']) - round($dataSdhCelupIII['qty']);
+          $dataBlmCelupIV   = round($databrutoIV['qty']) - round($dataAKJIV['qty']) - round($dataSdhCelupIV['qty']);
         // BLM CELUP
         
         // P'BLM CELUP
@@ -2999,6 +3190,7 @@ $tglInput = $_GET['tgl'];
         
             $queryPBlmCelup = "WITH QTY_BRUTO AS (
                                 SELECT
+                                  i.CODE,
                                   i.ORIGDLVSALORDLINESALORDERCODE,
                                   i.ORIGDLVSALORDERLINEORDERLINE,
                                   SUM(i.USERPRIMARYQUANTITY) AS KFF,
@@ -3006,6 +3198,7 @@ $tglInput = $_GET['tgl'];
                                 FROM
                                   ITXVIEWKGBRUTOBONORDER2 i
                                 GROUP BY 
+                                i.CODE,
                                   i.ORIGDLVSALORDLINESALORDERCODE,
                                   i.ORIGDLVSALORDERLINEORDERLINE
                               ),
@@ -3018,22 +3211,42 @@ $tglInput = $_GET['tgl'];
                                   PRODUCTIONDEMAND p
                                 LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
                                 WHERE
-                                  p2.OPERATIONCODE IN ('DYE2')
+                                  p2.OPERATIONCODE IN ('DYE2') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
                               )
-                              SELECT	
-                                SUM(COALESCE(qb.KFF, 0)) AS QTY
-                              FROM
-                                SALESORDER s
-                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                              WHERE
-                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                                AND cd.PROGRESSSTATUS IN ('0')";
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM (
+                                SELECT
+                                  COALESCE(qb.KFF, 0) AS QTY,
+                                  s.CODE,
+                                  p.CODE,
+                                  s2.ORDERLINE           
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                  AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
+                            --      AND s.TEMPLATECODE IN ('CWD')
+                                  AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                            --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                                --  AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                                  AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                            --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                GROUP BY
+                                  qb.KFF,
+                                  s.CODE,
+                                  p.CODE,
+                                  s2.ORDERLINE)";
         
             $resultPBlmCelup = db2_exec($conn, $queryPBlmCelup);
             $rowPBlmCelup = db2_fetch_assoc($resultPBlmCelup);
@@ -3052,10 +3265,10 @@ $tglInput = $_GET['tgl'];
         // P'BLM CELUP
 
         // C'BLM CELUP
-          $dataCBlmCelupI   = $dataBlmCelupI['qty'] - $dataPBlmCelupI['qty'];
-          $dataCBlmCelupII  = $dataBlmCelupII['qty'] - $dataPBlmCelupII['qty'];
-          $dataCBlmCelupIII = $dataBlmCelupIII['qty'] - $dataPBlmCelupIII['qty'];
-          $dataCBlmCelupIV  = $dataBlmCelupIV['qty'] - $dataPBlmCelupIV['qty'];
+          $dataCBlmCelupI   = round($dataBlmCelupI) - round($dataPBlmCelupI['qty']);
+          $dataCBlmCelupII  = round($dataBlmCelupII) - round($dataPBlmCelupII['qty']);
+          $dataCBlmCelupIII = round($dataBlmCelupIII) - round($dataPBlmCelupIII['qty']);
+          $dataCBlmCelupIV  = round($dataBlmCelupIV) - round($dataPBlmCelupIV['qty']);
         // C'BLM CELUP
 
         // TK
@@ -3065,24 +3278,37 @@ $tglInput = $_GET['tgl'];
             $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
-            $queryTK = "SELECT
-                          SUM(p2.USERPRIMARYQUANTITY) AS QTY
-                        FROM
-                          SALESORDER s
-                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
-                        LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
-                                      AND p2.ITEMTYPEAFICODE = 'KGF'
-                                      AND p2.SUBCODE01 = p.SUBCODE01
-                                      AND p2.SUBCODE02 = p.SUBCODE02
-                                      AND p2.SUBCODE03 = p.SUBCODE03
-                                      AND p2.SUBCODE04 = p.SUBCODE04
-                        WHERE
-                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                          AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                          AND NOT TRIM(p2.PROGRESSSTATUS) = '6'";
+            $queryTK = "SELECT 
+                          SUM(QTY) AS QTY 
+                        FROM (
+                          SELECT
+                            (p2.USERPRIMARYQUANTITY) AS QTY,
+                            s.CODE,
+                            s2.ORDERLINE
+                          FROM
+                            SALESORDER s
+                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
+                          LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
+                                        AND p2.ITEMTYPEAFICODE = 'KGF'
+                                        AND p2.SUBCODE01 = p.SUBCODE01
+                                        AND p2.SUBCODE02 = p.SUBCODE02
+                                        AND p2.SUBCODE03 = p.SUBCODE03
+                                        AND p2.SUBCODE04 = p.SUBCODE04
+                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p2.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                          WHERE
+                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                            AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                            AND NOT TRIM(p2.PROGRESSSTATUS) = '6'
+                            AND NOT a.VALUESTRING IS NULL
+                            AND a2.VALUESTRING IS NULL
+                          GROUP BY 
+                            p2.USERPRIMARYQUANTITY,
+                            s.CODE,
+                            s2.ORDERLINE)";
         
             $resultTK = db2_exec($conn, $queryTK);
             $rowTK = db2_fetch_assoc($resultTK);
@@ -3101,10 +3327,10 @@ $tglInput = $_GET['tgl'];
         // TK
 
         // GREIGE READY 
-          $dataGreigeReadyI   = $dataBlmCelupI['qty'] - $dataTKI['qty'];
-          $dataGreigeReadyII  = $dataBlmCelupII['qty'] - $dataTKII['qty'];
-          $dataGreigeReadyIII = $dataBlmCelupIII['qty'] - $dataTKIII['qty'];
-          $dataGreigeReadyIV  = $dataBlmCelupIV['qty'] - $dataTKIV['qty'];
+          $dataGreigeReadyI   = round($dataBlmCelupI) - round($dataTKI['qty']);
+          $dataGreigeReadyII  = round($dataBlmCelupII) - round($dataTKII['qty']);
+          $dataGreigeReadyIII = round($dataBlmCelupIII) - round($dataTKIII['qty']);
+          $dataGreigeReadyIV  = round($dataBlmCelupIV) - round($dataTKIV['qty']);
         // GREIGE READY 
 
         // SUDAH PRESET, BELUM CELUP
@@ -3115,55 +3341,68 @@ $tglInput = $_GET['tgl'];
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
             $querySudahPresetBlmCelup = "WITH QTY_BRUTO AS (
-                                    SELECT
-                                      i.ORIGDLVSALORDLINESALORDERCODE,
-                                      i.ORIGDLVSALORDERLINEORDERLINE,
-                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                    FROM
-                                      ITXVIEWKGBRUTOBONORDER2 i
-                                    GROUP BY 
-                                      i.ORIGDLVSALORDLINESALORDERCODE,
-                                      i.ORIGDLVSALORDERLINEORDERLINE
-                                  ),
-                                  CELUP_DYEING AS (
-                                    SELECT DISTINCT 
-                                      p.ORIGDLVSALORDLINESALORDERCODE,
-                                      p.CODE,
-                                      p2.PROGRESSSTATUS 
-                                    FROM
-                                      PRODUCTIONDEMAND p
-                                    LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                    WHERE
-                                      p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
-                                  ),
-                                  SUDAH_PRESET AS (
-                                    SELECT DISTINCT 
-                                    p.ORIGDLVSALORDLINESALORDERCODE,
-                                    p.CODE,
-                                    p2.PROGRESSSTATUS 
-                                  FROM
-                                    PRODUCTIONDEMAND p
-                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                  WHERE
-                                    p2.OPERATIONCODE IN ('PRE1')
-                                  )
-                                  SELECT	
-                                    SUM(COALESCE(qb.KFF, 0)) AS QTY
-                                  FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                                  LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                                  LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                                AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
-                                AND sp.PROGRESSSTATUS = '3' -- SUDAH PRESET";
+                                          SELECT
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        ),
+                                        CELUP_DYEING AS (
+                                          SELECT DISTINCT 
+                                            p.ORIGDLVSALORDLINESALORDERCODE,
+                                            p.CODE,
+                                            p2.PROGRESSSTATUS 
+                                          FROM
+                                            PRODUCTIONDEMAND p
+                                          LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                          WHERE
+                                            p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') 
+                                        ),
+                                        SUDAH_PRESET AS (
+                                          SELECT DISTINCT 
+                                          p.ORIGDLVSALORDLINESALORDERCODE,
+                                          p.CODE,
+                                          p2.PROGRESSSTATUS 
+                                        FROM
+                                          PRODUCTIONDEMAND p
+                                        LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                        WHERE
+                                          p2.OPERATIONCODE IN ('PRE1')
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM
+                                          (SELECT	
+                                            (COALESCE(qb.KFF, 0)) AS QTY,
+                                            s.CODE,
+                                            s2.ORDERLINE
+                                          FROM
+                                            SALESORDER s
+                                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                          LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                          LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                          LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
+                                          WHERE
+                                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                                            AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                            AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
+                                            AND sp.PROGRESSSTATUS = '3' -- SUDAH PRESET
+                                            AND NOT a.VALUESTRING IS NULL
+                                            AND a2.VALUESTRING IS NULL
+                                          GROUP BY
+                                            qb.KFF,
+                                            s.CODE,
+                                            s2.ORDERLINE)";
         
             $resultSudahPresetBlmCelup = db2_exec($conn, $querySudahPresetBlmCelup);
             $rowSudahPresetBlmCelup = db2_fetch_assoc($resultSudahPresetBlmCelup);
@@ -3189,55 +3428,68 @@ $tglInput = $_GET['tgl'];
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
             $queryBelumPresetBlmCelup = "WITH QTY_BRUTO AS (
-                                    SELECT
-                                      i.ORIGDLVSALORDLINESALORDERCODE,
-                                      i.ORIGDLVSALORDERLINEORDERLINE,
-                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                    FROM
-                                      ITXVIEWKGBRUTOBONORDER2 i
-                                    GROUP BY 
-                                      i.ORIGDLVSALORDLINESALORDERCODE,
-                                      i.ORIGDLVSALORDERLINEORDERLINE
-                                  ),
-                                  CELUP_DYEING AS (
-                                    SELECT DISTINCT 
-                                      p.ORIGDLVSALORDLINESALORDERCODE,
-                                      p.CODE,
-                                      p2.PROGRESSSTATUS 
-                                    FROM
-                                      PRODUCTIONDEMAND p
-                                    LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                    WHERE
-                                      p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
-                                  ),
-                                  SUDAH_PRESET AS (
-                                    SELECT DISTINCT 
-                                    p.ORIGDLVSALORDLINESALORDERCODE,
-                                    p.CODE,
-                                    p2.PROGRESSSTATUS 
-                                  FROM
-                                    PRODUCTIONDEMAND p
-                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                  WHERE
-                                    p2.OPERATIONCODE IN ('PRE1')
-                                  )
-                                  SELECT	
-                                    SUM(COALESCE(qb.KFF, 0)) AS QTY
-                                  FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                                  LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                                  LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                                AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
-                                AND sp.PROGRESSSTATUS IN ('0','1','2') -- BELUM PRESET";
+                                            SELECT
+                                              i.ORIGDLVSALORDLINESALORDERCODE,
+                                              i.ORIGDLVSALORDERLINEORDERLINE,
+                                              SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                              SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                            FROM
+                                              ITXVIEWKGBRUTOBONORDER2 i
+                                            GROUP BY 
+                                              i.ORIGDLVSALORDLINESALORDERCODE,
+                                              i.ORIGDLVSALORDERLINEORDERLINE
+                                          ),
+                                          CELUP_DYEING AS (
+                                            SELECT DISTINCT 
+                                              p.ORIGDLVSALORDLINESALORDERCODE,
+                                              p.CODE,
+                                              p2.PROGRESSSTATUS 
+                                            FROM
+                                              PRODUCTIONDEMAND p
+                                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                            WHERE
+                                              p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') 
+                                          ),
+                                          SUDAH_PRESET AS (
+                                            SELECT DISTINCT 
+                                            p.ORIGDLVSALORDLINESALORDERCODE,
+                                            p.CODE,
+                                            p2.PROGRESSSTATUS 
+                                          FROM
+                                            PRODUCTIONDEMAND p
+                                          LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                          WHERE
+                                            p2.OPERATIONCODE IN ('PRE1')
+                                          )
+                                          SELECT 
+                                            SUM(QTY) AS QTY
+                                          FROM
+                                            (SELECT	
+                                              (COALESCE(qb.KFF, 0)) AS QTY,
+                                              s.CODE,
+                                              s2.ORDERLINE
+                                            FROM
+                                              SALESORDER s
+                                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                            LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
+                                            WHERE
+                                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                              AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
+                                              AND sp.PROGRESSSTATUS IN ('0','1','2') -- BELUM PRESET
+                                              AND NOT a.VALUESTRING IS NULL
+                                              AND a2.VALUESTRING IS NULL
+                                            GROUP BY
+                                              qb.KFF,
+                                              s.CODE,
+                                              s2.ORDERLINE)";
         
             $resultBelumPresetBlmCelup = db2_exec($conn, $queryBelumPresetBlmCelup);
             $rowBelumPresetBlmCelup = db2_fetch_assoc($resultBelumPresetBlmCelup);
@@ -3259,19 +3511,19 @@ $tglInput = $_GET['tgl'];
         <tr>
           <td><?= $bulan; ?></td>
           <td>I</td>
-          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoI['qty']); ?></td>
           <td><?= number_format($dataAKJI['qty']); ?></td>
           <td><?= number_format($dataSdhCelupI['qty']); ?></td>
-          <td><?= number_format($dataBlmCelupI['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupI); ?></td>
           <td><?= number_format($dataPBlmCelupI['qty']); ?></td>
           <td><?= number_format($dataCBlmCelupI); ?></td>
           
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>I</td>
-          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKI['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyI); ?></td>
@@ -3285,19 +3537,19 @@ $tglInput = $_GET['tgl'];
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>II</td>
-          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoII['qty']); ?></td>
           <td><?= number_format($dataAKJII['qty']); ?></td>
           <td><?= number_format($dataSdhCelupII['qty']); ?></td>
-          <td><?= number_format($dataBlmCelupII['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupII); ?></td>
           <td><?= number_format($dataPBlmCelupII['qty']); ?></td>
           <td><?= number_format($dataCBlmCelupII); ?></td>
           
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>II</td>
-          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKII['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyII); ?></td>
@@ -3314,16 +3566,16 @@ $tglInput = $_GET['tgl'];
           <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoIII['qty']); ?></td>
-          <td><?= number_format($dataAKJII['qty']); ?></td>
+          <td><?= number_format($dataAKJIII['qty']); ?></td>
           <td><?= number_format($dataSdhCelupIII['qty']); ?></td>
-          <td><?= number_format($dataBlmCelupIII['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupIII); ?></td>
           <td><?= number_format($dataPBlmCelupIII['qty']); ?></td>
           <td><?= number_format($dataCBlmCelupIII); ?></td>
           
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>III</td>
-          <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKIII['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyIII); ?></td>
@@ -3337,19 +3589,19 @@ $tglInput = $_GET['tgl'];
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>IV</td>
-          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoIV['qty']); ?></td>
           <td><?= number_format($dataAKJIV['qty']); ?></td>
           <td><?= number_format($dataSdhCelupIV['qty']); ?></td>
-          <td><?= number_format($dataBlmCelupIV['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupIV); ?></td>
           <td><?= number_format($dataPBlmCelupIV['qty']); ?></td>
           <td><?= number_format($dataCBlmCelupIV); ?></td>
           
           <!-- KOLOM DELIVERY -->
           <td><?= $bulan; ?></td>
           <td>IV</td>
-          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKIV['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyIV); ?></td>
@@ -3417,29 +3669,64 @@ $tglInput = $_GET['tgl'];
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
             $queryBruto = "WITH QTY_BRUTO AS (
-                        SELECT
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE,
-                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                          SUM(i.USERSECONDARYQUANTITY) AS FKF
-                        FROM
-                          ITXVIEWKGBRUTOBONORDER2 i
-                        GROUP BY 
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE
-                      )
-                      SELECT
-                        SUM(COALESCE(qb.KFF, 0)) AS QTY
-                      FROM
-                        SALESORDER s
-                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      WHERE
-                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                        AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'";
+                            SELECT
+                              i.CODE,
+                              i.ORIGDLVSALORDLINESALORDERCODE,
+                              i.ORIGDLVSALORDERLINEORDERLINE,
+                              SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                              SUM(i.USERSECONDARYQUANTITY) AS FKF
+                            FROM
+                              ITXVIEWKGBRUTOBONORDER2 i
+                            GROUP BY 
+                            i.CODE,
+                              i.ORIGDLVSALORDLINESALORDERCODE,
+                              i.ORIGDLVSALORDERLINEORDERLINE
+                          ),
+                          CELUP_DYEING AS(
+                            SELECT DISTINCT 
+                              p.ORIGDLVSALORDLINESALORDERCODE,
+                              p.CODE,
+                              p2.PROGRESSSTATUS 
+                            FROM
+                              PRODUCTIONDEMAND p
+                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                            WHERE
+                              p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                          )
+                          SELECT 
+                            SUM(QTY) AS QTY
+                          FROM (
+                            SELECT
+                              COALESCE(qb.KFF, 0) AS QTY,
+                              s.CODE,
+                              p.CODE,
+                              s2.ORDERLINE           
+                            FROM
+                              SALESORDER s
+                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                            LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                            LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                            WHERE
+                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
+                        --      AND s.TEMPLATECODE IN ('CWD')
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND NOT a.VALUESTRING IS NULL
+                              AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                        --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                        --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                            GROUP BY
+                              qb.KFF,
+                              s.CODE,
+                              p.CODE,
+                              s2.ORDERLINE)";
         
             $resultBruto = db2_exec($conn, $queryBruto);
             $rowBruto = db2_fetch_assoc($resultBruto);
@@ -3465,31 +3752,64 @@ $tglInput = $_GET['tgl'];
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
             $queryAKJ = "WITH QTY_BRUTO AS (
-                        SELECT
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE,
-                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                          SUM(i.USERSECONDARYQUANTITY) AS FKF
-                        FROM
-                          ITXVIEWKGBRUTOBONORDER2 i
-                        GROUP BY 
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE
-                      )
-                      SELECT
-                        SUM(COALESCE(qb.KFF, 0)) AS QTY
-                      FROM
-                        SALESORDER s
-                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                      LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s2.ABSUNIQUEID AND a.FIELDNAME = 'KainAKJ'
-                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      WHERE
-                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                        AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                        AND a.VALUESTRING = 1";
+                            SELECT
+                              i.CODE,
+                              i.ORIGDLVSALORDLINESALORDERCODE,
+                              i.ORIGDLVSALORDERLINEORDERLINE,
+                              SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                              SUM(i.USERSECONDARYQUANTITY) AS FKF
+                            FROM
+                              ITXVIEWKGBRUTOBONORDER2 i
+                            GROUP BY 
+                            i.CODE,
+                              i.ORIGDLVSALORDLINESALORDERCODE,
+                              i.ORIGDLVSALORDERLINEORDERLINE
+                          ),
+                          CELUP_DYEING AS(
+                            SELECT DISTINCT 
+                              p.ORIGDLVSALORDLINESALORDERCODE,
+                              p.CODE,
+                              p2.PROGRESSSTATUS 
+                            FROM
+                              PRODUCTIONDEMAND p
+                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                            WHERE
+                              p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                          )
+                          SELECT 
+                            SUM(QTY) AS QTY
+                          FROM (
+                            SELECT
+                              COALESCE(qb.KFF, 0) AS QTY,
+                              s.CODE,
+                              p.CODE,
+                              s2.ORDERLINE           
+                            FROM
+                              SALESORDER s
+                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                            LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                            LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                            WHERE
+                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
+                        --      AND s.TEMPLATECODE IN ('CWD')
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND NOT a.VALUESTRING IS NULL
+                              AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                             AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                        --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                            GROUP BY
+                              qb.KFF,
+                              s.CODE,
+                              p.CODE,
+                              s2.ORDERLINE)";
         
             $resultAKJ = db2_exec($conn, $queryAKJ);
             $rowAKJ = db2_fetch_assoc($resultAKJ);
@@ -3516,6 +3836,7 @@ $tglInput = $_GET['tgl'];
         
             $querySdhCelup = "WITH QTY_BRUTO AS (
                                 SELECT
+                                  i.CODE,
                                   i.ORIGDLVSALORDLINESALORDERCODE,
                                   i.ORIGDLVSALORDERLINEORDERLINE,
                                   SUM(i.USERPRIMARYQUANTITY) AS KFF,
@@ -3523,6 +3844,7 @@ $tglInput = $_GET['tgl'];
                                 FROM
                                   ITXVIEWKGBRUTOBONORDER2 i
                                 GROUP BY 
+                                i.CODE,
                                   i.ORIGDLVSALORDLINESALORDERCODE,
                                   i.ORIGDLVSALORDERLINEORDERLINE
                               ),
@@ -3535,22 +3857,42 @@ $tglInput = $_GET['tgl'];
                                   PRODUCTIONDEMAND p
                                 LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
                                 WHERE
-                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
+                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
                               )
-                              SELECT	
-                                SUM(COALESCE(qb.KFF, 0)) AS QTY
-                              FROM
-                                SALESORDER s
-                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                              WHERE
-                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                                AND cd.PROGRESSSTATUS = '3'";
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM (
+                                SELECT
+                                  COALESCE(qb.KFF, 0) AS QTY,
+                                  s.CODE,
+                                  p.CODE,
+                                  s2.ORDERLINE           
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                                  AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
+                            --      AND s.TEMPLATECODE IN ('CWD')
+                                  AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                            --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                                 AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                            --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                            --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                GROUP BY
+                                  qb.KFF,
+                                  s.CODE,
+                                  p.CODE,
+                                  s2.ORDERLINE)";
         
             $resultSdhCelup = db2_exec($conn, $querySdhCelup);
             $rowSdhCelup = db2_fetch_assoc($resultSdhCelup);
@@ -3569,64 +3911,10 @@ $tglInput = $_GET['tgl'];
         // SDH CELUP
         
         // BLM CELUP
-          function ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
-            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
-            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
-            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
-            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
-        
-            $queryBlmCelup = "WITH QTY_BRUTO AS (
-                                SELECT
-                                  i.ORIGDLVSALORDLINESALORDERCODE,
-                                  i.ORIGDLVSALORDERLINEORDERLINE,
-                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                FROM
-                                  ITXVIEWKGBRUTOBONORDER2 i
-                                GROUP BY 
-                                  i.ORIGDLVSALORDLINESALORDERCODE,
-                                  i.ORIGDLVSALORDERLINEORDERLINE
-                              ),
-                              CELUP_DYEING AS(
-                                SELECT DISTINCT 
-                                  p.ORIGDLVSALORDLINESALORDERCODE,
-                                  p.CODE,
-                                  p2.PROGRESSSTATUS 
-                                FROM
-                                  PRODUCTIONDEMAND p
-                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                WHERE
-                                  p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                              )
-                              SELECT	
-                                SUM(COALESCE(qb.KFF, 0)) AS QTY
-                              FROM
-                                SALESORDER s
-                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                              WHERE
-                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                                AND cd.PROGRESSSTATUS IN ('0','1','2')";
-        
-            $resultBlmCelup = db2_exec($conn, $queryBlmCelup);
-            $rowBlmCelup = db2_fetch_assoc($resultBlmCelup);
-            $qtyBlmCelup = $rowBlmCelup['QTY'];
-
-            return [
-                'qty' => $qtyBlmCelup,
-                'tgl_awal' => (int)$tanggalAwal,
-                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
-            ];
-          }
-          $dataBlmCelupI = ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
-          $dataBlmCelupII = ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
-          $dataBlmCelupIII = ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
-          $dataBlmCelupIV = ambilQtyBlmCelupPeriodeBulanDepanBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+          $dataBlmCelupI    = round($databrutoI['qty']) - round($dataAKJI['qty']) - round($dataSdhCelupI['qty']);
+          $dataBlmCelupII   = round($databrutoII['qty']) - round($dataAKJII['qty']) - round($dataSdhCelupII['qty']);
+          $dataBlmCelupIII  = round($databrutoIII['qty']) - round($dataAKJIII['qty']) - round($dataSdhCelupIII['qty']);
+          $dataBlmCelupIV   = round($databrutoIV['qty']) - round($dataAKJIV['qty']) - round($dataSdhCelupIV['qty']);
         // BLM CELUP
         
         // P'BLM CELUP
@@ -3659,20 +3947,31 @@ $tglInput = $_GET['tgl'];
                                 WHERE
                                   p2.OPERATIONCODE IN ('DYE2')
                               )
-                              SELECT	
-                                SUM(COALESCE(qb.KFF, 0)) AS QTY
-                              FROM
-                                SALESORDER s
-                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                              LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                              WHERE
-                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                                AND cd.PROGRESSSTATUS IN ('0')";
+                              SELECT SUM(QTY) AS QTY FROM (
+                                SELECT
+                                  COALESCE(qb.KFF, 0) AS QTY,
+                                  s.CODE,
+                                  s2.ORDERLINE
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                                  AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                  AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                  AND cd.PROGRESSSTATUS IN ('0')
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL
+                                GROUP BY
+                                  qb.KFF,
+                                  s.CODE,
+                                  s2.ORDERLINE)";
         
             $resultPBlmCelup = db2_exec($conn, $queryPBlmCelup);
             $rowPBlmCelup = db2_fetch_assoc($resultPBlmCelup);
@@ -3691,10 +3990,10 @@ $tglInput = $_GET['tgl'];
         // P'BLM CELUP
 
         // C'BLM CELUP
-          $dataCBlmCelupI   = $dataBlmCelupI['qty'] - $dataPBlmCelupI['qty'];
-          $dataCBlmCelupII  = $dataBlmCelupII['qty'] - $dataPBlmCelupII['qty'];
-          $dataCBlmCelupIII = $dataBlmCelupIII['qty'] - $dataPBlmCelupIII['qty'];
-          $dataCBlmCelupIV  = $dataBlmCelupIV['qty'] - $dataPBlmCelupIV['qty'];
+          $dataCBlmCelupI   = round($dataBlmCelupI) - round($dataPBlmCelupI['qty']);
+          $dataCBlmCelupII  = round($dataBlmCelupII) - round($dataPBlmCelupII['qty']);
+          $dataCBlmCelupIII = round($dataBlmCelupIII) - round($dataPBlmCelupIII['qty']);
+          $dataCBlmCelupIV  = round($dataBlmCelupIV) - round($dataPBlmCelupIV['qty']);
         // C'BLM CELUP
 
         // TK
@@ -3704,24 +4003,37 @@ $tglInput = $_GET['tgl'];
             $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
-            $queryTK = "SELECT
-                          SUM(p2.USERPRIMARYQUANTITY) AS QTY
-                        FROM
-                          SALESORDER s
-                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
-                        LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
-                                      AND p2.ITEMTYPEAFICODE = 'KGF'
-                                      AND p2.SUBCODE01 = p.SUBCODE01
-                                      AND p2.SUBCODE02 = p.SUBCODE02
-                                      AND p2.SUBCODE03 = p.SUBCODE03
-                                      AND p2.SUBCODE04 = p.SUBCODE04
-                        WHERE
-                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                          AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                          AND NOT TRIM(p2.PROGRESSSTATUS) = '6'";
+            $queryTK = "SELECT 
+                          SUM(QTY) AS QTY 
+                        FROM (
+                          SELECT
+                            (p2.USERPRIMARYQUANTITY) AS QTY,
+                            s.CODE,
+                            s2.ORDERLINE
+                          FROM
+                            SALESORDER s
+                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
+                          LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
+                                        AND p2.ITEMTYPEAFICODE = 'KGF'
+                                        AND p2.SUBCODE01 = p.SUBCODE01
+                                        AND p2.SUBCODE02 = p.SUBCODE02
+                                        AND p2.SUBCODE03 = p.SUBCODE03
+                                        AND p2.SUBCODE04 = p.SUBCODE04
+                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p2.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                          WHERE
+                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                            AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                            AND NOT TRIM(p2.PROGRESSSTATUS) = '6'
+                            AND NOT a.VALUESTRING IS NULL
+                            AND a2.VALUESTRING IS NULL
+                          GROUP BY 
+                            p2.USERPRIMARYQUANTITY,
+                            s.CODE,
+                            s2.ORDERLINE)";
         
             $resultTK = db2_exec($conn, $queryTK);
             $rowTK = db2_fetch_assoc($resultTK);
@@ -3739,166 +4051,192 @@ $tglInput = $_GET['tgl'];
           $dataTKIV  = ambilTKPeriodeBulanDepan($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
         // TK
 
-      // GREIGE READY 
-        $dataGreigeReadyI   = $dataBlmCelupI['qty'] - $dataTKI['qty'];
-        $dataGreigeReadyII  = $dataBlmCelupII['qty'] - $dataTKII['qty'];
-        $dataGreigeReadyIII = $dataBlmCelupIII['qty'] - $dataTKIII['qty'];
-        $dataGreigeReadyIV  = $dataBlmCelupIV['qty'] - $dataTKIV['qty'];
-      // GREIGE READY
+        // GREIGE READY 
+          $dataGreigeReadyI   = round($dataBlmCelupI) - round($dataTKI['qty']);
+          $dataGreigeReadyII  = round($dataBlmCelupII) - round($dataTKII['qty']);
+          $dataGreigeReadyIII = round($dataBlmCelupIII) - round($dataTKIII['qty']);
+          $dataGreigeReadyIV  = round($dataBlmCelupIV) - round($dataTKIV['qty']);
+        // GREIGE READY
 
-      // SUDAH PRESET, BELUM CELUP
-        function ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
-          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
-          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
-          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
-          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
-      
-          $querySudahPresetBlmCelup = "WITH QTY_BRUTO AS (
-                                  SELECT
-                                    i.ORIGDLVSALORDLINESALORDERCODE,
-                                    i.ORIGDLVSALORDERLINEORDERLINE,
-                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                  FROM
-                                    ITXVIEWKGBRUTOBONORDER2 i
-                                  GROUP BY 
-                                    i.ORIGDLVSALORDLINESALORDERCODE,
-                                    i.ORIGDLVSALORDERLINEORDERLINE
-                                ),
-                                CELUP_DYEING AS (
-                                  SELECT DISTINCT 
-                                    p.ORIGDLVSALORDLINESALORDERCODE,
-                                    p.CODE,
-                                    p2.PROGRESSSTATUS 
-                                  FROM
-                                    PRODUCTIONDEMAND p
-                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                  WHERE
-                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
-                                ),
-                                SUDAH_PRESET AS (
-                                  SELECT DISTINCT 
-                                  p.ORIGDLVSALORDLINESALORDERCODE,
-                                  p.CODE,
-                                  p2.PROGRESSSTATUS 
-                                FROM
-                                  PRODUCTIONDEMAND p
-                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                WHERE
-                                  p2.OPERATIONCODE IN ('PRE1')
-                                )
-                                SELECT	
-                                  SUM(COALESCE(qb.KFF, 0)) AS QTY
-                                FROM
-                                  SALESORDER s
-                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                                LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                                LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
-                                WHERE
-                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                              AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
-                              AND sp.PROGRESSSTATUS = '3' -- SUDAH PRESET";
-      
-          $resultSudahPresetBlmCelup = db2_exec($conn, $querySudahPresetBlmCelup);
-          $rowSudahPresetBlmCelup = db2_fetch_assoc($resultSudahPresetBlmCelup);
-          $qtySudahPresetBlmCelup = $rowSudahPresetBlmCelup['QTY'];
+        // SUDAH PRESET, BELUM CELUP
+          function ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $querySudahPresetBlmCelup = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        ),
+                                        CELUP_DYEING AS (
+                                          SELECT DISTINCT 
+                                            p.ORIGDLVSALORDLINESALORDERCODE,
+                                            p.CODE,
+                                            p2.PROGRESSSTATUS 
+                                          FROM
+                                            PRODUCTIONDEMAND p
+                                          LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                          WHERE
+                                            p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
+                                        ),
+                                        SUDAH_PRESET AS (
+                                          SELECT DISTINCT 
+                                          p.ORIGDLVSALORDLINESALORDERCODE,
+                                          p.CODE,
+                                          p2.PROGRESSSTATUS 
+                                        FROM
+                                          PRODUCTIONDEMAND p
+                                        LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                        WHERE
+                                          p2.OPERATIONCODE IN ('PRE1')
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM
+                                          (SELECT	
+                                            (COALESCE(qb.KFF, 0)) AS QTY,
+                                            s.CODE,
+                                            s2.ORDERLINE
+                                          FROM
+                                            SALESORDER s
+                                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                          LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                          LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                          LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
+                                          WHERE
+                                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                                            AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                            AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
+                                            AND sp.PROGRESSSTATUS = '3' -- SUDAH PRESET
+                                            AND NOT a.VALUESTRING IS NULL
+                                            AND a2.VALUESTRING IS NULL
+                                          GROUP BY
+                                            qb.KFF,
+                                            s.CODE,
+                                            s2.ORDERLINE)";
+        
+            $resultSudahPresetBlmCelup = db2_exec($conn, $querySudahPresetBlmCelup);
+            $rowSudahPresetBlmCelup = db2_fetch_assoc($resultSudahPresetBlmCelup);
+            $qtySudahPresetBlmCelup = $rowSudahPresetBlmCelup['QTY'];
 
-          return [
-              'qty' => $qtySudahPresetBlmCelup,
-              'tgl_awal' => (int)$tanggalAwal,
-              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
-          ];
-        }
-        $dataSudahPresetBlmCelupI = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
-        $dataSudahPresetBlmCelupII = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
-        $dataSudahPresetBlmCelupIII = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
-        $dataSudahPresetBlmCelupIV = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
-      // SUDAH PRESET, BELUM CELUP
-      
-      // BELUM PRESET, BELUM CELUP
-        function ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
-          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
-          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
-          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
-          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
-      
-          $queryBelumPresetBlmCelup = "WITH QTY_BRUTO AS (
-                                  SELECT
-                                    i.ORIGDLVSALORDLINESALORDERCODE,
-                                    i.ORIGDLVSALORDERLINEORDERLINE,
-                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                  FROM
-                                    ITXVIEWKGBRUTOBONORDER2 i
-                                  GROUP BY 
-                                    i.ORIGDLVSALORDLINESALORDERCODE,
-                                    i.ORIGDLVSALORDERLINEORDERLINE
-                                ),
-                                CELUP_DYEING AS (
-                                  SELECT DISTINCT 
-                                    p.ORIGDLVSALORDLINESALORDERCODE,
-                                    p.CODE,
-                                    p2.PROGRESSSTATUS 
-                                  FROM
-                                    PRODUCTIONDEMAND p
-                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                  WHERE
-                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
-                                ),
-                                SUDAH_PRESET AS (
-                                  SELECT DISTINCT 
-                                  p.ORIGDLVSALORDLINESALORDERCODE,
-                                  p.CODE,
-                                  p2.PROGRESSSTATUS 
-                                FROM
-                                  PRODUCTIONDEMAND p
-                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                WHERE
-                                  p2.OPERATIONCODE IN ('PRE1')
-                                )
-                                SELECT	
-                                  SUM(COALESCE(qb.KFF, 0)) AS QTY
-                                FROM
-                                  SALESORDER s
-                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                                LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                                LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
-                                WHERE
-                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                              AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
-                              AND sp.PROGRESSSTATUS IN ('0','1','2') -- BELUM PRESET";
-      
-          $resultBelumPresetBlmCelup = db2_exec($conn, $queryBelumPresetBlmCelup);
-          $rowBelumPresetBlmCelup = db2_fetch_assoc($resultBelumPresetBlmCelup);
-          $qtyBelumPresetBlmCelup = $rowBelumPresetBlmCelup['QTY'];
+            return [
+                'qty' => $qtySudahPresetBlmCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataSudahPresetBlmCelupI = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+          $dataSudahPresetBlmCelupII = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+          $dataSudahPresetBlmCelupIII = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+          $dataSudahPresetBlmCelupIV = ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+        // SUDAH PRESET, BELUM CELUP
+        
+        // BELUM PRESET, BELUM CELUP
+          function ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+            // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
+            $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
+            $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
+            $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
+        
+            $queryBelumPresetBlmCelup = "WITH QTY_BRUTO AS (
+                                            SELECT
+                                              i.ORIGDLVSALORDLINESALORDERCODE,
+                                              i.ORIGDLVSALORDERLINEORDERLINE,
+                                              SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                              SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                            FROM
+                                              ITXVIEWKGBRUTOBONORDER2 i
+                                            GROUP BY 
+                                              i.ORIGDLVSALORDLINESALORDERCODE,
+                                              i.ORIGDLVSALORDERLINEORDERLINE
+                                          ),
+                                          CELUP_DYEING AS (
+                                            SELECT DISTINCT 
+                                              p.ORIGDLVSALORDLINESALORDERCODE,
+                                              p.CODE,
+                                              p2.PROGRESSSTATUS 
+                                            FROM
+                                              PRODUCTIONDEMAND p
+                                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                            WHERE
+                                              p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5') 
+                                          ),
+                                          SUDAH_PRESET AS (
+                                            SELECT DISTINCT 
+                                            p.ORIGDLVSALORDLINESALORDERCODE,
+                                            p.CODE,
+                                            p2.PROGRESSSTATUS 
+                                          FROM
+                                            PRODUCTIONDEMAND p
+                                          LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                          WHERE
+                                            p2.OPERATIONCODE IN ('PRE1')
+                                          )
+                                          SELECT 
+                                            SUM(QTY) AS QTY
+                                          FROM
+                                            (SELECT	
+                                              (COALESCE(qb.KFF, 0)) AS QTY,
+                                              s.CODE,
+                                              s2.ORDERLINE
+                                            FROM
+                                              SALESORDER s
+                                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                            LEFT JOIN SUDAH_PRESET sp ON sp.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND sp.CODE = p.CODE
+                                            WHERE
+                                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                              AND cd.PROGRESSSTATUS IN ('0','1','2') -- BELUM CELUP
+                                              AND sp.PROGRESSSTATUS IN ('0','1','2') -- BELUM PRESET
+                                              AND NOT a.VALUESTRING IS NULL
+                                              AND a2.VALUESTRING IS NULL
+                                            GROUP BY
+                                              qb.KFF,
+                                              s.CODE,
+                                              s2.ORDERLINE)";
+        
+            $resultBelumPresetBlmCelup = db2_exec($conn, $queryBelumPresetBlmCelup);
+            $rowBelumPresetBlmCelup = db2_fetch_assoc($resultBelumPresetBlmCelup);
+            $qtyBelumPresetBlmCelup = $rowBelumPresetBlmCelup['QTY'];
 
-          return [
-              'qty' => $qtyBelumPresetBlmCelup,
-              'tgl_awal' => (int)$tanggalAwal,
-              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
-          ];
-        }
-        $dataBelumPresetBlmCelupI   = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
-        $dataBelumPresetBlmCelupII  = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
-        $dataBelumPresetBlmCelupIII = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
-        $dataBelumPresetBlmCelupIV  = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
-      // BELUM PRESET, BELUM CELUP
+            return [
+                'qty' => $qtyBelumPresetBlmCelup,
+                'tgl_awal' => (int)$tanggalAwal,
+                'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
+            ];
+          }
+          $dataBelumPresetBlmCelupI   = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+          $dataBelumPresetBlmCelupII  = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+          $dataBelumPresetBlmCelupIII = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+          $dataBelumPresetBlmCelupIV  = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+        // BELUM PRESET, BELUM CELUP
       ?>
       <!-- MINGGU 1 -->
         <tr>
           <td><?= $bulanDepan; ?></td>
           <td>I</td>
-          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoI['qty']); ?></td>
           <td><?= number_format($dataAKJI['qty']); ?></td>
@@ -3910,7 +4248,7 @@ $tglInput = $_GET['tgl'];
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>I</td>
-          <td><?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKI['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyI); ?></td>
@@ -3924,7 +4262,7 @@ $tglInput = $_GET['tgl'];
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>II</td>
-          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoII['qty']); ?></td>
           <td><?= number_format($dataAKJII['qty']); ?></td>
@@ -3936,7 +4274,7 @@ $tglInput = $_GET['tgl'];
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>II</td>
-          <td><?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKII['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyII); ?></td>
@@ -3953,7 +4291,7 @@ $tglInput = $_GET['tgl'];
           <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoIII['qty']); ?></td>
-          <td><?= number_format($dataAKJII['qty']); ?></td>
+          <td><?= number_format($dataAKJIII['qty']); ?></td>
           <td><?= number_format($dataSdhCelupIII['qty']); ?></td>
           <td><?= number_format($dataBlmCelupIII['qty']); ?></td>
           <td><?= number_format($dataPBlmCelupIII['qty']); ?></td>
@@ -3962,7 +4300,7 @@ $tglInput = $_GET['tgl'];
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>III</td>
-          <td><?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKIII['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyIII); ?></td>
@@ -3976,7 +4314,7 @@ $tglInput = $_GET['tgl'];
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>IV</td>
-          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
           <td><?= number_format($databrutoIV['qty']); ?></td>
           <td><?= number_format($dataAKJIV['qty']); ?></td>
@@ -3988,7 +4326,7 @@ $tglInput = $_GET['tgl'];
           <!-- KOLOM DELIVERY -->
           <td><?= $bulanDepan; ?></td>
           <td>IV</td>
-          <td><?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
+          <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
           <td><?= number_format($dataTKIV['qty']); ?></td>
           <td><?= number_format($dataGreigeReadyIV); ?></td>
@@ -3998,8 +4336,7 @@ $tglInput = $_GET['tgl'];
       <!-- MINGGU 4 -->
 </table>
 
-<br>
-<center><h4>BOOKING</h4></center>
+BOOKING
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
   <thead>
     <tr>
@@ -4046,29 +4383,64 @@ $tglInput = $_GET['tgl'];
           $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
       
           $queryBrutoBooking = "WITH QTY_BRUTO AS (
-                      SELECT
-                        i.ORIGDLVSALORDLINESALORDERCODE,
-                        i.ORIGDLVSALORDERLINEORDERLINE,
-                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                        SUM(i.USERSECONDARYQUANTITY) AS FKF
-                      FROM
-                        ITXVIEWKGBRUTOBONORDER2 i
-                      GROUP BY 
-                        i.ORIGDLVSALORDLINESALORDERCODE,
-                        i.ORIGDLVSALORDERLINEORDERLINE
-                    )
-                    SELECT
-                      SUM(COALESCE(qb.KFF, 0)) AS QTY
-                    FROM
-                      SALESORDER s
-                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                    WHERE
-                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                      AND s.TEMPLATECODE IN ('OPN')  
-                      AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'";
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                  i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                ),
+                                CELUP_DYEING AS(
+                                  SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM (
+                                  SELECT
+                                    COALESCE(qb.KFF, 0) AS QTY,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE           
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                    AND s.TEMPLATECODE IN ('OPN')
+                              --      AND s.TEMPLATECODE IN ('CWD')
+                                    AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                    AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                              --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                  GROUP BY
+                                    qb.KFF,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE)";
       
           $resultBrutoBooking = db2_exec($conn, $queryBrutoBooking);
           $rowBrutoBooking = db2_fetch_assoc($resultBrutoBooking);
@@ -4094,42 +4466,64 @@ $tglInput = $_GET['tgl'];
           $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
       
           $queryBookingSdhCelup = "WITH QTY_BRUTO AS (
-                              SELECT
-                                i.ORIGDLVSALORDLINESALORDERCODE,
-                                i.ORIGDLVSALORDERLINEORDERLINE,
-                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                SUM(i.USERSECONDARYQUANTITY) AS FKF
-                              FROM
-                                ITXVIEWKGBRUTOBONORDER2 i
-                              GROUP BY 
-                                i.ORIGDLVSALORDLINESALORDERCODE,
-                                i.ORIGDLVSALORDERLINEORDERLINE
-                            ),
-                            CELUP_DYEING AS(
-                              SELECT DISTINCT 
-                                p.ORIGDLVSALORDLINESALORDERCODE,
-                                p.CODE,
-                                p2.PROGRESSSTATUS 
-                              FROM
-                                PRODUCTIONDEMAND p
-                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                              WHERE
-                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                            )
-                            SELECT	
-                              SUM(COALESCE(qb.KFF, 0)) AS QTY
-                            FROM
-                              SALESORDER s
-                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                            WHERE
-                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                              AND s.TEMPLATECODE IN ('OPN')  
-                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                              AND cd.PROGRESSSTATUS = '3'";
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                    i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  ),
+                                  CELUP_DYEING AS(
+                                    SELECT DISTINCT 
+                                      p.ORIGDLVSALORDLINESALORDERCODE,
+                                      p.CODE,
+                                      p2.PROGRESSSTATUS 
+                                    FROM
+                                      PRODUCTIONDEMAND p
+                                    LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                    WHERE
+                                      p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                  )
+                                  SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM (
+                                    SELECT
+                                      COALESCE(qb.KFF, 0) AS QTY,
+                                      s.CODE,
+                                      p.CODE,
+                                      s2.ORDERLINE           
+                                    FROM
+                                      SALESORDER s
+                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                    LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                    LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                    WHERE
+                                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                                      AND s.TEMPLATECODE IN ('OPN')
+                                --      AND s.TEMPLATECODE IN ('CWD')
+                                      AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                      AND NOT a.VALUESTRING IS NULL
+                                      AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                                      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                                --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                                --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                    GROUP BY
+                                      qb.KFF,
+                                      s.CODE,
+                                      p.CODE,
+                                      s2.ORDERLINE)";
       
           $resultBookingSdhCelup = db2_exec($conn, $queryBookingSdhCelup);
           $rowBookingSdhCelup = db2_fetch_assoc($resultBookingSdhCelup);
@@ -4148,64 +4542,10 @@ $tglInput = $_GET['tgl'];
       // SDH CELUP
 
       // BLM CELUP
-        function ambilQtyBookingBlmCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
-          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
-          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
-          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
-          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
-      
-          $queryBookingBlmCelup = "WITH QTY_BRUTO AS (
-                              SELECT
-                                i.ORIGDLVSALORDLINESALORDERCODE,
-                                i.ORIGDLVSALORDERLINEORDERLINE,
-                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                SUM(i.USERSECONDARYQUANTITY) AS FKF
-                              FROM
-                                ITXVIEWKGBRUTOBONORDER2 i
-                              GROUP BY 
-                                i.ORIGDLVSALORDLINESALORDERCODE,
-                                i.ORIGDLVSALORDERLINEORDERLINE
-                            ),
-                            CELUP_DYEING AS(
-                              SELECT DISTINCT 
-                                p.ORIGDLVSALORDLINESALORDERCODE,
-                                p.CODE,
-                                p2.PROGRESSSTATUS 
-                              FROM
-                                PRODUCTIONDEMAND p
-                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                              WHERE
-                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                            )
-                            SELECT	
-                              SUM(COALESCE(qb.KFF, 0)) AS QTY
-                            FROM
-                              SALESORDER s
-                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                            WHERE
-                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                              AND s.TEMPLATECODE IN ('OPN')  
-                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                              AND cd.PROGRESSSTATUS IN ('0','1','2')";
-      
-          $resultBookingBlmCelup = db2_exec($conn, $queryBookingBlmCelup);
-          $rowBookingBlmCelup = db2_fetch_assoc($resultBookingBlmCelup);
-          $qtyBookingBlmCelup = $rowBookingBlmCelup['QTY'];
-
-          return [
-              'qty' => $qtyBookingBlmCelup,
-              'tgl_awal' => (int)$tanggalAwal,
-              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
-          ];
-        }
-        $dataBookingBlmCelupI   = ambilQtyBookingBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
-        $dataBookingBlmCelupII  = ambilQtyBookingBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
-        $dataBookingBlmCelupIII = ambilQtyBookingBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
-        $dataBookingBlmCelupIV  = ambilQtyBookingBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
+        $dataBookingBlmCelupI   = round($databrutoBookingI['qty']) - round($dataBookingSdhCelupI['qty']);
+        $dataBookingBlmCelupII  = round($databrutoBookingII['qty']) - round($dataBookingSdhCelupII['qty']);
+        $dataBookingBlmCelupIII = round($databrutoBookingIII['qty']) - round($dataBookingSdhCelupIII['qty']);
+        $dataBookingBlmCelupIV  = round($databrutoBookingIV['qty']) - round($dataBookingSdhCelupIV['qty']);
       // BLM CELUP
     ?>
     <!-- MINGGU 1 -->
@@ -4213,11 +4553,11 @@ $tglInput = $_GET['tgl'];
         <!-- KOLOM DELIVERY -->
         <td><?= $bulan; ?></td>
         <td>I</td>
-        <td><?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingI['qty']); ?></td>
         <td><?= number_format($dataBookingSdhCelupI['qty']); ?></td>
-        <td><?= number_format($dataBookingBlmCelupI['qty']); ?></td>
+        <td><?= number_format($dataBookingBlmCelupI); ?></td>
       </tr>
     <!-- MINGGU 1 -->
 
@@ -4226,11 +4566,11 @@ $tglInput = $_GET['tgl'];
         <!-- KOLOM DELIVERY -->
         <td><?= $bulan; ?></td>
         <td>II</td>
-        <td><?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingII['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupII['qty'])  ?></td>
-        <td><?= number_format($dataBookingBlmCelupII['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupII)  ?></td>
       </tr>
     <!-- MINGGU 2 -->  
 
@@ -4239,11 +4579,11 @@ $tglInput = $_GET['tgl'];
         <!-- KOLOM DELIVERY -->
         <td><?= $bulan; ?></td>
         <td>III</td>
-        <td><?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingIII['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupIII['qty'])  ?></td>
-        <td><?= number_format($dataBookingBlmCelupIII['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupIII)  ?></td>
       </tr>
     <!-- MINGGU 3 -->
 
@@ -4252,11 +4592,11 @@ $tglInput = $_GET['tgl'];
         <!-- KOLOM DELIVERY -->
         <td><?= $bulan; ?></td>
         <td>IV</td>
-        <td><?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingIV['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupIV['qty'])  ?></td>
-        <td><?= number_format($dataBookingBlmCelupIV['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupIV)  ?></td>
       </tr>
     <!-- MINGGU 4 -->        
   </tbody>
@@ -4311,29 +4651,64 @@ $tglInput = $_GET['tgl'];
           $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
       
           $queryBrutoBooking = "WITH QTY_BRUTO AS (
-                      SELECT
-                        i.ORIGDLVSALORDLINESALORDERCODE,
-                        i.ORIGDLVSALORDERLINEORDERLINE,
-                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                        SUM(i.USERSECONDARYQUANTITY) AS FKF
-                      FROM
-                        ITXVIEWKGBRUTOBONORDER2 i
-                      GROUP BY 
-                        i.ORIGDLVSALORDLINESALORDERCODE,
-                        i.ORIGDLVSALORDERLINEORDERLINE
-                    )
-                    SELECT
-                      SUM(COALESCE(qb.KFF, 0)) AS QTY
-                    FROM
-                      SALESORDER s
-                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                    WHERE
-                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                      AND s.TEMPLATECODE IN ('OPN')  
-                      AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'";
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                  i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                ),
+                                CELUP_DYEING AS(
+                                  SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM (
+                                  SELECT
+                                    COALESCE(qb.KFF, 0) AS QTY,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE           
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                                    AND s.TEMPLATECODE IN ('OPN')
+                              --      AND s.TEMPLATECODE IN ('CWD')
+                                    AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                    AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                              --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                  GROUP BY
+                                    qb.KFF,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE)";
       
           $resultBrutoBooking = db2_exec($conn, $queryBrutoBooking);
           $rowBrutoBooking = db2_fetch_assoc($resultBrutoBooking);
@@ -4359,42 +4734,64 @@ $tglInput = $_GET['tgl'];
           $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
       
           $queryBookingSdhCelup = "WITH QTY_BRUTO AS (
-                              SELECT
-                                i.ORIGDLVSALORDLINESALORDERCODE,
-                                i.ORIGDLVSALORDERLINEORDERLINE,
-                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                SUM(i.USERSECONDARYQUANTITY) AS FKF
-                              FROM
-                                ITXVIEWKGBRUTOBONORDER2 i
-                              GROUP BY 
-                                i.ORIGDLVSALORDLINESALORDERCODE,
-                                i.ORIGDLVSALORDERLINEORDERLINE
-                            ),
-                            CELUP_DYEING AS(
-                              SELECT DISTINCT 
-                                p.ORIGDLVSALORDLINESALORDERCODE,
-                                p.CODE,
-                                p2.PROGRESSSTATUS 
-                              FROM
-                                PRODUCTIONDEMAND p
-                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                              WHERE
-                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                            )
-                            SELECT	
-                              SUM(COALESCE(qb.KFF, 0)) AS QTY
-                            FROM
-                              SALESORDER s
-                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                            WHERE
-                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                              AND s.TEMPLATECODE IN ('OPN')  
-                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                              AND cd.PROGRESSSTATUS = '3'";
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                    i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  ),
+                                  CELUP_DYEING AS(
+                                    SELECT DISTINCT 
+                                      p.ORIGDLVSALORDLINESALORDERCODE,
+                                      p.CODE,
+                                      p2.PROGRESSSTATUS 
+                                    FROM
+                                      PRODUCTIONDEMAND p
+                                    LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                    WHERE
+                                      p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                  )
+                                  SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM (
+                                    SELECT
+                                      COALESCE(qb.KFF, 0) AS QTY,
+                                      s.CODE,
+                                      p.CODE,
+                                      s2.ORDERLINE           
+                                    FROM
+                                      SALESORDER s
+                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                    LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                    LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                    WHERE
+                                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
+                                      AND s.TEMPLATECODE IN ('OPN')
+                                --      AND s.TEMPLATECODE IN ('CWD')
+                                      AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                                      AND NOT a.VALUESTRING IS NULL
+                                      AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                                      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                                --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                                --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                    GROUP BY
+                                      qb.KFF,
+                                      s.CODE,
+                                      p.CODE,
+                                      s2.ORDERLINE)";
       
           $resultBookingSdhCelup = db2_exec($conn, $queryBookingSdhCelup);
           $rowBookingSdhCelup = db2_fetch_assoc($resultBookingSdhCelup);
@@ -4413,64 +4810,10 @@ $tglInput = $_GET['tgl'];
       // SDH CELUP
 
       // BLM CELUP
-        function ambilQtyBookingBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
-          // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
-          $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
-          $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
-          $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
-      
-          $queryBookingBlmCelup = "WITH QTY_BRUTO AS (
-                              SELECT
-                                i.ORIGDLVSALORDLINESALORDERCODE,
-                                i.ORIGDLVSALORDERLINEORDERLINE,
-                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                SUM(i.USERSECONDARYQUANTITY) AS FKF
-                              FROM
-                                ITXVIEWKGBRUTOBONORDER2 i
-                              GROUP BY 
-                                i.ORIGDLVSALORDLINESALORDERCODE,
-                                i.ORIGDLVSALORDERLINEORDERLINE
-                            ),
-                            CELUP_DYEING AS(
-                              SELECT DISTINCT 
-                                p.ORIGDLVSALORDLINESALORDERCODE,
-                                p.CODE,
-                                p2.PROGRESSSTATUS 
-                              FROM
-                                PRODUCTIONDEMAND p
-                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                              WHERE
-                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                            )
-                            SELECT	
-                              SUM(COALESCE(qb.KFF, 0)) AS QTY
-                            FROM
-                              SALESORDER s
-                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                            LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                            LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                            WHERE
-                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                              AND s.TEMPLATECODE IN ('OPN')  
-                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                              AND cd.PROGRESSSTATUS IN ('0','1','2')";
-      
-          $resultBookingBlmCelup = db2_exec($conn, $queryBookingBlmCelup);
-          $rowBookingBlmCelup = db2_fetch_assoc($resultBookingBlmCelup);
-          $qtyBookingBlmCelup = $rowBookingBlmCelup['QTY'];
-
-          return [
-              'qty' => $qtyBookingBlmCelup,
-              'tgl_awal' => (int)$tanggalAwal,
-              'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
-          ];
-        }
-        $dataBookingBlmCelupI   = ambilQtyBookingBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
-        $dataBookingBlmCelupII  = ambilQtyBookingBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
-        $dataBookingBlmCelupIII = ambilQtyBookingBlmCelupPeriodeBulanDepan($conn1, $tgltglInput_bulandepanInput, $tahunInput, $bulanInput, 15, 21);
-        $dataBookingBlmCelupIV  = ambilQtyBookingBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
+        $dataBookingBlmCelupI   = round($databrutoBookingI['qty']) - round($dataBookingSdhCelupI['qty']);
+        $dataBookingBlmCelupII  = round($databrutoBookingII['qty']) - round($dataBookingSdhCelupII['qty']);
+        $dataBookingBlmCelupIII = round($databrutoBookingIII['qty']) - round($dataBookingSdhCelupIII['qty']);
+        $dataBookingBlmCelupIV  = round($databrutoBookingIV['qty']) - round($dataBookingSdhCelupIV['qty']);
       // BLM CELUP
     ?>
     <!-- MINGGU 1 -->
@@ -4478,11 +4821,11 @@ $tglInput = $_GET['tgl'];
         <!-- KOLOM DELIVERY -->
         <td><?= $bulanDepan; ?></td>
         <td>I</td>
-        <td><?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingI['tgl_awal']; ?>-<?= $databrutoBookingI['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingI['qty']); ?></td>
         <td><?= number_format($dataBookingSdhCelupI['qty']); ?></td>
-        <td><?= number_format($dataBookingBlmCelupI['qty']); ?></td>
+        <td><?= number_format($dataBookingBlmCelupI); ?></td>
       </tr>
     <!-- MINGGU 1 -->
 
@@ -4491,11 +4834,11 @@ $tglInput = $_GET['tgl'];
         <!-- KOLOM DELIVERY -->
         <td><?= $bulanDepan; ?></td>
         <td>II</td>
-        <td><?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingII['tgl_awal']; ?>-<?= $databrutoBookingII['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingII['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupII['qty'])  ?></td>
-        <td><?= number_format($dataBookingBlmCelupII['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupII)  ?></td>
       </tr>
     <!-- MINGGU 2 -->  
 
@@ -4504,11 +4847,11 @@ $tglInput = $_GET['tgl'];
         <!-- KOLOM DELIVERY -->
         <td><?= $bulanDepan; ?></td>
         <td>III</td>
-        <td><?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingIII['tgl_awal']; ?>-<?= $databrutoBookingIII['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingIII['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupIII['qty'])  ?></td>
-        <td><?= number_format($dataBookingBlmCelupIII['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupIII)  ?></td>
       </tr>
     <!-- MINGGU 3 -->
 
@@ -4517,18 +4860,17 @@ $tglInput = $_GET['tgl'];
         <!-- KOLOM DELIVERY -->
         <td><?= $bulanDepan; ?></td>
         <td>IV</td>
-        <td><?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
+        <td>`<?= $databrutoBookingIV['tgl_awal']; ?>-<?= $databrutoBookingIV['tgl_akhir']; ?></td>
 
         <td><?= number_format($databrutoBookingIV['qty'])  ?></td>
         <td><?= number_format($dataBookingSdhCelupIV['qty'])  ?></td>
-        <td><?= number_format($dataBookingBlmCelupIV['qty'])  ?></td>
+        <td><?= number_format($dataBookingBlmCelupIV)  ?></td>
       </tr>
     <!-- MINGGU 4 -->        
   </tbody>
 </table>
 
-<br>
-<center><h4>PRINTING</h4></center>
+PRINTING
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
   <thead>
     <tr>
@@ -4572,29 +4914,64 @@ $tglInput = $_GET['tgl'];
       $tglAkhirBulanLalu = $dtBulanLalu->format('Y-m-t');
 
       $qPrintingBulanLalu = "WITH QTY_BRUTO AS (
-                        SELECT
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE,
-                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                          SUM(i.USERSECONDARYQUANTITY) AS FKF
-                        FROM
-                          ITXVIEWKGBRUTOBONORDER2 i
-                        GROUP BY 
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE
-                      )
-                      SELECT
-                        SUM(COALESCE(qb.KFF, 0)) AS QTY
-                      FROM
-                        SALESORDER s
-                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
-                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      WHERE
-                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
-                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
-                        AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'";
+                              SELECT
+                                i.CODE,
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE,
+                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                SUM(i.USERSECONDARYQUANTITY) AS FKF
+                              FROM
+                                ITXVIEWKGBRUTOBONORDER2 i
+                              GROUP BY 
+                              i.CODE,
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE
+                            ),
+                            CELUP_DYEING AS(
+                              SELECT DISTINCT 
+                                p.ORIGDLVSALORDLINESALORDERCODE,
+                                p.CODE,
+                                p2.PROGRESSSTATUS 
+                              FROM
+                                PRODUCTIONDEMAND p
+                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                              WHERE
+                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                            )
+                            SELECT 
+                              SUM(QTY) AS QTY
+                            FROM (
+                              SELECT
+                                COALESCE(qb.KFF, 0) AS QTY,
+                                s.CODE,
+                                p.CODE,
+                                s2.ORDERLINE           
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(s2.SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(p.SUBCODE07) = '-'
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE 
+                              LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                          --      AND s.TEMPLATECODE IN ('CWD')
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                          --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                                -- AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                          --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                          --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                              GROUP BY
+                                qb.KFF,
+                                s.CODE,
+                                p.CODE,
+                                s2.ORDERLINE)";
       $resultPrintingBulanLalu  = db2_exec($conn1, $qPrintingBulanLalu);
       $rowPrintingBulanLalu     = db2_fetch_assoc($resultPrintingBulanLalu);
       $qtyPrintingBulanLalu     = $rowPrintingBulanLalu['QTY'];
@@ -4630,29 +5007,64 @@ $tglInput = $_GET['tgl'];
       $tglAkhirBulanIni = $dtBulanIni->format('Y-m-t');
 
       $qPrintingBulanIni = "WITH QTY_BRUTO AS (
-                        SELECT
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE,
-                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                          SUM(i.USERSECONDARYQUANTITY) AS FKF
-                        FROM
-                          ITXVIEWKGBRUTOBONORDER2 i
-                        GROUP BY 
-                          i.ORIGDLVSALORDLINESALORDERCODE,
-                          i.ORIGDLVSALORDERLINEORDERLINE
-                      )
-                      SELECT
-                        SUM(COALESCE(qb.KFF, 0)) AS QTY
-                      FROM
-                        SALESORDER s
-                      LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
-                      LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                      LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                      LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                      WHERE
-                        CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
-                        AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
-                        AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'";
+                              SELECT
+                                i.CODE,
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE,
+                                SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                SUM(i.USERSECONDARYQUANTITY) AS FKF
+                              FROM
+                                ITXVIEWKGBRUTOBONORDER2 i
+                              GROUP BY 
+                              i.CODE,
+                                i.ORIGDLVSALORDLINESALORDERCODE,
+                                i.ORIGDLVSALORDERLINEORDERLINE
+                            ),
+                            CELUP_DYEING AS(
+                              SELECT DISTINCT 
+                                p.ORIGDLVSALORDLINESALORDERCODE,
+                                p.CODE,
+                                p2.PROGRESSSTATUS 
+                              FROM
+                                PRODUCTIONDEMAND p
+                              LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                              WHERE
+                                p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                            )
+                            SELECT 
+                              SUM(QTY) AS QTY
+                            FROM (
+                              SELECT
+                                COALESCE(qb.KFF, 0) AS QTY,
+                                s.CODE,
+                                p.CODE,
+                                s2.ORDERLINE           
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(s2.SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(p.SUBCODE07) = '-'
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE 
+                              LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                          --      AND s.TEMPLATECODE IN ('CWD')
+                                AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                          --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                                -- AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                          --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                          --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                              GROUP BY
+                                qb.KFF,
+                                s.CODE,
+                                p.CODE,
+                                s2.ORDERLINE)";
       $resultPrintingBulanIni  = db2_exec($conn1, $qPrintingBulanIni);
       $rowPrintingBulanIni     = db2_fetch_assoc($resultPrintingBulanIni);
       $qtyPrintingBulanIni     = $rowPrintingBulanIni['QTY'];
@@ -4665,42 +5077,64 @@ $tglInput = $_GET['tgl'];
 
     // SDH CELUP PRINTING - 1 BULAN
       $qSdhCelupPrintingBlnLalu = "WITH QTY_BRUTO AS (
-                                      SELECT
-                                        i.ORIGDLVSALORDLINESALORDERCODE,
-                                        i.ORIGDLVSALORDERLINEORDERLINE,
-                                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                        SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                      FROM
-                                        ITXVIEWKGBRUTOBONORDER2 i
-                                      GROUP BY
-                                        i.ORIGDLVSALORDLINESALORDERCODE,
-                                        i.ORIGDLVSALORDERLINEORDERLINE
-                                    ),
-                                    CELUP_DYEING AS(
-                                      SELECT DISTINCT 
-                                        p.ORIGDLVSALORDLINESALORDERCODE,
-                                        p.CODE,
-                                        p2.PROGRESSSTATUS 
-                                      FROM
-                                        PRODUCTIONDEMAND p
-                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                      WHERE
-                                        p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                                    )
                                     SELECT
-                                      SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                    i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  ),
+                                  CELUP_DYEING AS(
+                                    SELECT DISTINCT 
+                                      p.ORIGDLVSALORDLINESALORDERCODE,
+                                      p.CODE,
+                                      p2.PROGRESSSTATUS 
+                                    FROM
+                                      PRODUCTIONDEMAND p
+                                    LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                    WHERE
+                                      p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                  )
+                                  SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM (
+                                    SELECT
+                                      COALESCE(qb.KFF, 0) AS QTY,
+                                      s.CODE,
+                                      p.CODE,
+                                      s2.ORDERLINE           
                                     FROM
                                       SALESORDER s
-                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
+                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(s2.SUBCODE07) = '-'
                                     LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')  AND NOT TRIM(p.SUBCODE07) = '-'
-                                    LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                    LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(p.SUBCODE07) = '-'
+                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE 
+                                    LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                                     WHERE
                                       CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
                                       AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                --      AND s.TEMPLATECODE IN ('CWD')
                                       AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
-                                      AND cd.PROGRESSSTATUS = '3'";
+                                      AND NOT a.VALUESTRING IS NULL
+                                      AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                                      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                                --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                                --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                    GROUP BY
+                                      qb.KFF,
+                                      s.CODE,
+                                      p.CODE,
+                                      s2.ORDERLINE)";
       $resultSdhCelupPrintingBlnLalu  = db2_exec($conn1, $qSdhCelupPrintingBlnLalu);
       $rowSdhCelupPrintingBlnLalu     = db2_fetch_assoc($resultSdhCelupPrintingBlnLalu);
       $qtySdhCelupPrintingBlnLalu     = $rowSdhCelupPrintingBlnLalu['QTY'];
@@ -4708,132 +5142,84 @@ $tglInput = $_GET['tgl'];
     
     // SDH CELUP PRINTING - BULAN SAAT INI
       $qSdhCelupPrintingBlnIni = "WITH QTY_BRUTO AS (
-                                      SELECT
-                                        i.ORIGDLVSALORDLINESALORDERCODE,
-                                        i.ORIGDLVSALORDERLINEORDERLINE,
-                                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                        SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                      FROM
-                                        ITXVIEWKGBRUTOBONORDER2 i
-                                      GROUP BY
-                                        i.ORIGDLVSALORDLINESALORDERCODE,
-                                        i.ORIGDLVSALORDERLINEORDERLINE
-                                    ),
-                                    CELUP_DYEING AS(
-                                      SELECT DISTINCT 
-                                        p.ORIGDLVSALORDLINESALORDERCODE,
-                                        p.CODE,
-                                        p2.PROGRESSSTATUS 
-                                      FROM
-                                        PRODUCTIONDEMAND p
-                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                      WHERE
-                                        p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                                    )
                                     SELECT
-                                      SUM(COALESCE(qb.KFF, 0)) AS QTY
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                    i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  ),
+                                  CELUP_DYEING AS(
+                                    SELECT DISTINCT 
+                                      p.ORIGDLVSALORDLINESALORDERCODE,
+                                      p.CODE,
+                                      p2.PROGRESSSTATUS 
+                                    FROM
+                                      PRODUCTIONDEMAND p
+                                    LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                    WHERE
+                                      p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                  )
+                                  SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM (
+                                    SELECT
+                                      COALESCE(qb.KFF, 0) AS QTY,
+                                      s.CODE,
+                                      p.CODE,
+                                      s2.ORDERLINE           
                                     FROM
                                       SALESORDER s
-                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
+                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(s2.SUBCODE07) = '-'
                                     LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')  AND NOT TRIM(p.SUBCODE07) = '-'
-                                    LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
+                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                    LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(p.SUBCODE07) = '-'
+                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE 
+                                    LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                                     WHERE
                                       CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
                                       AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                --      AND s.TEMPLATECODE IN ('CWD')
                                       AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
-                                      AND cd.PROGRESSSTATUS = '3'";
+                                      AND NOT a.VALUESTRING IS NULL
+                                      AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                                      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                                --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                                --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                    GROUP BY
+                                      qb.KFF,
+                                      s.CODE,
+                                      p.CODE,
+                                      s2.ORDERLINE)";
       $resultSdhCelupPrintingBlnIni  = db2_exec($conn1, $qSdhCelupPrintingBlnIni);
       $rowSdhCelupPrintingBlnIni     = db2_fetch_assoc($resultSdhCelupPrintingBlnIni);
       $qtySdhCelupPrintingBlnIni     = $rowSdhCelupPrintingBlnIni['QTY'];
     // SDH CELUP PRINTING - BULAN SAAT INI
 
     // BLM CELUP PRINTING - 1 BULAN
-      $qBlmCelupPrintingBlnLalu = "WITH QTY_BRUTO AS (
-                                      SELECT
-                                        i.ORIGDLVSALORDLINESALORDERCODE,
-                                        i.ORIGDLVSALORDERLINEORDERLINE,
-                                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                        SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                      FROM
-                                        ITXVIEWKGBRUTOBONORDER2 i
-                                      GROUP BY
-                                        i.ORIGDLVSALORDLINESALORDERCODE,
-                                        i.ORIGDLVSALORDERLINEORDERLINE
-                                    ),
-                                    CELUP_DYEING AS(
-                                      SELECT DISTINCT 
-                                        p.ORIGDLVSALORDLINESALORDERCODE,
-                                        p.CODE,
-                                        p2.PROGRESSSTATUS 
-                                      FROM
-                                        PRODUCTIONDEMAND p
-                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                      WHERE
-                                        p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                                    )
-                                    SELECT
-                                      SUM(COALESCE(qb.KFF, 0)) AS QTY
-                                    FROM
-                                      SALESORDER s
-                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
-                                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')  AND NOT TRIM(p.SUBCODE07) = '-'
-                                    LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                                    WHERE
-                                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
-                                      AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
-                                      AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
-                                      AND cd.PROGRESSSTATUS IN ('0','1','2')";
-      $resultBlmCelupPrintingBlnLalu  = db2_exec($conn1, $qBlmCelupPrintingBlnLalu);
-      $rowBlmCelupPrintingBlnLalu     = db2_fetch_assoc($resultBlmCelupPrintingBlnLalu);
-      $qtyBlmCelupPrintingBlnLalu     = $rowBlmCelupPrintingBlnLalu['QTY'];
+      $qtyBlmCelupPrintingBlnLalu     = round($qtyPrintingBulanLalu) - round($qtySdhCelupPrintingBlnLalu);
     // BLM CELUP PRINTING - 1 BULAN
 
     // BLM CELUP PRINTING - BULAN SAAT INI
-      $qBlmCelupPrintingBlnIni = "WITH QTY_BRUTO AS (
-                                      SELECT
-                                        i.ORIGDLVSALORDLINESALORDERCODE,
-                                        i.ORIGDLVSALORDERLINEORDERLINE,
-                                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                                        SUM(i.USERSECONDARYQUANTITY) AS FKF
-                                      FROM
-                                        ITXVIEWKGBRUTOBONORDER2 i
-                                      GROUP BY
-                                        i.ORIGDLVSALORDLINESALORDERCODE,
-                                        i.ORIGDLVSALORDERLINEORDERLINE
-                                    ),
-                                    CELUP_DYEING AS(
-                                      SELECT DISTINCT 
-                                        p.ORIGDLVSALORDLINESALORDERCODE,
-                                        p.CODE,
-                                        p2.PROGRESSSTATUS 
-                                      FROM
-                                        PRODUCTIONDEMAND p
-                                      LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                      WHERE
-                                        p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5')
-                                    )
-                                    SELECT
-                                      SUM(COALESCE(qb.KFF, 0)) AS QTY
-                                    FROM
-                                      SALESORDER s
-                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF') AND NOT TRIM(SUBCODE07) = '-'
-                                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')  AND NOT TRIM(p.SUBCODE07) = '-'
-                                    LEFT JOIN CELUP_DYEING cd ON cd.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND cd.CODE = p.CODE
-                                    WHERE
-                                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
-                                      AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
-                                      AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
-                                      AND cd.PROGRESSSTATUS IN ('0','1','2')";
-      $resultBlmCelupPrintingBlnIni  = db2_exec($conn1, $qBlmCelupPrintingBlnIni);
-      $rowBlmCelupPrintingBlnIni     = db2_fetch_assoc($resultBlmCelupPrintingBlnIni);
-      $qtyBlmCelupPrintingBlnIni     = $rowBlmCelupPrintingBlnIni['QTY'];
+      $qtyBlmCelupPrintingBlnIni     = round($qtyPrintingBulanIni) - round($qtySdhCelupPrintingBlnIni);
     // BLM CELUP PRINTING - BULAN SAAT INI
+
+    // TOTAL SDH CELUP PRINTING
+      $totalSdhCelupPrinting = $qtySdhCelupPrintingBlnLalu + $qtySdhCelupPrintingBlnIni;
+    // TOTAL SDH CELUP PRINTING
+    
+    // TOTAL BLM CELUP PRINTING
+      $totalBlmCelupPrinting = $qtyBlmCelupPrintingBlnLalu + $qtyBlmCelupPrintingBlnIni;
+    // TOTAL BLM CELUP PRINTING
     ?>
     <tr>
       <td><?= $bulanLalu; ?></td>
@@ -4858,15 +5244,14 @@ $tglInput = $_GET['tgl'];
       <td><?= number_format($totalSublimation); ?></td>
       <td>0</td>
       <td>0</td>
-      <td>TOTAL SDH CELUP...</td>
-      <td>TOTAL BLM CELUP...</td>
+      <td><?= number_format($totalSdhCelupPrinting); ?></td>
+      <td><?= number_format($totalBlmCelupPrinting); ?></td>
     </tr>
   </tbody>
 </table>
 
-<br>
-<center><h4>YARN DYE</h4></center>
-<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
+YARN DYE
+<table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;"> 
   <thead>
     <tr>
       <th>DELIVERY</th>
@@ -4917,11 +5302,15 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND p.TEMPLATECODE = '100'
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -4972,13 +5361,17 @@ $tglInput = $_GET['tgl'];
                                         SALESORDER s
                                       LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                       LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                      LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                       LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                      LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                       LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE AND p2.OPERATIONCODE = 'YDY1'
                                       WHERE
                                         CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu' -- FILTER pertama untuk mencari salesorder yg dibuat
                                         AND p.TEMPLATECODE = '100'
                                         AND NOT s3.DELIVERYDATE IS NULL
                                         AND TRIM(p2.PROGRESSSTATUS) = '3'
+                                        AND NOT a.VALUESTRING IS NULL
+                                        AND a2.VALUESTRING IS NULL
                                       GROUP BY
                                         s.CODE,
                                         s3.DELIVERYDATE)
@@ -4990,7 +5383,7 @@ $tglInput = $_GET['tgl'];
       // SUDAH CELUP - 1 BULAN LALU
 
       // BELUM CELUP - 1 BULAN LALU
-        $qtyTotalOrderBlmCelupYndBlnLalu = $qtyTotalOrderYndBlnLalu - $qtyTotalOrderSdhCelupYndBlnLalu;
+        $qtyTotalOrderBlmCelupYndBlnLalu = round($qtyTotalOrderYndBlnLalu) - round($qtyTotalOrderSdhCelupYndBlnLalu);
       // BELUM CELUP - 1 BULAN LALU
 
       // TOTAL ORDER - BULAN SAAT INI
@@ -5032,11 +5425,15 @@ $tglInput = $_GET['tgl'];
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                   LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni' -- FILTER pertama untuk mencari salesorder yg dibuat
                                     AND p.TEMPLATECODE = '100'
                                     AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -5086,13 +5483,17 @@ $tglInput = $_GET['tgl'];
                                         SALESORDER s
                                       LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                       LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                      LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
                                       LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
+                                      LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                       LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE AND p2.OPERATIONCODE = 'YDY1'
                                       WHERE
                                         CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni' -- FILTER pertama untuk mencari salesorder yg dibuat
                                         AND p.TEMPLATECODE = '100'
                                         AND NOT s3.DELIVERYDATE IS NULL
                                         AND TRIM(p2.PROGRESSSTATUS) = '3'
+                                        AND NOT a.VALUESTRING IS NULL
+                                        AND a2.VALUESTRING IS NULL
                                       GROUP BY
                                         s.CODE,
                                         s3.DELIVERYDATE)
@@ -5104,7 +5505,7 @@ $tglInput = $_GET['tgl'];
       // SUDAH CELUP - BULAN SAAT INI
 
       // BELUM CELUP - BULAN SAAT INI
-        $qtyTotalOrderBlmCelupYndBlnIni = $qtyTotalOrderYndBlnIni - $qtyTotalOrderSdhCelupYndBlnIni;
+        $qtyTotalOrderBlmCelupYndBlnIni = round($qtyTotalOrderYndBlnIni) - round($qtyTotalOrderSdhCelupYndBlnIni);
       // BELUM CELUP - BULAN SAAT INI
     ?>
     <tr>
@@ -5123,8 +5524,7 @@ $tglInput = $_GET['tgl'];
   </tbody>
 </table>
 
-<br>
-<center><h4>GANTI KAIN INTERNAL+EXTERNAL+RETUR</h4></center>
+GANTI KAIN INTERNAL+EXTERNAL+RETUR
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
   <thead>
     <tr>
@@ -5168,31 +5568,65 @@ $tglInput = $_GET['tgl'];
         $tglAkhirBulanLalu = $dtBulanLalu->format('Y-m-t');
 
         $qGIInternalBulanLalu = "WITH QTY_BRUTO AS (
-                          SELECT
-                            i.ORIGDLVSALORDLINESALORDERCODE,
-                            i.ORIGDLVSALORDERLINEORDERLINE,
-                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                            SUM(i.USERSECONDARYQUANTITY) AS FKF
-                          FROM
-                            ITXVIEWKGBRUTOBONORDER2 i
-                          GROUP BY 
-                            i.ORIGDLVSALORDLINESALORDERCODE,
-                            i.ORIGDLVSALORDERLINEORDERLINE
-                        )
-                        SELECT
-                          SUM(COALESCE(qb.KFF, 0)) AS QTY
-                        FROM
-                          SALESORDER s
-                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DefectNote'
-                        WHERE
-                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
-                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                          AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
-                          AND a.VALUESTRING LIKE '%GI%'";
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                  i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                ),
+                                CELUP_DYEING AS(
+                                  SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM (
+                                  SELECT
+                                    COALESCE(qb.KFF, 0) AS QTY,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE           
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  -- LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a5 ON a5.UNIQUEID = p.ABSUNIQUEID AND a5.FIELDNAME = 'DefectNote'
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
+                                    AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                    AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
+                                    AND NOT a.VALUESTRING IS NULL
+                                    -- AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                    AND a5.VALUESTRING LIKE '%GI%'
+                              --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                              --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                  GROUP BY
+                                    qb.KFF,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE)";
         $resultGIInternalBulanLalu  = db2_exec($conn1, $qGIInternalBulanLalu);
         $rowGIInternalBulanLalu     = db2_fetch_assoc($resultGIInternalBulanLalu);
         $qtyGIInternalBulanLalu     = $rowGIInternalBulanLalu['QTY'];
@@ -5228,31 +5662,65 @@ $tglInput = $_GET['tgl'];
         $tglAkhirBulanLalu = $dtBulanLalu->format('Y-m-t');
 
         $qGIExternalBulanLalu = "WITH QTY_BRUTO AS (
-                          SELECT
-                            i.ORIGDLVSALORDLINESALORDERCODE,
-                            i.ORIGDLVSALORDERLINEORDERLINE,
-                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                            SUM(i.USERSECONDARYQUANTITY) AS FKF
-                          FROM
-                            ITXVIEWKGBRUTOBONORDER2 i
-                          GROUP BY 
-                            i.ORIGDLVSALORDLINESALORDERCODE,
-                            i.ORIGDLVSALORDERLINEORDERLINE
-                        )
-                        SELECT
-                          SUM(COALESCE(qb.KFF, 0)) AS QTY
-                        FROM
-                          SALESORDER s
-                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DefectNote'
-                        WHERE
-                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
-                          AND s.TEMPLATECODE IN ('RFD', 'RFE')  
-                          AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
-                          AND a.VALUESTRING LIKE '%GI%'";
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                  i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                ),
+                                CELUP_DYEING AS(
+                                  SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM (
+                                  SELECT
+                                    COALESCE(qb.KFF, 0) AS QTY,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE           
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  -- LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a5 ON a5.UNIQUEID = p.ABSUNIQUEID AND a5.FIELDNAME = 'DefectNote'
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanlalu'
+                                    AND s.TEMPLATECODE IN ('RFD', 'RFE')
+                                    AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanLalu' AND '$tglAkhirBulanLalu'
+                                    AND NOT a.VALUESTRING IS NULL
+                                    -- AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                    AND a5.VALUESTRING LIKE '%GI%'
+                              --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                              --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                  GROUP BY
+                                    qb.KFF,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE)";
         $resultGIExternalBulanLalu  = db2_exec($conn1, $qGIExternalBulanLalu);
         $rowGIExternalBulanLalu     = db2_fetch_assoc($resultGIExternalBulanLalu);
         $qtyGIExternalBulanLalu     = $rowGIExternalBulanLalu['QTY'];
@@ -5264,7 +5732,6 @@ $tglInput = $_GET['tgl'];
 
       // GI INTERNAL - BULAN SAAT INI
         $dtBulanIni = new DateTime($tglInput);
-        $dtBulanIni->modify('-1 month');
         $tglInput_bulanIni = $dtBulanIni->format('Y-m-d');
 
         // Buat objek DateTime
@@ -5292,31 +5759,65 @@ $tglInput = $_GET['tgl'];
         $tglAkhirBulanIni = $dtBulanIni->format('Y-m-t');
 
         $qGIInternalBulanIni = "WITH QTY_BRUTO AS (
-                          SELECT
-                            i.ORIGDLVSALORDLINESALORDERCODE,
-                            i.ORIGDLVSALORDERLINEORDERLINE,
-                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                            SUM(i.USERSECONDARYQUANTITY) AS FKF
-                          FROM
-                            ITXVIEWKGBRUTOBONORDER2 i
-                          GROUP BY 
-                            i.ORIGDLVSALORDLINESALORDERCODE,
-                            i.ORIGDLVSALORDERLINEORDERLINE
-                        )
-                        SELECT
-                          SUM(COALESCE(qb.KFF, 0)) AS QTY
-                        FROM
-                          SALESORDER s
-                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DefectNote'
-                        WHERE
-                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
-                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                          AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
-                          AND a.VALUESTRING LIKE '%GI%'";
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                  i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                ),
+                                CELUP_DYEING AS(
+                                  SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM (
+                                  SELECT
+                                    COALESCE(qb.KFF, 0) AS QTY,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE           
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  -- LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a5 ON a5.UNIQUEID = p.ABSUNIQUEID AND a5.FIELDNAME = 'DefectNote'
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
+                                    AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                    AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
+                                    AND NOT a.VALUESTRING IS NULL
+                                    -- AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                    AND a5.VALUESTRING LIKE '%GI%'
+                              --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                              --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                  GROUP BY
+                                    qb.KFF,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE)";
         $resultGIInternalBulanIni  = db2_exec($conn1, $qGIInternalBulanIni);
         $rowGIInternalBulanIni     = db2_fetch_assoc($resultGIInternalBulanIni);
         $qtyGIInternalBulanIni     = $rowGIInternalBulanIni['QTY'];
@@ -5324,7 +5825,6 @@ $tglInput = $_GET['tgl'];
 
       // GI EXTERNAL - BULAN SAAT INI
         $dtBulanIni = new DateTime($tglInput);
-        $dtBulanIni->modify('-1 month');
         $tglInput_bulanIni = $dtBulanIni->format('Y-m-d');
 
         // Buat objek DateTime
@@ -5352,31 +5852,65 @@ $tglInput = $_GET['tgl'];
         $tglAkhirBulanIni = $dtBulanIni->format('Y-m-t');
 
         $qGIExternalBulanIni = "WITH QTY_BRUTO AS (
-                          SELECT
-                            i.ORIGDLVSALORDLINESALORDERCODE,
-                            i.ORIGDLVSALORDERLINEORDERLINE,
-                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
-                            SUM(i.USERSECONDARYQUANTITY) AS FKF
-                          FROM
-                            ITXVIEWKGBRUTOBONORDER2 i
-                          GROUP BY 
-                            i.ORIGDLVSALORDLINESALORDERCODE,
-                            i.ORIGDLVSALORDERLINEORDERLINE
-                        )
-                        SELECT
-                          SUM(COALESCE(qb.KFF, 0)) AS QTY
-                        FROM
-                          SALESORDER s
-                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE
-                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DefectNote'
-                        WHERE
-                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
-                          AND s.TEMPLATECODE IN ('RFD', 'RFE')  
-                          AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
-                          AND a.VALUESTRING LIKE '%GI%'";
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                  i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                ),
+                                CELUP_DYEING AS(
+                                  SELECT DISTINCT 
+                                    p.ORIGDLVSALORDLINESALORDERCODE,
+                                    p.CODE,
+                                    p2.PROGRESSSTATUS 
+                                  FROM
+                                    PRODUCTIONDEMAND p
+                                  LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+                                  WHERE
+                                    p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM (
+                                  SELECT
+                                    COALESCE(qb.KFF, 0) AS QTY,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE           
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  -- LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a5 ON a5.UNIQUEID = p.ABSUNIQUEID AND a5.FIELDNAME = 'DefectNote'
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulanIni'
+                                    AND s.TEMPLATECODE IN ('RFD', 'RFE')
+                                    AND s3.DELIVERYDATE BETWEEN '$tglAwalBulanIni' AND '$tglAkhirBulanIni'
+                                    AND NOT a.VALUESTRING IS NULL
+                                    -- AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                    AND a5.VALUESTRING LIKE '%GI%'
+                              --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
+                              --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
+                              --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
+                                  GROUP BY
+                                    qb.KFF,
+                                    s.CODE,
+                                    p.CODE,
+                                    s2.ORDERLINE)";
         $resultGIExternalBulanIni  = db2_exec($conn1, $qGIExternalBulanIni);
         $rowGIExternalBulanIni     = db2_fetch_assoc($resultGIExternalBulanIni);
         $qtyGIExternalBulanIni     = $rowGIExternalBulanIni['QTY'];

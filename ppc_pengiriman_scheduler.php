@@ -3,24 +3,25 @@
 
 
     //ini akan dijalankan ketika sudah selesai insert data yang tidak dapat mengakses h-1 lagi
-    // $tanggal_kemarin = date('Y-m-d');
-    // $tanggal_kemarin = date('Y-m-d', strtotime('-1 day'));
+    $tanggal_kemarin = date('Y-m-d');
+    $tanggal_kemarin = date('Y-m-d', strtotime('-1 day'));
 
-    // if ($tanggal_kemarin) {
-    //     $where_date = "i.GOODSISSUEDATE BETWEEN '$tanggal_kemarin' AND '$tanggal_kemarin'";
-    // } else {
-    //     $where_date = "";
-    // }
 
-    $start = new DateTime('2024-12-01');
-    $end = new DateTime('2025-05-18');
+    if ($tanggal_kemarin) {
+        $where_date = "i.GOODSISSUEDATE BETWEEN '$tanggal_kemarin' AND '$tanggal_kemarin'";
+    } else {
+        $where_date = "";
+    }
+
+    // $start = new DateTime('2024-12-01');
+    // $end = new DateTime('2025-12-31');
 
     $dept = 'PPC';
 
-    while ($start < $end) {
-        $tanggal_kemarin = $start->format('Y-m-d');
+    // while ($start < $end) {
+        // $tanggal_kemarin = $start->format('Y-m-d');
 
-        $where_date = "i.GOODSISSUEDATE BETWEEN '$tanggal_kemarin' AND '$tanggal_kemarin'";
+        // $where_date = "i.GOODSISSUEDATE BETWEEN '$tanggal_kemarin' AND '$tanggal_kemarin'";
 
         $codeExport = "TRIM(i.DEFINITIVECOUNTERCODE) = 'CESDEF' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'CESPROV' OR
                         TRIM(i.DEFINITIVECOUNTERCODE) = 'DREDEF' OR TRIM(i.DEFINITIVECOUNTERCODE) = 'DREPROV' OR 
@@ -242,10 +243,10 @@
             echo "Data untuk tanggal $tanggal_kemarin sudah ada. Tidak disimpan ulang. " ; 
         }
 
-    echo "Proses tanggal: $tanggal_kemarin<br>";
+        echo "Proses tanggal: $tanggal_kemarin<br>";
 
         // Increment ke tanggal berikutnya
         // $start->modify('+1 day');
-    }
+    // }
 
 ?>

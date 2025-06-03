@@ -4,6 +4,10 @@ session_start();
 require_once "koneksi.php";
 include "utils/helper.php";
 
+$tgl_hari_ini = date('Y-m-d');
+$tgl1_kkoke = isset($_POST['tgl1_kkoke']) ? $_POST['tgl1_kkoke'] : $tgl_hari_ini;
+$tgl2_kkoke = isset($_POST['tgl2_kkoke']) ? $_POST['tgl2_kkoke'] : $tgl_hari_ini;
+
 if (isset($_POST['execute'])) {
     $productionorder    = $_POST['productionorder'];
     $datenow            = $_POST['datenow'];
@@ -114,6 +118,101 @@ if (isset($_POST['execute'])) {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">Data Scan KK OKE</h5>
+                                                </div>
+                                                <div class="card-block">
+                                                    <form method="POST">
+                                                        <div class="form-row align-items-end">
+                                                            <div class="form-group col-md-3">
+                                                                <label for="tgl1_kkoke"><strong>Tanggal Mulai Scan KK OKE</strong></label>
+                                                                <input type="date" name="tgl1_kkoke" id="tgl1_kkoke" class="form-control form-control-sm" value="<?= $tgl1_kkoke; ?>">
+                                                            </div>
+                                                            <div class="form-group col-md-3">
+                                                                <label for="tgl2_kkoke"><strong>Tanggal Selesai Scan KK OKE</strong></label>
+                                                                <input type="date" name="tgl2_kkoke" id="tgl2_kkoke" class="form-control form-control-sm" value="<?= $tgl2_kkoke; ?>">
+                                                            </div>
+                                                            <div class="form-group col-md-2">
+                                                                <button type="submit" name="search" class="btn btn-primary btn-sm btn-block">
+                                                                    <i class="icofont icofont-search"></i> Search
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <?php if (isset($_POST['search'])): ?>
+                                                <div class="card mt-3">
+                                                    <div class="card-header">
+                                                        <h5 class="mb-0">Hasil Pencarian</h5>
+                                                    </div>
+                                                    <div class="card-block">
+                                                        <div class="table-responsive">
+                                                            <table id="excel-kkok" class="table table-striped table-bordered nowrap">
+                                                                <table id="excelDownload" class="table table-striped table-bordered nowrap">
+                                                                <thead class="thead-light">
+                                                                    <tr>
+                                                                        <th>Tgl Scan KK Ok</th>
+                                                                        <th>Langganan</th>
+                                                                        <th>Buyer</th>
+                                                                        <th>Warna</th>
+                                                                        <th>Item</th>
+                                                                        <th>Prod. Demand</th>
+                                                                        <th>Prod. Order</th>
+                                                                        <th>No. Order</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php
+                                                                        $qDataMain  = "SELECT 
+                                                                                        CAST(p.LASTUPDATEDATETIME AS DATE) AS TGL_SCAN_KKOKE,
+                                                                                        ip.LANGGANAN,
+                                                                                        ip.BUYER,
+                                                                                        i.WARNA,
+                                                                                        TRIM(p2.SUBCODE02) || '-' || TRIM(p2.SUBCODE03) AS ITEM,
+                                                                                        p.PRODUCTIONDEMANDCODE,
+                                                                                        p.PRODUCTIONORDERCODE,
+                                                                                        p2.ORIGDLVSALORDLINESALORDERCODE AS NO_ORDER
+                                                                                    FROM
+                                                                                        PRODUCTIONDEMANDSTEP p
+                                                                                    LEFT JOIN PRODUCTIONDEMAND p2 ON p2.CODE = p.PRODUCTIONDEMANDCODE
+                                                                                    LEFT JOIN SALESORDER s ON s.CODE = p2.ORIGDLVSALORDLINESALORDERCODE
+                                                                                    LEFT JOIN ITXVIEW_PELANGGAN ip ON ip.ORDPRNCUSTOMERSUPPLIERCODE = s.ORDPRNCUSTOMERSUPPLIERCODE AND ip.CODE = s.CODE
+                                                                                    LEFT JOIN ITXVIEWCOLOR i ON i.ITEMTYPECODE = p2.ITEMTYPEAFICODE
+                                                                                                            AND i.SUBCODE01 = p2.SUBCODE01
+                                                                                                            AND i.SUBCODE02 = p2.SUBCODE02
+                                                                                                            AND i.SUBCODE03 = p2.SUBCODE03
+                                                                                                            AND i.SUBCODE04 = p2.SUBCODE04
+                                                                                                            AND i.SUBCODE05 = p2.SUBCODE05
+                                                                                                            AND i.SUBCODE06 = p2.SUBCODE06
+                                                                                                            AND i.SUBCODE07 = p2.SUBCODE07
+                                                                                                            AND i.SUBCODE08 = p2.SUBCODE08
+                                                                                                            AND i.SUBCODE09 = p2.SUBCODE09
+                                                                                                            AND i.SUBCODE10 = p2.SUBCODE10
+                                                                                    WHERE
+                                                                                        p.LASTUPDATEUSER LIKE '10.0%'
+                                                                                        AND CAST(p.LASTUPDATEDATETIME AS DATE) BETWEEN '$tgl1_kkoke' AND '$tgl2_kkoke'";
+                                                                        $execMain   = db2_exec($conn1, $qDataMain);
+                                                                    ?>
+                                                                    <?php while ($rowMain   = db2_fetch_assoc($execMain))  : ?>
+                                                                        <tr>
+                                                                            <td><?= $rowMain['TGL_SCAN_KKOKE'] ?></td>
+                                                                            <td><?= $rowMain['LANGGANAN'] ?></td>
+                                                                            <td><?= $rowMain['BUYER'] ?></td>
+                                                                            <td><?= $rowMain['WARNA'] ?></td>
+                                                                            <td><?= $rowMain['ITEM'] ?></td>
+                                                                            <td>`<?= $rowMain['PRODUCTIONDEMANDCODE'] ?></td>
+                                                                            <td>`<?= $rowMain['PRODUCTIONORDERCODE'] ?></td>
+                                                                            <td><?= $rowMain['NO_ORDER'] ?></td>
+                                                                        </tr>
+                                                                    <?php endwhile; ?>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </form>
@@ -127,7 +226,23 @@ if (isset($_POST['execute'])) {
 </body>
 <script src="files\assets\js\pcoded.min.js"></script>
 <script type="text/javascript" src="files\assets\js\script.js"></script>
+<?php require_once 'footer.php'; ?>
 <script>
+    $('#excelDownload').DataTable({
+        dom: 'Bfrtip',
+        buttons: [{
+            extend: 'excelHtml5',
+            customize: function (xlsx) {
+                var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                $('row c[r^="F"]', sheet).each(function () {
+                    if ($('is t', this).text().replace(/[^\d]/g, '') * 1 >= 500000) {
+                        $(this).attr('s', '20');
+                    }
+                });
+            }
+        }]
+    });
+
     function getCurrentDateTimeForDB2() {
         const now = new Date();
 
@@ -149,4 +264,3 @@ if (isset($_POST['execute'])) {
     setInterval(updateDateTime, 1000);
     updateDateTime();
 </script>
-<?php require_once 'footer.php'; ?>
