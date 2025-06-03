@@ -1,5 +1,7 @@
 <?php
-    ob_start();
+    header("content-type:application/vnd-ms-excel");
+    header("content-disposition:attachment;filename=SummaryPencarianGerobak-BRS-" . date_default_timezone_set('Asia/Jakarta') . date('Y-m-d H:i:s') . ".xls");
+    header('Cache-Control: max-age=0');
 ?>
 
 <?php
@@ -661,12 +663,4 @@
 </table>
 </body>
 </html>
-
-
-<?php
-    $htmlContent = ob_get_clean();
-    $filename    = "SummaryPencarianGerobak-BRS-" . date('Y-m-d_H-i-s') . ".xls";
-    $filePath    = "Y:\\DATA PO\\Laporan pencarian gerobak\\summary\\BRS\\" . $filename;
-    file_put_contents($filePath, $htmlContent);
-?>
 
