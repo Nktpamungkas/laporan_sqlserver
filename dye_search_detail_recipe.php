@@ -77,8 +77,8 @@
         position: relative;
     }
 
-    .bg-blue-soft {
-        background-color: #e3f2fd;
+    .bg-green-soft {
+        background-color: #9acc99;
         /* color: #0d47a1; */
         padding: 1rem;
         border-radius: 0.25rem;
@@ -91,7 +91,7 @@
 <body>
 
     <div class="pcoded-content">
-        <div class="pcoded-inner-content bg-blue-soft">
+        <div class="pcoded-inner-content bg-green-soft">
             <div class="main-body">
                 <div class="page-wrapper">
                     <div class="page-body">
@@ -157,6 +157,17 @@
                                         </form>
                                     </div>
                                 </div>
+                                <div class="d-flex align-items-center">
+                                    <!-- Logo -->
+                                    <div class="text-start">
+                                        <img src="img/logo-tektok.png" alt="logo-tektok" height="80">
+                                    </div>
+
+                                    <div class="ms-3">
+                                        <h5 class="mb-0" style='font-family:"Microsoft Sans Serif"'>Approved Recipes</h5>
+                                    </div>
+                                </div>
+
                                 <div class="card">
                                     <div class="card-header">
                                         <table border="0" style='font-family:"Microsoft Sans Serif"' id='atas'>
