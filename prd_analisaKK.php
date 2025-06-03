@@ -93,20 +93,27 @@
                                                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light m-b-10" id='deselect-all'>deselect all</button>
                                                     <select id='public-methods' multiple='multiple' name="operation[]">
                                                         <?php
-                                                        $query_ITXVIEWKK     = db2_exec($conn1, "SELECT TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE, TRIM(PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$_GET[demand]'");
+                                                        $query_ITXVIEWKK     = db2_exec($conn1, "SELECT
+                                                                                                    TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
+                                                                                                    TRIM(PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE
+                                                                                                FROM
+                                                                                                    ITXVIEWKK
+                                                                                                WHERE
+                                                                                                    PRODUCTIONDEMANDCODE = '$_GET[demand]'
+                                                                                                ORDER BY CREATIONDATETIME DESC");
                                                         $data_ITXVIEWKK      = db2_fetch_assoc($query_ITXVIEWKK);
 
-                                                        $q_operation    = db2_exec($conn1, "SELECT
-                                                                                                    DISTINCT 
-                                                                                                    TRIM(OPERATIONCODE) AS OPERATIONCODE,
-                                                                                                    DESKRIPSI_OPERATION
-                                                                                                FROM
-                                                                                                    ITXVIEW_DETAIL_QA_DATA
-                                                                                                WHERE
-                                                                                                    PRODUCTIONORDERCODE = '$data_ITXVIEWKK[PRODUCTIONORDERCODE]'
-                                                                                                    AND PRODUCTIONDEMANDCODE = '$data_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
-                                                                                                ORDER BY
-                                                                                                    OPERATIONCODE ASC");
+                                                        $dataOperation = "SELECT
+                                                                                DISTINCT 
+                                                                                TRIM(OPERATIONCODE) AS OPERATIONCODE,
+                                                                                DESKRIPSI_OPERATION
+                                                                            FROM
+                                                                                ITXVIEW_DETAIL_QA_DATA
+                                                                            WHERE
+                                                                                PRODUCTIONDEMANDCODE = '$data_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
+                                                                            ORDER BY
+                                                                                OPERATIONCODE ASC";
+                                                        $q_operation    = db2_exec($conn1, $dataOperation);
                                                         ?>
                                                         <?php while ($row_operation = db2_fetch_assoc($q_operation)) : ?>
                                                             <option value="<?= $row_operation['OPERATIONCODE']; ?>">
@@ -127,7 +134,7 @@
                                                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light m-b-10" id='deselect-all2'>deselect all</button>
                                                     <select id='public-methods2' multiple='multiple' name="operation2[]">
                                                         <?php
-                                                        $query_ITXVIEWKK2     = db2_exec($conn1, "SELECT TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE, TRIM(PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$_GET[demand2]'");
+                                                        $query_ITXVIEWKK2     = db2_exec($conn1, "SELECT TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE, TRIM(PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$_GET[demand2]' ORDER BY CREATIONDATETIME DESC");
                                                         $data_ITXVIEWKK2      = db2_fetch_assoc($query_ITXVIEWKK2);
 
                                                         $q_operation2    = db2_exec($conn1, "SELECT
@@ -137,8 +144,7 @@
                                                                                                 FROM
                                                                                                     ITXVIEW_DETAIL_QA_DATA
                                                                                                 WHERE
-                                                                                                    PRODUCTIONORDERCODE = '$data_ITXVIEWKK2[PRODUCTIONORDERCODE]'
-                                                                                                    AND PRODUCTIONDEMANDCODE = '$data_ITXVIEWKK2[PRODUCTIONDEMANDCODE]'
+                                                                                                    PRODUCTIONDEMANDCODE = '$data_ITXVIEWKK2[PRODUCTIONDEMANDCODE]'
                                                                                                 ORDER BY
                                                                                                     OPERATIONCODE ASC");
                                                         ?>
@@ -179,7 +185,7 @@
                                                         $demand     = $_POST['demand'];
                                                     }
 
-                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' ORDER BY CREATIONDATETIME DESC");
                                                     $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
 
                                                     if ($_GET['prod_order']) {
@@ -196,8 +202,8 @@
 
                                                     // itxview_detail_qa_data
                                                     $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM ITXVIEW_DETAIL_QA_DATA 
-                                                                                                    WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                    AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
+                                                                                                    WHERE  
+                                                                                                    PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
                                                                                                     AND OPERATIONCODE IN ('" . implode("','", $_POST['operation']) . "') 
                                                                                                     ORDER BY LINE ASC");
                                                     while ($row_itxview_detail_qa_data     = db2_fetch_assoc($itxview_detail_qa_data)) {
@@ -222,7 +228,7 @@
                                                 <table width="100%" style="border: 1px solid black; border-collapse: collapse;">
                                                     <thead>
                                                         <tr>
-                                                            <th>Prod. Order</th>
+                                                            <th>Prod. Order Terakhir</th>
                                                             <th>:</th>
                                                             <th><?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?></th>
                                                         </tr>
@@ -592,90 +598,106 @@
                                                 <div style="overflow-x:auto;">
                                                     <table width="100%" border="1">
                                                         <?php
-                                                        ini_set("error_reporting", 1);
-                                                        session_start();
-                                                        require_once "koneksi.php";
+                                                            ini_set("error_reporting", 1);
+                                                            session_start();
+                                                            require_once "koneksi.php";
 
-                                                        // itxview_posisikk_tgl_in_prodorder_ins3
-                                                        $posisikk_ins3 = db2_exec($conn1, "SELECT * FROM ITXVIEW_POSISIKK_TGL_IN_PRODORDER_INS3 WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]'");
-                                                        while ($row_posisikk_ins3   = db2_fetch_assoc($posisikk_ins3)) {
-                                                            $r_posisikk_ins3[]      = "('" . TRIM(addslashes($row_posisikk_ins3['PRODUCTIONORDERCODE'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['OPERATIONCODE'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['PROPROGRESSPROGRESSNUMBER'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['DEMANDSTEPSTEPNUMBER'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['PROGRESSTEMPLATECODE'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_ins3['MULAI'])) . "',"
-                                                                . "'" . $_SERVER['REMOTE_ADDR'] . "',"
-                                                                . "'" . date('Y-m-d H:i:s') . "',"
-                                                                . "'" . 'Analisa KK' . "')";
-                                                        }
-                                                        if ($r_posisikk_ins3) {
-                                                            $value_posisikk_ins3        = implode(',', $r_posisikk_ins3);
-                                                            $insert_posisikk_ins3       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_posisikk_tgl_in_prodorder_ins3(PRODUCTIONORDERCODE,OPERATIONCODE,PROPROGRESSPROGRESSNUMBER,DEMANDSTEPSTEPNUMBER,PROGRESSTEMPLATECODE,MULAI,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_posisikk_ins3");
-                                                        }
+                                                            // itxview_posisikk_tgl_in_prodorder_ins3
+                                                            $posisikk_ins3 = db2_exec($conn1, "SELECT * FROM ITXVIEW_POSISIKK_TGL_IN_PRODORDER_INS3 WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]'");
+                                                            while ($row_posisikk_ins3   = db2_fetch_assoc($posisikk_ins3)) {
+                                                                $r_posisikk_ins3[]      = "('" . TRIM(addslashes($row_posisikk_ins3['PRODUCTIONORDERCODE'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_ins3['OPERATIONCODE'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_ins3['PROPROGRESSPROGRESSNUMBER'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_ins3['DEMANDSTEPSTEPNUMBER'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_ins3['PROGRESSTEMPLATECODE'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_ins3['MULAI'])) . "',"
+                                                                    . "'" . $_SERVER['REMOTE_ADDR'] . "',"
+                                                                    . "'" . date('Y-m-d H:i:s') . "',"
+                                                                    . "'" . 'Analisa KK' . "')";
+                                                            }
+                                                            if ($r_posisikk_ins3) {
+                                                                $value_posisikk_ins3        = implode(',', $r_posisikk_ins3);
+                                                                $insert_posisikk_ins3       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_posisikk_tgl_in_prodorder_ins3(PRODUCTIONORDERCODE,OPERATIONCODE,PROPROGRESSPROGRESSNUMBER,DEMANDSTEPSTEPNUMBER,PROGRESSTEMPLATECODE,MULAI,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_posisikk_ins3");
+                                                            }
 
-                                                        // itxview_posisikk_tgl_in_prodorder_cnp1
-                                                        $posisikk_cnp1 = db2_exec($conn1, "SELECT * FROM ITXVIEW_POSISIKK_TGL_IN_PRODORDER_CNP1 WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]'");
-                                                        while ($row_posisikk_cnp1   = db2_fetch_assoc($posisikk_cnp1)) {
-                                                            $r_posisikk_cnp1[]      = "('" . TRIM(addslashes($row_posisikk_cnp1['PRODUCTIONORDERCODE'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['OPERATIONCODE'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['PROPROGRESSPROGRESSNUMBER'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['DEMANDSTEPSTEPNUMBER'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['PROGRESSTEMPLATECODE'])) . "',"
-                                                                . "'" . TRIM(addslashes($row_posisikk_cnp1['MULAI'])) . "',"
-                                                                . "'" . $_SERVER['REMOTE_ADDR'] . "',"
-                                                                . "'" . date('Y-m-d H:i:s') . "',"
-                                                                . "'" . 'Analisa KK' . "')";
-                                                        }
-                                                        if ($r_posisikk_cnp1) {
-                                                            $value_posisikk_cnp1        = implode(',', $r_posisikk_cnp1);
-                                                            $insert_posisikk_cnp1       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_posisikk_tgl_in_prodorder_cnp1(PRODUCTIONORDERCODE,OPERATIONCODE,PROPROGRESSPROGRESSNUMBER,DEMANDSTEPSTEPNUMBER,PROGRESSTEMPLATECODE,MULAI,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_posisikk_cnp1");
-                                                        }
+                                                            // itxview_posisikk_tgl_in_prodorder_cnp1
+                                                            $posisikk_cnp1 = db2_exec($conn1, "SELECT * FROM ITXVIEW_POSISIKK_TGL_IN_PRODORDER_CNP1 WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]'");
+                                                            while ($row_posisikk_cnp1   = db2_fetch_assoc($posisikk_cnp1)) {
+                                                                $r_posisikk_cnp1[]      = "('" . TRIM(addslashes($row_posisikk_cnp1['PRODUCTIONORDERCODE'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_cnp1['OPERATIONCODE'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_cnp1['PROPROGRESSPROGRESSNUMBER'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_cnp1['DEMANDSTEPSTEPNUMBER'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_cnp1['PROGRESSTEMPLATECODE'])) . "',"
+                                                                    . "'" . TRIM(addslashes($row_posisikk_cnp1['MULAI'])) . "',"
+                                                                    . "'" . $_SERVER['REMOTE_ADDR'] . "',"
+                                                                    . "'" . date('Y-m-d H:i:s') . "',"
+                                                                    . "'" . 'Analisa KK' . "')";
+                                                            }
+                                                            if ($r_posisikk_cnp1) {
+                                                                $value_posisikk_cnp1        = implode(',', $r_posisikk_cnp1);
+                                                                $insert_posisikk_cnp1       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_posisikk_tgl_in_prodorder_cnp1(PRODUCTIONORDERCODE,OPERATIONCODE,PROPROGRESSPROGRESSNUMBER,DEMANDSTEPSTEPNUMBER,PROGRESSTEMPLATECODE,MULAI,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_posisikk_cnp1");
+                                                            }
                                                         ?>
                                                         <thead>
                                                             <?php
-                                                            ini_set("error_reporting", 1);
-                                                            $sqlDB2 = "SELECT DISTINCT
-                                                                            p.WORKCENTERCODE,
-                                                                            CASE
-                                                                                WHEN p.PRODRESERVATIONLINKGROUPCODE IS NULL THEN TRIM(p.OPERATIONCODE) 
-                                                                                WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE) 
-                                                                                ELSE p.PRODRESERVATIONLINKGROUPCODE
-                                                                            END	AS OPERATIONCODE,
-                                                                            TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
-                                                                            o.LONGDESCRIPTION,
-                                                                            iptip.MULAI,
-                                                                            iptop.SELESAI,
-                                                                            p.PRODUCTIONORDERCODE,
-                                                                            p.PRODUCTIONDEMANDCODE,
-                                                                            p.GROUPSTEPNUMBER AS STEPNUMBER,
-                                                                            CASE
-                                                                                WHEN iptip.MACHINECODE = iptop.MACHINECODE THEN iptip.MACHINECODE
-                                                                                ELSE iptip.MACHINECODE || '-' ||iptop.MACHINECODE
-                                                                            END AS MESIN   
-                                                                        FROM 
-                                                                            PRODUCTIONDEMANDSTEP p 
-                                                                        LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
-                                                                        LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
-                                                                        LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
-                                                                        WHERE
-                                                                            p.PRODUCTIONORDERCODE  = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
-                                                                            -- AND NOT iptip.MULAI IS NULL AND NOT iptop.SELESAI IS NULL
-                                                                        ORDER BY iptip.MULAI ASC";
-                                                            $stmt = db2_exec($conn1, $sqlDB2);
-                                                            $stmt2 = db2_exec($conn1, $sqlDB2);
-                                                            $stmt3 = db2_exec($conn1, $sqlDB2);
-                                                            $stmt4 = db2_exec($conn1, $sqlDB2);
-                                                            $stmt5 = db2_exec($conn1, $sqlDB2);
-                                                            $stmt6 = db2_exec($conn1, $sqlDB2);
-                                                            $stmt7 = db2_exec($conn1, $sqlDB2);
+                                                                ini_set("error_reporting", 1);
+                                                                // handle jika prod order gabungan 
+                                                                $gabungProdOrder   = "SELECT
+                                                                                        LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', 	', ') AS PRODUCTIONORDERCODE 
+                                                                                    FROM
+                                                                                        ITXVIEWKK
+                                                                                    WHERE
+                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'";
+                                                                $q_gabungProdOrder  = db2_exec($conn1, $gabungProdOrder);
+                                                                $d_gabungProdOrder  = db2_fetch_assoc($q_gabungProdOrder);
+
+                                                                if($d_gabungProdOrder){
+                                                                    $ProdOrderGabung    = $d_gabungProdOrder['PRODUCTIONORDERCODE'];
+                                                                }else{
+                                                                    $ProdOrderGabung    = '';
+                                                                }
+
+                                                                $sqlDB2 = "SELECT DISTINCT
+                                                                                p.WORKCENTERCODE,
+                                                                                CASE
+                                                                                    WHEN p.PRODRESERVATIONLINKGROUPCODE IS NULL THEN TRIM(p.OPERATIONCODE) 
+                                                                                    WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE) 
+                                                                                    ELSE p.PRODRESERVATIONLINKGROUPCODE
+                                                                                END	AS OPERATIONCODE,
+                                                                                TRIM(o.OPERATIONGROUPCODE) AS OPERATIONGROUPCODE,
+                                                                                o.LONGDESCRIPTION,
+                                                                                iptip.MULAI,
+                                                                                iptop.SELESAI,
+                                                                                p.PRODUCTIONORDERCODE,
+                                                                                p.PRODUCTIONDEMANDCODE,
+                                                                                p.GROUPSTEPNUMBER AS STEPNUMBER,
+                                                                                CASE
+                                                                                    WHEN iptip.MACHINECODE = iptop.MACHINECODE THEN iptip.MACHINECODE
+                                                                                    ELSE iptip.MACHINECODE || '-' ||iptop.MACHINECODE
+                                                                                END AS MESIN   
+                                                                            FROM 
+                                                                                PRODUCTIONDEMANDSTEP p 
+                                                                            LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
+                                                                            LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
+                                                                            LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
+                                                                            WHERE
+                                                                                p.PRODUCTIONORDERCODE IN ($ProdOrderGabung) AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                -- AND NOT iptip.MULAI IS NULL AND NOT iptop.SELESAI IS NULL
+                                                                            ORDER BY iptip.MULAI ASC";
+                                                                $stmt = db2_exec($conn1, $sqlDB2);
+                                                                $stmt2 = db2_exec($conn1, $sqlDB2);
+                                                                $stmt3 = db2_exec($conn1, $sqlDB2);
+                                                                $stmt4 = db2_exec($conn1, $sqlDB2);
+                                                                $stmt5 = db2_exec($conn1, $sqlDB2);
+                                                                $stmt6 = db2_exec($conn1, $sqlDB2);
+                                                                $stmt7 = db2_exec($conn1, $sqlDB2);
                                                             ?>
                                                             <tr>
                                                                 <?php while ($rowdb2 = db2_fetch_assoc($stmt)) { ?>
                                                                     <?php
                                                                     $q_QA_DATA  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                WHERE  
+                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                 AND WORKCENTERCODE = '$rowdb2[WORKCENTERCODE]' 
                                                                                                                 AND OPERATIONCODE = '$rowdb2[OPERATIONCODE]' 
                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -692,8 +714,8 @@
                                                                 <?php while ($rowdb4 = db2_fetch_assoc($stmt4)) { ?>
                                                                     <?php
                                                                     $q_QA_DATA4  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                WHERE  
+                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                 AND WORKCENTERCODE = '$rowdb4[WORKCENTERCODE]' 
                                                                                                                 AND OPERATIONCODE = '$rowdb4[OPERATIONCODE]' 
                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -774,8 +796,8 @@
                                                                 <?php while ($rowdb3 = db2_fetch_assoc($stmt2)) { ?>
                                                                     <?php
                                                                     $q_QA_DATA2  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                WHERE  
+                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                 AND WORKCENTERCODE = '$rowdb3[WORKCENTERCODE]' 
                                                                                                                 AND OPERATIONCODE = '$rowdb3[OPERATIONCODE]' 
                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -792,8 +814,8 @@
                                                                 <?php while ($rowdb5 = db2_fetch_assoc($stmt5)) { ?>
                                                                     <?php
                                                                     $q_QA_DATA5  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                WHERE  
+                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                 AND WORKCENTERCODE = '$rowdb5[WORKCENTERCODE]' 
                                                                                                                 AND OPERATIONCODE = '$rowdb5[OPERATIONCODE]' 
                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -826,13 +848,13 @@
                                                                                 <th style="text-align: center;">
                                                                                     <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/dye-itti/pages/cetak/cetak_monitoring_new.php?idkk=&no=<?= $d_dye_montemp['no_resep']; ?>&idm=<?php echo $d_dye_montemp['idm']; ?>&ids=<?php echo $d_dye_montemp['ids']; ?>" target="_blank">Monitoring <i class="icofont icofont-external-link"></i></a>
                                                                                     &ensp;
-                                                                                    <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
+                                                                                    <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $cek_QA_DATA5['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
                                                                                 </th>
                                                                         <?php else : ?>
                                                                             <?php $opr_grup = $rowdb5['OPERATIONGROUPCODE'];
                                                                             if (str_contains($opr_grup, "FIN")) : ?>
                                                                                 <th style="text-align: center;">
-                                                                                    <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/fin_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
+                                                                                    <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/fin_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $cek_QA_DATA5['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
                                                                                 </th>
                                                                             <?php else : ?>
                                                                                 <th style="text-align: center;">-</th>
@@ -845,8 +867,8 @@
                                                                 <?php while ($rowdb7 = db2_fetch_assoc($stmt7)) { ?>
                                                                     <?php
                                                                     $q_QA_DATA7  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                WHERE  
+                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                 AND WORKCENTERCODE = '$rowdb7[WORKCENTERCODE]' 
                                                                                                                 AND OPERATIONCODE = '$rowdb7[OPERATIONCODE]' 
                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -892,8 +914,8 @@
                                                                 <?php while ($rowdb6 = db2_fetch_assoc($stmt6)) { ?>
                                                                     <?php
                                                                     $q_QA_DATA8  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                WHERE  
+                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                 AND WORKCENTERCODE = '$rowdb6[WORKCENTERCODE]' 
                                                                                                                 AND OPERATIONCODE = '$rowdb6[OPERATIONCODE]' 
                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -930,8 +952,8 @@
                                                                 <?php while ($rowdb4 = db2_fetch_assoc($stmt3)) { ?>
                                                                     <?php
                                                                     $sqlQAData      = "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                        WHERE 
+                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                         AND WORKCENTERCODE = '$rowdb4[WORKCENTERCODE]' 
                                                                                         AND OPERATIONCODE = '$rowdb4[OPERATIONCODE]' 
                                                                                         AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -1013,7 +1035,7 @@
                                                             require_once "koneksi.php";
                                                             $demand     = $row_looping1['PRODUCTIONDEMANDCODE'];
 
-                                                            $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+                                                            $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' ORDER BY CREATIONDATETIME DESC");
                                                             $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
 
                                                             if ($_GET['prod_order']) {
@@ -1029,9 +1051,9 @@
                                                             $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
 
                                                             // itxview_detail_qa_data
-                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM itxview_detail_qa_data 
-                                                                                                            WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                            AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
+                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM ITXVIEW_DETAIL_QA_DATA 
+                                                                                                            WHERE  
+                                                                                                            PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
                                                                                                             AND OPERATIONCODE IN ('" . implode("','", $_POST['operation']) . "') 
                                                                                                             ORDER BY LINE ASC");
                                                             while ($row_itxview_detail_qa_data     = db2_fetch_assoc($itxview_detail_qa_data)) {
@@ -1489,6 +1511,22 @@
                                                                 <thead>
                                                                     <?php
                                                                         ini_set("error_reporting", 1);
+                                                                        // handle jika prod order gabungan 
+                                                                        $gabungProdOrder   = "SELECT
+                                                                                                LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', 	', ') AS PRODUCTIONORDERCODE 
+                                                                                            FROM
+                                                                                                ITXVIEWKK
+                                                                                            WHERE
+                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'";
+                                                                        $q_gabungProdOrder  = db2_exec($conn1, $gabungProdOrder);
+                                                                        $d_gabungProdOrder  = db2_fetch_assoc($q_gabungProdOrder);
+
+                                                                        if($d_gabungProdOrder){
+                                                                            $ProdOrderGabung    = $d_gabungProdOrder['PRODUCTIONORDERCODE'];
+                                                                        }else{
+                                                                            $ProdOrderGabung    = '';
+                                                                        }
+
                                                                         $sqlDB2 = "SELECT DISTINCT
                                                                                         p.WORKCENTERCODE,
                                                                                         CASE
@@ -1513,7 +1551,7 @@
                                                                                     LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                                     LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                                     WHERE
-                                                                                        p.PRODUCTIONORDERCODE  = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                        p.PRODUCTIONORDERCODE IN($ProdOrderGabung) AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                         -- AND NOT iptip.MULAI IS NULL AND NOT iptop.SELESAI IS NULL
                                                                                     ORDER BY iptip.MULAI ASC";
                                                                         $stmt = db2_exec($conn1, $sqlDB2);
@@ -1528,8 +1566,8 @@
                                                                         <?php while ($rowdb2 = db2_fetch_assoc($stmt)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                        WHERE 
+                                                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                         AND WORKCENTERCODE = '$rowdb2[WORKCENTERCODE]' 
                                                                                                                         AND OPERATIONCODE = '$rowdb2[OPERATIONCODE]' 
                                                                                                                         AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -1546,8 +1584,8 @@
                                                                         <?php while ($rowdb4 = db2_fetch_assoc($stmt4)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA4  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                        WHERE  
+                                                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                         AND WORKCENTERCODE = '$rowdb4[WORKCENTERCODE]' 
                                                                                                                         AND OPERATIONCODE = '$rowdb4[OPERATIONCODE]' 
                                                                                                                         AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -1628,8 +1666,8 @@
                                                                         <?php while ($rowdb3 = db2_fetch_assoc($stmt2)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA2  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                        WHERE  
+                                                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                         AND WORKCENTERCODE = '$rowdb3[WORKCENTERCODE]' 
                                                                                                                         AND OPERATIONCODE = '$rowdb3[OPERATIONCODE]' 
                                                                                                                         AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -1646,8 +1684,8 @@
                                                                         <?php while ($rowdb5 = db2_fetch_assoc($stmt5)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA5  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                        WHERE  
+                                                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                         AND WORKCENTERCODE = '$rowdb5[WORKCENTERCODE]' 
                                                                                                                         AND OPERATIONCODE = '$rowdb5[OPERATIONCODE]' 
                                                                                                                         AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -1680,13 +1718,13 @@
                                                                                     <th style="text-align: center;">
                                                                                         <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/dye-itti/pages/cetak/cetak_monitoring_new.php?idkk=&no=<?= $d_dye_montemp['no_resep']; ?>&idm=<?php echo $d_dye_montemp['idm']; ?>&ids=<?php echo $d_dye_montemp['ids']; ?>" target="_blank">Monitoring <i class="icofont icofont-external-link"></i></a>
                                                                                         &ensp;
-                                                                                        <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
+                                                                                        <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $cek_QA_DATA5['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
                                                                                     </th>
                                                                                 <?php else : ?>
                                                                                     <?php $opr_grup = $rowdb5['OPERATIONGROUPCODE'];
                                                                                     if (str_contains($opr_grup, "FIN")) : ?>
                                                                                         <th style="text-align: center;">
-                                                                                            <!-- <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/finishing2-new/reports/pages/reports-detail-stenter.php?FromAnalisa=FromAnalisa&prod_order=<?= TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']); ?>&prod_demand=<?= TRIM($demand); ?>&tgl_in=<?= substr($rowdb5['MULAI'], 1, 10); ?>&tgl_out=<?= substr($rowdb5['SELESAI'], 1, 10); ?>" target="_blank">Detail proses <i class="icofont icofont-external-link"></i></a> -->
+                                                                                            <!-- <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/finishing2-new/reports/pages/reports-detail-stenter.php?FromAnalisa=FromAnalisa&prod_order=<?= TRIM($cek_QA_DATA5['PRODUCTIONORDERCODE']); ?>&prod_demand=<?= TRIM($demand); ?>&tgl_in=<?= substr($rowdb5['MULAI'], 1, 10); ?>&tgl_out=<?= substr($rowdb5['SELESAI'], 1, 10); ?>" target="_blank">Detail proses <i class="icofont icofont-external-link"></i></a> -->
                                                                                         </th>
                                                                                     <?php else : ?>
                                                                                         <th style="text-align: center;">-</th>
@@ -1699,8 +1737,8 @@
                                                                         <?php while ($rowdb7 = db2_fetch_assoc($stmt7)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA7  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                        WHERE  
+                                                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                         AND WORKCENTERCODE = '$rowdb7[WORKCENTERCODE]' 
                                                                                                                         AND OPERATIONCODE = '$rowdb7[OPERATIONCODE]' 
                                                                                                                         AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -1746,8 +1784,8 @@
                                                                         <?php while ($rowdb6 = db2_fetch_assoc($stmt6)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA8  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                        WHERE 
+                                                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                         AND WORKCENTERCODE = '$rowdb6[WORKCENTERCODE]' 
                                                                                                                         AND OPERATIONCODE = '$rowdb6[OPERATIONCODE]' 
                                                                                                                         AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -1784,8 +1822,8 @@
                                                                         <?php while ($rowdb4 = db2_fetch_assoc($stmt3)) { ?>
                                                                             <?php
                                                                             $sqlQAData      = "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                WHERE 
+                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                 AND WORKCENTERCODE = '$rowdb4[WORKCENTERCODE]' 
                                                                                                 AND OPERATIONCODE = '$rowdb4[OPERATIONCODE]' 
                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -1867,7 +1905,7 @@
                                                                 <?php
                                                                     $demand     = $row_looping2['PRODUCTIONDEMANDCODE'];
 
-                                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+                                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' ORDER BY CREATIONDATETIME DESC");
                                                                     $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
 
                                                                     if ($_GET['prod_order']) {
@@ -1883,9 +1921,9 @@
                                                                     $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
 
                                                                     // itxview_detail_qa_data
-                                                                    $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                    WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                    AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                    $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM ITXVIEW_DETAIL_QA_DATA 
+                                                                                                                    WHERE  
+                                                                                                                    PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                     AND OPERATIONCODE IN ('" . implode("','", $_POST['operation']) . "') 
                                                                                                                     ORDER BY LINE ASC");
                                                                     while ($row_itxview_detail_qa_data     = db2_fetch_assoc($itxview_detail_qa_data)) {
@@ -2328,6 +2366,22 @@
                                                                         <thead>
                                                                             <?php
                                                                             ini_set("error_reporting", 1);
+                                                                            // handle jika prod order gabungan 
+                                                                            $gabungProdOrder   = "SELECT
+                                                                                                    LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', 	', ') AS PRODUCTIONORDERCODE 
+                                                                                                FROM
+                                                                                                    ITXVIEWKK
+                                                                                                WHERE
+                                                                                                    PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'";
+                                                                            $q_gabungProdOrder  = db2_exec($conn1, $gabungProdOrder);
+                                                                            $d_gabungProdOrder  = db2_fetch_assoc($q_gabungProdOrder);
+
+                                                                            if($d_gabungProdOrder){
+                                                                                $ProdOrderGabung    = $d_gabungProdOrder['PRODUCTIONORDERCODE'];
+                                                                            }else{
+                                                                                $ProdOrderGabung    = '';
+                                                                            }
+
                                                                             $sqlDB2 = "SELECT DISTINCT
                                                                                             p.WORKCENTERCODE,
                                                                                             CASE
@@ -2352,7 +2406,7 @@
                                                                                         LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                                         LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                                         WHERE
-                                                                                            p.PRODUCTIONORDERCODE  = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                            p.PRODUCTIONORDERCODE IN($ProdOrderGabung) AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                             -- AND NOT iptip.MULAI IS NULL AND NOT iptop.SELESAI IS NULL
                                                                                         ORDER BY iptip.MULAI ASC";
                                                                             $stmt = db2_exec($conn1, $sqlDB2);
@@ -2367,8 +2421,8 @@
                                                                                 <?php while ($rowdb2 = db2_fetch_assoc($stmt)) { ?>
                                                                                     <?php
                                                                                     $q_QA_DATA  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                                WHERE  
+                                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                                 AND WORKCENTERCODE = '$rowdb2[WORKCENTERCODE]' 
                                                                                                                                 AND OPERATIONCODE = '$rowdb2[OPERATIONCODE]' 
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -2385,8 +2439,8 @@
                                                                                 <?php while ($rowdb4 = db2_fetch_assoc($stmt4)) : ?>
                                                                                     <?php
                                                                                     $q_QA_DATA4  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                                WHERE  
+                                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                                 AND WORKCENTERCODE = '$rowdb4[WORKCENTERCODE]' 
                                                                                                                                 AND OPERATIONCODE = '$rowdb4[OPERATIONCODE]' 
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -2467,8 +2521,8 @@
                                                                                 <?php while ($rowdb3 = db2_fetch_assoc($stmt2)) { ?>
                                                                                     <?php
                                                                                     $q_QA_DATA2  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                                WHERE  
+                                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                                 AND WORKCENTERCODE = '$rowdb3[WORKCENTERCODE]' 
                                                                                                                                 AND OPERATIONCODE = '$rowdb3[OPERATIONCODE]' 
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -2485,8 +2539,8 @@
                                                                                 <?php while ($rowdb5 = db2_fetch_assoc($stmt5)) { ?>
                                                                                     <?php
                                                                                     $q_QA_DATA5  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                                WHERE 
+                                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                                 AND WORKCENTERCODE = '$rowdb5[WORKCENTERCODE]' 
                                                                                                                                 AND OPERATIONCODE = '$rowdb5[OPERATIONCODE]' 
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -2519,7 +2573,7 @@
                                                                                             <th style="text-align: center;">
                                                                                                 <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/dye-itti/pages/cetak/cetak_monitoring_new.php?idkk=&no=<?= $d_dye_montemp['no_resep']; ?>&idm=<?php echo $d_dye_montemp['idm']; ?>&ids=<?php echo $d_dye_montemp['ids']; ?>" target="_blank">Monitoring <i class="icofont icofont-external-link"></i></a>
                                                                                                 &ensp;
-                                                                                                <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
+                                                                                                <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand; ?>&prod_order=<?= $cek_QA_DATA5['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
                                                                                             </th>
                                                                                         <?php else : ?>
                                                                                             <?php $opr_grup = $rowdb5['OPERATIONGROUPCODE'];
@@ -2538,8 +2592,8 @@
                                                                                 <?php while ($rowdb7 = db2_fetch_assoc($stmt7)) { ?>
                                                                                     <?php
                                                                                     $q_QA_DATA7  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                                WHERE  
+                                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                                 AND WORKCENTERCODE = '$rowdb7[WORKCENTERCODE]' 
                                                                                                                                 AND OPERATIONCODE = '$rowdb7[OPERATIONCODE]' 
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -2585,8 +2639,8 @@
                                                                                 <?php while ($rowdb6 = db2_fetch_assoc($stmt6)) { ?>
                                                                                     <?php
                                                                                     $q_QA_DATA8  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                                WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                                AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                                                WHERE  
+                                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                                                 AND WORKCENTERCODE = '$rowdb6[WORKCENTERCODE]' 
                                                                                                                                 AND OPERATIONCODE = '$rowdb6[OPERATIONCODE]' 
                                                                                                                                 AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -2623,8 +2677,8 @@
                                                                                 <?php while ($rowdb4 = db2_fetch_assoc($stmt3)) { ?>
                                                                                     <?php
                                                                                     $sqlQAData      = "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
+                                                                                                        WHERE  
+                                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' 
                                                                                                         AND WORKCENTERCODE = '$rowdb4[WORKCENTERCODE]' 
                                                                                                         AND OPERATIONCODE = '$rowdb4[OPERATIONCODE]' 
                                                                                                         AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -2706,7 +2760,7 @@
                                                                 $demand_2     = $_POST['demand2'];
                                                             }
 
-                                                            $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2'");
+                                                            $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2' ORDER BY CREATIONDATETIME DESC");
                                                             $d_ITXVIEWKK_2    = db2_fetch_assoc($q_ITXVIEWKK_2);
 
                                                             if ($_GET['prod_order']) {
@@ -2722,9 +2776,9 @@
                                                             $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
 
                                                             // itxview_detail_qa_data
-                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM itxview_detail_qa_data 
-                                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM ITXVIEW_DETAIL_QA_DATA 
+                                                                                                        WHERE  
+                                                                                                        PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                         AND OPERATIONCODE IN ('" . implode("','", $_POST['operation2']) . "') 
                                                                                                         ORDER BY LINE ASC");
                                                             while ($row_itxview_detail_qa_data     = db2_fetch_assoc($itxview_detail_qa_data)) {
@@ -3161,6 +3215,22 @@
                                                                 <thead>
                                                                     <?php
                                                                     ini_set("error_reporting", 1);
+                                                                    // handle jika prod order gabungan 
+                                                                    $gabungProdOrder   = "SELECT
+                                                                                            LISTAGG('''' || TRIM(PRODUCTIONORDERCODE) || '''', 	', ') AS PRODUCTIONORDERCODE 
+                                                                                        FROM
+                                                                                            ITXVIEWKK
+                                                                                        WHERE
+                                                                                            PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'";
+                                                                    $q_gabungProdOrder  = db2_exec($conn1, $gabungProdOrder);
+                                                                    $d_gabungProdOrder  = db2_fetch_assoc($q_gabungProdOrder);
+
+                                                                    if($d_gabungProdOrder){
+                                                                        $ProdOrderGabung    = $d_gabungProdOrder['PRODUCTIONORDERCODE'];
+                                                                    }else{
+                                                                        $ProdOrderGabung    = '';
+                                                                    }
+
                                                                     $sqlDB2 = "SELECT DISTINCT
                                                                                 p.WORKCENTERCODE,
                                                                                 CASE
@@ -3185,7 +3255,7 @@
                                                                             LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                             LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                             WHERE
-                                                                                p.PRODUCTIONORDERCODE  = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                p.PRODUCTIONORDERCODE IN ($gabungProdOrder) AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                 -- AND NOT iptip.MULAI IS NULL AND NOT iptop.SELESAI IS NULL
                                                                             ORDER BY iptip.MULAI ASC";
                                                                     $stmt = db2_exec($conn1, $sqlDB2);
@@ -3200,8 +3270,8 @@
                                                                         <?php while ($rowdb2 = db2_fetch_assoc($stmt)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                    WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                                                    AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                                                    WHERE  
+                                                                                                                    PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                                     AND WORKCENTERCODE = '$rowdb2[WORKCENTERCODE]' 
                                                                                                                     AND OPERATIONCODE = '$rowdb2[OPERATIONCODE]' 
                                                                                                                     AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -3218,8 +3288,8 @@
                                                                         <?php while ($rowdb4 = db2_fetch_assoc($stmt4)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA4  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                    WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                                                    AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                                                    WHERE  
+                                                                                                                    PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                                     AND WORKCENTERCODE = '$rowdb4[WORKCENTERCODE]' 
                                                                                                                     AND OPERATIONCODE = '$rowdb4[OPERATIONCODE]' 
                                                                                                                     AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -3300,8 +3370,8 @@
                                                                         <?php while ($rowdb3 = db2_fetch_assoc($stmt2)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA2  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                    WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                                                    AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                                                    WHERE  
+                                                                                                                    PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                                     AND WORKCENTERCODE = '$rowdb3[WORKCENTERCODE]' 
                                                                                                                     AND OPERATIONCODE = '$rowdb3[OPERATIONCODE]' 
                                                                                                                     AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -3318,8 +3388,8 @@
                                                                         <?php while ($rowdb5 = db2_fetch_assoc($stmt5)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA5  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                    WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                                                    AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                                                    WHERE  
+                                                                                                                    PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                                     AND WORKCENTERCODE = '$rowdb5[WORKCENTERCODE]' 
                                                                                                                     AND OPERATIONCODE = '$rowdb5[OPERATIONCODE]' 
                                                                                                                     AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -3352,7 +3422,7 @@
                                                                                     <th style="text-align: center;">
                                                                                         <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/dye-itti/pages/cetak/cetak_monitoring_new.php?idkk=&no=<?= $d_dye_montemp['no_resep']; ?>&idm=<?php echo $d_dye_montemp['idm']; ?>&ids=<?php echo $d_dye_montemp['ids']; ?>" target="_blank">Monitoring <i class="icofont icofont-external-link"></i></a>
                                                                                         &ensp;
-                                                                                        <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand_2; ?>&prod_order=<?= $d_ITXVIEWKK_2['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
+                                                                                        <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand_2; ?>&prod_order=<?= $cek_QA_DATA5['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
                                                                                     </th>
                                                                                 <?php else : ?>
                                                                                     <?php $opr_grup = $rowdb5['OPERATIONGROUPCODE'];
@@ -3371,8 +3441,8 @@
                                                                         <?php while ($rowdb7 = db2_fetch_assoc($stmt7)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA7  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                    WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                                                    AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                                                    WHERE  
+                                                                                                                    PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                                     AND WORKCENTERCODE = '$rowdb7[WORKCENTERCODE]' 
                                                                                                                     AND OPERATIONCODE = '$rowdb7[OPERATIONCODE]' 
                                                                                                                     AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -3418,8 +3488,8 @@
                                                                         <?php while ($rowdb6 = db2_fetch_assoc($stmt6)) { ?>
                                                                             <?php
                                                                             $q_QA_DATA8  = sqlsrv_query($con_nowprd, "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                                                    WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                                                    AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                                                    WHERE  
+                                                                                                                    PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                                                     AND WORKCENTERCODE = '$rowdb6[WORKCENTERCODE]' 
                                                                                                                     AND OPERATIONCODE = '$rowdb6[OPERATIONCODE]' 
                                                                                                                     AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -3456,8 +3526,8 @@
                                                                         <?php while ($rowdb4 = db2_fetch_assoc($stmt3)) { ?>
                                                                             <?php
                                                                             $sqlQAData      = "SELECT DISTINCT * FROM nowprd.itxview_detail_qa_data 
-                                                                                            WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                            AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                            WHERE  
+                                                                                            PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                             AND WORKCENTERCODE = '$rowdb4[WORKCENTERCODE]' 
                                                                                             AND OPERATIONCODE = '$rowdb4[OPERATIONCODE]' 
                                                                                             AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
@@ -3535,50 +3605,50 @@
                                                         ?>
                                                         <?php while ($row_looping1_bd2 = db2_fetch_assoc($q_looping1_bd2)) : ?>
                                                             <?php
-                                                            require_once "koneksi.php";
+                                                                require_once "koneksi.php";
 
-                                                            $demand_2     = $row_looping1_bd2['PRODUCTIONDEMANDCODE'];
+                                                                $demand_2     = $row_looping1_bd2['PRODUCTIONDEMANDCODE'];
 
 
-                                                            $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2'");
-                                                            $d_ITXVIEWKK_2    = db2_fetch_assoc($q_ITXVIEWKK_2);
+                                                                $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2' ORDER BY CREATIONDATETIME DESC");
+                                                                $d_ITXVIEWKK_2    = db2_fetch_assoc($q_ITXVIEWKK_2);
 
-                                                            if ($_GET['prod_order']) {
-                                                                $prod_order     = $_GET['prod_order'];
-                                                            } elseif ($_POST['prod_order']) {
-                                                                $prod_order     = $_POST['prod_order'];
-                                                            } else {
-                                                                $prod_order     = $d_ITXVIEWKK_2['PRODUCTIONORDERCODE'];
-                                                            }
+                                                                if ($_GET['prod_order']) {
+                                                                    $prod_order     = $_GET['prod_order'];
+                                                                } elseif ($_POST['prod_order']) {
+                                                                    $prod_order     = $_POST['prod_order'];
+                                                                } else {
+                                                                    $prod_order     = $d_ITXVIEWKK_2['PRODUCTIONORDERCODE'];
+                                                                }
 
-                                                            $sql_pelanggan_buyer     = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$d_ITXVIEWKK_2[ORDPRNCUSTOMERSUPPLIERCODE]' 
-                                                                                                                                        AND CODE = '$d_ITXVIEWKK_2[PROJECTCODE]'");
-                                                            $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
+                                                                $sql_pelanggan_buyer     = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$d_ITXVIEWKK_2[ORDPRNCUSTOMERSUPPLIERCODE]' 
+                                                                                                                                            AND CODE = '$d_ITXVIEWKK_2[PROJECTCODE]'");
+                                                                $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
 
-                                                            // itxview_detail_qa_data
-                                                            $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM itxview_detail_qa_data 
-                                                                                                        WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                                        AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
-                                                                                                        AND OPERATIONCODE IN ('" . implode("','", $_POST['operation2']) . "') 
-                                                                                                        ORDER BY LINE ASC");
-                                                            while ($row_itxview_detail_qa_data     = db2_fetch_assoc($itxview_detail_qa_data)) {
-                                                                $r_itxview_detail_qa_data[]        = "('" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONDEMANDCODE'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONORDERCODE'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxview_detail_qa_data['WORKCENTERCODE'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxview_detail_qa_data['OPERATIONCODE'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxview_detail_qa_data['LINE'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxview_detail_qa_data['QUALITYDOCUMENTHEADERNUMBERID'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxview_detail_qa_data['CHARACTERISTICCODE'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxview_detail_qa_data['LONGDESCRIPTION'])) . "',"
-                                                                    . "'" . TRIM(addslashes($row_itxview_detail_qa_data['VALUEQUANTITY'])) . "',"
-                                                                    . "'" . $_SERVER['REMOTE_ADDR'] . "',"
-                                                                    . "'" . date('Y-m-d H:i:s') . "',"
-                                                                    . "'" . 'Analisa KK' . "')";
-                                                            }
-                                                            if (!empty($r_itxview_detail_qa_data)) {
-                                                                $value_itxview_detail_qa_data        = implode(',', $r_itxview_detail_qa_data);
-                                                                $insert_itxview_detail_qa_data       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_detail_qa_data(PRODUCTIONDEMANDCODE,PRODUCTIONORDERCODE,WORKCENTERCODE,OPERATIONCODE,LINE,QUALITYDOCUMENTHEADERNUMBERID,CHARACTERISTICCODE,LONGDESCRIPTION,VALUEQUANTITY,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_itxview_detail_qa_data");
-                                                            }
+                                                                // itxview_detail_qa_data
+                                                                $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM ITXVIEW_DETAIL_QA_DATA 
+                                                                                                            WHERE  
+                                                                                                            PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                                            AND OPERATIONCODE IN ('" . implode("','", $_POST['operation2']) . "') 
+                                                                                                            ORDER BY LINE ASC");
+                                                                while ($row_itxview_detail_qa_data     = db2_fetch_assoc($itxview_detail_qa_data)) {
+                                                                    $r_itxview_detail_qa_data[]        = "('" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONDEMANDCODE'])) . "',"
+                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONORDERCODE'])) . "',"
+                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['WORKCENTERCODE'])) . "',"
+                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['OPERATIONCODE'])) . "',"
+                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['LINE'])) . "',"
+                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['QUALITYDOCUMENTHEADERNUMBERID'])) . "',"
+                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['CHARACTERISTICCODE'])) . "',"
+                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['LONGDESCRIPTION'])) . "',"
+                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['VALUEQUANTITY'])) . "',"
+                                                                        . "'" . $_SERVER['REMOTE_ADDR'] . "',"
+                                                                        . "'" . date('Y-m-d H:i:s') . "',"
+                                                                        . "'" . 'Analisa KK' . "')";
+                                                                }
+                                                                if (!empty($r_itxview_detail_qa_data)) {
+                                                                    $value_itxview_detail_qa_data        = implode(',', $r_itxview_detail_qa_data);
+                                                                    $insert_itxview_detail_qa_data       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_detail_qa_data(PRODUCTIONDEMANDCODE,PRODUCTIONORDERCODE,WORKCENTERCODE,OPERATIONCODE,LINE,QUALITYDOCUMENTHEADERNUMBERID,CHARACTERISTICCODE,LONGDESCRIPTION,VALUEQUANTITY,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_itxview_detail_qa_data");
+                                                                }
                                                             ?>
                                                             <center style="background-color: #ff6b81; color: #2d3436;">
                                                                 <i class="ti-angle-double-down"></i>
@@ -4192,7 +4262,7 @@
                                                                                         <th style="text-align: center;">
                                                                                             <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/dye-itti/pages/cetak/cetak_monitoring_new.php?idkk=&no=<?= $d_dye_montemp['no_resep']; ?>&idm=<?php echo $d_dye_montemp['idm']; ?>&ids=<?php echo $d_dye_montemp['ids']; ?>" target="_blank">Monitoring <i class="icofont icofont-external-link"></i></a>
                                                                                             &ensp;
-                                                                                            <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand_2; ?>&prod_order=<?= $d_ITXVIEWKK_2['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
+                                                                                            <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand_2; ?>&prod_order=<?= $cek_QA_DATA5['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
                                                                                         </th>
                                                                                     <?php else : ?>
                                                                                         <?php $opr_grup = $rowdb5['OPERATIONGROUPCODE'];
@@ -4376,50 +4446,50 @@
                                                             ?>
                                                             <?php while ($row_looping2_bd2 = db2_fetch_assoc($q_looping2_bd2)) : ?>
                                                                 <?php
-                                                                require_once "koneksi.php";
+                                                                    require_once "koneksi.php";
 
-                                                                $demand_2     = $row_looping2_bd2['PRODUCTIONDEMANDCODE'];
+                                                                    $demand_2     = $row_looping2_bd2['PRODUCTIONDEMANDCODE'];
 
 
-                                                                $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2'");
-                                                                $d_ITXVIEWKK_2    = db2_fetch_assoc($q_ITXVIEWKK_2);
+                                                                    $q_ITXVIEWKK_2    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand_2' ORDER BY CREATIONDATETIME DESC");
+                                                                    $d_ITXVIEWKK_2    = db2_fetch_assoc($q_ITXVIEWKK_2);
 
-                                                                if ($_GET['prod_order']) {
-                                                                    $prod_order     = $_GET['prod_order'];
-                                                                } elseif ($_POST['prod_order']) {
-                                                                    $prod_order     = $_POST['prod_order'];
-                                                                } else {
-                                                                    $prod_order     = $d_ITXVIEWKK_2['PRODUCTIONORDERCODE'];
-                                                                }
+                                                                    if ($_GET['prod_order']) {
+                                                                        $prod_order     = $_GET['prod_order'];
+                                                                    } elseif ($_POST['prod_order']) {
+                                                                        $prod_order     = $_POST['prod_order'];
+                                                                    } else {
+                                                                        $prod_order     = $d_ITXVIEWKK_2['PRODUCTIONORDERCODE'];
+                                                                    }
 
-                                                                $sql_pelanggan_buyer     = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$d_ITXVIEWKK_2[ORDPRNCUSTOMERSUPPLIERCODE]' 
-                                                                                                                                            AND CODE = '$d_ITXVIEWKK_2[PROJECTCODE]'");
-                                                                $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
+                                                                    $sql_pelanggan_buyer     = db2_exec($conn1, "SELECT * FROM ITXVIEW_PELANGGAN WHERE ORDPRNCUSTOMERSUPPLIERCODE = '$d_ITXVIEWKK_2[ORDPRNCUSTOMERSUPPLIERCODE]' 
+                                                                                                                                                AND CODE = '$d_ITXVIEWKK_2[PROJECTCODE]'");
+                                                                    $dt_pelanggan_buyer        = db2_fetch_assoc($sql_pelanggan_buyer);
 
-                                                                // itxview_detail_qa_data
-                                                                $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM itxview_detail_qa_data 
-                                                                                                            WHERE PRODUCTIONORDERCODE = '$d_ITXVIEWKK_2[PRODUCTIONORDERCODE]' 
-                                                                                                            AND PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
-                                                                                                            AND OPERATIONCODE IN ('" . implode("','", $_POST['operation2']) . "') 
-                                                                                                            ORDER BY LINE ASC");
-                                                                while ($row_itxview_detail_qa_data     = db2_fetch_assoc($itxview_detail_qa_data)) {
-                                                                    $r_itxview_detail_qa_data[]        = "('" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONDEMANDCODE'])) . "',"
-                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONORDERCODE'])) . "',"
-                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['WORKCENTERCODE'])) . "',"
-                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['OPERATIONCODE'])) . "',"
-                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['LINE'])) . "',"
-                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['QUALITYDOCUMENTHEADERNUMBERID'])) . "',"
-                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['CHARACTERISTICCODE'])) . "',"
-                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['LONGDESCRIPTION'])) . "',"
-                                                                        . "'" . TRIM(addslashes($row_itxview_detail_qa_data['VALUEQUANTITY'])) . "',"
-                                                                        . "'" . $_SERVER['REMOTE_ADDR'] . "',"
-                                                                        . "'" . date('Y-m-d H:i:s') . "',"
-                                                                        . "'" . 'Analisa KK' . "')";
-                                                                }
-                                                                if (!empty($r_itxview_detail_qa_data)) {
-                                                                    $value_itxview_detail_qa_data        = implode(',', $r_itxview_detail_qa_data);
-                                                                    $insert_itxview_detail_qa_data       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_detail_qa_data(PRODUCTIONDEMANDCODE,PRODUCTIONORDERCODE,WORKCENTERCODE,OPERATIONCODE,LINE,QUALITYDOCUMENTHEADERNUMBERID,CHARACTERISTICCODE,LONGDESCRIPTION,VALUEQUANTITY,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_itxview_detail_qa_data");
-                                                                }
+                                                                    // itxview_detail_qa_data
+                                                                    $itxview_detail_qa_data     = db2_exec($conn1, "SELECT * FROM ITXVIEW_DETAIL_QA_DATA 
+                                                                                                                WHERE  
+                                                                                                                PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                                                AND OPERATIONCODE IN ('" . implode("','", $_POST['operation2']) . "') 
+                                                                                                                ORDER BY LINE ASC");
+                                                                    while ($row_itxview_detail_qa_data     = db2_fetch_assoc($itxview_detail_qa_data)) {
+                                                                        $r_itxview_detail_qa_data[]        = "('" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONDEMANDCODE'])) . "',"
+                                                                            . "'" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONORDERCODE'])) . "',"
+                                                                            . "'" . TRIM(addslashes($row_itxview_detail_qa_data['WORKCENTERCODE'])) . "',"
+                                                                            . "'" . TRIM(addslashes($row_itxview_detail_qa_data['OPERATIONCODE'])) . "',"
+                                                                            . "'" . TRIM(addslashes($row_itxview_detail_qa_data['LINE'])) . "',"
+                                                                            . "'" . TRIM(addslashes($row_itxview_detail_qa_data['QUALITYDOCUMENTHEADERNUMBERID'])) . "',"
+                                                                            . "'" . TRIM(addslashes($row_itxview_detail_qa_data['CHARACTERISTICCODE'])) . "',"
+                                                                            . "'" . TRIM(addslashes($row_itxview_detail_qa_data['LONGDESCRIPTION'])) . "',"
+                                                                            . "'" . TRIM(addslashes($row_itxview_detail_qa_data['VALUEQUANTITY'])) . "',"
+                                                                            . "'" . $_SERVER['REMOTE_ADDR'] . "',"
+                                                                            . "'" . date('Y-m-d H:i:s') . "',"
+                                                                            . "'" . 'Analisa KK' . "')";
+                                                                    }
+                                                                    if (!empty($r_itxview_detail_qa_data)) {
+                                                                        $value_itxview_detail_qa_data        = implode(',', $r_itxview_detail_qa_data);
+                                                                        $insert_itxview_detail_qa_data       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_detail_qa_data(PRODUCTIONDEMANDCODE,PRODUCTIONORDERCODE,WORKCENTERCODE,OPERATIONCODE,LINE,QUALITYDOCUMENTHEADERNUMBERID,CHARACTERISTICCODE,LONGDESCRIPTION,VALUEQUANTITY,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_itxview_detail_qa_data");
+                                                                    }
                                                                 ?>
                                                                 <center style="background-color: #e67e22; color: white;">
                                                                     <i class="ti-angle-double-down"></i>
@@ -5033,7 +5103,7 @@
                                                                                             <th style="text-align: center;">
                                                                                                 <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/dye-itti/pages/cetak/cetak_monitoring_new.php?idkk=&no=<?= $d_dye_montemp['no_resep']; ?>&idm=<?php echo $d_dye_montemp['idm']; ?>&ids=<?php echo $d_dye_montemp['ids']; ?>" target="_blank">Monitoring <i class="icofont icofont-external-link"></i></a>
                                                                                                 &ensp;
-                                                                                                <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand_2; ?>&prod_order=<?= $d_ITXVIEWKK_2['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
+                                                                                                <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/laporan/dye_filter_bon_reservation.php?demand=<?= $demand_2; ?>&prod_order=<?= $cek_QA_DATA5['PRODUCTIONORDERCODE']; ?>&OPERATION=<?= $rowdb5['OPERATIONCODE'] ?>" target="_blank">Bon Resep <i class="icofont icofont-external-link"></i></a>
                                                                                             </th>
                                                                                         <?php else : ?>
                                                                                             <?php $opr_grup = $rowdb5['OPERATIONGROUPCODE'];

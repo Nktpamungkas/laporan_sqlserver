@@ -51,9 +51,15 @@
                                                         } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
-                                                    <h4 class="sub-title">Issue Date/Tgl Pengiriman</h4>
+                                                    <h4 class="sub-title">Issue Date/Tgl Pengiriman 1</h4>
                                                     <input type="date" name="tgl1" class="form-control" id="tgl1" value="<?php if (isset($_POST['submit'])) {
                                                         echo $_POST['tgl1'];
+                                                    } ?>">
+                                                </div>
+                                                <div class="col-sm-12 col-xl-2 m-b-30">
+                                                    <h4 class="sub-title">Issue Date/Tgl Pengiriman 2</h4>
+                                                    <input type="date" name="tgl2" class="form-control" id="tgl2" value="<?php if (isset($_POST['submit'])) {
+                                                        echo $_POST['tgl2'];
                                                     } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
@@ -132,10 +138,11 @@
                                                             set_time_limit(0);
                                                             require_once "koneksi.php";
                                                             $tgl1 = $_POST['tgl1'];
+                                                            $tgl2 = $_POST['tgl2'];
                                                             $no_order = $_POST['no_order'];
 
                                                             if ($tgl1) {
-                                                                $where_date = "i.GOODSISSUEDATE = '$tgl1'";
+                                                                $where_date = "i.GOODSISSUEDATE BETWEEN '$tgl1' AND '$tgl2'";
                                                             } else {
                                                                 $where_date = "";
                                                             }
@@ -175,9 +182,11 @@
                                                                                     LISTAGG(DISTINCT ''''|| TRIM(iasp.LOTCODE) ||'''', ', ' ) AS LOTCODE2,
                                                                                     i2.WARNA AS WARNA,
                                                                                     i.LEGALNAME1,
-                                                                                    i.CODE AS CODE
+                                                                                    i.CODE AS CODE                                                                                 
                                                                                 FROM
                                                                                     ITXVIEW_SURATJALAN_PPC_FOR_POSELESAI i
+                                                                                LEFT JOIN ITXVIEW_SURATJALAN_PPCNEW isp ON
+                                                                                    isp.PROVISIONALCODE = i.PROVISIONALCODE
                                                                                 LEFT JOIN ITXVIEW_ALLOCATION_SURATJALAN_PPC iasp ON
                                                                                     iasp.CODE = i.CODE
                                                                                 LEFT JOIN ITXVIEWCOLOR i2 ON
@@ -272,6 +281,7 @@
                                                                                     AND i.DOCUMENTTYPETYPE = 05 
                                                                                     AND NOT i.CODE IS NULL 
                                                                                     AND i.PROGRESSSTATUS_SALDOC = 2
+                                                                                    AND iasp.PROGRESSSTATUS = 2 -- STATUS ALLOCATIONNYA 'CLOSED' = SHIPPED
                                                                                 GROUP BY
                                                                                     i.PROVISIONALCODE,
                                                                                     i.PRICEUNITOFMEASURECODE,
@@ -305,7 +315,7 @@
                                                                                 ORDER BY 
                                                                                     i.PROVISIONALCODE ASC";
                                                             }
-
+                                                            // echo $sqlDB2;
                                                             $stmt = db2_exec($conn1, $sqlDB2);
                                                             $no = 1;
                                                             while ($rowdb2 = db2_fetch_assoc($stmt)) {
@@ -352,7 +362,7 @@
                                                                         <td><?= $rowdb2['PROVISIONALCODE']; ?></td>
                                                                         <td><?= $rowdb2['WARNA']; ?></td>
                                                                         <td><?= $d_ket_foc['ROLL']; ?></td>
-                                                                        <td><?= number_format($d_ket_foc['KG'], 2); ?>halah</td>
+                                                                        <td><?= number_format($d_ket_foc['KG'], 2); ?></td>
                                                                         <td><?= number_format($d_ket_foc['YARD_MTR'], 2); ?></td>
                                                                         <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td>
                                                                         <td>
@@ -440,14 +450,71 @@
                                                                         $d_rollfoc = db2_fetch_assoc($q_rollfoc);
                                                                         $roll = $d_roll['ROLL'] - $d_rollfoc['ROLL']; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
                                                                     } else {
-                                                                        $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
-                                                                                                            SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                                                            SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                                                            LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
-                                                                                                    FROM 
-                                                                                                        ITXVIEWALLOCATION0 
-                                                                                                    WHERE 
-                                                                                                        CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
+                                                                        // $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                                                                        //                                     SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                        //                                     SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                        //                                     LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
+                                                                        //                             FROM 
+                                                                        //                                 ITXVIEWALLOCATION0 
+                                                                        //                             WHERE 
+                                                                        //                                 CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
+                                                                        // $q_roll = db2_exec($conn1, "SELECT
+                                                                        //                                         COUNT(ITEMTYPECODE) AS ROLL,
+                                                                        //                                         SUM(USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                        //                                         SUM(USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                        //                                         LOTCODE 
+                                                                        //                                     FROM
+                                                                        //                                         STOCKTRANSACTION s
+                                                                        //                                     WHERE
+                                                                        //                                         TEMPLATECODE = 'S02'
+                                                                        //                                         AND LOGICALWAREHOUSECODE = 'M031'
+                                                                        //                                         AND ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                        //                                         AND DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                        //                                     GROUP BY
+                                                                        //                                         LOTCODE");
+                                                                        $q_roll = db2_exec($conn1, "SELECT
+                                                                                                        COUNT(s.ITEMTYPECODE) AS ROLL,
+                                                                                                        SUM(s.USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                                        SUM(s.USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                                        -- s.LOTCODE,
+                                                                                                        CASE 
+                                                                                                            WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                                            ELSE 'NON'
+                                                                                                        END AS QUALITYREASONCODE
+                                                                                                    FROM
+                                                                                                        STOCKTRANSACTION s
+                                                                                                        LEFT JOIN ELEMENTS e ON e.CODE = s.ITEMELEMENTCODE 
+                                                                                                        AND e.DECOSUBCODE01 = s.DECOSUBCODE01
+                                                                                                        AND e.DECOSUBCODE02 = s.DECOSUBCODE02
+                                                                                                        AND e.DECOSUBCODE03 = s.DECOSUBCODE03
+                                                                                                        AND e.DECOSUBCODE04 = s.DECOSUBCODE04
+                                                                                                        AND e.DECOSUBCODE05 = s.DECOSUBCODE05
+                                                                                                        AND e.DECOSUBCODE06 = s.DECOSUBCODE06
+                                                                                                        AND e.DECOSUBCODE07 = s.DECOSUBCODE07
+                                                                                                        AND e.DECOSUBCODE08 = s.DECOSUBCODE08
+                                                                                                        AND e.DECOSUBCODE09 = s.DECOSUBCODE09
+                                                                                                        AND e.DECOSUBCODE10 = s.DECOSUBCODE10
+                                                                                                    WHERE
+                                                                                                        s.TEMPLATECODE = 'S02'
+                                                                                                        -- AND ( s.LOGICALWAREHOUSECODE = 'M031'  or s.LOGICALWAREHOUSECODE = 'M504' or s.LOGICALWAREHOUSECODE = 'M631' )
+                                                                                                        AND s.ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                                        AND s.DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                                                    GROUP BY
+                                                                                                        -- s.LOTCODE,
+                                                                                                        s.DECOSUBCODE01,
+                                                                                                        s.DECOSUBCODE02,
+                                                                                                        s.DECOSUBCODE03,
+                                                                                                        s.DECOSUBCODE04,
+                                                                                                        s.DECOSUBCODE05,
+                                                                                                        s.DECOSUBCODE06,
+                                                                                                        s.DECOSUBCODE07,
+                                                                                                        s.DECOSUBCODE08,
+                                                                                                        s.DECOSUBCODE09,
+                                                                                                        s.DECOSUBCODE10,
+                                                                                                        CASE 
+                                                                                                            WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                                            ELSE 'NON'
+                                                                                                        END");
                                                                         $d_roll = db2_fetch_assoc($q_roll);
                                                                         $roll = $d_roll['ROLL'];
                                                                     }
@@ -542,26 +609,119 @@
                                                                                 $d_roll = db2_fetch_assoc($q_roll);
                                                                                 echo $d_roll['ROLL']; // MENGHITUNG JIKA FOC SEBAGIAN, MAKA ROLL UNTUK FOC TIDAK PERLU DIPISAH DARI KESELURUHAN
                                                                             } else {
-                                                                                $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
-                                                                                                                                SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                                                                                LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
-                                                                                                                        FROM 
-                                                                                                                            ITXVIEWALLOCATION0 
-                                                                                                                        WHERE 
-                                                                                                                            CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
+                                                                            // Sebelum perubahan pakai query ini
+                                                                                // $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                                                                                //                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                                                 LOTCODE
+                                                                                //                                         FROM 
+                                                                                //                                             ITXVIEWALLOCATION0 
+                                                                                //                                         WHERE 
+                                                                                //                                             CODE = '$rowdb2[CODE]' 
+                                                                                //                                             AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                                //                                         GROUP BY 
+                                                                                //                                             LOTCODE");
+                                                                            // End Query
+                                                                            // Query nya anto
+                                                                                // $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                                                                                //                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                                                 LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
+                                                                                //                                         FROM 
+                                                                                //                                             ITXVIEWALLOCATION0 
+                                                                                //                                         WHERE 
+                                                                                //                                             CODE = '$rowdb2[CODE]' AND LOTCODE IN ($rowdb2[LOTCODE2])");
+                                                                                // $q_roll = db2_exec($conn1, "SELECT
+                                                                                //                                 COUNT(ITEMTYPECODE) AS ROLL,
+                                                                                //                                 SUM(USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                                 SUM(USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                                 LOTCODE 
+                                                                                //                             FROM
+                                                                                //                                 STOCKTRANSACTION s
+                                                                                //                             WHERE
+                                                                                //                                 TEMPLATECODE = 'S02'
+                                                                                //                                 AND LOGICALWAREHOUSECODE = 'M031'
+                                                                                //                                 AND ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                //                                 AND DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                                //                             GROUP BY
+                                                                                //                                 LOTCODE");
+                                                                                // $q_roll = db2_exec($conn1, "SELECT
+                                                                                //                         COUNT(s.ITEMTYPECODE) AS ROLL,
+                                                                                //                         SUM(s.USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                         SUM(s.USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                         -- s.LOTCODE,
+                                                                                //                         CASE 
+                                                                                //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                //                             ELSE 'NON'
+                                                                                //                         END AS QUALITYREASONCODE
+                                                                                //                     FROM
+                                                                                //                         STOCKTRANSACTION s
+                                                                                //                         LEFT JOIN ELEMENTS e ON e.CODE = s.ITEMELEMENTCODE 
+                                                                                //                         AND e.DECOSUBCODE01 = s.DECOSUBCODE01
+                                                                                //                         AND e.DECOSUBCODE02 = s.DECOSUBCODE02
+                                                                                //                         AND e.DECOSUBCODE03 = s.DECOSUBCODE03
+                                                                                //                         AND e.DECOSUBCODE04 = s.DECOSUBCODE04
+                                                                                //                         AND e.DECOSUBCODE05 = s.DECOSUBCODE05
+                                                                                //                         AND e.DECOSUBCODE06 = s.DECOSUBCODE06
+                                                                                //                         AND e.DECOSUBCODE07 = s.DECOSUBCODE07
+                                                                                //                         AND e.DECOSUBCODE08 = s.DECOSUBCODE08
+                                                                                //                         AND e.DECOSUBCODE09 = s.DECOSUBCODE09
+                                                                                //                         AND e.DECOSUBCODE10 = s.DECOSUBCODE10
+                                                                                //                     WHERE
+                                                                                //                         s.TEMPLATECODE = 'S02'
+                                                                                //                         -- AND ( s.LOGICALWAREHOUSECODE = 'M031'  or s.LOGICALWAREHOUSECODE = 'M504' or s.LOGICALWAREHOUSECODE = 'M631' )
+                                                                                //                         AND s.ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                //                         AND s.DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                                //                     GROUP BY
+                                                                                //                         -- s.LOTCODE,
+                                                                                //                         s.DECOSUBCODE01,
+                                                                                //                         s.DECOSUBCODE02,
+                                                                                //                         s.DECOSUBCODE03,
+                                                                                //                         s.DECOSUBCODE04,
+                                                                                //                         s.DECOSUBCODE05,
+                                                                                //                         s.DECOSUBCODE06,
+                                                                                //                         s.DECOSUBCODE07,
+                                                                                //                         s.DECOSUBCODE08,
+                                                                                //                         s.DECOSUBCODE09,
+                                                                                //                         s.DECOSUBCODE10,
+                                                                                //                         CASE 
+                                                                                //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                //                             ELSE 'NON'
+                                                                                //                         END");
+                                                                            // End query nya anto
+                                                                                $q_roll = db2_exec($conn1, "SELECT
+                                                                                                                COUNT(CODE) AS ROLL,
+                                                                                                                SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD
+                                                                                                                -- LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE
+                                                                                                            FROM
+                                                                                                                ITXVIEWALLOCATION0
+                                                                                                            WHERE
+                                                                                                                CODE = '$rowdb2[CODE]'
+                                                                                                            --	AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                                                            GROUP BY
+                                                                                                                DECOSUBCODE01,
+                                                                                                                DECOSUBCODE02,
+                                                                                                                DECOSUBCODE03,
+                                                                                                                DECOSUBCODE04,
+                                                                                                                DECOSUBCODE05,
+                                                                                                                DECOSUBCODE06,
+                                                                                                                DECOSUBCODE07,
+                                                                                                                DECOSUBCODE08,
+                                                                                                                DECOSUBCODE09,
+                                                                                                                DECOSUBCODE10");
                                                                                 $d_roll = db2_fetch_assoc($q_roll);
                                                                                 echo $d_roll['ROLL'];
                                                                             }
                                                                             ?>
                                                                         </td>
-                                                                        <td><?= number_format($d_roll['QTY_SJ_KG'], 2); ?></td>
+                                                                        <td><?= number_format(floatval($d_roll['QTY_SJ_KG']), 2); ?></td>
                                                                         <td>
                                                                             <?php
                                                                             if ($rowdb2['PRICEUNITOFMEASURECODE'] == 'm') {
                                                                                 echo round(number_format($d_roll['QTY_SJ_YARD'], 2) * 0.9144, 2);
                                                                             } else {
-                                                                                echo number_format($d_roll['QTY_SJ_YARD'], 2);
+                                                                                echo number_format(floatval($d_roll['QTY_SJ_YARD']), 2);
                                                                             }
                                                                             ?>
                                                                         </td>
@@ -706,22 +866,84 @@
                                                                                     echo $d_roll['ROLL'];
                                                                                 }
                                                                             } else {
-                                                                                $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
-                                                                                                                                SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
-                                                                                                                                SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
-                                                                                                                                LOTCODE
-                                                                                                                        FROM 
-                                                                                                                            ITXVIEWALLOCATION0 
-                                                                                                                        WHERE 
-                                                                                                                            CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
-                                                                                                                        GROUP BY 
-                                                                                                                            LOTCODE");
+                                                                                // $q_roll = db2_exec($conn1, "SELECT COUNT(CODE) AS ROLL,
+                                                                                //                                                 SUM(BASEPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                                                 SUM(BASESECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                                                 LOTCODE
+                                                                                //                                         FROM 
+                                                                                //                                             ITXVIEWALLOCATION0 
+                                                                                //                                         WHERE 
+                                                                                //                                             CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
+                                                                                //                                         GROUP BY 
+                                                                                //                                             LOTCODE");
+                                                                                $q_roll = db2_exec($conn1, "SELECT
+                                                                                                                COUNT(ITEMTYPECODE) AS ROLL,
+                                                                                                                SUM(USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                                                SUM(USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                                                LOTCODE 
+                                                                                                            FROM
+                                                                                                                STOCKTRANSACTION s
+                                                                                                            WHERE
+                                                                                                                TEMPLATECODE = 'S02'
+                                                                                                                AND LOGICALWAREHOUSECODE = 'M031'
+                                                                                                                AND ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                                                AND DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                                                            GROUP BY
+                                                                                                                LOTCODE");
+                                                                                // $q_roll = db2_exec($conn1, "SELECT
+                                                                                //                         COUNT(s.ITEMTYPECODE) AS ROLL,
+                                                                                //                         SUM(s.USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                         SUM(s.USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                         s.LOTCODE,
+                                                                                //                         CASE 
+                                                                                //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                //                             ELSE e.QUALITYREASONCODE
+                                                                                //                         END AS QUALITYREASONCODE
+                                                                                //                     FROM
+                                                                                //                         STOCKTRANSACTION s
+                                                                                //                         LEFT JOIN ELEMENTS e ON e.CODE = s.ITEMELEMENTCODE 
+                                                                                //                         AND e.DECOSUBCODE01 = s.DECOSUBCODE01
+                                                                                //                         AND e.DECOSUBCODE02 = s.DECOSUBCODE02
+                                                                                //                         AND e.DECOSUBCODE03 = s.DECOSUBCODE03
+                                                                                //                         AND e.DECOSUBCODE04 = s.DECOSUBCODE04
+                                                                                //                         AND e.DECOSUBCODE05 = s.DECOSUBCODE05
+                                                                                //                         AND e.DECOSUBCODE06 = s.DECOSUBCODE06
+                                                                                //                         AND e.DECOSUBCODE07 = s.DECOSUBCODE07
+                                                                                //                         AND e.DECOSUBCODE08 = s.DECOSUBCODE08
+                                                                                //                         AND e.DECOSUBCODE09 = s.DECOSUBCODE09
+                                                                                //                         AND e.DECOSUBCODE10 = s.DECOSUBCODE10
+                                                                                //                     WHERE
+                                                                                //                         s.TEMPLATECODE = 'S02'
+                                                                                //                         -- AND ( s.LOGICALWAREHOUSECODE = 'M031'  or s.LOGICALWAREHOUSECODE = 'M504' or s.LOGICALWAREHOUSECODE = 'M631' )
+                                                                                //                         AND s.ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                //                         AND s.DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                                //                     GROUP BY
+                                                                                //                         s.LOTCODE,
+                                                                                //                         s.DECOSUBCODE01,
+                                                                                //                         s.DECOSUBCODE02,
+                                                                                //                         s.DECOSUBCODE03,
+                                                                                //                         s.DECOSUBCODE04,
+                                                                                //                         s.DECOSUBCODE05,
+                                                                                //                         s.DECOSUBCODE06,
+                                                                                //                         s.DECOSUBCODE07,
+                                                                                //                         s.DECOSUBCODE08,
+                                                                                //                         s.DECOSUBCODE09,
+                                                                                //                         s.DECOSUBCODE10,
+                                                                                //                         CASE 
+                                                                                //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                //                             ELSE e.QUALITYREASONCODE
+                                                                                //                         END");
                                                                                 $d_roll = db2_fetch_assoc($q_roll);
-                                                                                echo $d_roll['ROLL'];
+                                                                                echo $d_roll['ROLL']; 
                                                                             }
                                                                             ?>
                                                                         </td>
                                                                         <td><?= number_format($d_roll['QTY_SJ_KG'], 2); ?></td>
+                                                                        <?php
+                                                                           if (strtoupper($rowdb2['ITEMTYPEAFICODE']) !== 'GYR') {
+                                                                                $total_qty_sj_kg += $d_roll['QTY_SJ_KG'] ?? 0;
+                                                                            }
+                                                                        ?>
                                                                         <td>
                                                                             <?php
                                                                             if ($rowdb2['PRICEUNITOFMEASURECODE'] == 'm') {
@@ -820,20 +1042,86 @@
                                                                                                                             CODE = '$rowdb2[CODE]' AND LOTCODE = '$rowdb2[LOTCODE]'
                                                                                                                         GROUP BY 
                                                                                                                             LOTCODE");
+                                                                                // DIGANTI JADI NGAMBILNYA LEWAT STOCKTRANSACTION
+                                                                                // $q_roll = db2_exec($conn1, "SELECT
+                                                                                //                                 COUNT(ITEMTYPECODE) AS ROLL,
+                                                                                //                                 SUM(USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                                 SUM(USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                                 LOTCODE 
+                                                                                //                             FROM
+                                                                                //                                 STOCKTRANSACTION s
+                                                                                //                             WHERE
+                                                                                //                                 TEMPLATECODE = 'S02'
+                                                                                //                                 AND LOGICALWAREHOUSECODE = 'M031'
+                                                                                //                                 AND ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                //                                 AND DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                                //                             GROUP BY
+                                                                                //                                 LOTCODE");
+                                                                                // $q_roll = db2_exec($conn1, "SELECT
+                                                                                //                         COUNT(s.ITEMTYPECODE) AS ROLL,
+                                                                                //                         SUM(s.USERPRIMARYQUANTITY) AS QTY_SJ_KG,
+                                                                                //                         SUM(s.USERSECONDARYQUANTITY) AS QTY_SJ_YARD,
+                                                                                //                         s.LOTCODE,
+                                                                                //                         CASE 
+                                                                                //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                //                             ELSE e.QUALITYREASONCODE
+                                                                                //                         END AS QUALITYREASONCODE
+                                                                                //                     FROM
+                                                                                //                         STOCKTRANSACTION s
+                                                                                //                         LEFT JOIN ELEMENTS e ON e.CODE = s.ITEMELEMENTCODE 
+                                                                                //                         AND e.DECOSUBCODE01 = s.DECOSUBCODE01
+                                                                                //                         AND e.DECOSUBCODE02 = s.DECOSUBCODE02
+                                                                                //                         AND e.DECOSUBCODE03 = s.DECOSUBCODE03
+                                                                                //                         AND e.DECOSUBCODE04 = s.DECOSUBCODE04
+                                                                                //                         AND e.DECOSUBCODE05 = s.DECOSUBCODE05
+                                                                                //                         AND e.DECOSUBCODE06 = s.DECOSUBCODE06
+                                                                                //                         AND e.DECOSUBCODE07 = s.DECOSUBCODE07
+                                                                                //                         AND e.DECOSUBCODE08 = s.DECOSUBCODE08
+                                                                                //                         AND e.DECOSUBCODE09 = s.DECOSUBCODE09
+                                                                                //                         AND e.DECOSUBCODE10 = s.DECOSUBCODE10
+                                                                                //                     WHERE
+                                                                                //                         s.TEMPLATECODE = 'S02'
+                                                                                //                         -- AND ( s.LOGICALWAREHOUSECODE = 'M031'  or s.LOGICALWAREHOUSECODE = 'M504' or s.LOGICALWAREHOUSECODE = 'M631' )
+                                                                                //                         AND s.ORDERCODE = '$rowdb2[PROVISIONALCODE]'
+                                                                                //                         AND s.DERIVATIONCODE = '$rowdb2[CODE]'
+                                                                                //                     GROUP BY
+                                                                                //                         s.LOTCODE,
+                                                                                //                         s.DECOSUBCODE01,
+                                                                                //                         s.DECOSUBCODE02,
+                                                                                //                         s.DECOSUBCODE03,
+                                                                                //                         s.DECOSUBCODE04,
+                                                                                //                         s.DECOSUBCODE05,
+                                                                                //                         s.DECOSUBCODE06,
+                                                                                //                         s.DECOSUBCODE07,
+                                                                                //                         s.DECOSUBCODE08,
+                                                                                //                         s.DECOSUBCODE09,
+                                                                                //                         s.DECOSUBCODE10,
+                                                                                //                         CASE 
+                                                                                //                             WHEN e.QUALITYREASONCODE = 'FOC' THEN 'FOC'
+                                                                                //                             ELSE e.QUALITYREASONCODE
+                                                                                //                         END");
                                                                                 $d_roll = db2_fetch_assoc($q_roll);
                                                                                 echo $d_roll['ROLL'];
                                                                             }
                                                                             ?>
                                                                         </td>
-                                                                        <td><?= number_format($d_roll['QTY_SJ_KG'], 2); ?></td>
+                                                                        <td><?= number_format($d_roll['QTY_SJ_KG'] ?? 0, 2); ?></td>
+                                                                        <?php
+                                                                           if (strtoupper($rowdb2['ITEMTYPEAFICODE']) !== 'GYR') {
+                                                                                $total_qty_sj_kg += $d_roll['QTY_SJ_KG'] ?? 0;
+                                                                            }
+                                                                        ?>
                                                                         <td>
                                                                             <?php
-                                                                            if ($rowdb2['PRICEUNITOFMEASURECODE'] == 'm') {
-                                                                                echo round(number_format($d_roll['QTY_SJ_YARD'], 2) * 0.9144, 2);
-                                                                            } else {
-                                                                                echo number_format($d_roll['QTY_SJ_YARD'], 2);
-                                                                            }
+                                                                                $qty_sj_yard = $d_roll['QTY_SJ_YARD'] ?? 0; // Use 0 as default if null or undefined
+
+                                                                                if ($rowdb2['PRICEUNITOFMEASURECODE'] == 'm') {
+                                                                                echo round($qty_sj_yard * 0.9144, 2);
+                                                                                } else {
+                                                                                echo number_format($qty_sj_yard, 2);
+                                                                                }
                                                                             ?>
+
                                                                         </td>
                                                                         <td><?= $rowdb2['ORDERPARTNERBRANDCODE']; ?></td>
                                                                         <td>
@@ -882,6 +1170,15 @@
                                                                 <?php endif; ?>
                                                             <?php endif; ?>
                                                         <?php } ?>
+
+                                                        <!-- <?php if ($_POST['dept'] == 'PPC'): ?>
+                                                            <tr style="font-weight: bold; background-color: #f0f0f0;">
+                                                                <td colspan="5" align="right">Total:</td>
+                                                                <td><?= number_format($total_qty_sj_kg ?? 0, 2); ?></td>
+                                                                <td colspan="11"></td>
+                                                            </tr>
+                                                        <?php endif; ?> -->
+                                                        
                                                         <!-- CAPITAL KFF & KGF -->
                                                         <?php
                                                         $stmt_cap_kff = db2_exec($conn1, "SELECT 

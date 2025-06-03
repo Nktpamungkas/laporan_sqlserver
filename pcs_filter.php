@@ -94,7 +94,7 @@
                                                             while ($rowdb = db2_fetch_assoc($stmt)) {
                                                         ?>
                                                         <option value="<?= $rowdb['KODE_BARANG']; ?>">
-                                                            <?= $rowdb['LONGDESCRIPTION']; ?>
+                                                            <?= $rowdb['LONGDESCRIPTION']; ?> - <?= $rowdb['ITEMDESCRIPTION']; ?>
                                                         </option>
                                                         <?php } ?> 
                                                     </select>

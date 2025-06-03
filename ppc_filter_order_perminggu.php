@@ -1,13 +1,13 @@
 <?php
     if (isset($_POST['cari_delivery'])) {
-        $thn = $_POST['thn'];
-        header("Location: ppc_laporder_pertahun.php?thn=$thn");
+        $tgl = $_POST['tanggal'];
+        header("Location: ppc_laporder_pertahun.php?tgl=$tgl");
     }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
-    <title>PPC - PO Selesai</title>
+    <title>PPC - Terima Order</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,23 +43,18 @@
                                     </div>
                                     <div class="card-block">
                                         <form action="" method="post">
-                                            <div class="row">
-                                                <div class="col-sm-12 col-xl-12 m-b-30">
-                                                    <h4 class="sub-title">Tahun:</h4>
-                                                    <?php $years = range(2022, strftime("2030", time())); ?>
-                                                    <select name="thn" class="form-control form-control-primary" required>
-                                                        <option disabled selected value="">Select Year</option>
-                                                        <?php foreach($years as $year) : ?>
-                                                            <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
-                                                        <?php endforeach; ?>
-                                                    </select>
+                                            <div class="row align-items-end"> <!-- Tambahkan align-items-end biar tombol rata bawah -->
+                                                <div class="col-md-2 m-b-5">
+                                                    <h4 class="sub-title">Tanggal:</h4>
+                                                    <input type="date" name="tanggal" class="form-control form-control-primary" required>
                                                 </div>
-                                                <div class="col-sm-12 col-xl-4 m-b-30">
-                                                    <button type="submit" name="cari_delivery" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
+                                                <div class="col-md-4 m-b-5">
+                                                    <button type="submit" name="cari_delivery" class="btn btn-primary mt-4">
+                                                        <i class="icofont icofont-search-alt-1"></i> Cari data
+                                                    </button>
                                                 </div>
                                             </div>
                                         </form>
-                                        
                                     </div>
                                 </div>
                             </div>

@@ -47,7 +47,7 @@
                         <tr>
                             <td colspan="3"
                                 style="border-top:0px #000000 solid; border-bottom:0px #000000 solid; border-left:0px #000000 solid; border-right:0px #000000 solid;">
-                                <div style="font-size: 8px;">PRD.DEMAND : <?php echo $rowdb2_cetaklabel['NO_DEMAND']; ?>
+                                <div style="font-size: 8px;">PRD.DEMAND : <?php echo $rowdb2_cetaklabel['NO_DEMAND']; ?> &nbsp;<?php echo $rowdb2_cetaklabel['NOTE1']; ?>
                                 </div>
                             </td>
                         </tr>
@@ -141,7 +141,7 @@
                         <tr>
                             <td colspan="3"
                                 style="border-top:0px #000000 solid; border-bottom:0px #000000 solid; border-left:0px #000000 solid; border-right:0px #000000 solid;">
-                                <div style="font-size: 8px;">PRD.DEMAND : <?php echo $rowdb2_cetaklabel['NO_DEMAND']; ?>
+                                <div style="font-size: 8px;">PRD.DEMAND : <?php echo $rowdb2_cetaklabel['NO_DEMAND']; ?> &nbsp;<?php echo $rowdb2_cetaklabel['NOTE1']; ?>
                                 </div>
                             </td>
                         </tr>
@@ -235,14 +235,14 @@
                         <tr>
                             <td colspan="3"
                                 style="border-top:0px #000000 solid; border-bottom:0px #000000 solid; border-left:0px #000000 solid; border-right:0px #000000 solid;">
-                                <div style="font-size: 8px;">PRD.DEMAND : <?php echo $rowdb2_cetaklabel['NO_DEMAND']; ?>
+                                <div style="font-size: 8px;">PRD.DEMAND : <?php echo $rowdb2_cetaklabel['NO_DEMAND']; ?> &nbsp;<?php echo $rowdb2_cetaklabel['NOTE1']; ?>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="3"
                                 style="border-top:0px #000000 solid; border-bottom:0px #000000 solid; border-left:0px #000000 solid; border-right:0px #000000 solid;">
-                                <div style="font-size: 8px;"<?php echo $rowdb2_cetaklabel['BUYER']; ?></div>
+                                <div style="font-size: 8px;"><?php echo $rowdb2_cetaklabel['BUYER']; ?></div>
                             </td>
                         </tr>
                         <tr>

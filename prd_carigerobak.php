@@ -65,7 +65,7 @@
                                                     <select name="dept" class="form-control">
                                                         <option value="">Pilih Dept</option>
                                                         <option value="ALL"
-                                                            <?php if($_POST['dept'] == 'All'){ echo "SELECTED"; } ?>>
+                                                            <?php if($_POST['dept'] == 'ALL'){ echo "SELECTED"; } ?>>
                                                             Semua Dept</option>
                                                         <?php
                                                             $q_operation = db2_exec($conn1, "SELECT TRIM(OPERATIONGROUPCODE) AS OPERATIONGROUPCODE FROM operation WHERE NOT OPERATIONGROUPCODE IS NULL GROUP BY OPERATIONGROUPCODE ORDER BY OPERATIONGROUPCODE ASC");
@@ -144,8 +144,10 @@
                                                     <?php
                                                             if($_POST['demand']){
                                                                 $where_demand    = "AND p.PRODUCTIONDEMANDCODE = '$_POST[demand]'";
+																$where_stepno	 = ""; // analisa usman
                                                             }else{
                                                                 $where_demand    = "";
+																$where_stepno	 = "AND p.STEPNUMBER < '$row_iptip[STEPNUMBER]'"; // analisa usman
                                                             }
                                                             if($_POST['dept'] == 'ALL'){
                                                                 $where_all  = "AND NOT TRIM(OPERATIONGROUPCODE) IS NULL";
@@ -316,7 +318,8 @@
                                                                                                     WHERE
                                                                                                         p.PRODUCTIONORDERCODE  = '$row_iptip[PRODUCTIONORDERCODE]' 
                                                                                                         AND p.PRODUCTIONDEMANDCODE IN ($row_iptip[PRODUCTIONDEMANDCODE2])
-                                                                                                        AND p.STEPNUMBER < '$row_iptip[STEPNUMBER]'
+																										$where_stepno
+                                                                                                        -- AND p.STEPNUMBER < '$row_iptip[STEPNUMBER]'
                                                                                                         AND NOT idqd.VALUEQUANTITY IS NULL
                                                                                                         AND (a.VALUEBOOLEAN IS NULL OR a.VALUEBOOLEAN = 0)
                                                                                                     GROUP BY
@@ -371,7 +374,8 @@
                                                                                                     WHERE
                                                                                                         p.PRODUCTIONORDERCODE  = '$row_iptip[PRODUCTIONORDERCODE]' 
                                                                                                         AND p.PRODUCTIONDEMANDCODE IN ($row_iptip[PRODUCTIONDEMANDCODE2])
-                                                                                                        AND p.STEPNUMBER < '$row_iptip[STEPNUMBER]'
+                                                                                                        -- AND p.STEPNUMBER < '$row_iptip[STEPNUMBER]'
+																										$where_stepno
                                                                                                         AND NOT idqd.VALUEQUANTITY IS NULL
                                                                                                         AND (a.VALUEBOOLEAN IS NULL OR a.VALUEBOOLEAN = 0)
                                                                                                     GROUP BY

@@ -120,6 +120,7 @@
                             AND i.DOCUMENTTYPETYPE = 05 
                             AND NOT i.CODE IS NULL 
                             AND i.PROGRESSSTATUS_SALDOC = 2
+                            AND iasp.PROGRESSSTATUS = 2 -- STATUS ALLOCATIONNYA 'CLOSED' = SHIPPED
                         GROUP BY
                             i.PROVISIONALCODE,
                             i.PRICEUNITOFMEASURECODE,

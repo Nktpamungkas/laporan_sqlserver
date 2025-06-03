@@ -7,12 +7,6 @@ $password = "Q?o*]vdjDb#w";
 $db_name = "TICKET";
 $connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
 $conn_sql = sqlsrv_connect($host, $connInfo);
-$host = "10.0.4.8";
-$username = "sa";
-$password = "Q?o*]vdjDb#w";
-$db_name = "TICKET";
-$connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
-$conn_sql = sqlsrv_connect($host, $connInfo);
 
 $host = "10.0.4.8";
 $username = "sa";
@@ -21,19 +15,6 @@ $db_name = "LA1000_Exchange";
 $connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
 $conn_sql2 = sqlsrv_connect($host, $connInfo);
 
-$host = "10.0.4.8";
-$username = "sa";
-$password = "Q?o*]vdjDb#w";
-$db_name = "LA1000_Exchange";
-$connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
-$conn_sql2 = sqlsrv_connect($host, $connInfo);
-
-$host = "S-CATS";
-$username = "progm";
-$password = "BW#bbfW";
-$db_name = "TAICHEN_CAMS_LIVE";
-$connInfo = array("Database" => $db_name, "UID" => $username, "PWD" => $password);
-$conn_cams = sqlsrv_connect($host, $connInfo);
 $host = "S-CATS";
 $username = "progm";
 $password = "BW#bbfW";
@@ -57,6 +38,7 @@ $con_db_dyeing      = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_dying");
 $con_db_finishing   = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_finishing");
 $con_db_lab         = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_laborat");
 $con_dbnow_mkt      = mysqli_connect("10.0.0.10", "dit", "4dm1n", "dbnow_mkt");
+$con_rec         = mysqli_connect("10.0.0.10", "dit", "4dm1n", "approval_document");
 $con_db_qc          = mysqli_connect("10.0.0.10", "dit", "4dm1n", "db_qc");
 $con_hrd            = mysqli_connect("10.0.0.10", "dit", "4dm1n", "hrd");
 $con_now_gerobak    = mysqli_connect("10.0.0.10", "dit", "4dm1n", "dbnow_gerobak");
@@ -72,8 +54,11 @@ $qc = "db_qc";
 $lab = "db_laborat";
 $hrd = "hrd";
 $db_nowmkt = "dbnow_mkt";
+$db_ppc = "test_ppc";
 
 $nowprdd = array("Database" => $nowprd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$nowppc = array("Database" => $db_ppc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+
 // $db_dying = array("Database" => $dying, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 // $dbLab = array("Database" => $lab, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 // $db_qc = array("Database" => $qc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
@@ -83,6 +68,7 @@ $nowprdd = array("Database" => $nowprd, "UID" => $usernameSVR19, "PWD" => $passw
 // $db_nowmkt = array("Database" => $db_nowmkt, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 
 $con_nowprd = sqlsrv_connect($hostSVR19, $nowprdd);
+$con_db_ppc = sqlsrv_connect($hostSVR19, $nowppc);
 // $con_db_dyeing = sqlsrv_connect($hostSVR19, $db_dying);
 // $con_db_qc = sqlsrv_connect($hostSVR19, $db_qc);
 // $con_db_lab = sqlsrv_connect($hostSVR19, $dbLab);
@@ -127,6 +113,11 @@ if ($con_db_finishing) {
 }
 
 if ($con_dbnow_mkt) {
+} else {
+    exit("SQLSVR19 Connection failed to con_finishing");
+}
+
+if ($con_db_ppc) {
 } else {
     exit("SQLSVR19 Connection failed to con_finishing");
 }
