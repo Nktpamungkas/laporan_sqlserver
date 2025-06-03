@@ -69,6 +69,77 @@
                                 <?php if (isset($_POST['submit']) or isset($_GET['demand']) or isset($_GET['prod_order'])) : ?>
                                     <div class="card">
                                         <div class="card-block">
+                                            <?php
+                                                ini_set("error_reporting", 1);
+                                                require_once "koneksi.php";
+
+                                                $demand = $_POST['demand'] ?? '';
+                                                $prod_order = $_POST['prod_order'] ?? '';
+
+
+                                                if (!empty($demand) && !empty($prod_order)) {
+                                                    $q_ITXVIEWKK = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' AND PRODUCTIONORDERCODE = '$prod_order'");
+                                                } elseif (!empty($demand)) {
+                                                    $q_ITXVIEWKK = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+                                                } elseif (!empty($prod_order)) {
+                                                    $q_ITXVIEWKK = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONORDERCODE = '$prod_order'");
+                                                } else {
+                                                    $q_ITXVIEWKK = false;
+                                                }
+                                                $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
+
+                                                $bagikain = db2_exec($conn1, "SELECT v.INITIALUSERPRIMARYQUANTITY 
+                                                                                FROM
+                                                                                    ITXVIEWKK i
+                                                                                LEFT JOIN VIEWPRODUCTIONDEMANDSTEP v ON v.PRODUCTIONORDERCODE = i.PRODUCTIONORDERCODE 
+                                                                                WHERE 
+                                                                                    i.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'
+                                                                                ORDER BY 
+                                                                                    v.GROUPSTEPNUMBER ASC LIMIT 1");
+                                                                    
+                                                $d_bagikain = db2_fetch_assoc($bagikain);
+                                            ?>
+                                            <table width="14%" border="0" style='font-family:"Microsoft Sans Serif"'>
+                                                <tr>
+                                                    <td style="width: 30%">Kode Product/Kode Warna </td>
+                                                    <td style="width: 10%"> : &nbsp;</td>
+                                                    <td style="width: 60%">
+                                                        <?php 
+                                                        $subcodes = TRIM($d_ITXVIEWKK['SUBCODE02'] ?? '') . TRIM($d_ITXVIEWKK['SUBCODE03'] ?? '');
+                                                        $subcode5 = TRIM($d_ITXVIEWKK['SUBCODE05'] ?? '');
+                                                        echo !empty($subcodes) ? $subcodes . (!empty($subcode5) ? '-' . $subcode5 : '') : $subcode5;
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Production Demand</td>
+                                                    <td>:</td>
+                                                    <td><?= !empty($d_ITXVIEWKK['PRODUCTIONDEMANDCODE']) ? $d_ITXVIEWKK['PRODUCTIONDEMANDCODE'] : ''; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Warna</td>
+                                                    <td>:</td>
+                                                    <td><?= !empty($d_ITXVIEWKK['WARNA']) ? $d_ITXVIEWKK['WARNA'] : ''; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>No Order</td>
+                                                    <td>:</td>
+                                                    <td><?= !empty($d_ITXVIEWKK['PROJECTCODE']) ? $d_ITXVIEWKK['PROJECTCODE'] : ''; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>LOT</td>
+                                                    <td>:</td>
+                                                    <td><?= !empty($d_ITXVIEWKK['LOT']) ? $d_ITXVIEWKK['LOT'] : ''; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>QTY</td>
+                                                    <td>:</td>
+                                                    <td><?= !empty($d_bagikain['INITIALUSERPRIMARYQUANTITY']) ? $d_bagikain['INITIALUSERPRIMARYQUANTITY'] : ''; ?></td>
+                                                </tr>
+
+                                            </table>
+                                            <br>
+
                                             <div class="row">
                                                 <div class="table-responsive dt-responsive">
                                                     <table border='1' style='font-family:"Microsoft Sans Serif"' width="100%">
@@ -91,8 +162,7 @@
                                                         </thead>
                                                         <tbody>
                                                             <?php
-                                                            ini_set("error_reporting", 1);
-                                                            require_once "koneksi.php";
+
 
                                                             if ($_GET['demand']) {
                                                                 $demand     = $_GET['demand'];
@@ -269,7 +339,7 @@
                                                                 $dsuffix = db2_exec($conn1, $qry_suffix);
                                                                 $suffix = db2_fetch_assoc($dsuffix);
 
-                                                            //QRY Untuk cari total consumntion
+                                                                //QRY Untuk cari total consumntion
                                                                 $qpem = "SELECT
                                                                                 *
                                                                             FROM
