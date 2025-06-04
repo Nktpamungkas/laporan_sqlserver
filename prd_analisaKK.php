@@ -527,6 +527,28 @@
                                                             </th>
                                                         </tr>
                                                         <tr>
+                                                            <th style="vertical-align: text-top;">Panjang Benang</th>
+                                                            <th style="vertical-align: text-top;">:</th>
+                                                            <th style="vertical-align: text-top;">
+                                                                <?php
+                                                                    $q_panjang_benang = db2_exec($conn1, "SELECT
+                                                                                                                DISTINCT 
+                                                                                                                PRODUCTIONDEMANDCODE,
+                                                                                                                a.VALUESTRING 
+                                                                                                            FROM
+                                                                                                                PRODUCTIONDEMANDSTEP p
+                                                                                                            LEFT JOIN PRODUCTIONDEMAND p2 ON p2.CODE = p.PRODUCTIONDEMANDCODE 
+                                                                                                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p2.ABSUNIQUEID AND a.FIELDNAME = 'FALoopLenght'
+                                                                                                            WHERE
+                                                                                                                PRODUCTIONORDERCODE IN ($value_benang)");
+                                                                    $cek_panjang_benang = db2_fetch_assoc($q_panjang_benang);
+                                                                    if ($cek_panjang_benang) {
+                                                                        echo $cek_panjang_benang['VALUESTRING'];
+                                                                    }
+                                                                ?>
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
                                                             <th style="vertical-align: text-top;">Alur Normal</th>
                                                             <th style="vertical-align: text-top;">:</th>
                                                             <th style="vertical-align: text-top; white-space: wrap;">
