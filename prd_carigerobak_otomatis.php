@@ -1,29 +1,48 @@
 <?php
     header("content-type:application/vnd-ms-excel");
-    header("content-disposition:attachment;filename=LaporanPencarianGerobak-".date_default_timezone_set('Asia/Jakarta').date('Y-m-d H:i:s').".xls");
+    header("content-disposition:attachment;filename=LaporanPencarianGerobak-" . date_default_timezone_set('Asia/Jakarta') . date('Y-m-d H:i:s') . ".xls");
     header('Cache-Control: max-age=0');
 ?>
 <?php
     ini_set("error_reporting", 0);
     session_start();
     require_once "koneksi.php";
+
+    $updateStatus = "UPDATE tmp_status SET status=0 WHERE name='cari_gerobak_otomatis'";
+    mysqli_query($con_now_gerobak, $updateStatus);
+
+    $delete = "DELETE FROM tmp_cari_gerobak_otomatis";
+    mysqli_query($con_now_gerobak, $delete);
+
+    function tmpData($operation, $departemen, $qty, $jml)
+    {
+        global $con_now_gerobak;
+
+        if (! empty($operation) || ! empty($departemen)) {
+            $sql = "INSERT INTO tmp_cari_gerobak_otomatis (OPERATION, DEPARTEMEN, QTY, JML_GEROBAK)
+                    VALUES ('$operation', '$departemen', $qty, $jml)";
+            mysqli_query($con_now_gerobak, $sql);
+        }
+    }
+
 ?>
+
 <table width="100%">
 <thead>
     <tr>
         <?php
-            $dept   = $_POST['dept'];
+            $dept = $_POST['dept'];
 
-            if($dept == 'DYE'){
-                $colspan    = '9';
-                $th         = '<th style="text-align: center;" rowspan="2">KETERANGAN</th>
+            if ($dept == 'DYE') {
+                $colspan = '9';
+                $th      = '<th style="text-align: center;" rowspan="2">KETERANGAN</th>
                                 <th style="text-align: center;" rowspan="2">NO URUT</th>';
-            }else{
-                $colspan    = '9';
-                $th         = '';
+            } else {
+                $colspan = '9';
+                $th      = '';
             }
         ?>
-        <th style="text-align: center; background: #B97E6F; color: #FCFCFC;" colspan="<?= $colspan; ?>">POSISI GEROBAK SEKARANG</th>
+        <th style="text-align: center; background: #B97E6F; color: #FCFCFC;" colspan="<?php echo $colspan; ?>">POSISI GEROBAK SEKARANG</th>
         <th style="text-align: center; background: #83D46E; color: Black;" colspan="15">POSISI GEROBAK SEBELUMNYA</th>
     </tr>
     <tr>
@@ -36,7 +55,7 @@
         <th style="text-align: center;" rowspan="2">OPERATION</th>
         <th style="text-align: center;" rowspan="2">DEPARTEMEN</th>
         <th style="text-align: center;" rowspan="2">STATUS</th>
-        <?= $th; ?>
+        <?php echo $th; ?>
     </tr>
     <tr>
         <th style="text-align: center;">PROD. ORDER ORIGINAL</th>
@@ -53,24 +72,24 @@
         <th style="text-align: center;">JML GEROBAK</th>
     </tr>
 </thead>
-<tbody> 
+<tbody>
     <?php
-        if($_POST['demand']){
-            $where_demand    = "AND p.PRODUCTIONDEMANDCODE = '$_POST[demand]'";
-        }else{
-            $where_demand    = "";
+        if ($_POST['demand']) {
+            $where_demand = "AND p.PRODUCTIONDEMANDCODE = '$_POST[demand]'";
+        } else {
+            $where_demand = "";
         }
-        if($_POST['dept'] == 'DYE'){
+        if ($_POST['dept'] == 'DYE') {
             $where_entered_dye = "AND STATUS_OPERATION IN ('Entered', 'Progress')";
-        }else{
+        } else {
             $where_entered_dye = "";
         }
-        if($_POST['dept'] == 'DYE'){
+        if ($_POST['dept'] == 'DYE') {
             $where_operation_dye = "WHERE NOT (OPERATIONCODE IN ('DYE1', 'DYE2', 'DYE4', 'SOA1', 'RDC1', 'LVL1', 'NEU1', 'CBL1', 'RLX1', 'FEW1', 'FIX1', 'HEW1', 'HOT1', 'SCO1', 'SCO2', 'SOF1', 'STR1') AND STATUS_OPERATION = 'Progress')";
-        }else{
+        } else {
             $where_operation_dye = "WHERE NOT OPERATIONGROUPCODE = 'DYE'";
         }
-        $q_iptip    = db2_exec($conn1, "SELECT * FROM 
+        $q_iptip = db2_exec($conn1, "SELECT * FROM
                                         (SELECT DISTINCT
                                             PRODUCTIONORDERCODE,
                                             REPLACE(LISTAGG( '`'|| PRODUCTIONDEMANDCODE || '`', ', '), '`', '''')  AS PRODUCTIONDEMANDCODE2,
@@ -86,7 +105,7 @@
                                             ABSUNIQUEID_OPERATION,
                                             CREATIONDATETIME
                                         FROM
-                                            (SELECT	
+                                            (SELECT
                                                 TRIM(p.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
                                                 TRIM(p.PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE,
                                                 p.STEPNUMBER,
@@ -107,7 +126,7 @@
                                                 p2.CREATIONDATETIME
                                             FROM
                                                 PRODUCTIONDEMANDSTEP p
-                                            LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
+                                            LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE
                                             LEFT JOIN PRODUCTIONDEMAND p2 ON p2.CODE = p.PRODUCTIONDEMANDCODE
                                             LEFT JOIN ITXVIEWCOLOR i ON i.ITEMTYPECODE = p2.ITEMTYPEAFICODE
                                                                     AND i.SUBCODE01 = p2.SUBCODE01
@@ -120,7 +139,7 @@
                                                                     AND i.SUBCODE08 = p2.SUBCODE08
                                                                     AND i.SUBCODE09 = p2.SUBCODE09
                                                                     AND i.SUBCODE10 = p2.SUBCODE10
-                                            WHERE 
+                                            WHERE
                                                 TRIM(p.PROGRESSSTATUS) IN ('0', '2')
                                                 $where_demand
                                                 AND p2.CREATIONDATETIME >= '2023-11-01'
@@ -135,7 +154,7 @@
                                             AND NOT TRIM(OPERATIONGROUPCODE) IS NULL
                                             $where_entered_dye
                                             AND (a.VALUEBOOLEAN IS NULL OR a.VALUEBOOLEAN = 0)
-                                        GROUP BY 
+                                        GROUP BY
                                             PRODUCTIONORDERCODE,
                                             STEPNUMBER,
                                             OPERATIONCODE,
@@ -147,10 +166,10 @@
                                             OPERATIONGROUPCODE,
                                             ABSUNIQUEID_OPERATION,
                                             CREATIONDATETIME
-                                        ORDER BY 
+                                        ORDER BY
                                             OPERATIONGROUPCODE ASC)
                                         $where_operation_dye");
-        $totalGerobak_QC = 0;
+        $totalGerobak_QC  = 0;
         $totalGerobak_BRS = 0;
         $totalGerobak_DYE = 0;
         $totalGerobak_FIN = 0;
@@ -162,19 +181,19 @@
         $totalGerobak_RMP = 0;
         $totalGerobak_TAS = 0;
     ?>
-    <?php while($row_iptip = db2_fetch_assoc($q_iptip)) : ?>
-        <?php
-            if($dept == 'DYE'){
-                $gerobak    = "CASE
+<?php while ($row_iptip = db2_fetch_assoc($q_iptip)): ?>
+<?php
+    if ($dept == 'DYE') {
+        $gerobak = "CASE
                                     WHEN TRIM(p.OPERATIONCODE) = 'DYE2' THEN 'Poly'
                                     WHEN TRIM(p.OPERATIONCODE) = 'DYE4' THEN 'Cotton'
                                     ELSE LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ')
                                 END AS GEROBAK";
-            }else{
-                $gerobak    = "LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') AS GEROBAK";
-            }
+    } else {
+        $gerobak = "LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') AS GEROBAK";
+    }
 
-            $q_posisikk     = db2_exec($conn1, "SELECT DISTINCT
+    $q_posisikk = db2_exec($conn1, "SELECT DISTINCT
                                                     p.STEPNUMBER AS STEPNUMBER,
                                                     CASE
                                                         WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
@@ -198,9 +217,9 @@
                                                     iptip.LONGDESCRIPTION AS OP1,
                                                     iptop.LONGDESCRIPTION AS OP2,
                                                     $gerobak
-                                                FROM 
-                                                    PRODUCTIONDEMANDSTEP p 
-                                                LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
+                                                FROM
+                                                    PRODUCTIONDEMANDSTEP p
+                                                LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE
                                                 LEFT JOIN ADSTORAGE a ON a.UNIQUEID = o.ABSUNIQUEID AND a.FIELDNAME = 'Gerobak'
                                                 LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                 LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
@@ -209,7 +228,7 @@
                                                                                                                 WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
                                                                                                                 ELSE TRIM(p.PRODRESERVATIONLINKGROUPCODE)
                                                                                                             END
-                                                                                    AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER) 
+                                                                                    AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER)
                                                                                     AND (idqd.CHARACTERISTICCODE = 'GRB1' OR
                                                                                         idqd.CHARACTERISTICCODE = 'GRB2' OR
                                                                                         idqd.CHARACTERISTICCODE = 'GRB3' OR
@@ -223,7 +242,7 @@
                                                                                         idqd.CHARACTERISTICCODE = 'AREA')
                                                                                     AND NOT (idqd.VALUEQUANTITY = 999 OR idqd.VALUEQUANTITY = 1 OR idqd.VALUEQUANTITY = 9999 OR idqd.VALUEQUANTITY = 99999 OR idqd.VALUEQUANTITY = 91)
                                                 WHERE
-                                                    p.PRODUCTIONORDERCODE  = '$row_iptip[PRODUCTIONORDERCODE]' 
+                                                    p.PRODUCTIONORDERCODE  = '$row_iptip[PRODUCTIONORDERCODE]'
                                                     AND p.PRODUCTIONDEMANDCODE IN ($row_iptip[PRODUCTIONDEMANDCODE2])
                                                     AND p.STEPNUMBER < '$row_iptip[STEPNUMBER]'
                                                     AND NOT idqd.VALUEQUANTITY IS NULL
@@ -243,19 +262,19 @@
                                                     p.PRODUCTIONDEMANDCODE,
                                                     iptip.LONGDESCRIPTION,
                                                     iptop.LONGDESCRIPTION
-                                                ORDER BY 
+                                                ORDER BY
                                                     p.STEPNUMBER
                                                 DESC
                                                 LIMIT 1");
-                                                
-            $row_posisikk = db2_fetch_assoc($q_posisikk);
 
-            $count_gerobak  = db2_exec($conn1, "SELECT 
+    $row_posisikk = db2_fetch_assoc($q_posisikk);
+
+    $count_gerobak = db2_exec($conn1, "SELECT
                                                     TRIM(o.OPERATIONGROUPCODE) AS DEPT,
                                                     COUNT(DISTINCT idqd.VALUEQUANTITY) AS JML_GEROBAK
-                                                FROM 
-                                                    PRODUCTIONDEMANDSTEP p 
-                                                LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
+                                                FROM
+                                                    PRODUCTIONDEMANDSTEP p
+                                                LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE
                                                 LEFT JOIN ADSTORAGE a ON a.UNIQUEID = o.ABSUNIQUEID AND a.FIELDNAME = 'Gerobak'
                                                 LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                 LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
@@ -264,7 +283,7 @@
                                                                                                                 WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
                                                                                                                 ELSE TRIM(p.PRODRESERVATIONLINKGROUPCODE)
                                                                                                             END
-                                                                                    AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER) 
+                                                                                    AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER)
                                                                                     AND (idqd.CHARACTERISTICCODE = 'GRB1' OR
                                                                                         idqd.CHARACTERISTICCODE = 'GRB2' OR
                                                                                         idqd.CHARACTERISTICCODE = 'GRB3' OR
@@ -278,7 +297,7 @@
                                                                                         idqd.CHARACTERISTICCODE = 'AREA')
                                                                                     AND NOT (idqd.VALUEQUANTITY = 999 OR idqd.VALUEQUANTITY = 1 OR idqd.VALUEQUANTITY = 9999 OR idqd.VALUEQUANTITY = 99999 OR idqd.VALUEQUANTITY = 91)
                                                 WHERE
-                                                    p.PRODUCTIONORDERCODE  = '$row_iptip[PRODUCTIONORDERCODE]' 
+                                                    p.PRODUCTIONORDERCODE  = '$row_iptip[PRODUCTIONORDERCODE]'
                                                     AND p.PRODUCTIONDEMANDCODE IN ($row_iptip[PRODUCTIONDEMANDCODE2])
                                                     AND p.STEPNUMBER < '$row_iptip[STEPNUMBER]'
                                                     AND NOT idqd.VALUEQUANTITY IS NULL
@@ -298,71 +317,77 @@
                                                     p.PRODUCTIONDEMANDCODE,
                                                     iptip.LONGDESCRIPTION,
                                                     iptop.LONGDESCRIPTION
-                                                ORDER BY 
+                                                ORDER BY
                                                     p.STEPNUMBER
                                                 DESC
                                                 LIMIT 1");
-            $row_count_gerobak = db2_fetch_assoc($count_gerobak);
-            if($row_iptip['OPERATIONGROUPCODE'] == 'BRS'){
-                $totalGerobak_BRS += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'DYE'){
-                $totalGerobak_DYE += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'FIN'){
-                $totalGerobak_FIN += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'GKG'){
-                $totalGerobak_GKG += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'KNT'){
-                $totalGerobak_KNT += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'LAB'){
-                $totalGerobak_LAB += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'PPC'){
-                $totalGerobak_PPC += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'PRT'){
-                $totalGerobak_PRT += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'RMP'){
-                $totalGerobak_RMP += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'TAS'){
-                $totalGerobak_TAS += $row_count_gerobak['JML_GEROBAK'];
-            }
-            if($row_iptip['OPERATIONGROUPCODE'] == 'QC'){
-                $totalGerobak_QC += $row_count_gerobak['JML_GEROBAK'];
-            }
-        ?>
-        <?php if(!empty($row_posisikk['GEROBAK'])) :?>
+    $row_count_gerobak = db2_fetch_assoc($count_gerobak);
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'BRS') {
+        $totalGerobak_BRS += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'DYE') {
+        $totalGerobak_DYE += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'FIN') {
+        $totalGerobak_FIN += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'GKG') {
+        $totalGerobak_GKG += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'KNT') {
+        $totalGerobak_KNT += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'LAB') {
+        $totalGerobak_LAB += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'PPC') {
+        $totalGerobak_PPC += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'PRT') {
+        $totalGerobak_PRT += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'RMP') {
+        $totalGerobak_RMP += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'TAS') {
+        $totalGerobak_TAS += $row_count_gerobak['JML_GEROBAK'];
+    }
+    if ($row_iptip['OPERATIONGROUPCODE'] == 'QC') {
+        $totalGerobak_QC += $row_count_gerobak['JML_GEROBAK'];
+    }
+?>
+<?php if (! empty($row_posisikk['GEROBAK'])): ?>
             <tr>
-                <td><?= $row_iptip['STEPNUMBER'] ?></td>
-                <td><?= $row_iptip['HANGER'] ?> - <?= $row_iptip['SUBCODE06'] ?></td>
-                <td><?= $row_iptip['NO_WARNA']; ?></td>
-                <td><?= $row_iptip['WARNA']; ?></td>
-                <td><?= $row_iptip['PRODUCTIONORDERCODE'] ?></td>
-                <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_iptip['PRODUCTIONORDERCODE']; ?>"><?= $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
-                <td align="center"><?= $row_iptip['OPERATIONCODE'] ?></td>
-                <td align="center"><?= $row_iptip['OPERATIONGROUPCODE'] ?></td>
+                <?php
+                    $operation_choice = "";
+                    $dept_choice      = "";
+                    $qty_choice       = 0;
+                    $jml_choice       = 0;
+                ?>
+                <td><?php echo $row_iptip['STEPNUMBER'] ?></td>
+                <td><?php echo $row_iptip['HANGER'] ?> -<?php echo $row_iptip['SUBCODE06'] ?></td>
+                <td><?php echo $row_iptip['NO_WARNA']; ?></td>
+                <td><?php echo $row_iptip['WARNA']; ?></td>
+                <td><?php echo $row_iptip['PRODUCTIONORDERCODE'] ?></td>
+                <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?php echo $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?php echo $row_iptip['PRODUCTIONORDERCODE']; ?>"><?php echo $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
+                <td align="center"><?php echo $row_iptip['OPERATIONCODE'] ?></td>
+                <td align="center"><?php echo $row_iptip['OPERATIONGROUPCODE'] ?></td>
                 <td
-                    <?php 
-                        if($row_iptip['STATUS_OPERATION'] == 'Closed'){ 
-                            echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
-                            
-                        }elseif($row_iptip['STATUS_OPERATION'] == 'Progress'){ 
-                            echo 'style="background-color:#41CC11;"'; 
-                        }else{ 
-                            echo 'style="background-color:#CECECE;"'; 
-                        } 
-                    ?>>
-                    <center><?= $row_iptip['STATUS_OPERATION']; ?></center>
-                </td>
-                <?php if($dept == 'DYE') : ?>
                     <?php
-                        $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
+                        if ($row_iptip['STATUS_OPERATION'] == 'Closed') {
+                            echo 'style="background-color:#DC526E; color:#F7F7F7;"';
+
+                        } elseif ($row_iptip['STATUS_OPERATION'] == 'Progress') {
+                            echo 'style="background-color:#41CC11;"';
+                        } else {
+                            echo 'style="background-color:#CECECE;"';
+                    }
+                    ?>>
+                    <center><?php echo $row_iptip['STATUS_OPERATION']; ?></center>
+                </td>
+                <?php if ($dept == 'DYE'): ?>
+<?php
+    $q_schedule_dye = mysqli_query($con_db_dyeing, "SELECT DISTINCT
                                                                                 nokk,
                                                                                 id,
                                                                                 GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
@@ -387,94 +412,122 @@
                                                                                 mc_from,
                                                                                 GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
                                                                             FROM
-                                                                                tbl_schedule 
+                                                                                tbl_schedule
                                                                             WHERE
                                                                                 (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_iptip[PRODUCTIONORDERCODE]'
                                                                             GROUP BY
                                                                                 no_mesin,
-                                                                                no_urut 
+                                                                                no_urut
                                                                             ORDER BY
                                                                                 id ASC");
-                        $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
-                        $ket    = $row_schedule_dye['ket_status'].'- '.$row_schedule_dye['ket_kain'].' '.$row_schedule_dye['proses'].' MC '.$row_schedule_dye['mc_from'];
-                    ?>
-                    <td align="center"><?= $ket; ?></td>
-                    <td align="center"><?= $row_schedule_dye['no_urut']; ?></td>
+    $row_schedule_dye = mysqli_fetch_assoc($q_schedule_dye);
+    $ket              = $row_schedule_dye['ket_status'] . '- ' . $row_schedule_dye['ket_kain'] . ' ' . $row_schedule_dye['proses'] . ' MC ' . $row_schedule_dye['mc_from'];
+?>
+                    <td align="center"><?php echo $ket; ?></td>
+                    <td align="center"><?php echo $row_schedule_dye['no_urut']; ?></td>
                 <?php endif; ?>
 
                 <td align="center"></td>
                 <td align="center"></td>
-                <td align="center"><?= $row_posisikk['OPERATIONCODE'] ?></td>
-                <td align="center"><?= $row_posisikk['DEPT'] ?></td>
-                <td
-                    <?php 
-                        if($row_posisikk['STATUS_OPERATION'] == 'Closed'){ 
-                            echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
-                            
-                        }elseif($row_posisikk['STATUS_OPERATION'] == 'Progress'){ 
-                            echo 'style="background-color:#41CC11;"'; 
-                        }else{ 
-                            echo 'style="background-color:#CECECE;"'; 
-                        } 
-                    ?>>
-                    <center><?= $row_posisikk['STATUS_OPERATION']; ?></center>
+                <td align="center">
+                <?php
+                    $operation_choice = $row_posisikk['OPERATIONCODE'];
+                    echo $row_posisikk['OPERATIONCODE'];
+                ?>
                 </td>
-                <td><?= $row_posisikk['MULAI'] ?></td>
-                <td><?= $row_posisikk['SELESAI'] ?></td>
-                <td><?= $row_posisikk['OP1'] ?></td>
-                <td><?= $row_posisikk['OP2'] ?></td>
-                <td><?= $row_posisikk['GEROBAK'] ?></td>
+                <td align="center">
+                    <?php
+                        $dept_choice = $row_posisikk['DEPT'];
+                        echo $row_posisikk['DEPT'];
+                    ?>
+                </td>
+                <td
+                    <?php
+                        if ($row_posisikk['STATUS_OPERATION'] == 'Closed') {
+                            echo 'style="background-color:#DC526E; color:#F7F7F7;"';
+
+                        } elseif ($row_posisikk['STATUS_OPERATION'] == 'Progress') {
+                            echo 'style="background-color:#41CC11;"';
+                        } else {
+                            echo 'style="background-color:#CECECE;"';
+                    }
+                    ?>>
+                    <center><?php echo $row_posisikk['STATUS_OPERATION']; ?></center>
+                </td>
+                <td><?php echo $row_posisikk['MULAI'] ?></td>
+                <td><?php echo $row_posisikk['SELESAI'] ?></td>
+                <td><?php echo $row_posisikk['OP1'] ?></td>
+                <td><?php echo $row_posisikk['OP2'] ?></td>
+                <td><?php echo $row_posisikk['GEROBAK'] ?></td>
                 <td>
                     <?php
-                        $sql_qtyorder   = db2_exec($conn1, "SELECT DISTINCT
+                        $sql_qtyorder = db2_exec($conn1, "SELECT DISTINCT
                                                                     GROUPSTEPNUMBER,
                                                                     INITIALUSERPRIMARYQUANTITY AS QTY_ORDER,
                                                                     INITIALUSERSECONDARYQUANTITY AS QTY_ORDER_YARD
-                                                                FROM 
-                                                                    VIEWPRODUCTIONDEMANDSTEP 
-                                                                WHERE 
+                                                                FROM
+                                                                    VIEWPRODUCTIONDEMANDSTEP
+                                                                WHERE
                                                                     PRODUCTIONORDERCODE = '$row_iptip[PRODUCTIONORDERCODE]'
                                                                     -- AND GROUPSTEPNUMBER = '$row_iptip[STEPNUMBER]'
                                                                 ORDER BY
                                                                     GROUPSTEPNUMBER ASC LIMIT 1");
-                        $dt_qtyorder    = db2_fetch_assoc($sql_qtyorder);
+                        $dt_qtyorder = db2_fetch_assoc($sql_qtyorder);
                     ?>
-                    <?= $dt_qtyorder['QTY_ORDER']; ?>
+<?php
+    $qty_choice = $dt_qtyorder['QTY_ORDER'];
+    echo $dt_qtyorder['QTY_ORDER'];
+?>
                 </td>
-                <td><?= $row_count_gerobak['JML_GEROBAK'] ?></td>
+                <td>
+                    <?php
+                        $jml_choice = $row_count_gerobak['JML_GEROBAK'];
+                        echo $row_count_gerobak['JML_GEROBAK'];
+                    ?>
+                </td>
+                <?php
+                    tmpData($operation_choice, $dept_choice,
+                        $qty_choice, $jml_choice);
+                ?>
             </tr>
-        <?php else : ?>
-            <?php 
-                // FIELDNYA = tempat, kain_gerobak
-                $q_ncp      = mysqli_query($con_db_qc, "SELECT * FROM `tbl_ncp_qcf_now` WHERE nokk = '$row_iptip[PRODUCTIONORDERCODE]' AND nodemand = '$row_iptip[PRODUCTIONDEMANDCODE]'");
-                $row_ncp    = mysqli_fetch_assoc($q_ncp);
-            ?>
-            <?php if($row_ncp) : ?>
+<?php else: ?>
+<?php
+    // FIELDNYA = tempat, kain_gerobak
+    $q_ncp   = mysqli_query($con_db_qc, "SELECT * FROM `tbl_ncp_qcf_now` WHERE nokk = '$row_iptip[PRODUCTIONORDERCODE]' AND nodemand = '$row_iptip[PRODUCTIONDEMANDCODE]'");
+    $row_ncp = mysqli_fetch_assoc($q_ncp);
+?>
+<?php if ($row_ncp): ?>
                 <tr>
-                    <td><?= $row_iptip['STEPNUMBER'] ?></td>
-                    <td><?= $row_iptip['HANGER'] ?> - <?= $row_iptip['SUBCODE06'] ?></td>
-                    <td><?= $row_iptip['NO_WARNA']; ?></td>
-                    <td><?= $row_iptip['WARNA']; ?></td>
-                    <td><?= $row_iptip['PRODUCTIONORDERCODE'] ?></td>
-                    <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_iptip['PRODUCTIONORDERCODE']; ?>"><?= $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
-                    <td align="center"><?= $row_iptip['OPERATIONCODE'] ?></td>
-                    <td align="center"><?= $row_iptip['OPERATIONGROUPCODE'] ?></td>
+                <?php
+                    $operation_choice = "";
+                    $dept_choice      = "";
+                    $qty_choice       = 0;
+                    $jml_choice       = 0;
+                ?>
+                    <td><?php echo $row_iptip['STEPNUMBER'] ?></td>
+                    <td><?php echo $row_iptip['HANGER'] ?> -<?php echo $row_iptip['SUBCODE06'] ?></td>
+                    <td><?php echo $row_iptip['NO_WARNA']; ?></td>
+                    <td><?php echo $row_iptip['WARNA']; ?></td>
+                    <td><?php echo $row_iptip['PRODUCTIONORDERCODE'] ?></td>
+                    <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?php echo $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?php echo $row_iptip['PRODUCTIONORDERCODE']; ?>"><?php echo $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
+                    <td align="center"><?php echo $row_iptip['OPERATIONCODE'] ?></td>
+                    <td align="center"><?php echo $row_iptip['OPERATIONGROUPCODE'] ?></td>
                     <td
-                        <?php 
-                            if($row_iptip['STATUS_OPERATION'] == 'Closed'){ 
-                                echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
-                                
-                            }elseif($row_iptip['STATUS_OPERATION'] == 'Progress'){ 
-                                echo 'style="background-color:#41CC11;"'; 
-                            }else{ 
-                                echo 'style="background-color:#CECECE;"'; 
-                            } 
-                        ?>>
-                        <center><?= $row_iptip['STATUS_OPERATION']; ?></center>
-                    </td>
-                    <?php if($dept == 'DYE') : ?>
                         <?php
-                            $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
+                            if ($row_iptip['STATUS_OPERATION'] == 'Closed') {
+                                echo 'style="background-color:#DC526E; color:#F7F7F7;"';
+
+                            } elseif ($row_iptip['STATUS_OPERATION'] == 'Progress') {
+                                echo 'style="background-color:#41CC11;"';
+                            } else {
+                                echo 'style="background-color:#CECECE;"';
+                        }
+                        ?>>
+                        <center><?php echo $row_iptip['STATUS_OPERATION']; ?></center>
+                    </td>
+                    <?php if ($dept == 'DYE'): ?>
+<?php
+    $q_schedule_dye = mysqli_query($con_db_dyeing, "SELECT DISTINCT
                                                                                     nokk,
                                                                                     id,
                                                                                     GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
@@ -499,70 +552,93 @@
                                                                                     mc_from,
                                                                                     GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
                                                                                 FROM
-                                                                                    tbl_schedule 
+                                                                                    tbl_schedule
                                                                                 WHERE
                                                                                     (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_iptip[PRODUCTIONORDERCODE]'
                                                                                 GROUP BY
                                                                                     no_mesin,
-                                                                                    no_urut 
+                                                                                    no_urut
                                                                                 ORDER BY
                                                                                     id ASC");
-                            $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
-                            $ket    = $row_schedule_dye['ket_status'].'- '.$row_schedule_dye['ket_kain'].' '.$row_schedule_dye['proses'].' MC '.$row_schedule_dye['mc_from'];
-                        ?>
-                        <td align="center"><?= $ket; ?></td>
-                        <td align="center"><?= $row_schedule_dye['no_urut']; ?></td>
+    $row_schedule_dye = mysqli_fetch_assoc($q_schedule_dye);
+    $ket              = $row_schedule_dye['ket_status'] . '- ' . $row_schedule_dye['ket_kain'] . ' ' . $row_schedule_dye['proses'] . ' MC ' . $row_schedule_dye['mc_from'];
+?>
+                        <td align="center"><?php echo $ket; ?></td>
+                        <td align="center"><?php echo $row_schedule_dye['no_urut']; ?></td>
                     <?php endif; ?>
-                    
-                    <td align="center"><?= $row_ncp['nokk'] ?></td>
-                    <td align="center"><?= $row_ncp['nodemand'] ?></td>
-                    <td align="center"><?= $row_posisikk['OPERATIONCODE'] ?></td>
-                    <td align="center"><?= $row_ncp['dept'] ?></td>
-                    <td><center><?= $row_ncp['status']; ?></center></td>
-                    <td><?= $row_ncp['tgl_buat'] ?></td>
+
+                    <td align="center"><?php echo $row_ncp['nokk'] ?></td>
+                    <td align="center"><?php echo $row_ncp['nodemand'] ?></td>
+                    <td align="center">
+                        <?php
+                            $operation_choice = $row_posisikk['OPERATIONCODE'];
+                            echo $row_posisikk['OPERATIONCODE'];
+                        ?>
+                    </td>
+                    <td align="center">
+                        <?php
+                            $dept_choice = $row_ncp['dept'];
+                            echo $row_ncp['dept'];
+                        ?>
+                    </td>
+                    <td><center><?php echo $row_ncp['status']; ?></center></td>
+                    <td><?php echo $row_ncp['tgl_buat'] ?></td>
                     <td>-</td>
-                    <td><?= $row_ncp['peninjau_awal'] ?></td>
-                    <td><?= $row_ncp['peninjau_akhir'] ?></td>
-                    <td><?= $row_ncp['tempat'] ?></td>
-                    <td><?= $row_ncp['berat'] ?></td>
-                    <td></td>
+                    <td><?php echo $row_ncp['peninjau_awal'] ?></td>
+                    <td><?php echo $row_ncp['peninjau_akhir'] ?></td>
+                    <td><?php echo $row_ncp['tempat'] ?></td>
+                    <td>
+                        <?php
+                            $qty_choice = $row_ncp['berat'];
+                            echo $row_ncp['berat'];
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                            $jml_choice = 0;
+                        ?>
+                    </td>
+                    <?php
+                        tmpData($operation_choice, $dept_choice,
+                            $qty_choice, $jml_choice);
+                    ?>
                 </tr>
-            <?php else : ?>
+<?php else: ?>
                 <!-- QTY SALINAN
                 <?php
-                    $q_carisalinan1  = db2_exec($conn1, "SELECT
+                    $q_carisalinan1 = db2_exec($conn1, "SELECT
                                                             PRODUCTIONORDERCODE,
                                                             PRODUCTIONDEMANDCODE,
-                                                            SUBSTR(ORIGINALPDCODE, 5) AS ORIGINALPDCODE 
-                                                        FROM 
-                                                            ITXVIEWKK i 
-                                                        WHERE 
+                                                            SUBSTR(ORIGINALPDCODE, 5) AS ORIGINALPDCODE
+                                                        FROM
+                                                            ITXVIEWKK i
+                                                        WHERE
                                                             PRODUCTIONDEMANDCODE = '$row_iptip[PRODUCTIONDEMANDCODE]'");
-                    $row_carisalinan1    = db2_fetch_assoc($q_carisalinan1);
-                    
-                    $q_carisalinan  = db2_exec($conn1, "SELECT
+                    $row_carisalinan1 = db2_fetch_assoc($q_carisalinan1);
+
+                    $q_carisalinan = db2_exec($conn1, "SELECT
                                                             PRODUCTIONORDERCODE,
                                                             PRODUCTIONDEMANDCODE,
-                                                            SUBSTR(ORIGINALPDCODE, 5) AS ORIGINALPDCODE 
-                                                        FROM 
-                                                            ITXVIEWKK i 
-                                                        WHERE 
+                                                            SUBSTR(ORIGINALPDCODE, 5) AS ORIGINALPDCODE
+                                                        FROM
+                                                            ITXVIEWKK i
+                                                        WHERE
                                                             PRODUCTIONDEMANDCODE = '$row_carisalinan1[ORIGINALPDCODE]'");
-                    $row_carisalinan    = db2_fetch_assoc($q_carisalinan);
+                    $row_carisalinan = db2_fetch_assoc($q_carisalinan);
                 ?>
-                <?php if($row_carisalinan) : ?>
-                    <?php
-                        if($dept == 'DYE'){
-                            $gerobak    = "CASE
+<?php if ($row_carisalinan): ?>
+<?php
+    if ($dept == 'DYE') {
+        $gerobak = "CASE
                                                 WHEN TRIM(p.OPERATIONCODE) = 'DYE2' THEN 'Poly'
                                                 WHEN TRIM(p.OPERATIONCODE) = 'DYE4' THEN 'Cotton'
                                                 ELSE LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ')
                                             END AS GEROBAK";
-                        }else{
-                            $gerobak    = "LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') AS GEROBAK";
-                        }
+    } else {
+        $gerobak = "LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') AS GEROBAK";
+    }
 
-                        $qsalinan = "SELECT DISTINCT
+    $qsalinan = "SELECT DISTINCT
                                             p.STEPNUMBER AS STEPNUMBER,
                                             CASE
                                                 WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
@@ -586,9 +662,9 @@
                                             iptip.LONGDESCRIPTION AS OP1,
                                             iptop.LONGDESCRIPTION AS OP2,
                                             $gerobak
-                                        FROM 
-                                            PRODUCTIONDEMANDSTEP p 
-                                        LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
+                                        FROM
+                                            PRODUCTIONDEMANDSTEP p
+                                        LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE
                                         LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                         LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                         LEFT JOIN ITXVIEW_DETAIL_QA_DATA idqd ON idqd.PRODUCTIONDEMANDCODE = p.PRODUCTIONDEMANDCODE AND idqd.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE
@@ -596,7 +672,7 @@
                                                                                                         WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
                                                                                                         ELSE TRIM(p.PRODRESERVATIONLINKGROUPCODE)
                                                                                                     END
-                                                                            AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER) 
+                                                                            AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER)
                                                                             AND (idqd.CHARACTERISTICCODE = 'GRB1' OR
                                                                                 idqd.CHARACTERISTICCODE = 'GRB2' OR
                                                                                 idqd.CHARACTERISTICCODE = 'GRB3' OR
@@ -610,7 +686,7 @@
                                                                                 idqd.CHARACTERISTICCODE = 'AREA')
                                                                             AND NOT (idqd.VALUEQUANTITY = 999 OR idqd.VALUEQUANTITY = 1 OR idqd.VALUEQUANTITY = 9999 OR idqd.VALUEQUANTITY = 99999 OR idqd.VALUEQUANTITY = 91)
                                         WHERE
-                                            p.PRODUCTIONORDERCODE  = '$row_carisalinan[PRODUCTIONORDERCODE]' 
+                                            p.PRODUCTIONORDERCODE  = '$row_carisalinan[PRODUCTIONORDERCODE]'
                                             AND p.PRODUCTIONDEMANDCODE = '$row_carisalinan[PRODUCTIONDEMANDCODE]'
                                             AND NOT idqd.VALUEQUANTITY IS NULL
                                         GROUP BY
@@ -628,18 +704,18 @@
                                             p.PRODUCTIONDEMANDCODE,
                                             iptip.LONGDESCRIPTION,
                                             iptop.LONGDESCRIPTION
-                                        ORDER BY 
+                                        ORDER BY
                                             p.STEPNUMBER
                                         DESC
                                         LIMIT 1";
-                        $q_posisikksalinan     = db2_exec($conn1, $qsalinan);
-                        $row_posisikk_salinan = db2_fetch_assoc($q_posisikksalinan);
+    $q_posisikksalinan    = db2_exec($conn1, $qsalinan);
+    $row_posisikk_salinan = db2_fetch_assoc($q_posisikksalinan);
 
-                        $count_gerobaksalinan  = db2_exec($conn1, "SELECT 
+    $count_gerobaksalinan = db2_exec($conn1, "SELECT
                                                             COUNT(DISTINCT idqd.VALUEQUANTITY) AS JML_GEROBAK
-                                                            FROM 
-                                                                PRODUCTIONDEMANDSTEP p 
-                                                            LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
+                                                            FROM
+                                                                PRODUCTIONDEMANDSTEP p
+                                                            LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE
                                                             -- LEFT JOIN ADSTORAGE a ON a.UNIQUEID = o.ABSUNIQUEID AND a.FIELDNAME = 'Gerobak'
                                                             LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                             LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
@@ -648,7 +724,7 @@
                                                                                                                             WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
                                                                                                                             ELSE TRIM(p.PRODRESERVATIONLINKGROUPCODE)
                                                                                                                         END
-                                                                                                AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER) 
+                                                                                                AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER)
                                                                                                 AND (idqd.CHARACTERISTICCODE = 'GRB1' OR
                                                                                                     idqd.CHARACTERISTICCODE = 'GRB2' OR
                                                                                                     idqd.CHARACTERISTICCODE = 'GRB3' OR
@@ -662,7 +738,7 @@
                                                                                                     idqd.CHARACTERISTICCODE = 'AREA')
                                                                                                 AND NOT (idqd.VALUEQUANTITY = 999 OR idqd.VALUEQUANTITY = 1 OR idqd.VALUEQUANTITY = 9999 OR idqd.VALUEQUANTITY = 99999 OR idqd.VALUEQUANTITY = 91)
                                                             WHERE
-                                                                p.PRODUCTIONORDERCODE  = '$row_carisalinan[PRODUCTIONORDERCODE]' 
+                                                                p.PRODUCTIONORDERCODE  = '$row_carisalinan[PRODUCTIONORDERCODE]'
                                                                 AND p.PRODUCTIONDEMANDCODE IN ($row_carisalinan[PRODUCTIONDEMANDCODE])
                                                                 AND NOT idqd.VALUEQUANTITY IS NULL
                                                             GROUP BY
@@ -680,37 +756,37 @@
                                                                 p.PRODUCTIONDEMANDCODE,
                                                                 iptip.LONGDESCRIPTION,
                                                                 iptop.LONGDESCRIPTION
-                                                            ORDER BY 
+                                                            ORDER BY
                                                                 p.STEPNUMBER
                                                             DESC
                                                             LIMIT 1");
-                        $row_count_gerobaksalinan = db2_fetch_assoc($count_gerobaksalinan);
-                    ?>
+    $row_count_gerobaksalinan = db2_fetch_assoc($count_gerobaksalinan);
+?>
                     <tr>
-                        <td><?= $row_iptip['STEPNUMBER'] ?></td>
-                        <td><?= $row_iptip['HANGER'] ?> - <?= $row_iptip['SUBCODE06'] ?></td>
-                        <td><?= $row_iptip['NO_WARNA']; ?></td>
-                        <td><?= $row_iptip['WARNA']; ?></td>
-                        <td><?= $row_iptip['PRODUCTIONORDERCODE'] ?></td>
-                        <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_iptip['PRODUCTIONORDERCODE']; ?>"><?= $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
-                        <td align="center"><?= $row_iptip['OPERATIONCODE'] ?></td>
-                        <td align="center"><?= $row_iptip['OPERATIONGROUPCODE'] ?></td>
+                        <td><?php echo $row_iptip['STEPNUMBER'] ?></td>
+                        <td><?php echo $row_iptip['HANGER'] ?> -<?php echo $row_iptip['SUBCODE06'] ?></td>
+                        <td><?php echo $row_iptip['NO_WARNA']; ?></td>
+                        <td><?php echo $row_iptip['WARNA']; ?></td>
+                        <td><?php echo $row_iptip['PRODUCTIONORDERCODE'] ?></td>
+                        <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?php echo $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?php echo $row_iptip['PRODUCTIONORDERCODE']; ?>"><?php echo $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
+                        <td align="center"><?php echo $row_iptip['OPERATIONCODE'] ?></td>
+                        <td align="center"><?php echo $row_iptip['OPERATIONGROUPCODE'] ?></td>
                         <td
-                            <?php 
-                                if($row_iptip['STATUS_OPERATION'] == 'Closed'){ 
-                                    echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
-                                    
-                                }elseif($row_iptip['STATUS_OPERATION'] == 'Progress'){ 
-                                    echo 'style="background-color:#41CC11;"'; 
-                                }else{ 
-                                    echo 'style="background-color:#CECECE;"'; 
-                                } 
-                            ?>>
-                            <center><?= $row_iptip['STATUS_OPERATION']; ?></center>
-                        </td>
-                        <?php if($dept == 'DYE') : ?>
                             <?php
-                                $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
+                                if ($row_iptip['STATUS_OPERATION'] == 'Closed') {
+                                    echo 'style="background-color:#DC526E; color:#F7F7F7;"';
+
+                                } elseif ($row_iptip['STATUS_OPERATION'] == 'Progress') {
+                                    echo 'style="background-color:#41CC11;"';
+                                } else {
+                                    echo 'style="background-color:#CECECE;"';
+                            }
+                            ?>>
+                            <center><?php echo $row_iptip['STATUS_OPERATION']; ?></center>
+                        </td>
+                        <?php if ($dept == 'DYE'): ?>
+<?php
+    $q_schedule_dye = mysqli_query($con_db_dyeing, "SELECT DISTINCT
                                                                                         nokk,
                                                                                         id,
                                                                                         GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
@@ -735,67 +811,81 @@
                                                                                         mc_from,
                                                                                         GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
                                                                                     FROM
-                                                                                        tbl_schedule 
+                                                                                        tbl_schedule
                                                                                     WHERE
                                                                                         (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_posisikk_salinan[PRODUCTIONORDERCODE]'
                                                                                     GROUP BY
                                                                                         no_mesin,
-                                                                                        no_urut 
+                                                                                        no_urut
                                                                                     ORDER BY
                                                                                         id ASC");
-                                $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
-                                $ket    = $row_schedule_dye['ket_status'].'- '.$row_schedule_dye['ket_kain'].' '.$row_schedule_dye['proses'].' MC '.$row_schedule_dye['mc_from'];
-                            ?>
-                            <td align="center"><?= $ket; ?></td>
-                            <td align="center"><?= $row_schedule_dye['no_urut']; ?></td>
+    $row_schedule_dye = mysqli_fetch_assoc($q_schedule_dye);
+    $ket              = $row_schedule_dye['ket_status'] . '- ' . $row_schedule_dye['ket_kain'] . ' ' . $row_schedule_dye['proses'] . ' MC ' . $row_schedule_dye['mc_from'];
+?>
+                            <td align="center"><?php echo $ket; ?></td>
+                            <td align="center"><?php echo $row_schedule_dye['no_urut']; ?></td>
                         <?php endif; ?>
 
-                        <td align="center"><?= $row_posisikk_salinan['PRODUCTIONORDERCODE'] ?></td>
-                        <td align="center"><?= $row_posisikk_salinan['PRODUCTIONDEMANDCODE'] ?></td>
-                        <td align="center"><?= $row_posisikk_salinan['OPERATIONCODE'] ?></td>
-                        <td align="center"><?= $row_posisikk_salinan['DEPT'] ?></td>
-                        <td
-                            <?php 
-                                if($row_posisikk_salinan['STATUS_OPERATION'] == 'Closed'){ 
-                                    echo 'style="background-color:#DC526E; color:#F7F7F7;"'; 
-                                    
-                                }elseif($row_posisikk_salinan['STATUS_OPERATION'] == 'Progress'){ 
-                                    echo 'style="background-color:#41CC11;"'; 
-                                }else{ 
-                                    echo 'style="background-color:#CECECE;"'; 
-                                } 
-                            ?>>
-                            <center><?= $row_posisikk_salinan['STATUS_OPERATION']; ?></center>
+                        <td align="center"><?php echo $row_posisikk_salinan['PRODUCTIONORDERCODE'] ?></td>
+                        <td align="center"><?php echo $row_posisikk_salinan['PRODUCTIONDEMANDCODE'] ?></td>
+                        <td align="center">
+                            <?php
+                                echo $row_posisikk_salinan['OPERATIONCODE'];
+                            ?>
                         </td>
-                        <td><?= $row_posisikk_salinan['MULAI'] ?></td>
-                        <td><?= $row_posisikk_salinan['SELESAI'] ?></td>
-                        <td><?= $row_posisikk_salinan['OP1'] ?></td>
-                        <td><?= $row_posisikk_salinan['OP2'] ?></td>
-                        <td><?= $row_posisikk_salinan['GEROBAK'] ?></td>
+                        <td align="center">
+                            <?php
+                                echo $row_posisikk_salinan['DEPT'];
+                            ?>
+                            </td>
+                        <td
+                            <?php
+                                if ($row_posisikk_salinan['STATUS_OPERATION'] == 'Closed') {
+                                    echo 'style="background-color:#DC526E; color:#F7F7F7;"';
+
+                                } elseif ($row_posisikk_salinan['STATUS_OPERATION'] == 'Progress') {
+                                    echo 'style="background-color:#41CC11;"';
+                                } else {
+                                    echo 'style="background-color:#CECECE;"';
+                            }
+                            ?>>
+                            <center><?php echo $row_posisikk_salinan['STATUS_OPERATION']; ?></center>
+                        </td>
+                        <td><?php echo $row_posisikk_salinan['MULAI'] ?></td>
+                        <td><?php echo $row_posisikk_salinan['SELESAI'] ?></td>
+                        <td><?php echo $row_posisikk_salinan['OP1'] ?></td>
+                        <td><?php echo $row_posisikk_salinan['OP2'] ?></td>
+                        <td><?php echo $row_posisikk_salinan['GEROBAK'] ?></td>
                         <td>
                             <?php
-                                $sql_qtyorder   = db2_exec($conn1, "SELECT DISTINCT
+                                $sql_qtyorder = db2_exec($conn1, "SELECT DISTINCT
                                                                             GROUPSTEPNUMBER,
                                                                             INITIALUSERPRIMARYQUANTITY AS QTY_ORDER,
                                                                             INITIALUSERSECONDARYQUANTITY AS QTY_ORDER_YARD
-                                                                        FROM 
-                                                                            VIEWPRODUCTIONDEMANDSTEP 
-                                                                        WHERE 
+                                                                        FROM
+                                                                            VIEWPRODUCTIONDEMANDSTEP
+                                                                        WHERE
                                                                             PRODUCTIONORDERCODE = '$row_posisikk_salinan[PRODUCTIONORDERCODE]'
                                                                             -- AND GROUPSTEPNUMBER = '$row_iptip[STEPNUMBER]'
                                                                         ORDER BY
                                                                             GROUPSTEPNUMBER ASC LIMIT 1");
-                                $dt_qtyorder    = db2_fetch_assoc($sql_qtyorder);
+                                $dt_qtyorder = db2_fetch_assoc($sql_qtyorder);
                             ?>
-                            <?= $dt_qtyorder['QTY_ORDER']; ?>
+<?php
+    echo $dt_qtyorder['QTY_ORDER'];
+?>
                         </td>
-                        <td><?= $row_count_gerobaksalinan['JML_GEROBAK'] ?></td>
+                        <td>
+                            <?php
+                                echo $row_count_gerobaksalinan['JML_GEROBAK'];
+                            ?>
+                        </td>
                     </tr>
-                <?php endif; ?> 
+                <?php endif; ?>
                 -->
             <?php endif; ?>
-        <?php endif; ?>
-    <?php endwhile; ?>
+<?php endif; ?>
+<?php endwhile; ?>
     <table class="table compact table-striped table-bordered nowrap" width="100%">
         <thead>
             <tr>
@@ -814,19 +904,24 @@
         </thead>
         <tbody>
             <tr>
-                <td><?= $totalGerobak_QC; ?></td>
-                <td><?= $totalGerobak_BRS; ?></td>
-                <td><?= $totalGerobak_DYE; ?></td>
-                <td><?= $totalGerobak_FIN; ?></td>
-                <td><?= $totalGerobak_GKG; ?></td>
-                <td><?= $totalGerobak_KNT; ?></td>
-                <td><?= $totalGerobak_LAB; ?></td>
-                <td><?= $totalGerobak_PPC; ?></td>
-                <td><?= $totalGerobak_PRT; ?></td>
-                <td><?= $totalGerobak_RMP; ?></td>
-                <td><?= $totalGerobak_TAS; ?></td>
+                <td><?php echo $totalGerobak_QC; ?></td>
+                <td><?php echo $totalGerobak_BRS; ?></td>
+                <td><?php echo $totalGerobak_DYE; ?></td>
+                <td><?php echo $totalGerobak_FIN; ?></td>
+                <td><?php echo $totalGerobak_GKG; ?></td>
+                <td><?php echo $totalGerobak_KNT; ?></td>
+                <td><?php echo $totalGerobak_LAB; ?></td>
+                <td><?php echo $totalGerobak_PPC; ?></td>
+                <td><?php echo $totalGerobak_PRT; ?></td>
+                <td><?php echo $totalGerobak_RMP; ?></td>
+                <td><?php echo $totalGerobak_TAS; ?></td>
             </tr>
         </tbody>
     </table>
 </tbody>
 </table>
+
+<?php
+    $updateStatus = "UPDATE tmp_status SET status=1 WHERE name='cari_gerobak_otomatis'";
+mysqli_query($con_now_gerobak, $updateStatus);
+?>
