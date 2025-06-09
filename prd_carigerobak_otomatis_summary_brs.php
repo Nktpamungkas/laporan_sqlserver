@@ -93,7 +93,8 @@
         ${$category . '_GEROBAK'} += $jml;
     }
 
-    $sql    = "SELECT * FROM tmp_cari_gerobak_otomatis";
+    $sql = "SELECT * FROM tmp_cari_gerobak_otomatis
+              group by OPERATION,DEPARTEMEN,QTY,JML_GEROBAK";
     $result = mysqli_query($con_now_gerobak, $sql);
 
     if (mysqli_num_rows($result) > 0) {
@@ -117,7 +118,7 @@
 
 <table border="1" cellspacing="0" cellpadding="3">
     <tr>
-        <td colspan="3" align="center" bgcolor="#FFFF00"><b>SISA                                                                                                                                                                                                                                                                                                                                                                                                 <?php echo $tgl . ' ' . $bln . ' ' . $thn ?> (<?php echo $waktu ?>)</b></td>
+        <td colspan="3" align="center" bgcolor="#FFFF00"><b>SISA                                                                                                                                                                                                                                                                                                                                                                                                                                                                 <?php echo $tgl . ' ' . $bln . ' ' . $thn ?> (<?php echo $waktu ?>)</b></td>
     </tr>
     <tr style="font-weight:bold; background:#f2f2f2;">
         <td align="center">PROSES</td>
