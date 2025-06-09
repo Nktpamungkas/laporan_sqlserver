@@ -88,7 +88,7 @@
             'NCP8'   => 'NCP',
         ];
 
-        $category = $ops[$operation] ?? 'PERSIAPAN';
+        $category = $ops[$operation];
         ${$category . '_QTY'} += $qty;
         ${$category . '_GEROBAK'} += $jml;
     }
@@ -117,7 +117,7 @@
 
 <table border="1" cellspacing="0" cellpadding="3">
     <tr>
-        <td colspan="3" align="center" bgcolor="#FFFF00"><b>SISA                                                                                                                                                                                                                                                                                                                                 <?php echo $tgl . ' ' . $bln . ' ' . $thn ?> (<?php echo $waktu ?>)</b></td>
+        <td colspan="3" align="center" bgcolor="#FFFF00"><b>SISA                                                                                                                                                                                                                                                                                                                                                                                                 <?php echo $tgl . ' ' . $bln . ' ' . $thn ?> (<?php echo $waktu ?>)</b></td>
     </tr>
     <tr style="font-weight:bold; background:#f2f2f2;">
         <td align="center">PROSES</td>
