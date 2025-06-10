@@ -37,23 +37,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirDes    = $tahunSebelumnya . '-12-31';
 
           // LOKAL
-            $qDesThnSebelumnyaLokal = "SELECT 
+            $qDesThnSebelumnyaLokal = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('DOM', 'SAM')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -65,23 +83,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // LOKAL
           
           // EXPORT
-            $qDesThnSebelumnyaExport = "SELECT 
+            $qDesThnSebelumnyaExport = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('EXP', 'SME')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -93,51 +129,87 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // EXPORT
           
           // F/K
-            $qDesThnSebelumnyaLokalExport_fkf = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qDesThnSebelumnyaLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                                    SELECT
+                                                      i.CODE,
+                                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                                    FROM
+                                                      ITXVIEWKGBRUTOBONORDER2 i
+                                                    GROUP BY 
+                                                    i.CODE,
+                                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                                  )
+                                                  SELECT 
+                                                    SUM(QTY) AS QTY
+                                                  FROM 
+                                                  (SELECT
+                                                    s.CODE,
+                                                    s3.DELIVERYDATE,
+                                                    ROUND(SUM(qb.KFF)) AS QTY
+                                                  FROM
+                                                    SALESORDER s
+                                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                                  WHERE
+                                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                                    AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                                    AND NOT s3.DELIVERYDATE IS NULL
+                                                    AND NOT a.VALUESTRING IS NULL
+                                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                                  GROUP BY
+                                                    s.CODE,
+                                                    s3.DELIVERYDATE)
+                                                  WHERE
+                                                    DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultDesThnSebelumnyaLokalExport_fkf = db2_exec($conn1, $qDesThnSebelumnyaLokalExport_fkf);
             $rowDesThnSebelumnyaLokalExport_fkf    = db2_fetch_assoc($resultDesThnSebelumnyaLokalExport_fkf);
             $dataDesThnSebelumnyaLokalExport_fkf   = $rowDesThnSebelumnyaLokalExport_fkf['QTY'];
           // F/K
           
           // BOOKING
-            $qDesThnSebelumnyaBooking = "SELECT 
+            $qDesThnSebelumnyaBooking = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('OPN')
+                                          AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -149,23 +221,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qDesThnSebelumnyaJasa = "SELECT 
+            $qDesThnSebelumnyaJasa = "WITH QTY_BRUTO AS (
+                                        SELECT
+                                          i.CODE,
+                                          i.ORIGDLVSALORDLINESALORDERCODE,
+                                          i.ORIGDLVSALORDERLINEORDERLINE,
+                                          SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                          SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                        FROM
+                                          ITXVIEWKGBRUTOBONORDER2 i
+                                        GROUP BY 
+                                        i.CODE,
+                                          i.ORIGDLVSALORDLINESALORDERCODE,
+                                          i.ORIGDLVSALORDERLINEORDERLINE
+                                      )
+                                      SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -177,28 +267,46 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // JASA
           
           // PRINTING
-            $qDesThnSebelumnyaPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qDesThnSebelumnyaPrt = "WITH QTY_BRUTO AS (
+                                      SELECT
+                                        i.CODE,
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE,
+                                        SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                        SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                      FROM
+                                        ITXVIEWKGBRUTOBONORDER2 i
+                                      GROUP BY 
+                                      i.CODE,
+                                        i.ORIGDLVSALORDLINESALORDERCODE,
+                                        i.ORIGDLVSALORDERLINEORDERLINE
+                                    )
+                                    SELECT 
+                                      SUM(QTY) AS QTY
+                                    FROM 
+                                    (SELECT
+                                      s.CODE,
+                                      s3.DELIVERYDATE,
+                                      ROUND(SUM(qb.KFF)) AS QTY
+                                    FROM
+                                      SALESORDER s
+                                    LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                    LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                    LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                    LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                    LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                    LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                    WHERE
+                                      CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                      AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                      AND NOT s3.DELIVERYDATE IS NULL
+                                      AND NOT a.VALUESTRING IS NULL
+                                      AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                    GROUP BY
+                                      s.CODE,
+                                      s3.DELIVERYDATE)
+                                    WHERE
+                                      DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultDesThnSebelumnyaPrt = db2_exec($conn1, $qDesThnSebelumnyaPrt);
             $rowDesThnSebelumnyaPrt    = db2_fetch_assoc($resultDesThnSebelumnyaPrt);
             $dataDesThnSebelumnyaPrt   = $rowDesThnSebelumnyaPrt['QTY'];
@@ -256,79 +364,133 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirJan    = $tahunInput . '-01-31';
 
           // LOKAL
-            $qJanThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+            $qJanThnIniLokal = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
                                   FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJanThnIniLokal = db2_exec($conn1, $qJanThnIniLokal);
             $rowJanThnIniLokal    = db2_fetch_assoc($resultJanThnIniLokal);
             $dataJanThnIniLokal   = $rowJanThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qJanThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJanThnIniExport = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJanThnIniExport = db2_exec($conn1, $qJanThnIniExport);
             $rowJanThnIniExport    = db2_fetch_assoc($resultJanThnIniExport);
             $dataJanThnIniExport   = $rowJanThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qJanThnIniLokalExport_fkf = "SELECT 
+            $qJanThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -340,23 +502,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // F/K
           
           // BOOKING
-            $qJanThnIniBooking = "SELECT 
+            $qJanThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -368,56 +548,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qJanThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJanThnIniJasa = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJanThnIniJasa = db2_exec($conn1, $qJanThnIniJasa);
             $rowJanThnIniJasa    = db2_fetch_assoc($resultJanThnIniJasa);
             $dataJanThnIniJasa   = $rowJanThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qJanThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJanThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJanThnIniPrt = db2_exec($conn1, $qJanThnIniPrt);
             $rowJanThnIniPrt    = db2_fetch_assoc($resultJanThnIniPrt);
             $dataJanThnIniPrt   = $rowJanThnIniPrt['QTY'];
@@ -475,79 +691,133 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirFeb    = $tahunInput . '-02-28';
 
           // LOKAL
-            $qFebThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                  FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qFebThnIniLokal = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultFebThnIniLokal = db2_exec($conn1, $qFebThnIniLokal);
             $rowFebThnIniLokal    = db2_fetch_assoc($resultFebThnIniLokal);
             $dataFebThnIniLokal   = $rowFebThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qFebThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qFebThnIniExport = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultFebThnIniExport = db2_exec($conn1, $qFebThnIniExport);
             $rowFebThnIniExport    = db2_fetch_assoc($resultFebThnIniExport);
             $dataFebThnIniExport   = $rowFebThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qFebThnIniLokalExport_fkf = "SELECT 
+            $qFebThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -559,23 +829,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // F/K
           
           // BOOKING
-            $qFebThnIniBooking = "SELECT 
+            $qFebThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -587,56 +875,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qFebThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qFebThnIniJasa = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultFebThnIniJasa = db2_exec($conn1, $qFebThnIniJasa);
             $rowFebThnIniJasa    = db2_fetch_assoc($resultFebThnIniJasa);
             $dataFebThnIniJasa   = $rowFebThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qFebThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qFebThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultFebThnIniPrt = db2_exec($conn1, $qFebThnIniPrt);
             $rowFebThnIniPrt    = db2_fetch_assoc($resultFebThnIniPrt);
             $dataFebThnIniPrt   = $rowFebThnIniPrt['QTY'];
@@ -694,107 +1018,179 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirMar    = $tahunInput . '-03-31';
 
           // LOKAL
-            $qMarThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+            $qMarThnIniLokal = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
                                   FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMarThnIniLokal = db2_exec($conn1, $qMarThnIniLokal);
             $rowMarThnIniLokal    = db2_fetch_assoc($resultMarThnIniLokal);
             $dataMarThnIniLokal   = $rowMarThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qMarThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qMarThnIniExport = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(qb.KFF)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMarThnIniExport = db2_exec($conn1, $qMarThnIniExport);
             $rowMarThnIniExport    = db2_fetch_assoc($resultMarThnIniExport);
             $dataMarThnIniExport   = $rowMarThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qMarThnIniLokalExport_fkf = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qMarThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                            SUM(QTY) AS QTY
+                                          FROM 
+                                          (SELECT
+                                            s.CODE,
+                                            s3.DELIVERYDATE,
+                                            ROUND(SUM(qb.KFF)) AS QTY
+                                          FROM
+                                            SALESORDER s
+                                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                          LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                          WHERE
+                                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                            AND NOT s3.DELIVERYDATE IS NULL
+                                            AND NOT a.VALUESTRING IS NULL
+                                            AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                          GROUP BY
+                                            s.CODE,
+                                            s3.DELIVERYDATE)
+                                          WHERE
+                                            DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMarThnIniLokalExport_fkf = db2_exec($conn1, $qMarThnIniLokalExport_fkf);
             $rowMarThnIniLokalExport_fkf    = db2_fetch_assoc($resultMarThnIniLokalExport_fkf);
             $dataMarThnIniLokalExport_fkf   = $rowMarThnIniLokalExport_fkf['QTY'];
           // F/K
           
           // BOOKING
-            $qMarThnIniBooking = "SELECT 
+            $qMarThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -806,56 +1202,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qMarThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qMarThnIniJasa = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('CWD')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMarThnIniJasa = db2_exec($conn1, $qMarThnIniJasa);
             $rowMarThnIniJasa    = db2_fetch_assoc($resultMarThnIniJasa);
             $dataMarThnIniJasa   = $rowMarThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qMarThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qMarThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMarThnIniPrt = db2_exec($conn1, $qMarThnIniPrt);
             $rowMarThnIniPrt    = db2_fetch_assoc($resultMarThnIniPrt);
             $dataMarThnIniPrt   = $rowMarThnIniPrt['QTY'];
@@ -913,107 +1345,179 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirApr    = $tahunInput . '-04-30';
 
           // LOKAL
-            $qAprThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+            $qAprThnIniLokal = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
                                   FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultAprThnIniLokal = db2_exec($conn1, $qAprThnIniLokal);
             $rowAprThnIniLokal    = db2_fetch_assoc($resultAprThnIniLokal);
             $dataAprThnIniLokal   = $rowAprThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qAprThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qAprThnIniExport = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultAprThnIniExport = db2_exec($conn1, $qAprThnIniExport);
             $rowAprThnIniExport    = db2_fetch_assoc($resultAprThnIniExport);
             $dataAprThnIniExport   = $rowAprThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qAprThnIniLokalExport_fkf = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qAprThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                            SELECT
+                                              i.CODE,
+                                              i.ORIGDLVSALORDLINESALORDERCODE,
+                                              i.ORIGDLVSALORDERLINEORDERLINE,
+                                              SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                              SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                            FROM
+                                              ITXVIEWKGBRUTOBONORDER2 i
+                                            GROUP BY 
+                                              i.CODE,
+                                              i.ORIGDLVSALORDLINESALORDERCODE,
+                                              i.ORIGDLVSALORDERLINEORDERLINE
+                                          )
+                                          SELECT 
+                                            SUM(QTY) AS QTY
+                                          FROM 
+                                          (SELECT
+                                            s.CODE,
+                                            s3.DELIVERYDATE,
+                                            ROUND(SUM(qb.KFF)) AS QTY
+                                          FROM
+                                            SALESORDER s
+                                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                          LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                          WHERE
+                                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                            AND NOT s3.DELIVERYDATE IS NULL
+                                            AND NOT a.VALUESTRING IS NULL
+                                            AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                          GROUP BY
+                                            s.CODE,
+                                            s3.DELIVERYDATE)
+                                          WHERE
+                                            DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultAprThnIniLokalExport_fkf = db2_exec($conn1, $qAprThnIniLokalExport_fkf);
             $rowAprThnIniLokalExport_fkf    = db2_fetch_assoc($resultAprThnIniLokalExport_fkf);
             $dataAprThnIniLokalExport_fkf   = $rowAprThnIniLokalExport_fkf['QTY'];
           // F/K
           
           // BOOKING
-            $qAprThnIniBooking = "SELECT 
+            $qAprThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1025,56 +1529,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qAprThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qAprThnIniJasa = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultAprThnIniJasa = db2_exec($conn1, $qAprThnIniJasa);
             $rowAprThnIniJasa    = db2_fetch_assoc($resultAprThnIniJasa);
             $dataAprThnIniJasa   = $rowAprThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qAprThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qAprThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultAprThnIniPrt = db2_exec($conn1, $qAprThnIniPrt);
             $rowAprThnIniPrt    = db2_fetch_assoc($resultAprThnIniPrt);
             $dataAprThnIniPrt   = $rowAprThnIniPrt['QTY'];
@@ -1132,107 +1672,179 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirMei    = $tahunInput . '-05-31';
 
           // LOKAL
-            $qMeiThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+            $qMeiThnIniLokal = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
                                   FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMeiThnIniLokal = db2_exec($conn1, $qMeiThnIniLokal);
             $rowMeiThnIniLokal    = db2_fetch_assoc($resultMeiThnIniLokal);
             $dataMeiThnIniLokal   = $rowMeiThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qMeiThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qMeiThnIniExport = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMeiThnIniExport = db2_exec($conn1, $qMeiThnIniExport);
             $rowMeiThnIniExport    = db2_fetch_assoc($resultMeiThnIniExport);
             $dataMeiThnIniExport   = $rowMeiThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qMeiThnIniLokalExport_fkf = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qMeiThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                            SELECT
+                                              i.CODE,
+                                              i.ORIGDLVSALORDLINESALORDERCODE,
+                                              i.ORIGDLVSALORDERLINEORDERLINE,
+                                              SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                              SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                            FROM
+                                              ITXVIEWKGBRUTOBONORDER2 i
+                                            GROUP BY 
+                                              i.CODE,
+                                              i.ORIGDLVSALORDLINESALORDERCODE,
+                                              i.ORIGDLVSALORDERLINEORDERLINE
+                                          )
+                                          SELECT 
+                                            SUM(QTY) AS QTY
+                                          FROM 
+                                          (SELECT
+                                            s.CODE,
+                                            s3.DELIVERYDATE,
+                                            ROUND(SUM(qb.KFF)) AS QTY
+                                          FROM
+                                            SALESORDER s
+                                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
+                                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                          LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                          WHERE
+                                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
+                                            AND NOT s3.DELIVERYDATE IS NULL
+                                            AND NOT a.VALUESTRING IS NULL
+                                            AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                          GROUP BY
+                                            s.CODE,
+                                            s3.DELIVERYDATE)
+                                          WHERE
+                                            DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMeiThnIniLokalExport_fkf = db2_exec($conn1, $qMeiThnIniLokalExport_fkf);
             $rowMeiThnIniLokalExport_fkf    = db2_fetch_assoc($resultMeiThnIniLokalExport_fkf);
             $dataMeiThnIniLokalExport_fkf   = $rowMeiThnIniLokalExport_fkf['QTY'];
           // F/K
           
           // BOOKING
-            $qMeiThnIniBooking = "SELECT 
+            $qMeiThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1244,56 +1856,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qMeiThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qMeiThnIniJasa = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('CWD')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMeiThnIniJasa = db2_exec($conn1, $qMeiThnIniJasa);
             $rowMeiThnIniJasa    = db2_fetch_assoc($resultMeiThnIniJasa);
             $dataMeiThnIniJasa   = $rowMeiThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qMeiThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qMeiThnIniPrt = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultMeiThnIniPrt = db2_exec($conn1, $qMeiThnIniPrt);
             $rowMeiThnIniPrt    = db2_fetch_assoc($resultMeiThnIniPrt);
             $dataMeiThnIniPrt   = $rowMeiThnIniPrt['QTY'];
@@ -1351,79 +1999,133 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirJun    = $tahunInput . '-06-30';
 
           // LOKAL
-            $qJunThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+            $qJunThnIniLokal = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
                                   FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJunThnIniLokal = db2_exec($conn1, $qJunThnIniLokal);
             $rowJunThnIniLokal    = db2_fetch_assoc($resultJunThnIniLokal);
             $dataJunThnIniLokal   = $rowJunThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qJunThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJunThnIniExport = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJunThnIniExport = db2_exec($conn1, $qJunThnIniExport);
             $rowJunThnIniExport    = db2_fetch_assoc($resultJunThnIniExport);
             $dataJunThnIniExport   = $rowJunThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qJunThnIniLokalExport_fkf = "SELECT 
+            $qJunThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1435,23 +2137,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // F/K
           
           // BOOKING
-            $qJunThnIniBooking = "SELECT 
+            $qJunThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1463,56 +2183,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qJunThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJunThnIniJasa = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('CWD')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJunThnIniJasa = db2_exec($conn1, $qJunThnIniJasa);
             $rowJunThnIniJasa    = db2_fetch_assoc($resultJunThnIniJasa);
             $dataJunThnIniJasa   = $rowJunThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qJunThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJunThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJunThnIniPrt = db2_exec($conn1, $qJunThnIniPrt);
             $rowJunThnIniPrt    = db2_fetch_assoc($resultJunThnIniPrt);
             $dataJunThnIniPrt   = $rowJunThnIniPrt['QTY'];
@@ -1570,79 +2326,133 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirJul    = $tahunInput . '-07-31';
 
           // LOKAL
-            $qJulThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                  FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJulThnIniLokal = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJulThnIniLokal = db2_exec($conn1, $qJulThnIniLokal);
             $rowJulThnIniLokal    = db2_fetch_assoc($resultJulThnIniLokal);
             $dataJulThnIniLokal   = $rowJulThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qJulThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJulThnIniExport = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJulThnIniExport = db2_exec($conn1, $qJulThnIniExport);
             $rowJulThnIniExport    = db2_fetch_assoc($resultJulThnIniExport);
             $dataJulThnIniExport   = $rowJulThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qJulThnIniLokalExport_fkf = "SELECT 
+            $qJulThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1654,23 +2464,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // F/K
           
           // BOOKING
-            $qJulThnIniBooking = "SELECT 
+            $qJulThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN' , 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1682,56 +2510,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qJulThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJulThnIniJasa = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJulThnIniJasa = db2_exec($conn1, $qJulThnIniJasa);
             $rowJulThnIniJasa    = db2_fetch_assoc($resultJulThnIniJasa);
             $dataJulThnIniJasa   = $rowJulThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qJulThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qJulThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultJulThnIniPrt = db2_exec($conn1, $qJulThnIniPrt);
             $rowJulThnIniPrt    = db2_fetch_assoc($resultJulThnIniPrt);
             $dataJulThnIniPrt   = $rowJulThnIniPrt['QTY'];
@@ -1789,79 +2653,133 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirAgs    = $tahunInput . '-08-31';
 
           // LOKAL
-            $qAgsThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+            $qAgsThnIniLokal = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
                                   FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'   
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'   
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultAgsThnIniLokal = db2_exec($conn1, $qAgsThnIniLokal);
             $rowAgsThnIniLokal    = db2_fetch_assoc($resultAgsThnIniLokal);
             $dataAgsThnIniLokal   = $rowAgsThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qAgsThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qAgsThnIniExport = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultAgsThnIniExport = db2_exec($conn1, $qAgsThnIniExport);
             $rowAgsThnIniExport    = db2_fetch_assoc($resultAgsThnIniExport);
             $dataAgsThnIniExport   = $rowAgsThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qAgsThnIniLokalExport_fkf = "SELECT 
+            $qAgsThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -1873,23 +2791,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // F/K
           
           // BOOKING
-            $qAgsThnIniBooking = "SELECT 
+            $qAgsThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN' , 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -1901,56 +2837,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qAgsThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qAgsThnIniJasa = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultAgsThnIniJasa = db2_exec($conn1, $qAgsThnIniJasa);
             $rowAgsThnIniJasa    = db2_fetch_assoc($resultAgsThnIniJasa);
             $dataAgsThnIniJasa   = $rowAgsThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qAgsThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qAgsThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultAgsThnIniPrt = db2_exec($conn1, $qAgsThnIniPrt);
             $rowAgsThnIniPrt    = db2_fetch_assoc($resultAgsThnIniPrt);
             $dataAgsThnIniPrt   = $rowAgsThnIniPrt['QTY'];
@@ -2009,79 +2981,133 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirSept    = $tahunInput . '-09-30';
 
           // LOKAL
-            $qSeptThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                  FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qSeptThnIniLokal = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultSeptThnIniLokal = db2_exec($conn1, $qSeptThnIniLokal);
             $rowSeptThnIniLokal    = db2_fetch_assoc($resultSeptThnIniLokal);
             $dataSeptThnIniLokal   = $rowSeptThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qSeptThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qSeptThnIniExport = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(qb.KFF)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultSeptThnIniExport = db2_exec($conn1, $qSeptThnIniExport);
             $rowSeptThnIniExport    = db2_fetch_assoc($resultSeptThnIniExport);
             $dataSeptThnIniExport   = $rowSeptThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qSeptThnIniLokalExport_fkf = "SELECT 
+            $qSeptThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2093,23 +3119,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // F/K
           
           // BOOKING
-            $qSeptThnIniBooking = "SELECT 
+            $qSeptThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2121,56 +3165,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qSeptThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qSeptThnIniJasa = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('CWD')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultSeptThnIniJasa = db2_exec($conn1, $qSeptThnIniJasa);
             $rowSeptThnIniJasa    = db2_fetch_assoc($resultSeptThnIniJasa);
             $dataSeptThnIniJasa   = $rowSeptThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qSeptThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qSeptThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultSeptThnIniPrt = db2_exec($conn1, $qSeptThnIniPrt);
             $rowSeptThnIniPrt    = db2_fetch_assoc($resultSeptThnIniPrt);
             $dataSeptThnIniPrt   = $rowSeptThnIniPrt['QTY'];
@@ -2228,79 +3308,133 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirOkt    = $tahunInput . '-10-31';
 
           // LOKAL
-            $qOktThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+            $qOktThnIniLokal = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
                                   FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultOktThnIniLokal = db2_exec($conn1, $qOktThnIniLokal);
             $rowOktThnIniLokal    = db2_fetch_assoc($resultOktThnIniLokal);
             $dataOktThnIniLokal   = $rowOktThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qOktThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qOktThnIniExport = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(qb.KFF)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultOktThnIniExport = db2_exec($conn1, $qOktThnIniExport);
             $rowOktThnIniExport    = db2_fetch_assoc($resultOktThnIniExport);
             $dataOktThnIniExport   = $rowOktThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qOktThnIniLokalExport_fkf = "SELECT 
+            $qOktThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2312,23 +3446,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // F/K
           
           // BOOKING
-            $qOktThnIniBooking = "SELECT 
+            $qOktThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2340,56 +3492,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qOktThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qOktThnIniJasa = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultOktThnIniJasa = db2_exec($conn1, $qOktThnIniJasa);
             $rowOktThnIniJasa    = db2_fetch_assoc($resultOktThnIniJasa);
             $dataOktThnIniJasa   = $rowOktThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qOktThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qOktThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT
+                                SUM(QTY) AS QTY
+                              FROM
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultOktThnIniPrt = db2_exec($conn1, $qOktThnIniPrt);
             $rowOktThnIniPrt    = db2_fetch_assoc($resultOktThnIniPrt);
             $dataOktThnIniPrt   = $rowOktThnIniPrt['QTY'];
@@ -2447,79 +3635,133 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirNov    = $tahunInput . '-11-30';
 
           // LOKAL
-            $qNovThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+            $qNovThnIniLokal = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
                                   FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultNovThnIniLokal = db2_exec($conn1, $qNovThnIniLokal);
             $rowNovThnIniLokal    = db2_fetch_assoc($resultNovThnIniLokal);
             $dataNovThnIniLokal   = $rowNovThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qNovThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qNovThnIniExport = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                  FROM
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultNovThnIniExport = db2_exec($conn1, $qNovThnIniExport);
             $rowNovThnIniExport    = db2_fetch_assoc($resultNovThnIniExport);
             $dataNovThnIniExport   = $rowNovThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qNovThnIniLokalExport_fkf = "SELECT 
+            $qNovThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2531,23 +3773,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // F/K
           
           // BOOKING
-            $qNovThnIniBooking = "SELECT 
+            $qNovThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2559,56 +3819,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qNovThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qNovThnIniJasa = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultNovThnIniJasa = db2_exec($conn1, $qNovThnIniJasa);
             $rowNovThnIniJasa    = db2_fetch_assoc($resultNovThnIniJasa);
             $dataNovThnIniJasa   = $rowNovThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qNovThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qNovThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultNovThnIniPrt = db2_exec($conn1, $qNovThnIniPrt);
             $rowNovThnIniPrt    = db2_fetch_assoc($resultNovThnIniPrt);
             $dataNovThnIniPrt   = $rowNovThnIniPrt['QTY'];
@@ -2666,79 +3962,132 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $tglAkhirDes    = $tahunInput . '-12-31';
 
           // LOKAL
-            $qDesThnIniLokal = "SELECT 
-                                    SUM(QTY) AS QTY
-                                  FROM 
-                                  (SELECT
-                                    s.CODE,
-                                    s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+            $qDesThnIniLokal = "WITH QTY_BRUTO AS (
+                                  SELECT
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE,
+                                    SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                    SUM(i.USERSECONDARYQUANTITY) AS FKF
                                   FROM
-                                    SALESORDER s
-                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                  WHERE
-                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('DOM', 'SAM')
-                                    AND NOT s3.DELIVERYDATE IS NULL
-                                    AND NOT a.VALUESTRING IS NULL
-                                  GROUP BY
-                                    s.CODE,
-                                    s3.DELIVERYDATE)
-                                  WHERE
-                                    DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+                                    ITXVIEWKGBRUTOBONORDER2 i
+                                  GROUP BY 
+                                    i.CODE,
+                                    i.ORIGDLVSALORDLINESALORDERCODE,
+                                    i.ORIGDLVSALORDERLINEORDERLINE
+                                )
+                                SELECT 
+                                  SUM(QTY) AS QTY
+                                FROM 
+                                (SELECT
+                                  s.CODE,
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY
+                                FROM
+                                  SALESORDER s
+                                LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                WHERE
+                                  CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                  AND s.TEMPLATECODE IN ('DOM', 'SAM')
+                                  AND NOT s3.DELIVERYDATE IS NULL
+                                  AND NOT a.VALUESTRING IS NULL
+                                  AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                GROUP BY
+                                  s.CODE,
+                                  s3.DELIVERYDATE)
+                                WHERE
+                                  DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultDesThnIniLokal = db2_exec($conn1, $qDesThnIniLokal);
             $rowDesThnIniLokal    = db2_fetch_assoc($resultDesThnIniLokal);
             $dataDesThnIniLokal   = $rowDesThnIniLokal['QTY'];
           // LOKAL
           
           // EXPORT
-            $qDesThnIniExport = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('EXP', 'SME')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qDesThnIniExport = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
+                                    SUM(QTY) AS QTY
+                                  FROM 
+                                  (SELECT
+                                    s.CODE,
+                                    s3.DELIVERYDATE,
+                                    ROUND(SUM(qb.KFF)) AS QTY
+                                  FROM
+                                    SALESORDER s
+                                  LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                  LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                  LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                  WHERE
+                                    CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                    AND s.TEMPLATECODE IN ('EXP', 'SME')
+                                    AND NOT s3.DELIVERYDATE IS NULL
+                                    AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                  GROUP BY
+                                    s.CODE,
+                                    s3.DELIVERYDATE)
+                                  WHERE
+                                    DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultDesThnIniExport = db2_exec($conn1, $qDesThnIniExport);
             $rowDesThnIniExport    = db2_fetch_assoc($resultDesThnIniExport);
             $dataDesThnIniExport   = $rowDesThnIniExport['QTY'];
           // EXPORT
           
           // F/K
-            $qDesThnIniLokalExport_fkf = "SELECT 
+            $qDesThnIniLokalExport_fkf = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )SELECT 
                                           SUM(QTY) AS QTY
                                         FROM 
                                         (SELECT
                                           s.CODE,
                                           s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                          ROUND(SUM(qb.KFF)) AS QTY
                                         FROM
                                           SALESORDER s
                                         LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'FKF'
                                         LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                         WHERE
                                           CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
                                           AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')
                                           AND NOT s3.DELIVERYDATE IS NULL
                                           AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                         GROUP BY
                                           s.CODE,
                                           s3.DELIVERYDATE)
@@ -2750,23 +4099,41 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // F/K
           
           // BOOKING
-            $qDesThnIniBooking = "SELECT 
+            $qDesThnIniBooking = "WITH QTY_BRUTO AS (
+                                    SELECT
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE,
+                                      SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                      SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                    FROM
+                                      ITXVIEWKGBRUTOBONORDER2 i
+                                    GROUP BY 
+                                      i.CODE,
+                                      i.ORIGDLVSALORDLINESALORDERCODE,
+                                      i.ORIGDLVSALORDERLINEORDERLINE
+                                  )
+                                  SELECT 
                                     SUM(QTY) AS QTY
                                   FROM 
                                   (SELECT
                                     s.CODE,
                                     s3.DELIVERYDATE,
-                                    ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
+                                    ROUND(SUM(qb.KFF)) AS QTY
                                   FROM
                                     SALESORDER s
                                   LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
                                   LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                                   LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                  LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                  LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                  LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                     AND NOT s3.DELIVERYDATE IS NULL
                                     AND NOT a.VALUESTRING IS NULL
+                                    AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                                   GROUP BY
                                     s.CODE,
                                     s3.DELIVERYDATE)
@@ -2778,56 +4145,92 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // BOOKING
           
           // JASA
-            $qDesThnIniJasa = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD')
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qDesThnIniJasa = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF','FKF')
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD')
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultDesThnIniJasa = db2_exec($conn1, $qDesThnIniJasa);
             $rowDesThnIniJasa    = db2_fetch_assoc($resultDesThnIniJasa);
             $dataDesThnIniJasa   = $rowDesThnIniJasa['QTY'];
           // JASA
           
           // PRINTING
-            $qDesThnIniPrt = "SELECT 
-                                          SUM(QTY) AS QTY
-                                        FROM 
-                                        (SELECT
-                                          s.CODE,
-                                          s3.DELIVERYDATE,
-                                          ROUND(SUM(s2.USERPRIMARYQUANTITY)) AS QTY
-                                        FROM
-                                          SALESORDER s
-                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
-                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                                        WHERE
-                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
-                                          AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
-                                          AND NOT s3.DELIVERYDATE IS NULL
-                                          AND NOT a.VALUESTRING IS NULL
-                                        GROUP BY
-                                          s.CODE,
-                                          s3.DELIVERYDATE)
-                                        WHERE
-                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $qDesThnIniPrt = "WITH QTY_BRUTO AS (
+                                SELECT
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE,
+                                  SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                  SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                FROM
+                                  ITXVIEWKGBRUTOBONORDER2 i
+                                GROUP BY 
+                                  i.CODE,
+                                  i.ORIGDLVSALORDLINESALORDERCODE,
+                                  i.ORIGDLVSALORDERLINEORDERLINE
+                              )
+                              SELECT 
+                                SUM(QTY) AS QTY
+                              FROM 
+                              (SELECT
+                                s.CODE,
+                                s3.DELIVERYDATE,
+                                ROUND(SUM(qb.KFF)) AS QTY
+                              FROM
+                                SALESORDER s
+                              LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF') AND NOT TRIM(SUBCODE07) = '-'
+                              LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                              LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                              LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                              LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                              LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                              WHERE
+                                CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME', 'OPN')  
+                                AND NOT s3.DELIVERYDATE IS NULL
+                                AND NOT a.VALUESTRING IS NULL
+                                AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                              GROUP BY
+                                s.CODE,
+                                s3.DELIVERYDATE)
+                              WHERE
+                                DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
             $resultDesThnIniPrt = db2_exec($conn1, $qDesThnIniPrt);
             $rowDesThnIniPrt    = db2_fetch_assoc($resultDesThnIniPrt);
             $dataDesThnIniPrt   = $rowDesThnIniPrt['QTY'];
@@ -4427,7 +5830,7 @@ BOOKING
                                   LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                               --      AND s.TEMPLATECODE IN ('CWD')
                                     AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
                                     AND NOT a.VALUESTRING IS NULL
@@ -4510,7 +5913,7 @@ BOOKING
                                     LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                                     WHERE
                                       CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                                      AND s.TEMPLATECODE IN ('OPN')
+                                      AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                 --      AND s.TEMPLATECODE IN ('CWD')
                                       AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
                                       AND NOT a.VALUESTRING IS NULL
@@ -4695,7 +6098,7 @@ BOOKING
                                   LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                                   WHERE
                                     CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                                    AND s.TEMPLATECODE IN ('OPN')
+                                    AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                               --      AND s.TEMPLATECODE IN ('CWD')
                                     AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
                                     AND NOT a.VALUESTRING IS NULL
@@ -4778,7 +6181,7 @@ BOOKING
                                     LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                                     WHERE
                                       CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                                      AND s.TEMPLATECODE IN ('OPN')
+                                      AND s.TEMPLATECODE IN ('OPN', 'TBG', 'MNB', 'DMB', 'RBG')
                                 --      AND s.TEMPLATECODE IN ('CWD')
                                       AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
                                       AND NOT a.VALUESTRING IS NULL
