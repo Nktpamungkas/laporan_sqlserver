@@ -5562,7 +5562,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($databrutoI['qty']); ?></td>
           <td><?= number_format($dataAKJI['qty']); ?></td>
           <td><?= number_format($dataSdhCelupI['qty']); ?></td>
-          <td><?= number_format($dataBlmCelupI['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupI); ?></td>
           <td><?= number_format($dataPBlmCelupI['qty']); ?></td>
           <td><?= number_format($dataCBlmCelupI); ?></td>
           
@@ -5588,7 +5588,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($databrutoII['qty']); ?></td>
           <td><?= number_format($dataAKJII['qty']); ?></td>
           <td><?= number_format($dataSdhCelupII['qty']); ?></td>
-          <td><?= number_format($dataBlmCelupII['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupII); ?></td>
           <td><?= number_format($dataPBlmCelupII['qty']); ?></td>
           <td><?= number_format($dataCBlmCelupII); ?></td>
           
@@ -5614,7 +5614,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($databrutoIII['qty']); ?></td>
           <td><?= number_format($dataAKJIII['qty']); ?></td>
           <td><?= number_format($dataSdhCelupIII['qty']); ?></td>
-          <td><?= number_format($dataBlmCelupIII['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupIII); ?></td>
           <td><?= number_format($dataPBlmCelupIII['qty']); ?></td>
           <td><?= number_format($dataCBlmCelupIII); ?></td>
           
@@ -5640,7 +5640,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($databrutoIV['qty']); ?></td>
           <td><?= number_format($dataAKJIV['qty']); ?></td>
           <td><?= number_format($dataSdhCelupIV['qty']); ?></td>
-          <td><?= number_format($dataBlmCelupIV['qty']); ?></td>
+          <td><?= number_format($dataBlmCelupIV); ?></td>
           <td><?= number_format($dataPBlmCelupIV['qty']); ?></td>
           <td><?= number_format($dataCBlmCelupIV); ?></td>
           
