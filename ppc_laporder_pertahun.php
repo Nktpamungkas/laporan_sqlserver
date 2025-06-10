@@ -4348,26 +4348,14 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                             i.CODE,
                               i.ORIGDLVSALORDLINESALORDERCODE,
                               i.ORIGDLVSALORDERLINEORDERLINE
-                          ),
-                          CELUP_DYEING AS(
-                            SELECT DISTINCT 
-                              p.ORIGDLVSALORDLINESALORDERCODE,
-                              p.CODE,
-                              p2.PROGRESSSTATUS 
-                            FROM
-                              PRODUCTIONDEMAND p
-                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                            WHERE
-                              p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
                           )
                           SELECT 
                             SUM(QTY) AS QTY
                           FROM (
                             SELECT
-                              COALESCE(qb.KFF, 0) AS QTY,
                               s.CODE,
-                              p.CODE,
-                              s2.ORDERLINE           
+                              s3.DELIVERYDATE,
+                              ROUND(SUM(qb.KFF)) AS QTY           
                             FROM
                               SALESORDER s
                             LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
@@ -4377,23 +4365,16 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                             LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
                             LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                             LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
-                            LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                             WHERE
                               CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
                               AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
-                        --      AND s.TEMPLATECODE IN ('CWD')
                               AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
                               AND NOT a.VALUESTRING IS NULL
                               AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                         --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
-                        --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
-                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
-                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
                             GROUP BY
-                              qb.KFF,
                               s.CODE,
-                              p.CODE,
-                              s2.ORDERLINE)";
+                              s3.DELIVERYDATE)";
         
             $resultBruto = db2_exec($conn, $queryBruto);
             $rowBruto = db2_fetch_assoc($resultBruto);
@@ -4431,26 +4412,14 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                           i.CODE,
                             i.ORIGDLVSALORDLINESALORDERCODE,
                             i.ORIGDLVSALORDERLINEORDERLINE
-                        ),
-                        CELUP_DYEING AS(
-                          SELECT DISTINCT 
-                            p.ORIGDLVSALORDLINESALORDERCODE,
-                            p.CODE,
-                            p2.PROGRESSSTATUS 
-                          FROM
-                            PRODUCTIONDEMAND p
-                          LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                          WHERE
-                            p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
                         )
                         SELECT 
                           SUM(QTY) AS QTY
                         FROM (
                           SELECT
-                            COALESCE(qb.KFF, 0) AS QTY,
                             s.CODE,
-                            p.CODE,
-                            s2.ORDERLINE           
+                            s3.DELIVERYDATE,
+                            ROUND(SUM(qb.KFF)) AS QTY          
                           FROM
                             SALESORDER s
                           LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
@@ -4460,23 +4429,16 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                           LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
                           LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                           LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
-                          LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                           WHERE
                             CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
                             AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
-                      --      AND s.TEMPLATECODE IN ('CWD')
                             AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
                             AND NOT a.VALUESTRING IS NULL
                             AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                            AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
-                      --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
-                      --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
-                      --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
                           GROUP BY
-                            qb.KFF,
                             s.CODE,
-                            p.CODE,
-                            s2.ORDERLINE)";
+                            s3.DELIVERYDATE)";
         
             $resultAKJ = db2_exec($conn, $queryAKJ);
             $rowAKJ = db2_fetch_assoc($resultAKJ);
@@ -4511,7 +4473,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                                 FROM
                                   ITXVIEWKGBRUTOBONORDER2 i
                                 GROUP BY 
-                                i.CODE,
+                                  i.CODE,
                                   i.ORIGDLVSALORDLINESALORDERCODE,
                                   i.ORIGDLVSALORDERLINEORDERLINE
                               ),
@@ -4530,10 +4492,9 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                                 SUM(QTY) AS QTY
                               FROM (
                                 SELECT
-                                  COALESCE(qb.KFF, 0) AS QTY,
                                   s.CODE,
-                                  p.CODE,
-                                  s2.ORDERLINE           
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY          
                                 FROM
                                   SALESORDER s
                                 LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
@@ -4556,10 +4517,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                             --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
                             --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
                                 GROUP BY
-                                  qb.KFF,
                                   s.CODE,
-                                  p.CODE,
-                                  s2.ORDERLINE)";
+                                  s3.DELIVERYDATE)";
         
             $resultSdhCelup = db2_exec($conn, $querySdhCelup);
             $rowSdhCelup = db2_fetch_assoc($resultSdhCelup);
@@ -5084,26 +5043,14 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                             i.CODE,
                               i.ORIGDLVSALORDLINESALORDERCODE,
                               i.ORIGDLVSALORDERLINEORDERLINE
-                          ),
-                          CELUP_DYEING AS(
-                            SELECT DISTINCT 
-                              p.ORIGDLVSALORDLINESALORDERCODE,
-                              p.CODE,
-                              p2.PROGRESSSTATUS 
-                            FROM
-                              PRODUCTIONDEMAND p
-                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                            WHERE
-                              p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
                           )
                           SELECT 
                             SUM(QTY) AS QTY
                           FROM (
                             SELECT
-                              COALESCE(qb.KFF, 0) AS QTY,
                               s.CODE,
-                              p.CODE,
-                              s2.ORDERLINE           
+                              s3.DELIVERYDATE,
+                              ROUND(SUM(qb.KFF)) AS QTY            
                             FROM
                               SALESORDER s
                             LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
@@ -5113,23 +5060,16 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                             LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
                             LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                             LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
-                            LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                             WHERE
                               CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
                               AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
-                        --      AND s.TEMPLATECODE IN ('CWD')
                               AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
                               AND NOT a.VALUESTRING IS NULL
                               AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                         --      AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
-                        --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
-                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
-                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
                             GROUP BY
-                              qb.KFF,
                               s.CODE,
-                              p.CODE,
-                              s2.ORDERLINE)";
+                              s3.DELIVERYDATE)";
         
             $resultBruto = db2_exec($conn, $queryBruto);
             $rowBruto = db2_fetch_assoc($resultBruto);
@@ -5164,29 +5104,17 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                             FROM
                               ITXVIEWKGBRUTOBONORDER2 i
                             GROUP BY 
-                            i.CODE,
+                              i.CODE,
                               i.ORIGDLVSALORDLINESALORDERCODE,
                               i.ORIGDLVSALORDERLINEORDERLINE
-                          ),
-                          CELUP_DYEING AS(
-                            SELECT DISTINCT 
-                              p.ORIGDLVSALORDLINESALORDERCODE,
-                              p.CODE,
-                              p2.PROGRESSSTATUS 
-                            FROM
-                              PRODUCTIONDEMAND p
-                            LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                            WHERE
-                              p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','MWS1') AND TRIM(p2.PROGRESSSTATUS) IN('0','1','2','3')
                           )
                           SELECT 
                             SUM(QTY) AS QTY
                           FROM (
                             SELECT
-                              COALESCE(qb.KFF, 0) AS QTY,
                               s.CODE,
-                              p.CODE,
-                              s2.ORDERLINE           
+                              s3.DELIVERYDATE,
+                              ROUND(SUM(qb.KFF)) AS QTY           
                             FROM
                               SALESORDER s
                             LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
@@ -5196,23 +5124,16 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                             LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
                             LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
                             LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
-                            LEFT JOIN CELUP_DYEING cd ON cd.CODE = p.CODE
                             WHERE
                               CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
                               AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
-                        --      AND s.TEMPLATECODE IN ('CWD')
                               AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
                               AND NOT a.VALUESTRING IS NULL
                               AND a2.VALUESTRING IS NULL -- DEMAND ASLI
                              AND TRIM(a4.VALUESTRING) IN ('1','2') -- AKJ
-                        --      AND TRIM(cd.PROGRESSSTATUS) = '3' -- SDH CELUP
-                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
-                        --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
                             GROUP BY
-                              qb.KFF,
                               s.CODE,
-                              p.CODE,
-                              s2.ORDERLINE)";
+                              s3.DELIVERYDATE)";
         
             $resultAKJ = db2_exec($conn, $queryAKJ);
             $rowAKJ = db2_fetch_assoc($resultAKJ);
@@ -5266,10 +5187,9 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                                 SUM(QTY) AS QTY
                               FROM (
                                 SELECT
-                                  COALESCE(qb.KFF, 0) AS QTY,
                                   s.CODE,
-                                  p.CODE,
-                                  s2.ORDERLINE           
+                                  s3.DELIVERYDATE,
+                                  ROUND(SUM(qb.KFF)) AS QTY           
                                 FROM
                                   SALESORDER s
                                 LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
@@ -5292,10 +5212,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                             --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2') -- BLM CELUP
                             --      AND TRIM(cd.PROGRESSSTATUS) IN ('0','1','2','3') -- SDH & BLM CELUP
                                 GROUP BY
-                                  qb.KFF,
                                   s.CODE,
-                                  p.CODE,
-                                  s2.ORDERLINE)";
+                                  s3.DELIVERYDATE)";
         
             $resultSdhCelup = db2_exec($conn, $querySdhCelup);
             $rowSdhCelup = db2_fetch_assoc($resultSdhCelup);
