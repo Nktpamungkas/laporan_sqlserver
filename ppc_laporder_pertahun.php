@@ -4689,11 +4689,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         // TK
 
         // GREIGE READY 
-          $dataGreigeReadyI   = round($dataBlmCelupI) - round($dataTKI['qty']);
-          $dataGreigeReadyII  = round($dataBlmCelupII) - round($dataTKII['qty']);
-          $dataGreigeReadyIII = round($dataBlmCelupIII) - round($dataTKIII['qty']);
-          $dataGreigeReadyIV  = round($dataBlmCelupIV) - round($dataTKIV['qty']);
-        // GREIGE READY 
+          $dataGreigeReadyI = ( ($x = round($dataBlmCelupI) - round($dataTKI['qty'])) < 0 ) ? 0 : $x;
+          $dataGreigeReadyII = ( ($x = round($dataBlmCelupII) - round($dataTKII['qty'])) < 0 ) ? 0 : $x;
+          $dataGreigeReadyIII = ( ($x = round($dataBlmCelupIII) - round($dataTKIII['qty'])) < 0 ) ? 0 : $x;
+          $dataGreigeReadyIV = ( ($x = round($dataBlmCelupIV) - round($dataTKIV['qty'])) < 0 ) ? 0 : $x;
+        // GREIGE READY
 
         // SUDAH PRESET, BELUM CELUP
           function ambilQtySudahPresetBlmCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
@@ -4971,6 +4971,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($dataBelumPresetBlmCelupIV['qty']); ?></td>
         </tr>
       <!-- MINGGU 4 -->
+    </tbody>
 </table>
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
     <thead>
@@ -5373,10 +5374,10 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         // TK
 
         // GREIGE READY 
-          $dataGreigeReadyI   = round($dataBlmCelupI) - round($dataTKI['qty']);
-          $dataGreigeReadyII  = round($dataBlmCelupII) - round($dataTKII['qty']);
-          $dataGreigeReadyIII = round($dataBlmCelupIII) - round($dataTKIII['qty']);
-          $dataGreigeReadyIV  = round($dataBlmCelupIV) - round($dataTKIV['qty']);
+          $dataGreigeReadyI = ( ($x = round($dataBlmCelupI) - round($dataTKI['qty'])) < 0 ) ? 0 : $x;
+          $dataGreigeReadyII = ( ($x = round($dataBlmCelupII) - round($dataTKII['qty'])) < 0 ) ? 0 : $x;
+          $dataGreigeReadyIII = ( ($x = round($dataBlmCelupIII) - round($dataTKIII['qty'])) < 0 ) ? 0 : $x;
+          $dataGreigeReadyIV = ( ($x = round($dataBlmCelupIV) - round($dataTKIV['qty'])) < 0 ) ? 0 : $x;
         // GREIGE READY
 
         // SUDAH PRESET, BELUM CELUP
