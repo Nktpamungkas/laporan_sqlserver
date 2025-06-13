@@ -14,13 +14,14 @@
     $delete = "DELETE FROM tmp_cari_gerobak_otomatis";
     mysqli_query($con_now_gerobak, $delete);
 
-    function tmpData($operation, $departemen, $qty, $jml)
+    function tmpData($operation, $departemen, $qty, $jml, $gerobak)
     {
         global $con_now_gerobak;
 
         if (! empty($operation) || ! empty($departemen)) {
-            $sql = "INSERT INTO tmp_cari_gerobak_otomatis (OPERATION, DEPARTEMEN, QTY, JML_GEROBAK)
-                    VALUES ('$operation', '$departemen', $qty, $jml)";
+            $sql = "INSERT INTO tmp_cari_gerobak_otomatis (OPERATION, DEPARTEMEN,
+            QTY, JML_GEROBAK,GEROBAK)
+                    VALUES ('$operation', '$departemen', $qty, $jml,'$gerobak')";
             mysqli_query($con_now_gerobak, $sql);
         }
     }
@@ -363,6 +364,7 @@
                     $dept_choice      = "";
                     $qty_choice       = 0;
                     $jml_choice       = 0;
+                    $gerobak_choice   = "";
                 ?>
                 <td><?php echo $row_iptip['STEPNUMBER'] ?></td>
                 <td><?php echo $row_iptip['HANGER'] ?> -<?php echo $row_iptip['SUBCODE06'] ?></td>
@@ -370,8 +372,18 @@
                 <td><?php echo $row_iptip['WARNA']; ?></td>
                 <td><?php echo $row_iptip['PRODUCTIONORDERCODE'] ?></td>
                 <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?php echo $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?php echo $row_iptip['PRODUCTIONORDERCODE']; ?>"><?php echo $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
-                <td align="center"><?php echo $row_iptip['OPERATIONCODE'] ?></td>
-                <td align="center"><?php echo $row_iptip['OPERATIONGROUPCODE'] ?></td>
+                <td align="center">
+                    <?php
+                        $operation_choice = $row_iptip['OPERATIONCODE'];
+                        echo $row_iptip['OPERATIONCODE'];
+                    ?>
+                </td>
+                <td align="center">
+                    <?php
+                        $dept_choice = $row_iptip['OPERATIONGROUPCODE'];
+                        echo $row_iptip['OPERATIONGROUPCODE'];
+                    ?>
+                </td>
                 <td
                     <?php
                         if ($row_iptip['STATUS_OPERATION'] == 'Closed') {
@@ -431,13 +443,11 @@
                 <td align="center"></td>
                 <td align="center">
                 <?php
-                    $operation_choice = $row_posisikk['OPERATIONCODE'];
                     echo $row_posisikk['OPERATIONCODE'];
                 ?>
                 </td>
                 <td align="center">
                     <?php
-                        $dept_choice = $row_posisikk['DEPT'];
                         echo $row_posisikk['DEPT'];
                     ?>
                 </td>
@@ -458,7 +468,12 @@
                 <td><?php echo $row_posisikk['SELESAI'] ?></td>
                 <td><?php echo $row_posisikk['OP1'] ?></td>
                 <td><?php echo $row_posisikk['OP2'] ?></td>
-                <td><?php echo $row_posisikk['GEROBAK'] ?></td>
+                <td>
+                    <?php
+                        $gerobak_choice = $row_posisikk['GEROBAK'];
+                        echo $row_posisikk['GEROBAK'];
+                    ?>
+                </td>
                 <td>
                     <?php
                         $sql_qtyorder = db2_exec($conn1, "SELECT DISTINCT
@@ -487,7 +502,7 @@
                 </td>
                 <?php
                     tmpData($operation_choice, $dept_choice,
-                        $qty_choice, $jml_choice);
+                        $qty_choice, $jml_choice, $gerobak_choice);
                 ?>
             </tr>
 <?php else: ?>
@@ -503,6 +518,7 @@
                     $dept_choice      = "";
                     $qty_choice       = 0;
                     $jml_choice       = 0;
+                    $gerobak_choice   = "";
                 ?>
                     <td><?php echo $row_iptip['STEPNUMBER'] ?></td>
                     <td><?php echo $row_iptip['HANGER'] ?> -<?php echo $row_iptip['SUBCODE06'] ?></td>
@@ -510,8 +526,18 @@
                     <td><?php echo $row_iptip['WARNA']; ?></td>
                     <td><?php echo $row_iptip['PRODUCTIONORDERCODE'] ?></td>
                     <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?php echo $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?php echo $row_iptip['PRODUCTIONORDERCODE']; ?>"><?php echo $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
-                    <td align="center"><?php echo $row_iptip['OPERATIONCODE'] ?></td>
-                    <td align="center"><?php echo $row_iptip['OPERATIONGROUPCODE'] ?></td>
+                    <td align="center">
+                        <?php
+                            $operation_choice = $row_iptip['OPERATIONCODE'];
+                            echo $row_iptip['OPERATIONCODE'];
+                        ?>
+                    </td>
+                    <td align="center">
+                        <?php
+                            $dept_choice = $row_iptip['OPERATIONGROUPCODE'];
+                            echo $row_iptip['OPERATIONGROUPCODE'];
+                        ?>
+                    </td>
                     <td
                         <?php
                             if ($row_iptip['STATUS_OPERATION'] == 'Closed') {
@@ -571,13 +597,11 @@
                     <td align="center"><?php echo $row_ncp['nodemand'] ?></td>
                     <td align="center">
                         <?php
-                            $operation_choice = $row_posisikk['OPERATIONCODE'];
                             echo $row_posisikk['OPERATIONCODE'];
                         ?>
                     </td>
                     <td align="center">
                         <?php
-                            $dept_choice = $row_ncp['dept'];
                             echo $row_ncp['dept'];
                         ?>
                     </td>
@@ -586,7 +610,12 @@
                     <td>-</td>
                     <td><?php echo $row_ncp['peninjau_awal'] ?></td>
                     <td><?php echo $row_ncp['peninjau_akhir'] ?></td>
-                    <td><?php echo $row_ncp['tempat'] ?></td>
+                    <td>
+                        <?php
+                            $gerobak_choice = $row_ncp['tempat'];
+                            echo $row_ncp['tempat'];
+                        ?>
+                    </td>
                     <td>
                         <?php
                             $qty_choice = $row_ncp['berat'];
@@ -600,7 +629,7 @@
                     </td>
                     <?php
                         tmpData($operation_choice, $dept_choice,
-                            $qty_choice, $jml_choice);
+                            $qty_choice, $jml_choice, $gerobak_choice);
                     ?>
                 </tr>
 <?php else: ?>
@@ -923,5 +952,6 @@
 
 <?php
     $updateStatus = "UPDATE tmp_status SET status=1 WHERE name='cari_gerobak_otomatis'";
-mysqli_query($con_now_gerobak, $updateStatus);
+    mysqli_query($con_now_gerobak, $updateStatus);
 ?>
+
