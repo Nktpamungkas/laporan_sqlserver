@@ -93,14 +93,39 @@
         ${$category . '_GEROBAK'} += $jml;
     }
 
-    $sql = "SELECT * FROM tmp_cari_gerobak_otomatis
-              group by OPERATION,DEPARTEMEN,QTY,JML_GEROBAK";
+    $sql = "SELECT
+            OPERATION,
+            DEPARTEMEN,
+            GEROBAK,
+            JML_GEROBAK,
+            SUM(QTY) AS total_qty
+        FROM (
+            SELECT
+                OPERATION,
+                DEPARTEMEN,
+                GEROBAK,
+                QTY,
+                JML_GEROBAK
+            FROM tmp_cari_gerobak_otomatis
+            GROUP BY
+                OPERATION,
+                DEPARTEMEN,
+                GEROBAK,
+                QTY,
+                JML_GEROBAK
+        ) AS t1
+        GROUP BY
+            OPERATION,
+            DEPARTEMEN,
+            GEROBAK,
+            JML_GEROBAK";
+
     $result = mysqli_query($con_now_gerobak, $sql);
 
     if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_assoc($result)) {
             if ($row['DEPARTEMEN'] == "BRS") {
-                brs_summary($row['OPERATION'], $row['QTY'], $row['JML_GEROBAK']);
+                brs_summary($row['OPERATION'], $row['total_qty'], $row['JML_GEROBAK']);
             }
         }
     }
@@ -118,7 +143,7 @@
 
 <table border="1" cellspacing="0" cellpadding="3">
     <tr>
-        <td colspan="3" align="center" bgcolor="#FFFF00"><b>SISA                                                                                                                                                                                                                                                                                                                                                                                                                                                                 <?php echo $tgl . ' ' . $bln . ' ' . $thn ?> (<?php echo $waktu ?>)</b></td>
+        <td colspan="3" align="center" bgcolor="#FFFF00"><b>SISA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 <?php echo $tgl . ' ' . $bln . ' ' . $thn ?> (<?php echo $waktu ?>)</b></td>
     </tr>
     <tr style="font-weight:bold; background:#f2f2f2;">
         <td align="center">PROSES</td>
@@ -140,13 +165,15 @@
             'NCP'                => [$NCP_QTY, $NCP_GEROBAK],
             'PERSIAPAN / KOSONG' => [$PERSIAPAN_QTY, $PERSIAPAN_GEROBAK],
         ];
+
         foreach ($rows as $proses => [$qty, $gerobak]) {
-            echo "<tr><td>$proses</td><td align='center'>" . ($qty ?: '-') . "</td><td align='center'>" . ($gerobak ?: '-') . "</td></tr>";
+            $formattedQty = $qty !== null ? number_format($qty, 2) : '-';
+            echo "<tr><td>$proses</td><td align='center'>$formattedQty</td><td align='center'>" . ($gerobak ?: '-') . "</td></tr>";
         }
     ?>
     <tr style="font-weight:bold; background:#f9f9f9;">
         <td align="center" bgcolor="#FFFF00"><b>TOTAL</b></td>
-        <td align="center" bgcolor="#FFFF00"><b><?php echo $TOTAL_QTY_SUMMARY ?></b></td>
+        <td align="center" bgcolor="#FFFF00"><b><?php echo number_format($TOTAL_QTY_SUMMARY, 2) ?></b></td>
         <td align="center" bgcolor="#FFFF00"><b><?php echo $TOTAL_GEROBAK_SUMMARY ?></b></td>
     </tr>
 </table>
