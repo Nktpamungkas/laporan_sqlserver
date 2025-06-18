@@ -4633,69 +4633,70 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $dataCBlmCelupIV  = round($dataBlmCelupIV) - round($dataPBlmCelupIV['qty']);
         // C'BLM CELUP
 
-        // TK
-          function ambilTKPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+        // GREIGE READY
+          function ambilGreigeReadyPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
             // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
             $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
             $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
-            $queryTK = "SELECT 
-                            SUM(QTY) AS QTY 
-                            --  *
-                            FROM (
-                            SELECT
-                              p2.CODE,
-                              p2.PROGRESSSTATUS,
-                              (p2.USERPRIMARYQUANTITY) AS QTY
-                            FROM
-                              SALESORDER s
-                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
-                            LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
-                                          AND p2.ITEMTYPEAFICODE = 'KGF'
-                                          AND p2.SUBCODE01 = p.SUBCODE01
-                                          AND p2.SUBCODE02 = p.SUBCODE02
-                                          AND p2.SUBCODE03 = p.SUBCODE03
-                                          AND p2.SUBCODE04 = p.SUBCODE04
-                            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p2.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
-                            WHERE
-                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                              AND NOT TRIM(p2.PROGRESSSTATUS) = '6'
-                              AND NOT a.VALUESTRING IS NULL
-                              AND a2.VALUESTRING IS NULL
-                            --    AND s.CODE = 'DOM2500548'
-                            GROUP BY 
-                              p2.CODE,
-                              p2.PROGRESSSTATUS,
-                              p2.USERPRIMARYQUANTITY)";
+            $queryGR = "WITH GREIGE_READY AS (
+                        SELECT
+                          b.PROJECTCODE,
+                          SUM(b.BASEPRIMARYQUANTITYUNIT) AS QTY 
+                        FROM
+                          BALANCE b
+                        WHERE
+                          b.LOGICALWAREHOUSECODE = 'M021'
+                        GROUP BY 
+                          b.PROJECTCODE
+                      )
+                        SELECT 
+                          SUM(QTY) AS QTY
+                        FROM (
+                          SELECT DISTINCT 
+                            TRIM(s.CODE) AS CODE,
+                            s3.DELIVERYDATE,
+                            ROUND(gr.QTY) AS QTY            
+                          FROM
+                            SALESORDER s
+                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                          LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                          LEFT JOIN GREIGE_READY gr ON gr.PROJECTCODE = s.CODE
+                          WHERE
+                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
+                            AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                            AND NOT a.VALUESTRING IS NULL
+                            AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                          )";
         
-            $resultTK = db2_exec($conn, $queryTK);
-            $rowTK = db2_fetch_assoc($resultTK);
-            $qtyTK = $rowTK['QTY'];
+            $resultGR = db2_exec($conn, $queryGR);
+            $rowGR = db2_fetch_assoc($resultGR);
+            $qtyGR = $rowGR['QTY'];
 
             return [
-                'qty' => $qtyTK,
+                'qty' => $qtyGR,
                 'tgl_awal' => (int)$tanggalAwal,
                 'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
             ];
           }
-          $dataTKI   = ambilTKPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
-          $dataTKII  = ambilTKPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
-          $dataTKIII = ambilTKPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
-          $dataTKIV  = ambilTKPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
-        // TK
-
-        // GREIGE READY 
-          $dataGreigeReadyI = ( ($x = round($dataBlmCelupI) - round($dataTKI['qty'])) < 0 ) ? 0 : $x;
-          $dataGreigeReadyII = ( ($x = round($dataBlmCelupII) - round($dataTKII['qty'])) < 0 ) ? 0 : $x;
-          $dataGreigeReadyIII = ( ($x = round($dataBlmCelupIII) - round($dataTKIII['qty'])) < 0 ) ? 0 : $x;
-          $dataGreigeReadyIV = ( ($x = round($dataBlmCelupIV) - round($dataTKIV['qty'])) < 0 ) ? 0 : $x;
+          $dataGRI   = ambilGreigeReadyPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
+          $dataGRII  = ambilGreigeReadyPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
+          $dataGRIII = ambilGreigeReadyPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
+          $dataGRIV  = ambilGreigeReadyPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
         // GREIGE READY
+
+        // TK 
+          $dataTKI = ( ($x = round($dataBlmCelupI) - round($dataGRI['qty'])) < 0 ) ? 0 : $x;
+          $dataTKII = ( ($x = round($dataBlmCelupII) - round($dataGRII['qty'])) < 0 ) ? 0 : $x;
+          $dataTKIII = ( ($x = round($dataBlmCelupIII) - round($dataGRIII['qty'])) < 0 ) ? 0 : $x;
+          $dataTKIV = ( ($x = round($dataBlmCelupIV) - round($dataGRIV['qty'])) < 0 ) ? 0 : $x;
+        // TK
 
         // SUDAH PRESET, BELUM CELUP
           function ambilQtySudahPresetBlmCelupPeriode($conn, $tglInput, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
@@ -4889,8 +4890,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td>I</td>
           <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
-          <td><?= number_format($dataTKI['qty']); ?></td>
-          <td><?= number_format($dataGreigeReadyI); ?></td>
+          <td><?= number_format($dataTKI); ?></td>
+          <td><?= number_format($dataGRI['qty']); ?></td>
           <td><?= number_format($dataSudahPresetBlmCelupI['qty']); ?></td>
           <td><?= number_format($dataBelumPresetBlmCelupI['qty']); ?></td>
         </tr>
@@ -4915,8 +4916,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td>II</td>
           <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
-          <td><?= number_format($dataTKII['qty']); ?></td>
-          <td><?= number_format($dataGreigeReadyII); ?></td>
+          <td><?= number_format($dataTKII); ?></td>
+          <td><?= number_format($dataGRII['qty']); ?></td>
           <td><?= number_format($dataSudahPresetBlmCelupII['qty']); ?></td>
           <td><?= number_format($dataBelumPresetBlmCelupII['qty']); ?></td>
         </tr>
@@ -4941,8 +4942,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td>III</td>
           <td>`<?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
 
-          <td><?= number_format($dataTKIII['qty']); ?></td>
-          <td><?= number_format($dataGreigeReadyIII); ?></td>
+          <td><?= number_format($dataTKIII); ?></td>
+          <td><?= number_format($dataGRIII['qty']); ?></td>
           <td><?= number_format($dataSudahPresetBlmCelupIII['qty']); ?></td>
           <td><?= number_format($dataBelumPresetBlmCelupIII['qty']); ?></td>
         </tr>
@@ -4967,8 +4968,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td>IV</td>
           <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
-          <td><?= number_format($dataTKIV['qty']); ?></td>
-          <td><?= number_format($dataGreigeReadyIV); ?></td>
+          <td><?= number_format($dataTKIV); ?></td>
+          <td><?= number_format($dataGRIV['qty']); ?></td>
           <td><?= number_format($dataSudahPresetBlmCelupIV['qty']); ?></td>
           <td><?= number_format($dataBelumPresetBlmCelupIV['qty']); ?></td>
         </tr>
@@ -5320,69 +5321,70 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $dataCBlmCelupIV  = round($dataBlmCelupIV) - round($dataPBlmCelupIV['qty']);
         // C'BLM CELUP
 
-        // TK
-          function ambilTKPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
+        // GREIGE READY
+          function ambilGreigeReadyPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
             // Tanggal akhir disesuaikan dengan akhir bulan jika lebih besar
             $tglMaxBulan = date('Y-m-t', strtotime("$tahunInput-$bulanInput-01"));
             $tglAkhirFix = date('Y-m-d', min(strtotime("$tahunInput-$bulanInput-$tanggalAkhir"), strtotime($tglMaxBulan)));
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
-            $queryTK = "SELECT 
-                          SUM(QTY) AS QTY 
-                          --  *
-                          FROM (
-                          SELECT
-                            p2.CODE,
-                            p2.PROGRESSSTATUS,
-                            (p2.USERPRIMARYQUANTITY) AS QTY
+            $queryGR = "WITH GREIGE_READY AS (
+                        SELECT
+                          b.PROJECTCODE,
+                          SUM(b.BASEPRIMARYQUANTITYUNIT) AS QTY 
+                        FROM
+                          BALANCE b
+                        WHERE
+                          b.LOGICALWAREHOUSECODE = 'M021'
+                        GROUP BY 
+                          b.PROJECTCODE
+                      )
+                        SELECT 
+                          SUM(QTY) AS QTY
+                        FROM (
+                          SELECT DISTINCT 
+                            TRIM(s.CODE) AS CODE,
+                            s3.DELIVERYDATE,
+                            ROUND(gr.QTY) AS QTY            
                           FROM
                             SALESORDER s
                           LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
                           LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
                           LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
-                          LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
-                                        AND p2.ITEMTYPEAFICODE = 'KGF'
-                                        AND p2.SUBCODE01 = p.SUBCODE01
-                                        AND p2.SUBCODE02 = p.SUBCODE02
-                                        AND p2.SUBCODE03 = p.SUBCODE03
-                                        AND p2.SUBCODE04 = p.SUBCODE04
-                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p2.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                          LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = s2.ABSUNIQUEID AND a4.FIELDNAME = 'KainAKJ'
+                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                          LEFT JOIN GREIGE_READY gr ON gr.PROJECTCODE = s.CODE
                           WHERE
                             CAST(s.CREATIONDATETIME AS DATE) < '$tglInput_bulandepan'
-                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')
                             AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                            AND NOT TRIM(p2.PROGRESSSTATUS) = '6'
                             AND NOT a.VALUESTRING IS NULL
-                            AND a2.VALUESTRING IS NULL
-                          --    AND s.CODE = 'DOM2500548'
-                          GROUP BY 
-                            p2.CODE,
-                            p2.PROGRESSSTATUS,
-                            p2.USERPRIMARYQUANTITY)";
+                            AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                          )";
         
-            $resultTK = db2_exec($conn, $queryTK);
-            $rowTK = db2_fetch_assoc($resultTK);
-            $qtyTK = $rowTK['QTY'];
+            $resultGR = db2_exec($conn, $queryGR);
+            $rowGR = db2_fetch_assoc($resultGR);
+            $qtyGR = $rowGR['QTY'];
 
             return [
-                'qty' => $qtyTK,
+                'qty' => $qtyGR,
                 'tgl_awal' => (int)$tanggalAwal,
                 'tgl_akhir' => (int)date('d', strtotime($tglAkhirFix))
             ];
           }
-          $dataTKI   = ambilTKPeriodeBulanDepan($conn1, $tglInput, $tahunInput, $bulanInput, 1, 7);
-          $dataTKII  = ambilTKPeriodeBulanDepan($conn1, $tglInput, $tahunInput, $bulanInput, 8, 14);
-          $dataTKIII = ambilTKPeriodeBulanDepan($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
-          $dataTKIV  = ambilTKPeriodeBulanDepan($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
-        // TK
-
-        // GREIGE READY 
-          $dataGreigeReadyI = ( ($x = round($dataBlmCelupI) - round($dataTKI['qty'])) < 0 ) ? 0 : $x;
-          $dataGreigeReadyII = ( ($x = round($dataBlmCelupII) - round($dataTKII['qty'])) < 0 ) ? 0 : $x;
-          $dataGreigeReadyIII = ( ($x = round($dataBlmCelupIII) - round($dataTKIII['qty'])) < 0 ) ? 0 : $x;
-          $dataGreigeReadyIV = ( ($x = round($dataBlmCelupIV) - round($dataTKIV['qty'])) < 0 ) ? 0 : $x;
+          $dataGRI   = ambilGreigeReadyPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 1, 7);
+          $dataGRII  = ambilGreigeReadyPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 8, 14);
+          $dataGRIII = ambilGreigeReadyPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
+          $dataGRIV  = ambilGreigeReadyPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
         // GREIGE READY
+
+        // TK 
+          $dataTKI = ( ($x = round($dataBlmCelupI) - round($dataGRI['qty'])) < 0 ) ? 0 : $x;
+          $dataTKII = ( ($x = round($dataBlmCelupII) - round($dataGRII['qty'])) < 0 ) ? 0 : $x;
+          $dataTKIII = ( ($x = round($dataBlmCelupIII) - round($dataGRIII['qty'])) < 0 ) ? 0 : $x;
+          $dataTKIV = ( ($x = round($dataBlmCelupIV) - round($dataGRIV['qty'])) < 0 ) ? 0 : $x;
+        // TK
 
         // SUDAH PRESET, BELUM CELUP
           function ambilQtySudahPresetBlmCelupPeriodeBulanDepan($conn, $tglInput_bulandepan, $tahunInput, $bulanInput, $tanggalAwal, $tanggalAkhir) {
@@ -5576,8 +5578,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td>I</td>
           <td>`<?= $databrutoI['tgl_awal']; ?>-<?= $databrutoI['tgl_akhir']; ?></td>
 
-          <td><?= number_format($dataTKI['qty']); ?></td>
-          <td><?= number_format($dataGreigeReadyI); ?></td>
+          <td><?= number_format($dataTKI); ?></td>
+          <td><?= number_format($dataGRI['qty']); ?></td>
           <td><?= number_format($dataSudahPresetBlmCelupI['qty']); ?></td>
           <td><?= number_format($dataBelumPresetBlmCelupI['qty']); ?></td>
         </tr>
@@ -5602,8 +5604,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td>II</td>
           <td>`<?= $databrutoII['tgl_awal']; ?>-<?= $databrutoII['tgl_akhir']; ?></td>
 
-          <td><?= number_format($dataTKII['qty']); ?></td>
-          <td><?= number_format($dataGreigeReadyII); ?></td>
+          <td><?= number_format($dataTKII); ?></td>
+          <td><?= number_format($dataGRII['qty']); ?></td>
           <td><?= number_format($dataSudahPresetBlmCelupII['qty']); ?></td>
           <td><?= number_format($dataBelumPresetBlmCelupII['qty']); ?></td>
         </tr>
@@ -5628,8 +5630,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td>III</td>
           <td>`<?= $databrutoIII['tgl_awal']; ?>-<?= $databrutoIII['tgl_akhir']; ?></td>
 
-          <td><?= number_format($dataTKIII['qty']); ?></td>
-          <td><?= number_format($dataGreigeReadyIII); ?></td>
+          <td><?= number_format($dataTKIII); ?></td>
+          <td><?= number_format($dataGRIII['qty']); ?></td>
           <td><?= number_format($dataSudahPresetBlmCelupIII['qty']); ?></td>
           <td><?= number_format($dataBelumPresetBlmCelupIII['qty']); ?></td>
         </tr>
@@ -5654,8 +5656,8 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td>IV</td>
           <td>`<?= $databrutoIV['tgl_awal']; ?>-<?= $databrutoIV['tgl_akhir']; ?></td>
 
-          <td><?= number_format($dataTKIV['qty']); ?></td>
-          <td><?= number_format($dataGreigeReadyIV); ?></td>
+          <td><?= number_format($dataTKIV); ?></td>
+          <td><?= number_format($dataGRIV['qty']); ?></td>
           <td><?= number_format($dataSudahPresetBlmCelupIV['qty']); ?></td>
           <td><?= number_format($dataBelumPresetBlmCelupIV['qty']); ?></td>
         </tr>
