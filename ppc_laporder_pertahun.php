@@ -1,7 +1,7 @@
 <?php
-header("content-type:application/vnd-ms-excel");
-header("content-disposition:attachment;filename=TerimaOrder.xls");
-header('Cache-Control: max-age=0');
+// header("content-type:application/vnd-ms-excel");
+// header("content-disposition:attachment;filename=TerimaOrder.xls");
+// header('Cache-Control: max-age=0');
 require_once 'koneksi.php';
 $tglInput = $_GET['tgl'];
 ?>
@@ -4641,36 +4641,38 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $tglAwalFix  = "$tahunInput-$bulanInput-" . str_pad($tanggalAwal, 2, '0', STR_PAD_LEFT);
         
             $queryTK = "SELECT 
-                          SUM(QTY) AS QTY 
-                        FROM (
-                          SELECT
-                            (p2.USERPRIMARYQUANTITY) AS QTY,
-                            s.CODE,
-                            s2.ORDERLINE
-                          FROM
-                            SALESORDER s
-                          LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
-                          LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
-                          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
-                          LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
-                          LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
-                                        AND p2.ITEMTYPEAFICODE = 'KGF'
-                                        AND p2.SUBCODE01 = p.SUBCODE01
-                                        AND p2.SUBCODE02 = p.SUBCODE02
-                                        AND p2.SUBCODE03 = p.SUBCODE03
-                                        AND p2.SUBCODE04 = p.SUBCODE04
-                          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p2.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
-                          WHERE
-                            CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
-                            AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
-                            AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
-                            AND NOT TRIM(p2.PROGRESSSTATUS) = '6'
-                            AND NOT a.VALUESTRING IS NULL
-                            AND a2.VALUESTRING IS NULL
-                          GROUP BY 
-                            p2.USERPRIMARYQUANTITY,
-                            s.CODE,
-                            s2.ORDERLINE)";
+                            SUM(QTY) AS QTY 
+                            --  *
+                            FROM (
+                            SELECT
+                              p2.CODE,
+                              p2.PROGRESSSTATUS,
+                              (p2.USERPRIMARYQUANTITY) AS QTY
+                            FROM
+                              SALESORDER s
+                            LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                            LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                            LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE 
+                            LEFT JOIN PRODUCTIONDEMAND p2 ON p2.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
+                                          AND p2.ITEMTYPEAFICODE = 'KGF'
+                                          AND p2.SUBCODE01 = p.SUBCODE01
+                                          AND p2.SUBCODE02 = p.SUBCODE02
+                                          AND p2.SUBCODE03 = p.SUBCODE03
+                                          AND p2.SUBCODE04 = p.SUBCODE04
+                            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p2.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                            WHERE
+                              CAST(s.CREATIONDATETIME AS DATE) < '$tglInput'
+                              AND s.TEMPLATECODE IN ('CWD', 'CWE', 'DOM', 'EXP', 'REP', 'RFD', 'RFE', 'RPE', 'SAM', 'SME')  
+                              AND s3.DELIVERYDATE BETWEEN '$tglAwalFix' AND '$tglAkhirFix'
+                              AND NOT TRIM(p2.PROGRESSSTATUS) = '6'
+                              AND NOT a.VALUESTRING IS NULL
+                              AND a2.VALUESTRING IS NULL
+                            --    AND s.CODE = 'DOM2500548'
+                            GROUP BY 
+                              p2.CODE,
+                              p2.PROGRESSSTATUS,
+                              p2.USERPRIMARYQUANTITY)";
         
             $resultTK = db2_exec($conn, $queryTK);
             $rowTK = db2_fetch_assoc($resultTK);
@@ -5327,11 +5329,12 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         
             $queryTK = "SELECT 
                           SUM(QTY) AS QTY 
-                        FROM (
+                          --  *
+                          FROM (
                           SELECT
-                            (p2.USERPRIMARYQUANTITY) AS QTY,
-                            s.CODE,
-                            s2.ORDERLINE
+                            p2.CODE,
+                            p2.PROGRESSSTATUS,
+                            (p2.USERPRIMARYQUANTITY) AS QTY
                           FROM
                             SALESORDER s
                           LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE IN ('KFF', 'FKF')
@@ -5352,10 +5355,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
                             AND NOT TRIM(p2.PROGRESSSTATUS) = '6'
                             AND NOT a.VALUESTRING IS NULL
                             AND a2.VALUESTRING IS NULL
+                          --    AND s.CODE = 'DOM2500548'
                           GROUP BY 
-                            p2.USERPRIMARYQUANTITY,
-                            s.CODE,
-                            s2.ORDERLINE)";
+                            p2.CODE,
+                            p2.PROGRESSSTATUS,
+                            p2.USERPRIMARYQUANTITY)";
         
             $resultTK = db2_exec($conn, $queryTK);
             $rowTK = db2_fetch_assoc($resultTK);
