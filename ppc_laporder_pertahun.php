@@ -19,9 +19,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
         <th>%EXPORT</th>
         <th>F/K</th>
         <th>TOTAL</th>
+        <th>GANTI KAIN EXT.</th>
         <th style="background-color: yellow;">BOOKING</th>
         <th>JASA</th>
         <th>PRINTING</th>
+        <th>GRAND TOTAL</th>
         <th>KIRIM</th>
         <th>ON TIME</th>
       </tr>
@@ -317,6 +319,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_DesThnSebelumnya = $total_DesThnSebelumnya;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qDesThnSebelumnyaGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnSebelumnyaGKE = db2_exec($conn1, $qDesThnSebelumnyaGKE);
+            $rowDesThnSebelumnyaGKE    = db2_fetch_assoc($resultDesThnSebelumnyaGKE);
+            $dataDesThnSebelumnyaGKE   = $rowDesThnSebelumnyaGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_DesThnSebelumnya = $dataDesThnSebelumnyaGKE + $dataDesThnSebelumnyaBooking + $dataDesThnSebelumnyaJasa + $dataDesThnSebelumnyaPrt;
+            $data_GrandTotal_DesThnSebelumnya = $grandTotal_DesThnSebelumnya;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_DesThnSebelumnya = $dataDesThnSebelumnyaLokal + $dataDesThnSebelumnyaLokalExport_fkf + $dataDesThnSebelumnyaPrt;
             $b_DesThnSebelumnya = $data_total_DesThnSebelumnya;
@@ -347,9 +400,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_DesThnSebelumnya); ?> %</td>
           <td><?= number_format($dataDesThnSebelumnyaLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_DesThnSebelumnya); ?></td>
+          <td><?= number_format($dataDesThnSebelumnyaGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataDesThnSebelumnyaBooking); ?></td>
           <td><?= number_format($dataDesThnSebelumnyaJasa); ?></td>
           <td><?= number_format($dataDesThnSebelumnyaPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_DesThnSebelumnya); ?></td>
           <td><?= number_format($dataDesThnSebelumnyaKirim); ?></td>
           <td>...</td>
         </tr>
@@ -644,6 +699,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_JanThnIni = $total_JanThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qJanThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJan' AND '$tglAkhirJan' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJanThnIniGKE = db2_exec($conn1, $qJanThnIniGKE);
+            $rowJanThnIniGKE    = db2_fetch_assoc($resultJanThnIniGKE);
+            $dataJanThnIniGKE   = $rowJanThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_JanThnIni = $dataJanThnIniGKE + $dataJanThnIniBooking + $dataJanThnIniJasa + $dataJanThnIniPrt;
+            $data_GrandTotal_JanThnIni = $grandTotal_JanThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_JanThnIni = $dataJanThnIniLokal + $dataJanThnIniLokalExport_fkf + $dataJanThnIniPrt;
             $b_JanThnIni = $data_total_JanThnIni;
@@ -674,9 +780,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_JanThnIni); ?> %</td>
           <td><?= number_format($dataJanThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_JanThnIni); ?></td>
+          <td><?= number_format($dataJanThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataJanThnIniJasa); ?></td>
           <td><?= number_format($dataJanThnIniBooking); ?></td>
           <td><?= number_format($dataJanThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_JanThnIni); ?></td>
           <td><?= number_format($dataQtyJanPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -971,6 +1079,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_FebThnIni = $total_FebThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qFebThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalFeb' AND '$tglAkhirFeb' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultFebThnIniGKE = db2_exec($conn1, $qFebThnIniGKE);
+            $rowFebThnIniGKE    = db2_fetch_assoc($resultFebThnIniGKE);
+            $dataFebThnIniGKE   = $rowFebThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_FebThnIni = $dataFebThnIniGKE + $dataFebThnIniBooking + $dataFebThnIniJasa + $dataFebThnIniPrt;
+            $data_GrandTotal_FebThnIni = $grandTotal_FebThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_FebThnIni = $dataFebThnIniLokal + $dataFebThnIniLokalExport_fkf + $dataFebThnIniPrt;
             $b_FebThnIni = $data_total_FebThnIni;
@@ -1001,9 +1160,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_FebThnIni); ?> %</td>
           <td><?= number_format($dataFebThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_FebThnIni); ?></td>
+          <td><?= number_format($dataFebThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataFebThnIniJasa); ?></td>
           <td><?= number_format($dataFebThnIniBooking); ?></td>
           <td><?= number_format($dataFebThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_FebThnIni); ?></td>
           <td><?= number_format($dataQtyFebPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -1298,6 +1459,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_MarThnIni = $total_MarThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qMarThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMar' AND '$tglAkhirMar' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMarThnIniGKE = db2_exec($conn1, $qMarThnIniGKE);
+            $rowMarThnIniGKE    = db2_fetch_assoc($resultMarThnIniGKE);
+            $dataMarThnIniGKE   = $rowMarThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_MarThnIni = $dataMarThnIniGKE + $dataMarThnIniBooking + $dataMarThnIniJasa + $dataMarThnIniPrt;
+            $data_GrandTotal_MarThnIni = $grandTotal_MarThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_MarThnIni = $dataMarThnIniLokal + $dataMarThnIniLokalExport_fkf + $dataMarThnIniPrt;
             $b_MarThnIni = $data_total_MarThnIni;
@@ -1328,9 +1540,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_MarThnIni); ?> %</td>
           <td><?= number_format($dataMarThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_MarThnIni); ?></td>
+          <td><?= number_format($dataMarThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataMarThnIniJasa); ?></td>
           <td><?= number_format($dataMarThnIniBooking); ?></td>
           <td><?= number_format($dataMarThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_MarThnIni); ?></td>
           <td><?= number_format($dataQtyMarPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -1625,6 +1839,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_AprThnIni = $total_AprThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qAprThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalApr' AND '$tglAkhirApr' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAprThnIniGKE = db2_exec($conn1, $qAprThnIniGKE);
+            $rowAprThnIniGKE    = db2_fetch_assoc($resultAprThnIniGKE);
+            $dataAprThnIniGKE   = $rowAprThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_AprThnIni = $dataAprThnIniGKE + $dataAprThnIniBooking + $dataAprThnIniJasa + $dataAprThnIniPrt;
+            $data_GrandTotal_AprThnIni = $grandTotal_AprThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_AprThnIni = $dataAprThnIniLokal + $dataAprThnIniLokalExport_fkf + $dataAprThnIniPrt;
             $b_AprThnIni = $data_total_AprThnIni;
@@ -1655,9 +1920,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_AprThnIni); ?> %</td>
           <td><?= number_format($dataAprThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_AprThnIni); ?></td>
+          <td><?= number_format($dataAprThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataAprThnIniJasa); ?></td>
           <td><?= number_format($dataAprThnIniBooking); ?></td>
           <td><?= number_format($dataAprThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_AprThnIni); ?></td>
           <td><?= number_format($dataQtyAprPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -1952,6 +2219,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_MeiThnIni = $total_MeiThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qMeiThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalMei' AND '$tglAkhirMei' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultMeiThnIniGKE = db2_exec($conn1, $qMeiThnIniGKE);
+            $rowMeiThnIniGKE    = db2_fetch_assoc($resultMeiThnIniGKE);
+            $dataMeiThnIniGKE   = $rowMeiThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_MeiThnIni = $dataMeiThnIniGKE + $dataMeiThnIniBooking + $dataMeiThnIniJasa + $dataMeiThnIniPrt;
+            $data_GrandTotal_MeiThnIni = $grandTotal_MeiThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_MeiThnIni = $dataMeiThnIniLokal + $dataMeiThnIniLokalExport_fkf + $dataMeiThnIniPrt;
             $b_MeiThnIni = $data_total_MeiThnIni;
@@ -1982,9 +2300,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_MeiThnIni); ?> %</td>
           <td><?= number_format($dataMeiThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_MeiThnIni); ?></td>
+          <td><?= number_format($dataMeiThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataMeiThnIniJasa); ?></td>
           <td><?= number_format($dataMeiThnIniBooking); ?></td>
           <td><?= number_format($dataMeiThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_MeiThnIni); ?></td>
           <td><?= number_format($dataQtyMeiPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -2279,6 +2599,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_JunThnIni = $total_JunThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qJunThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJun' AND '$tglAkhirJun' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJunThnIniGKE = db2_exec($conn1, $qJunThnIniGKE);
+            $rowJunThnIniGKE    = db2_fetch_assoc($resultJunThnIniGKE);
+            $dataJunThnIniGKE   = $rowJunThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_JunThnIni = $dataJunThnIniGKE + $dataJunThnIniBooking + $dataJunThnIniJasa + $dataJunThnIniPrt;
+            $data_GrandTotal_JunThnIni = $grandTotal_JunThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_JunThnIni = $dataJunThnIniLokal + $dataJunThnIniLokalExport_fkf + $dataJunThnIniPrt;
             $b_JunThnIni = $data_total_JunThnIni;
@@ -2309,9 +2680,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_JunThnIni); ?> %</td>
           <td><?= number_format($dataJunThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_JunThnIni); ?></td>
+          <td><?= number_format($dataJunThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataJunThnIniJasa); ?></td>
           <td><?= number_format($dataJunThnIniBooking); ?></td>
           <td><?= number_format($dataJunThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_JunThnIni); ?></td>
           <td><?= number_format($dataQtyJunPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -2606,6 +2979,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_JulThnIni = $total_JulThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qJulThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalJul' AND '$tglAkhirJul' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultJulThnIniGKE = db2_exec($conn1, $qJulThnIniGKE);
+            $rowJulThnIniGKE    = db2_fetch_assoc($resultJulThnIniGKE);
+            $dataJulThnIniGKE   = $rowJulThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_JulThnIni = $dataJulThnIniGKE + $dataJulThnIniBooking + $dataJulThnIniJasa + $dataJulThnIniPrt;
+            $data_GrandTotal_JulThnIni = $grandTotal_JulThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_JulThnIni = $dataJulThnIniLokal + $dataJulThnIniLokalExport_fkf + $dataJulThnIniPrt;
             $b_JulThnIni = $data_total_JulThnIni;
@@ -2636,9 +3060,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_JulThnIni); ?> %</td>
           <td><?= number_format($dataJulThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_JulThnIni); ?></td>
+          <td><?= number_format($dataJulThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataJulThnIniJasa); ?></td>
           <td><?= number_format($dataJulThnIniBooking); ?></td>
           <td><?= number_format($dataJulThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_JulThnIni); ?></td>
           <td><?= number_format($dataQtyJulPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -2933,6 +3359,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_AgsThnIni = $total_AgsThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qAgsThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalAgs' AND '$tglAkhirAgs' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultAgsThnIniGKE = db2_exec($conn1, $qAgsThnIniGKE);
+            $rowAgsThnIniGKE    = db2_fetch_assoc($resultAgsThnIniGKE);
+            $dataAgsThnIniGKE   = $rowAgsThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_AgsThnIni = $dataAgsThnIniGKE + $dataAgsThnIniBooking + $dataAgsThnIniJasa + $dataAgsThnIniPrt;
+            $data_GrandTotal_AgsThnIni = $grandTotal_AgsThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_AgsThnIni = $dataAgsThnIniLokal + $dataAgsThnIniLokalExport_fkf + $dataAgsThnIniPrt;
             $b_AgsThnIni = $data_total_AgsThnIni;
@@ -2964,9 +3441,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_AgsThnIni); ?> %</td>
           <td><?= number_format($dataAgsThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_AgsThnIni); ?></td>
+          <td><?= number_format($dataAgsThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataAgsThnIniJasa); ?></td>
           <td><?= number_format($dataAgsThnIniBooking); ?></td>
           <td><?= number_format($dataAgsThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_AgsThnIni); ?></td>
           <td><?= number_format($dataQtyAgsPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -3261,6 +3740,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_SeptThnIni = $total_SeptThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qSeptThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalSept' AND '$tglAkhirSept' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultSeptThnIniGKE = db2_exec($conn1, $qSeptThnIniGKE);
+            $rowSeptThnIniGKE    = db2_fetch_assoc($resultSeptThnIniGKE);
+            $dataSeptThnIniGKE   = $rowSeptThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_SeptThnIni = $dataSeptThnIniGKE + $dataSeptThnIniBooking + $dataSeptThnIniJasa + $dataSeptThnIniPrt;
+            $data_GrandTotal_SeptThnIni = $grandTotal_SeptThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_SeptThnIni = $dataSeptThnIniLokal + $dataSeptThnIniLokalExport_fkf + $dataSeptThnIniPrt;
             $b_SeptThnIni = $data_total_SeptThnIni;
@@ -3291,9 +3821,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_SeptThnIni); ?> %</td>
           <td><?= number_format($dataSeptThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_SeptThnIni); ?></td>
+          <td><?= number_format($dataSeptThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataSeptThnIniJasa); ?></td>
           <td><?= number_format($dataSeptThnIniBooking); ?></td>
           <td><?= number_format($dataSeptThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_SeptThnIni); ?></td>
           <td><?= number_format($dataQtySeptPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -3588,6 +4120,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_OktThnIni = $total_OktThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qOktThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalOkt' AND '$tglAkhirOkt' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultOktThnIniGKE = db2_exec($conn1, $qOktThnIniGKE);
+            $rowOktThnIniGKE    = db2_fetch_assoc($resultOktThnIniGKE);
+            $dataOktThnIniGKE   = $rowOktThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_OktThnIni = $dataOktThnIniGKE + $dataOktThnIniBooking + $dataOktThnIniJasa + $dataOktThnIniPrt;
+            $data_GrandTotal_OktThnIni = $grandTotal_OktThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_OktThnIni = $dataOktThnIniLokal + $dataOktThnIniLokalExport_fkf + $dataOktThnIniPrt;
             $b_OktThnIni = $data_total_OktThnIni;
@@ -3618,9 +4201,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_OktThnIni); ?> %</td>
           <td><?= number_format($dataOktThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_OktThnIni); ?></td>
+          <td><?= number_format($dataOktThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataOktThnIniJasa); ?></td>
           <td><?= number_format($dataOktThnIniBooking); ?></td>
           <td><?= number_format($dataOktThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_OktThnIni); ?></td>
           <td><?= number_format($dataQtyOktPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -3915,6 +4500,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_NovThnIni = $total_NovThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qNovThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalNov' AND '$tglAkhirNov' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultNovThnIniGKE = db2_exec($conn1, $qNovThnIniGKE);
+            $rowNovThnIniGKE    = db2_fetch_assoc($resultNovThnIniGKE);
+            $dataNovThnIniGKE   = $rowNovThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_NovThnIni = $dataNovThnIniGKE + $dataNovThnIniBooking + $dataNovThnIniJasa + $dataNovThnIniPrt;
+            $data_GrandTotal_NovThnIni = $grandTotal_NovThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_NovThnIni = $dataNovThnIniLokal + $dataNovThnIniLokalExport_fkf + $dataNovThnIniPrt;
             $b_NovThnIni = $data_total_NovThnIni;
@@ -3945,9 +4581,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_NovThnIni); ?> %</td>
           <td><?= number_format($dataNovThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_NovThnIni); ?></td>
+          <td><?= number_format($dataNovThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataNovThnIniJasa); ?></td>
           <td><?= number_format($dataNovThnIniBooking); ?></td>
           <td><?= number_format($dataNovThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_NovThnIni); ?></td>
           <td><?= number_format($dataQtyNovPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
@@ -4241,6 +4879,57 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
             $data_total_DesThnIni = $total_DesThnIni;
           // TOTAL
 
+          // GANTI KAIN EXT
+            $qDesThnIniGKE = "WITH QTY_BRUTO AS (
+                                          SELECT
+                                            i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE,
+                                            SUM(i.USERPRIMARYQUANTITY) AS KFF,
+                                            SUM(i.USERSECONDARYQUANTITY) AS FKF
+                                          FROM
+                                            ITXVIEWKGBRUTOBONORDER2 i
+                                          GROUP BY 
+                                          i.CODE,
+                                            i.ORIGDLVSALORDLINESALORDERCODE,
+                                            i.ORIGDLVSALORDERLINEORDERLINE
+                                        )
+                                        SELECT 
+                                          SUM(QTY) AS QTY
+                                        FROM 
+                                        (SELECT
+                                          s.CODE,
+                                          s3.DELIVERYDATE,
+                                          ROUND(SUM(qb.KFF)) AS QTY
+                                        FROM
+                                          SALESORDER s
+                                        LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = s.CODE AND s2.LINESTATUS = 1 AND s2.ITEMTYPEAFICODE = 'KFF'
+                                        LEFT JOIN SALESORDERDELIVERY s3 ON s3.SALESORDERLINESALESORDERCODE = s2.SALESORDERCODE AND s3.SALESORDERLINEORDERLINE = s2.ORDERLINE AND s3.ITEMTYPEAFICODE = s2.ITEMTYPEAFICODE
+                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = s.ABSUNIQUEID AND a.FIELDNAME = 'ApprovalRMP'
+                                        LEFT JOIN PRODUCTIONDEMAND p ON p.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND p.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND p.ITEMTYPEAFICODE IN ('KFF', 'FKF')
+                                        LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = s2.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = s2.ORDERLINE AND qb.CODE = p.CODE
+                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+                                        WHERE
+                                          CAST(s.CREATIONDATETIME AS DATE) < '$tglInput' -- FILTER pertama untuk mencari salesorder yg dibuat
+                                          AND s.TEMPLATECODE IN ('CWE', 'REP', 'RFD', 'RFE', 'RPE')
+                                          AND NOT s3.DELIVERYDATE IS NULL
+                                          AND NOT a.VALUESTRING IS NULL
+                                          AND a2.VALUESTRING IS NULL -- DEMAND ASLI
+                                        GROUP BY
+                                          s.CODE,
+                                          s3.DELIVERYDATE)
+                                        WHERE
+                                          DELIVERYDATE BETWEEN '$tglAwalDes' AND '$tglAkhirDes' -- FILTER kedua untuk mencari tgldelivery dari salesorder perbulan";
+            $resultDesThnIniGKE = db2_exec($conn1, $qDesThnIniGKE);
+            $rowDesThnIniGKE    = db2_fetch_assoc($resultDesThnIniGKE);
+            $dataDesThnIniGKE   = $rowDesThnIniGKE['QTY'];
+          // GANTI KAIN EXT
+
+          // GRAND TOTAL
+            $grandTotal_DesThnIni = $dataDesThnIniGKE + $dataDesThnIniBooking + $dataDesThnIniJasa + $dataDesThnIniPrt;
+            $data_GrandTotal_DesThnIni = $grandTotal_DesThnIni;
+          // GRAND TOTAL
+
           // %LOKAL
             $a_DesThnIni = $dataDesThnIniLokal + $dataDesThnIniLokalExport_fkf + $dataDesThnIniPrt;
             $b_DesThnIni = $data_total_DesThnIni;
@@ -4271,9 +4960,11 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($data_PersentageExport_DesThnIni); ?> %</td>
           <td><?= number_format($dataDesThnIniLokalExport_fkf); ?></td>
           <td><?= number_format($data_total_DesThnIni); ?></td>
+          <td><?= number_format($dataDesThnIniGKE); ?></td>
           <td style="background-color: yellow;"><?= number_format($dataDesThnIniJasa); ?></td>
           <td><?= number_format($dataDesThnIniBooking); ?></td>
           <td><?= number_format($dataDesThnIniPrt); ?></td>
+          <td><?= number_format($data_GrandTotal_DesThnIni); ?></td>
           <td><?= number_format($dataQtyDesPengirimanThnIniKirim); ?></td>
           <td>...</td>
         </tr>
