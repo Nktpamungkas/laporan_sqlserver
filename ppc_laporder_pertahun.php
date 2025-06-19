@@ -1,7 +1,7 @@
 <?php
-header("content-type:application/vnd-ms-excel");
-header("content-disposition:attachment;filename=TerimaOrder.xls");
-header('Cache-Control: max-age=0');
+// header("content-type:application/vnd-ms-excel");
+// header("content-disposition:attachment;filename=TerimaOrder.xls");
+// header('Cache-Control: max-age=0');
 require_once 'koneksi.php';
 $tglInput = $_GET['tgl'];
 ?>
@@ -366,7 +366,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_DesThnSebelumnya = $dataDesThnSebelumnyaGKE + $dataDesThnSebelumnyaBooking + $dataDesThnSebelumnyaJasa + $dataDesThnSebelumnyaPrt;
+            $grandTotal_DesThnSebelumnya = $data_total_DesThnSebelumnya + $dataDesThnSebelumnyaGKE + $dataDesThnSebelumnyaBooking + $dataDesThnSebelumnyaJasa + $dataDesThnSebelumnyaPrt;
             $data_GrandTotal_DesThnSebelumnya = $grandTotal_DesThnSebelumnya;
           // GRAND TOTAL
 
@@ -746,7 +746,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_JanThnIni = $dataJanThnIniGKE + $dataJanThnIniBooking + $dataJanThnIniJasa + $dataJanThnIniPrt;
+            $grandTotal_JanThnIni = $data_total_JanThnIni + $dataJanThnIniGKE + $dataJanThnIniBooking + $dataJanThnIniJasa + $dataJanThnIniPrt;
             $data_GrandTotal_JanThnIni = $grandTotal_JanThnIni;
           // GRAND TOTAL
 
@@ -1126,7 +1126,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_FebThnIni = $dataFebThnIniGKE + $dataFebThnIniBooking + $dataFebThnIniJasa + $dataFebThnIniPrt;
+            $grandTotal_FebThnIni = $data_total_FebThnIni + $dataFebThnIniGKE + $dataFebThnIniBooking + $dataFebThnIniJasa + $dataFebThnIniPrt;
             $data_GrandTotal_FebThnIni = $grandTotal_FebThnIni;
           // GRAND TOTAL
 
@@ -1506,7 +1506,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_MarThnIni = $dataMarThnIniGKE + $dataMarThnIniBooking + $dataMarThnIniJasa + $dataMarThnIniPrt;
+            $grandTotal_MarThnIni = $data_total_MarThnIni + $dataMarThnIniGKE + $dataMarThnIniBooking + $dataMarThnIniJasa + $dataMarThnIniPrt;
             $data_GrandTotal_MarThnIni = $grandTotal_MarThnIni;
           // GRAND TOTAL
 
@@ -1886,7 +1886,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_AprThnIni = $dataAprThnIniGKE + $dataAprThnIniBooking + $dataAprThnIniJasa + $dataAprThnIniPrt;
+            $grandTotal_AprThnIni = $data_total_AprThnIni + $dataAprThnIniGKE + $dataAprThnIniBooking + $dataAprThnIniJasa + $dataAprThnIniPrt;
             $data_GrandTotal_AprThnIni = $grandTotal_AprThnIni;
           // GRAND TOTAL
 
@@ -2266,7 +2266,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_MeiThnIni = $dataMeiThnIniGKE + $dataMeiThnIniBooking + $dataMeiThnIniJasa + $dataMeiThnIniPrt;
+            $grandTotal_MeiThnIni = $data_total_MeiThnIni + $dataMeiThnIniGKE + $dataMeiThnIniBooking + $dataMeiThnIniJasa + $dataMeiThnIniPrt;
             $data_GrandTotal_MeiThnIni = $grandTotal_MeiThnIni;
           // GRAND TOTAL
 
@@ -2646,7 +2646,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_JunThnIni = $dataJunThnIniGKE + $dataJunThnIniBooking + $dataJunThnIniJasa + $dataJunThnIniPrt;
+            $grandTotal_JunThnIni = $data_total_JunThnIni + $dataJunThnIniGKE + $dataJunThnIniBooking + $dataJunThnIniJasa + $dataJunThnIniPrt;
             $data_GrandTotal_JunThnIni = $grandTotal_JunThnIni;
           // GRAND TOTAL
 
@@ -3026,7 +3026,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_JulThnIni = $dataJulThnIniGKE + $dataJulThnIniBooking + $dataJulThnIniJasa + $dataJulThnIniPrt;
+            $grandTotal_JulThnIni = $data_total_JulThnIni + $dataJulThnIniGKE + $dataJulThnIniBooking + $dataJulThnIniJasa + $dataJulThnIniPrt;
             $data_GrandTotal_JulThnIni = $grandTotal_JulThnIni;
           // GRAND TOTAL
 
@@ -3406,7 +3406,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_AgsThnIni = $dataAgsThnIniGKE + $dataAgsThnIniBooking + $dataAgsThnIniJasa + $dataAgsThnIniPrt;
+            $grandTotal_AgsThnIni = $data_total_AgsThnIni + $dataAgsThnIniGKE + $dataAgsThnIniBooking + $dataAgsThnIniJasa + $dataAgsThnIniPrt;
             $data_GrandTotal_AgsThnIni = $grandTotal_AgsThnIni;
           // GRAND TOTAL
 
@@ -3787,7 +3787,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_SeptThnIni = $dataSeptThnIniGKE + $dataSeptThnIniBooking + $dataSeptThnIniJasa + $dataSeptThnIniPrt;
+            $grandTotal_SeptThnIni = $data_total_SeptThnIni + $dataSeptThnIniGKE + $dataSeptThnIniBooking + $dataSeptThnIniJasa + $dataSeptThnIniPrt;
             $data_GrandTotal_SeptThnIni = $grandTotal_SeptThnIni;
           // GRAND TOTAL
 
@@ -4167,7 +4167,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_OktThnIni = $dataOktThnIniGKE + $dataOktThnIniBooking + $dataOktThnIniJasa + $dataOktThnIniPrt;
+            $grandTotal_OktThnIni = $data_total_OktThnIni + $dataOktThnIniGKE + $dataOktThnIniBooking + $dataOktThnIniJasa + $dataOktThnIniPrt;
             $data_GrandTotal_OktThnIni = $grandTotal_OktThnIni;
           // GRAND TOTAL
 
@@ -4547,7 +4547,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_NovThnIni = $dataNovThnIniGKE + $dataNovThnIniBooking + $dataNovThnIniJasa + $dataNovThnIniPrt;
+            $grandTotal_NovThnIni = $data_total_NovThnIni + $dataNovThnIniGKE + $dataNovThnIniBooking + $dataNovThnIniJasa + $dataNovThnIniPrt;
             $data_GrandTotal_NovThnIni = $grandTotal_NovThnIni;
           // GRAND TOTAL
 
@@ -4926,7 +4926,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           // GANTI KAIN EXT
 
           // GRAND TOTAL
-            $grandTotal_DesThnIni = $dataDesThnIniGKE + $dataDesThnIniBooking + $dataDesThnIniJasa + $dataDesThnIniPrt;
+            $grandTotal_DesThnIni = $data_total_DesThnIni + $dataDesThnIniGKE + $dataDesThnIniBooking + $dataDesThnIniJasa + $dataDesThnIniPrt;
             $data_GrandTotal_DesThnIni = $grandTotal_DesThnIni;
           // GRAND TOTAL
 
@@ -4971,6 +4971,7 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
       <!-- DESEMBER -->
     </tbody>
 </table>
+
 
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
     <thead>
@@ -5562,6 +5563,20 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $dataBelumPresetBlmCelupIII = ambilQtyBelumPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 15, 21);
           $dataBelumPresetBlmCelupIV  = ambilQtyBelumPresetBlmCelupPeriode($conn1, $tglInput, $tahunInput, $bulanInput, 22, 31);
         // BELUM PRESET, BELUM CELUP
+
+        // TOTAL
+          $totalBruto     = $databrutoI['qty'] + $databrutoII['qty'] + $databrutoIII['qty'] + $databrutoIV['qty'];
+          $totalAKJ       = $dataAKJI['qty'] + $dataAKJII['qty'] + $dataAKJIII['qty'] + $dataAKJIV['qty'];
+          $totalSdhCelup  = $dataSdhCelupI['qty'] + $dataSdhCelupII['qty'] + $dataSdhCelupIII['qty'] + $dataSdhCelupIV['qty'];
+          $totalBlmCelup  = $dataBlmCelupI + $dataBlmCelupII + $dataBlmCelupIII + $dataBlmCelupIV;
+          $totalPBlmCelup = $dataPBlmCelupI['qty'] + $dataPBlmCelupII['qty'] + $dataPBlmCelupIII['qty'] + $dataPBlmCelupIV['qty'];
+          $totalCBlmCelup = $dataCBlmCelupI + $dataCBlmCelupII + $dataCBlmCelupIII + $dataCBlmCelupIV;
+
+          $totalTK                = $dataTKI + $dataTKII + $dataTKIII + $dataTKIV;
+          $totalGR                = $dataGRI['qty'] + $dataGRII['qty'] + $dataGRIII['qty'] + $dataGRIV['qty'];
+          $totalSdhPresetBlmCelup = $dataSudahPresetBlmCelupI['qty'] + $dataSudahPresetBlmCelupII['qty'] + $dataSudahPresetBlmCelupIII['qty'] + $dataSudahPresetBlmCelupIV['qty'];
+          $totalBlmPresetBlmCelup = $dataBelumPresetBlmCelupI['qty'] + $dataBelumPresetBlmCelupII['qty'] + $dataBelumPresetBlmCelupIII['qty'] + $dataBelumPresetBlmCelupIV['qty'];
+        // TOTAL
       ?>
       <!-- MINGGU 1 -->
         <tr>
@@ -5665,6 +5680,22 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($dataBelumPresetBlmCelupIV['qty']); ?></td>
         </tr>
       <!-- MINGGU 4 -->
+
+      <!-- TOTAL -->
+        <td colspan="3"><b>TOTAL</b></td>
+        <td><b><?= number_format($totalBruto); ?></b></td>
+        <td><b><?= number_format($totalAKJ); ?></b></td>
+        <td><b><?= number_format($totalSdhCelup); ?></b></td>
+        <td><b><?= number_format($totalBlmCelup); ?></b></td>
+        <td><b><?= number_format($totalPBlmCelup); ?></b></td>
+        <td><b><?= number_format($totalCBlmCelup); ?></b></td>
+
+        <td colspan="3"><b>TOTAL</b></td>
+        <td><b><?= number_format($totalTK); ?></b></td>
+        <td><b><?= number_format($totalGR); ?></b></td>
+        <td><b><?= number_format($totalSdhPresetBlmCelup); ?></b></td>
+        <td><b><?= number_format($totalBlmPresetBlmCelup); ?></b></td>
+      <!-- TOTAL -->
     </tbody>
 </table>
 <table border="1" width="100%" style="border-collapse:collapse; border:1px solid #000; font-size:12px; text-align:center;">
@@ -6250,6 +6281,20 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           $dataBelumPresetBlmCelupIII = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 15, 21);
           $dataBelumPresetBlmCelupIV  = ambilQtyBelumPresetBlmCelupPeriodeBulanDepan($conn1, $tglInput_bulandepan, $tahunInput, $bulanInput, 22, 31);
         // BELUM PRESET, BELUM CELUP
+
+        // TOTAL
+          $totalBruto     = $databrutoI['qty'] + $databrutoII['qty'] + $databrutoIII['qty'] + $databrutoIV['qty'];
+          $totalAKJ       = $dataAKJI['qty'] + $dataAKJII['qty'] + $dataAKJIII['qty'] + $dataAKJIV['qty'];
+          $totalSdhCelup  = $dataSdhCelupI['qty'] + $dataSdhCelupII['qty'] + $dataSdhCelupIII['qty'] + $dataSdhCelupIV['qty'];
+          $totalBlmCelup  = $dataBlmCelupI + $dataBlmCelupII + $dataBlmCelupIII + $dataBlmCelupIV;
+          $totalPBlmCelup = $dataPBlmCelupI['qty'] + $dataPBlmCelupII['qty'] + $dataPBlmCelupIII['qty'] + $dataPBlmCelupIV['qty'];
+          $totalCBlmCelup = $dataCBlmCelupI + $dataCBlmCelupII + $dataCBlmCelupIII + $dataCBlmCelupIV;
+
+          $totalTK                = $dataTKI + $dataTKII + $dataTKIII + $dataTKIV;
+          $totalGR                = $dataGRI['qty'] + $dataGRII['qty'] + $dataGRIII['qty'] + $dataGRIV['qty'];
+          $totalSdhPresetBlmCelup = $dataSudahPresetBlmCelupI['qty'] + $dataSudahPresetBlmCelupII['qty'] + $dataSudahPresetBlmCelupIII['qty'] + $dataSudahPresetBlmCelupIV['qty'];
+          $totalBlmPresetBlmCelup = $dataBelumPresetBlmCelupI['qty'] + $dataBelumPresetBlmCelupII['qty'] + $dataBelumPresetBlmCelupIII['qty'] + $dataBelumPresetBlmCelupIV['qty'];
+        // TOTAL
       ?>
       <!-- MINGGU 1 -->
         <tr>
@@ -6353,6 +6398,23 @@ LAPORAN DELIVERY ORDER PERMINGGU TAHUN 2025
           <td><?= number_format($dataBelumPresetBlmCelupIV['qty']); ?></td>
         </tr>
       <!-- MINGGU 4 -->
+
+      <!-- TOTAL -->
+        <td colspan="3"><b>TOTAL</b></td>
+        <td><b><?= number_format($totalBruto); ?></b></td>
+        <td><b><?= number_format($totalAKJ); ?></b></td>
+        <td><b><?= number_format($totalSdhCelup); ?></b></td>
+        <td><b><?= number_format($totalBlmCelup); ?></b></td>
+        <td><b><?= number_format($totalPBlmCelup); ?></b></td>
+        <td><b><?= number_format($totalCBlmCelup); ?></b></td>
+
+        <td colspan="3"><b>TOTAL</b></td>
+        <td><b><?= number_format($totalTK); ?></b></td>
+        <td><b><?= number_format($totalGR); ?></b></td>
+        <td><b><?= number_format($totalSdhPresetBlmCelup); ?></b></td>
+        <td><b><?= number_format($totalBlmPresetBlmCelup); ?></b></td>
+      <!-- TOTAL -->
+    </tbody>
 </table>
 
 BOOKING
