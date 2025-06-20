@@ -24,6 +24,7 @@ require_once "koneksi.php";
             <th>AFTER</th>
             <th>KETENTUAN</th>
             <th>STATUS</th>
+            <th>NO MESIN</th>
         </tr>
     </thead>
     <tbody>
@@ -46,7 +47,8 @@ require_once "koneksi.php";
                     CASE
                         WHEN p.PROGRESSTEMPLATECODE = 'E01' THEN r.LONGDESCRIPTION
                     END	AS OP_OUT,
-                    p4.TOTALPRIMARYQUANTITY
+                    p4.TOTALPRIMARYQUANTITY,
+                    p.MACHINECODE
                 FROM
                     PRODUCTIONPROGRESS p 
                 LEFT JOIN PRODUCTIONPROGRESSSTEPUPDATED p2 ON p2.PROPROGRESSPROGRESSNUMBER = p.PROGRESSNUMBER
@@ -196,6 +198,7 @@ require_once "koneksi.php";
                     echo $status;
                     ?>
                 </td>
+                <td><?= $row_timbang['MACHINECODE']; ?></td>
             </tr>
         <?php } ?>
     </tbody>

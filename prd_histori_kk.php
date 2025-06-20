@@ -427,7 +427,11 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.log_history(KET,PRODUCTIONORDER,IP
                                                     $array_konversi['title']['value'] =  '';
                                                     $array_konversi['title']['parent'] =  '';
 
-                                                    $array_konversi[$rootDemand]['value'] =  '<a target="blank" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . $rootDemand . '">' . $rootDemand . '</a>';
+                                                    // Ambil Qty untuk rootDemand
+                                                    $qtyRoot = getQtyPacking($rootDemand);
+                                                    $rootLabel = '<b>'. $rootDemand . '</b> <br>(Qty Salin: ' . number_format(getQtySalin($rootDemand), 2) . ') <br> (Qty Packing: ' . $qtyRoot . ')';
+
+                                                    $array_konversi[$rootDemand]['value'] =  '<a target="blank" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . $rootDemand . '">' . $rootLabel . '</a>';
                                                     $array_konversi[$rootDemand]['parent'] =  'title';
                                                     foreach ($resultArray as $v1) {
                                                         foreach ($v1 as $k2 => $v2) {
@@ -440,10 +444,16 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.log_history(KET,PRODUCTIONORDER,IP
                                                                 } else {
                                                                     $pengait = $resultArray[$no][0];
                                                                 }
-                                                                if ($highlightValue == $resultArray[$no][0]) {
-                                                                    $value = '<a style="color:red" target="blank" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . $resultArray[$no][0] . '">' . $resultArray[$no][0] . '</a>';
+
+                                                                $currentDemand = $resultArray[$no][0];
+                                                                $qtyPacking = getQtyPacking($currentDemand);
+                                                                $label = '<b>'. $currentDemand . '</b> <br> (Qty Salin: ' . number_format(getQtySalin($currentDemand), 2) . ') <br> (Qty Packing: ' . $qtyPacking . ')';
+
+
+                                                                if ($highlightValue == $currentDemand) {
+                                                                    $value = '<a style="color:red" target="blank" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . $currentDemand . '">' . $label . '</a>';
                                                                 } else {
-                                                                    $value = '<a target="blank" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . $resultArray[$no][0] . '">' . $resultArray[$no][0] . '</a>';
+                                                                    $value = '<a target="blank" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . $currentDemand . '">' . $label . '</a>';
                                                                 }
 
                                                                 $array_konversi[$pengait]['value'] = $value;
@@ -454,6 +464,33 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.log_history(KET,PRODUCTIONORDER,IP
                                                         $no++;
                                                     }
                                                     return $array_konversi;
+                                                }
+
+                                                function getQtyPacking2($noDemand) {
+                                                    global $con_db_qc;
+
+                                                    $query = "SELECT SUM(netto) AS TOTAL_NETTO
+                                                            FROM tbl_lap_inspeksi 
+                                                            WHERE dept = 'PACKING' AND nodemand = '$noDemand'";
+                                                    
+                                                    $stmt = mysqli_query($con_db_qc, $query);
+                                                    $row = mysqli_fetch_assoc($stmt);
+                                                    return $row['TOTAL_NETTO'] ?? 0;
+                                                }
+                                                
+                                                function getQtySalin2($noDemand) {
+                                                    global $con;
+
+                                                    $query = "SELECT
+                                                                USERPRIMARYQUANTITY AS QTY_SALIN
+                                                            FROM
+                                                                PRODUCTIONDEMAND p
+                                                            WHERE
+                                                                p.CODE = '$noDemand'";
+                                                    
+                                                    $stmt = db2_exec($con, $query);
+                                                    $row = db2_fetch_assoc($stmt);
+                                                    return $row['QTY_SALIN'] ?? 0;
                                                 }
 
                                                 $noDemand = $_POST['Demand'];
