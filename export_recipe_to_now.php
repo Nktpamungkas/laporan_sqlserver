@@ -343,10 +343,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insert_recipeBean  = db2_exec($conn1, $queryDataMain);
 
     if ($insert_recipeBean) {
-        echo json_encode(['success' => true, 'message' => 'Recipe successfully exported to NOW.']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to export recipe to NOW.']);
+    // Eksekusi query tambahan dari JavaScript (jika ada)
+    if (!empty($_POST['query_sql'])) {
+    $queries = explode(";", $_POST['query_sql']);
+
+        foreach ($queries as $q) {
+            $q = trim($q);
+            if ($q !== '') {
+                // Ganti placeholder dengan nilai IMPORTAUTOCOUNTER
+                $q = str_replace("'Anjay29181'", "'$IMPORTAUTOCOUNTER'", $q);
+
+                $result = db2_exec($conn1, $q);
+                if (!$result) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Gagal mengeksekusi salah satu query: ' . db2_stmt_errormsg()
+                    ]);
+                    exit;
+                }
+            }
+        }
     }
+
+
+    echo json_encode(['success' => true, 'message' => 'Recipe successfully exported to NOW.']);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Failed to export recipe to NOW.']);
+}
+
 }
 
 ?>
