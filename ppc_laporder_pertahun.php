@@ -1,7 +1,7 @@
 <?php
-// header("content-type:application/vnd-ms-excel");
-// header("content-disposition:attachment;filename=TerimaOrder.xls");
-// header('Cache-Control: max-age=0');
+header("content-type:application/vnd-ms-excel");
+header("content-disposition:attachment;filename=TerimaOrder.xls");
+header('Cache-Control: max-age=0');
 require_once 'koneksi.php';
 $tglInput = $_GET['tgl'];
 ?>
