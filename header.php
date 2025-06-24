@@ -51,7 +51,9 @@
                             'ppc_filter_qty_knt.php', 
                             'ppc_bagi_kain.php', 
                             'ppc_pengiriman.php',
-                            'ppc_scan_kkoke.php'];
+                            'ppc_scan_kkoke.php',
+                            'ppc_status_greige.php',
+                            'ppc_summary_lot_panjang.php'];
         $style_active_ppc = in_array($current_page, $active_pages_ppc) ? 'style="background-color: #d4e9fa;"' : '';
         
         $active_pages_fin = ['fin_filter_cetaklabel.php', 
@@ -178,6 +180,11 @@
                                     <li <?= ($current_page == 'ppc_status_greige.php') ? $style_active_ppc : ''; ?>>
                                         <a href="ppc_status_greige.php" data-i18n="nav.animations.main">
                                             Status Greige
+                                        </a>
+                                    </li>
+                                    <li <?= ($current_page == 'ppc_summary_lot_panjang.php') ? $style_active_ppc : ''; ?>>
+                                        <a href="ppc_summary_lot_panjang.php" data-i18n="nav.animations.main">
+                                            Laporan Summary Lot Panjang 
                                         </a>
                                     </li>
                                 </ul>
