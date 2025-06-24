@@ -155,6 +155,7 @@
                                                     <th>Sub sq</th>
                                                     <th>IT</th>
                                                     <th>Item code</th>
+                                                    <th>Suffix</th>
                                                     <th>Comment</th>
                                                     <th>Description</th>
                                                     <th>Cons type</th>
@@ -176,9 +177,8 @@
                                             <button type="button" id="exsecute" class="btn btn-danger btn-sm text-black" disabled>
                                                 <strong>SUBMIT FOR IMPORT TO NOW ! <i class="fa fa-save"></i></strong>
                                             </button>
-                                            <!-- <button class="btn btn-primary" onclick="insertAllToDB()">Simpan Semua</button> -->
+                                            <button class="btn btn-primary" onclick="generateInsertQueries()">Simpan Semua</button>
                                         </center>
-
 
                                     </div>
                                 </div>
@@ -205,76 +205,81 @@
             $('#exsecute').prop('disabled', !this.checked);
         });
         
-        $('#exsecute').on('click', function() {
-            const formData = {
-                recipe_code_new: $('#recipecode_new').val(),
-                suffix_new: $('#suffix_new').val(),
-                long_new: $('#long_new').val(),
-                short_new: $('#short_new').val(),
-                search_new: $('#search_new').val(),
-                lr_new: $('#lr_new').val()
-            };
+    $('#exsecute').on('click', async function () {
+        const formData = {
+            recipe_code_new: $('#recipecode_new').val(),
+            suffix_new: $('#suffix_new').val(),
+            long_new: $('#long_new').val(),
+            short_new: $('#short_new').val(),
+            search_new: $('#search_new').val(),
+            lr_new: $('#lr_new').val()
+        };
 
-            if (formData.recipe_code_new && formData.suffix_new) {
-                Swal.fire({
-                    title: 'Konfirmasi',
-                    text: "Apakah Anda yakin ingin mengeksport data ini?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Export!',
-                    cancelButtonText: 'Tidak'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            type: "POST",
-                            url: "export_recipe_to_now.php",
-                            data: formData,
-                            success: function(response) {
-                                Swal.fire({
-                                    title: 'Sukses!',
-                                    text: 'Data berhasil diexport ke NOW.',
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
-                                    // Refresh halaman setelah klik OK
-                                    location.reload();
-                                });
-                            },
-                            error: function(xhr, status, error) {
-                                Swal.fire('Error', 'Terjadi kesalahan saat menyimpan data.', 'error');
-                            }
-                        });
-                    }
-                });
-            } else {
-                const recipeCodeVal = $('#recipecode_new').val().trim();
-                const suffixVal = $('#suffix_new').val().trim();
-
-                const recipeCodeEl = document.getElementById('recipecode_new');
-                const suffixEl = document.getElementById('suffix_new');
-
-                // Reset style dulu
-                recipeCodeEl.classList.remove('input-error');
-                suffixEl.classList.remove('input-error');
-
-                Swal.fire({
-                    title: 'Peringatan!',
-                    text: 'Harap isi dulu Recipe Code dan Suffix sebelum melanjutkan.',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-
-                if (!recipeCodeVal) {
-                    recipeCodeEl.classList.add('input-error');
-                }
-
-                if (!suffixVal) {
-                    suffixEl.classList.add('input-error');
-                }
-
+        if (formData.recipe_code_new && formData.suffix_new) {
+            const queries = await generateInsertQueries();
+            if (queries.length === 0) {
+                Swal.fire('Error', 'Tidak ada data untuk diexport.', 'error');
                 return;
             }
-        });
+            formData.query_sql = queries.join(";\n");
+
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: "Apakah Anda yakin ingin mengeksport data ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Export!',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "export_recipe_to_now.php",
+                        data: formData,
+                        success: function (response) {
+                            Swal.fire({
+                                title: 'Sukses!',
+                                text: 'Data berhasil diexport ke NOW.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire('Error', 'Terjadi kesalahan saat menyimpan data.', 'error');
+                        }
+                    });
+                }
+            });
+        } else {
+            const recipeCodeVal = $('#recipecode_new').val().trim();
+            const suffixVal = $('#suffix_new').val().trim();
+
+            const recipeCodeEl = document.getElementById('recipecode_new');
+            const suffixEl = document.getElementById('suffix_new');
+
+            recipeCodeEl.classList.remove('input-error');
+            suffixEl.classList.remove('input-error');
+
+            Swal.fire({
+                title: 'Peringatan!',
+                text: 'Harap isi dulu Recipe Code dan Suffix sebelum melanjutkan.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+
+            if (!recipeCodeVal) {
+                recipeCodeEl.classList.add('input-error');
+            }
+
+            if (!suffixVal) {
+                suffixEl.classList.add('input-error');
+            }
+
+            return;
+        }
+    });
         
         $('#recipeComponents_table').DataTable({
             paging: false,           // hilangkan pagination
@@ -448,8 +453,7 @@
             </td>
             <td>${
                 row.IT === ''
-                ? row.GrTp
-                : `<select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
+                ? row.GrTp : `<select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
                     <option value="010" ${row.GrTp === '010' ? 'selected' : ''}>010 (Binder-Filler)</option>
                     <option value="201" ${row.GrTp === '201' ? 'selected' : ''}>201 (Sub Recipe - Fabric Dye)</option>
                     <option value="001" ${row.GrTp === '001' ? 'selected' : ''}>001 (Dyestuff/Chemical)</option>
@@ -461,6 +465,7 @@
             <td>${row.IT === ''? row.ItemCode: `<select class="select2-itemcode" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
                                 ${row.ItemCode ? `<option value="${row.ItemCode}" selected>${row.ItemCode}</option>` : ''}</select>`}
             </td>
+            <td>${row.SuffixCode ?? ''}</td>
             <td>${row.Comment ?? ''}</td>
             <td>${row.Description ?? ''}</td>
             <td>${row.IT !== 'DYC'? '': `<select onchange="updateField(${row.Gr}, 'ConsType', this.value)" ${row.IT !== 'DYC' ? 'disabled' : ''}>
@@ -594,6 +599,7 @@
                     <td>${detail.SUBSEQUENCE}</td>
                     <td>${detail.ITEMTYPEAFICODE}</td>
                     <td>${detail.ITEMCODE}</td>
+                    <td>${detail.SUFFIXCODE?? ''}</td>
                     <td>${detail.COMMENTLINE}</td>
                     <td>${detail.LONGDESCRIPTION ?? ''}</td>
                     <td>${detail.CONSUMPTIONTYPE}</td>
@@ -634,28 +640,180 @@
 
 <!-- Script Untuk Insert Ke DB -->
 <script>
-function insertAllToDB() {
-    if (!data || data.length === 0) {
-        Swal.fire('Kosong!', 'Tidak ada data untuk disimpan.', 'warning');
-        return;
-    }
+ function getCellValue(cell) {
+    const input = cell.querySelector('input');
+    const select = cell.querySelector('select');
+    if (input) return input.value.trim();
+    if (select) return select.value.trim();
+    return cell.textContent.trim();
+}
 
-    fetch('ajax/insert_recipe.php', {
+async function fetchAutoCounter() {
+    const res = await fetch('ajax/get_autocounter.php');
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'Gagal fetch auto counter');
+    return json.nomor_urut;
+}
+
+async function updateAutoCounter(nomorUrut) {
+    await fetch('ajax/update_autocounter.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ components: data })
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            Swal.fire('Sukses!', 'Data berhasil disimpan ke database.', 'success');
-        } else {
-            Swal.fire('Gagal!', result.message || 'Terjadi kesalahan.', 'error');
-        }
-    })
-    .catch(error => {
-        Swal.fire('Error!', 'Koneksi ke server gagal.', 'error');
-        console.error('Insert Error:', error);
+        body: JSON.stringify({nomor_urut: nomorUrut })
     });
 }
+
+async function generateInsertQueries() {
+    const table = document.getElementById("recipeComponents_table");
+    if (!table) {
+        console.error("Tabel dengan ID 'recipeComponents_table' tidak ditemukan.");
+        return [];
+    }
+
+    const rows = Array.from(table.querySelectorAll("tbody tr"));
+    const recipeCode = document.getElementById('recipecode_new').value.trim();
+    const suffixCode = document.getElementById('suffix_new').value.trim();
+    const importDatetime = new Date().toISOString().slice(0, 19).replace("T", " ");
+    // let queryIndex = 0;
+    const queries = [];
+    const autoCounterStart = await fetchAutoCounter();
+    let autoCounter = autoCounterStart;
+
+    // 🧩 Grupkan baris berdasarkan GROUPNUMBER
+    const groupedRows = {};
+    rows.forEach((row) => {
+        
+        const groupNumber = getCellValue(row.querySelectorAll("td")[0]);
+        if (!groupedRows[groupNumber]) {
+            groupedRows[groupNumber] = [];
+        }
+        groupedRows[groupNumber].push(row);
+    });
+
+    let queryIndex = 0;
+
+    // 🔁 Iterasi berdasarkan group
+    for (const groupNumber in groupedRows) {
+        const groupRows = groupedRows[groupNumber];
+        const firstRowCells = groupRows[0].querySelectorAll("td");
+        const firstItemType = getCellValue(firstRowCells[4]);
+        const selectedRows = (firstItemType === 'RFF') ? [groupRows[0]] : groupRows;
+        selectedRows.forEach((row) => {
+            const cells = row.querySelectorAll("td");
+            const groupTypeCode = getCellValue(cells[1]);
+            const sequence = getCellValue(cells[2]);
+            const subSequence = getCellValue(cells[3]);
+            const itemTypeAfiCode = getCellValue(cells[4]);
+            const rawSubCode = getCellValue(cells[5]);
+            const suffixcode_dynamic = getCellValue(cells[6]);
+            let comment = getCellValue(cells[7]).replace(/'/g, '`').replace(/"/g, '``');
+            const compUom = getCellValue(cells[10]);
+            let cons = getCellValue(cells[11]);
+            cons = cons === '' ? 0 : parseFloat(cons);
+
+            const contyp = getCellValue(cells[9]);
+            const consType = contyp === 'Quantity' ? 1 : contyp === 'Percentage' ? 2 : '';
+            let subCode01 = '', subCode02 = '', subCode03 = '', subCode04 = '';
+            let subCode05 = '', subCode06 = '', subCode07 = '', subCode08 = '';
+
+            let lineType;
+                if (itemTypeAfiCode === 'DYC') {
+                    lineType = 1;
+                } else if (itemTypeAfiCode === 'RFF') {
+                    lineType = 2;
+                } else if (!itemTypeAfiCode || itemTypeAfiCode.trim() === '') {
+                    lineType = 3;
+                }
+            let waterManagement = (itemTypeAfiCode === '') ?  0 : 1;
+
+            if (itemTypeAfiCode === 'DYC') {
+            const parts = rawSubCode.split('-');
+                subCode01 = parts[0] ?? '';
+                subCode02 = parts[1] ?? '';
+                subCode03 = parts[2] ?? '';
+                subCode04 = parts[3] ?? '';
+                subCode05 = parts[4] ?? '';
+                subCode06 = parts[5] ?? '';
+                subCode07 = parts[6] ?? '';
+                subCode08 = parts[7] ?? '';
+            } else {
+                subCode01 = rawSubCode;
+            }
+            
+            const myCounter = autoCounter++;
+            const query = `INSERT INTO RECIPECOMPONENTBEAN (
+                FATHERID, IMPORTAUTOCOUNTER, OWNEDCOMPONENT, RECIPEITEMTYPECODE, RECIPESUBCODE01,
+                RECIPESUFFIXCODE, GROUPNUMBER, GROUPTYPECODE, LINETYPE, SEQUENCE,
+                SUBSEQUENCE, COMPONENTINCIDENCE, REFRECIPEGROUPNUMBER, REFRECIPESEQUENCE,
+                REFRECIPESUBSEQUENCE, REFRECIPESTATUS, ITEMTYPEAFICODE, SUBCODE01, SUBCODE02, SUBCODE03, SUBCODE04, SUBCODE05, SUBCODE06, SUBCODE07, SUBCODE08, 
+                SUFFIXCODE, COMMENTLINE, CONSUMPTIONTYPE, ASSEMBLYUOMCODE, COMPONENTUOMCODE, COMPONENTUOMTYPE,
+                CONSUMPTION, WATERMANAGEMENT, BINDERFILLERCOMPONENT, PRODUCED, COSTINGPLANTCODE,
+                FINALENGINEERINGCHANGE, INITIALDATE, FINALDATE, ALLOWDELETEBINDERFILLER,
+                WSOPERATION, IMPORTSTATUS, IMPORTDATETIME, RETRYNR, NEXTRETRY,
+                IMPORTID, RELATEDDEPENDENTID, IMPOPERATIONUSER
+            ) VALUES (
+                'Anjay29181', '${autoCounter}', '0','RFD',
+                '${recipeCode}','${suffixCode}', 
+                '${groupNumber}', 
+                '${groupTypeCode}', 
+                '${lineType}', 
+                '${sequence}',
+                '${subSequence}', 
+                '100', 
+                '0', 
+                '0',
+                '0', 
+                '0', 
+                '${itemTypeAfiCode}', 
+                '${subCode01}', 
+                '${subCode02}', 
+                '${subCode03}', 
+                '${subCode04}',
+                '${subCode05}', 
+                '${subCode06}', 
+                '${subCode07}', 
+                '${subCode08}', 
+                '${suffixcode_dynamic}', 
+                '${comment}',
+                '${consType}', 
+                'l', 
+                '${compUom}', 
+                '', 
+                '${cons}',
+                '${waterManagement}',
+                '0', 
+                '0', 
+                '001', 
+                '9999999999', 
+                '1970-01-01', 
+                '2100-12-31', 
+                '0',
+                '1', 
+                '0', 
+                '${importDatetime}', 
+                '3', 
+                '0',
+                '0', 
+                '${autoCounter}', 
+                '10.0.5.135');`.trim();
+
+            queries.push(query);
+        });
+    }
+
+    if (queries.length > 0) {
+        console.log("✅ Query berhasil dibuat:");
+        console.log(queries.join("\n\n"));
+    } else {
+        console.warn("Tidak ada query yang dibuat.");
+    }
+    await updateAutoCounter(autoCounter);
+    console.log('Update nomor_urut selesai:', autoCounter);
+    return queries;
+}
+
+// await updateAutoCounter(autoCounter);
+
+
 </script>
+
