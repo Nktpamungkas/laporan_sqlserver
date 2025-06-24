@@ -139,113 +139,113 @@
     }
 
     // Cari Kolom Keluar
-    // if ($waktu == "PAGI") {
-    $yesterday = date('Y-m-d', strtotime('-1 day'));
+    if ($waktu == "PAGI") {
+        $yesterday = date('Y-m-d', strtotime('-1 day'));
 
-    $sql_keluar = "SELECT * FROM db_finishing.tbl_produksi WHERE
+        $sql_keluar = "SELECT * FROM db_finishing.tbl_produksi WHERE
         tbl_produksi.tgl_update = ?";
 
-    $params  = [$yesterday];
-    $options = ["Scrollable" => SQLSRV_CURSOR_STATIC];
+        $params  = [$yesterday];
+        $options = ["Scrollable" => SQLSRV_CURSOR_STATIC];
 
-    $result_keluar = sqlsrv_query($con_finishing, $sql_keluar, $params, $options);
+        $result_keluar = sqlsrv_query($con_finishing, $sql_keluar, $params, $options);
 
-    // Mapping Category
-    $keluar_map = [
-        'Belah Cuci (Normal)'                          => 'BELAH_KELUAR',
-        'Belah Cuci ulang (Normal)'                    => 'BELAH_KELUAR',
-        'Belah Dyeing (Bantu)'                         => 'BELAH_KELUAR',
-        'Belah Preset (Normal)'                        => 'BELAH_KELUAR',
-        'Steamer (Normal)'                             => 'STEAMER_KELUAR',
-        'Oven Greige (Normal)'                         => 'OVEN_GREIGE_KELUAR',
-        'Preset (Normal)'                              => 'OVEN_GREIGE_KELUAR',
-        'Oven Dyeing (Bantu)'                          => 'OVEN_DYE_KELUAR',
-        'Oven Stenter (Normal)'                        => [
-            'P3ST1' => 'OVEN_STENTER_KELUAR',
-        ],
-        'Oven Stenter Dyeing (Bantu)'                  => [
-            'P3ST1' => 'OVEN_STENTER_KELUAR',
-        ],
-        'Oven Stenter Ulang (Normal)'                  => [
-            'P3ST1' => 'OVEN_STENTER_KELUAR',
-        ],
-        'Oven Kering (Normal)'                         => [
-            'P3ST1' => 'OVEN_STENTER_KELUAR',
-        ],
-        'Oven Fleece (Normal)'                         => [
-            'P3ST1' => 'OVEN_STENTER_KELUAR',
-        ],
-        'Oven Fleece Ulang (Normal)'                   => [
-            'P3ST1' => 'OVEN_STENTER_KELUAR',
-        ],
-        'CURING STENTER (Bantu)'                       => [
-            'P3ST1' => 'OVEN_STENTER_KELUAR',
-        ],
-        'Oven Kragh (Normal)'                          => [
-            'P3ST1' => 'OVEN_STENTER_KELUAR',
-        ],
-        'Oven Perbaikan Kragh (Normal)'                => [
-            'P3ST1' => 'OVEN_STENTER_KELUAR',
-        ],
-        'Oven Tambah Obat (Khusus)'                    => 'OVEN_OBAT_KELUAR',
-        'FIN 1X (Normal)'                              => 'FINISHING_1_KELUAR',
-        'Finishing 1X (Normal)'                        => 'FINISHING_1_KELUAR',
-        'Finishing 1X (ov) (Normal)'                   => 'FINISHING_1_KELUAR',
-        'Finishing 1X ulang (Normal)'                  => 'FINISHING_1_KELUAR',
-        'Padder - Dyeing (Bantu)'                      => 'PADDER_KELUAR',
-        'Padder 2x - Dyeing (Bantu)'                   => 'PADDER_KELUAR',
-        'Padder 3x - Dyeing (Bantu)'                   => 'PADDER_KELUAR',
-        'Padder 4x - Dyeing (Bantu)'                   => 'PADDER_KELUAR',
-        'Padder 5x - Dyeing (Bantu)'                   => 'PADDER_KELUAR',
-        'Finishing Jadi (Normal)'                      => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang (Normal)'                     => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang - Brushing (Bantu)'           => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang - Dyeing (Bantu)'             => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang - Dyeing 2 (Bantu)'           => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang - Dyeing 3 (Bantu)'           => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang - Naik Suhu Dyeing (Bantu)'   => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang - Naik Suhu Dyeing 2 (Bantu)' => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang - Naik Suhu Dyeing 3 (Bantu)' => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang 2 (Normal)'                   => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Ulang 3 (Normal)'                   => 'FINISHING_JADI_ULANG_KELUAR',
-        'Finishing Suhu Tinggi - Dyeing (Bantu)'       => 'FINISHING_JADI_ULANG_KELUAR',
-        'Compact (Normal)'                             => 'COMPACT_KELUAR',
-        'Compact - Dyeing (Bantu)'                     => 'COMPACT_KELUAR',
-        'Compact - Dyeing 2 (Bantu)'                   => 'COMPACT_KELUAR',
-        'Compact - Dyeing 3 (Bantu)'                   => 'COMPACT_KELUAR',
-        'Compact Perbaikan (Normal)'                   => 'COMPACT_KELUAR',
-        'Inspek Finishing (Normal)'                    => 'LIPAT_INSPEK_FIN_KELUAR',
-        'Lipat (Normal)'                               => 'LIPAT_INSPEK_FIN_KELUAR',
-        'Perbaikan (Bantu)'                            => 'LIPAT_INSPEK_FIN_KELUAR',
-        'Potong Pinggir (Normal)'                      => 'LIPAT_INSPEK_FIN_KELUAR',
-        'Tarik Lebar (Normal)'                         => 'LIPAT_INSPEK_FIN_KELUAR',
-        'Tarik Lebar - Dyeing (Bantu)'                 => 'LIPAT_INSPEK_FIN_KELUAR',
-        'Tarik Lebar - Dyeing (Bantu)'                 => 'LIPAT_INSPEK_FIN_KELUAR',
+        // Mapping Category
+        $keluar_map = [
+            'Belah Cuci (Normal)'                          => 'BELAH_KELUAR',
+            'Belah Cuci ulang (Normal)'                    => 'BELAH_KELUAR',
+            'Belah Dyeing (Bantu)'                         => 'BELAH_KELUAR',
+            'Belah Preset (Normal)'                        => 'BELAH_KELUAR',
+            'Steamer (Normal)'                             => 'STEAMER_KELUAR',
+            'Oven Greige (Normal)'                         => 'OVEN_GREIGE_KELUAR',
+            'Preset (Normal)'                              => 'OVEN_GREIGE_KELUAR',
+            'Oven Dyeing (Bantu)'                          => 'OVEN_DYE_KELUAR',
+            'Oven Stenter (Normal)'                        => [
+                'P3ST1' => 'OVEN_STENTER_KELUAR',
+            ],
+            'Oven Stenter Dyeing (Bantu)'                  => [
+                'P3ST1' => 'OVEN_STENTER_KELUAR',
+            ],
+            'Oven Stenter Ulang (Normal)'                  => [
+                'P3ST1' => 'OVEN_STENTER_KELUAR',
+            ],
+            'Oven Kering (Normal)'                         => [
+                'P3ST1' => 'OVEN_STENTER_KELUAR',
+            ],
+            'Oven Fleece (Normal)'                         => [
+                'P3ST1' => 'OVEN_STENTER_KELUAR',
+            ],
+            'Oven Fleece Ulang (Normal)'                   => [
+                'P3ST1' => 'OVEN_STENTER_KELUAR',
+            ],
+            'CURING STENTER (Bantu)'                       => [
+                'P3ST1' => 'OVEN_STENTER_KELUAR',
+            ],
+            'Oven Kragh (Normal)'                          => [
+                'P3ST1' => 'OVEN_STENTER_KELUAR',
+            ],
+            'Oven Perbaikan Kragh (Normal)'                => [
+                'P3ST1' => 'OVEN_STENTER_KELUAR',
+            ],
+            'Oven Tambah Obat (Khusus)'                    => 'OVEN_OBAT_KELUAR',
+            'FIN 1X (Normal)'                              => 'FINISHING_1_KELUAR',
+            'Finishing 1X (Normal)'                        => 'FINISHING_1_KELUAR',
+            'Finishing 1X (ov) (Normal)'                   => 'FINISHING_1_KELUAR',
+            'Finishing 1X ulang (Normal)'                  => 'FINISHING_1_KELUAR',
+            'Padder - Dyeing (Bantu)'                      => 'PADDER_KELUAR',
+            'Padder 2x - Dyeing (Bantu)'                   => 'PADDER_KELUAR',
+            'Padder 3x - Dyeing (Bantu)'                   => 'PADDER_KELUAR',
+            'Padder 4x - Dyeing (Bantu)'                   => 'PADDER_KELUAR',
+            'Padder 5x - Dyeing (Bantu)'                   => 'PADDER_KELUAR',
+            'Finishing Jadi (Normal)'                      => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang (Normal)'                     => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang - Brushing (Bantu)'           => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang - Dyeing (Bantu)'             => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang - Dyeing 2 (Bantu)'           => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang - Dyeing 3 (Bantu)'           => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang - Naik Suhu Dyeing (Bantu)'   => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang - Naik Suhu Dyeing 2 (Bantu)' => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang - Naik Suhu Dyeing 3 (Bantu)' => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang 2 (Normal)'                   => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Ulang 3 (Normal)'                   => 'FINISHING_JADI_ULANG_KELUAR',
+            'Finishing Suhu Tinggi - Dyeing (Bantu)'       => 'FINISHING_JADI_ULANG_KELUAR',
+            'Compact (Normal)'                             => 'COMPACT_KELUAR',
+            'Compact - Dyeing (Bantu)'                     => 'COMPACT_KELUAR',
+            'Compact - Dyeing 2 (Bantu)'                   => 'COMPACT_KELUAR',
+            'Compact - Dyeing 3 (Bantu)'                   => 'COMPACT_KELUAR',
+            'Compact Perbaikan (Normal)'                   => 'COMPACT_KELUAR',
+            'Inspek Finishing (Normal)'                    => 'LIPAT_INSPEK_FIN_KELUAR',
+            'Lipat (Normal)'                               => 'LIPAT_INSPEK_FIN_KELUAR',
+            'Perbaikan (Bantu)'                            => 'LIPAT_INSPEK_FIN_KELUAR',
+            'Potong Pinggir (Normal)'                      => 'LIPAT_INSPEK_FIN_KELUAR',
+            'Tarik Lebar (Normal)'                         => 'LIPAT_INSPEK_FIN_KELUAR',
+            'Tarik Lebar - Dyeing (Bantu)'                 => 'LIPAT_INSPEK_FIN_KELUAR',
+            'Tarik Lebar - Dyeing (Bantu)'                 => 'LIPAT_INSPEK_FIN_KELUAR',
 
-    ];
+        ];
 
-    if (sqlsrv_num_rows($result_keluar) > 0) {
+        if (sqlsrv_num_rows($result_keluar) > 0) {
 
-        while ($row = sqlsrv_fetch_array($result_keluar, SQLSRV_FETCH_ASSOC)) {
-            $proses   = $row['proses'];
-            $no_mesin = $row['no_mesin'];
-            $no_mesin = substr('proses', 0, 5);
-            $qty      = $row['qty'];
+            while ($row = sqlsrv_fetch_array($result_keluar, SQLSRV_FETCH_ASSOC)) {
+                $proses   = $row['proses'];
+                $no_mesin = $row['no_mesin'];
+                $no_mesin = substr('proses', 0, 5);
+                $qty      = $row['qty'];
 
-            if (isset($keluar_map[$proses])) {
-                if (is_array($keluar_map[$proses])) {
-                    if (isset($keluar_map[$proses][$no_mesin])) {
-                        $varName = $keluar_map[$proses][$no_mesin];
+                if (isset($keluar_map[$proses])) {
+                    if (is_array($keluar_map[$proses])) {
+                        if (isset($keluar_map[$proses][$no_mesin])) {
+                            $varName = $keluar_map[$proses][$no_mesin];
+                            $$varName += $qty;
+                        }
+                    } else {
+                        $varName = $keluar_map[$proses];
                         $$varName += $qty;
                     }
-                } else {
-                    $varName = $keluar_map[$proses];
-                    $$varName += $qty;
                 }
             }
         }
     }
-    // }
 
     $TOTAL_QTY_SUMMARY = $BELAH_QTY + $STEAMER_QTY + $OVEN_GREIGE_QTY + $OVEN_DYE_QTY +
         $OVEN_STENTER_QTY + $OVEN_OBAT_QTY + $FINISHING_1_QTY + $PADDER_QTY +
@@ -267,7 +267,7 @@
 <table border="1" cellspacing="0" cellpadding="3">
     <tr>
     <td colspan="4" align="center" bgcolor="#FFFF00">
-  <b>DEPT. FINISHING /                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <?php echo $tgl . ' ' . $bln . ' ' . $thn . ' (' . strtoupper($waktu) . ')' ?></b>
+  <b>DEPT. FINISHING /                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <?php echo $tgl . ' ' . $bln . ' ' . $thn . ' (' . strtoupper($waktu) . ')' ?></b>
 </td>
 
     </tr>
