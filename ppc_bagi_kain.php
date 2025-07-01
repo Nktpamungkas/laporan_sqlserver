@@ -81,6 +81,7 @@
                                                             <th width="100px" style="text-align: center;">QTY PLAN BAGI</th>
                                                             <th width="100px" style="text-align: center;">QTY ACTUAL BAGI</th>
                                                             <th width="100px" style="text-align: center;">KETERANGAN</th>
+                                                            <th width="100px" style="text-align: center;">STATUS TERAKHIR</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -223,6 +224,20 @@
                                                                                                             p.ORIGDLVSALORDERLINEORDERLINE,
                                                                                                             p.CODE");
                                                                     $data_bruto_actual_bagikain     = db2_fetch_assoc($sqlMain_bruto_actual_bagikain);
+
+                                                                    $sqlMain_StatusTerakhir = db2_exec($conn1, "SELECT
+                                                                                                                    OPERATIONCODE || ' - ' || LONGDESCRIPTION AS STATUSTERAKHIR
+                                                                                                                FROM
+                                                                                                                    ITXVIEW_POSISI_KARTU_KERJA ipkk
+                                                                                                                WHERE
+                                                                                                                    ipkk.PRODUCTIONORDERCODE = '$dataMain[PRODUCTIONORDERCODE]'
+                                                                                                                    AND ipkk.PRODUCTIONDEMANDCODE = '$dataMain[PRODUCTIONDEMANDCODE]'
+                                                                                                                    AND ipkk.STATUS_OPERATION <> 'Closed'
+                                                                                                                ORDER BY
+                                                                                                                    ipkk.STEPNUMBER ASC
+                                                                                                                FETCH FIRST 1 ROW ONLY;");
+                                                                    $dataMain_StatusTerakhir = db2_fetch_assoc($sqlMain_StatusTerakhir);
+                                                                    $StatusTerakhir = $dataMain_StatusTerakhir['STATUSTERAKHIR'] ?? '';
                                                         ?>
                                                             <tr>
                                                                 <td width="100px" style="text-align: center;"><?= $dataActDevliery['ACTUAL_DELIVERY'] ?></td> <!-- TGL DEL -->
@@ -239,6 +254,7 @@
                                                                 <td width="100px" style="text-align: center;"><?= number_format($data_bruto_plan_bagikain['BRUTO'], 2); ?></td> <!-- QTY PLAN BAGI -->
                                                                 <td width="100px" style="text-align: center;"><?= number_format($data_bruto_actual_bagikain['BRUTO'], 2); ?></td> <!-- QTY ACTUAL BAGI -->
                                                                 <td width="100px" style="text-align: center;"></td> <!-- KETERANGAN -->
+                                                                <td width="100px" style="text-align: center;"><?= $StatusTerakhir ?></td> <!-- STATUS TERAKHIR -->
                                                             </tr>
                                                         <?php } } ?>
                                                     </tbody>

@@ -177,7 +177,7 @@
                                             <button type="button" id="exsecute" class="btn btn-danger btn-sm text-black" disabled>
                                                 <strong>SUBMIT FOR IMPORT TO NOW ! <i class="fa fa-save"></i></strong>
                                             </button>
-                                            <button class="btn btn-primary" onclick="generateInsertQueries()">Simpan Semua</button>
+                                            <!-- <button class="btn btn-primary" onclick="generateInsertQueries()">Simpan Semua</button> -->
                                         </center>
 
                                     </div>
