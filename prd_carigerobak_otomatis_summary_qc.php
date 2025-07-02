@@ -44,11 +44,6 @@
     $thn   = date('Y');
     $jam   = (int) date('H');
     $waktu = ($jam >= 5 && $jam < 12) ? 'PAGI' : 'SORE';
-    // $tgl = 13;
-    // $bln = 'MEI';
-    // $thn = 2025;
-    // $jam = 10;
-    // $waktu = 'PAGI';
 
     // Inisialisasi variabel
     $INSPEK_QTY                 = $INSPEK_GEROBAK                   = $INSPEK_KELUAR                = 0;
@@ -126,27 +121,83 @@
         $start = date('Y-m-d 06:00:00', strtotime('-1 day'));
         $end = date('Y-m-d 06:00:00');
 
-        $sql_keluar = " SELECT 
-                a.tgl_update,
-                a.id as idins,
-                b.id as id_schedule,
-                b.bruto,
-                b.rol,
-                a.jml_rol,
-                a.qty,
-                if(a.jml_rol>0,CONCAT(a.jml_rol,'x',a.qty),CONCAT(b.rol,'x',b.bruto)) as qty_bruto,
-                b.tgl_mulai,
-                b.tgl_stop,
-                b.no_mesin,
-                b.proses
-            FROM
-                tbl_inspection a
-            INNER JOIN 
-                tbl_schedule b ON a.id_schedule = b.id
-            INNER JOIN 
-                tbl_gerobak c ON c.id_schedule = b.id 
-            where 
-                a.tgl_buat BETWEEN '$start' AND '$end' ORDER by a.id ASC"
+        $sql_keluar = " SELECT
+                                a.id as idins,
+                                b.id as id_schedule,
+                                a.catatan,
+                                a.personil,
+                                b.langganan,
+                                b.buyer,
+                                CONCAT(b.langganan,'/',b.buyer) as pelanggan,
+                                b.po,
+                                b.no_order,
+                                b.jenis_kain,
+                                b.warna,
+                                b.lot,
+                                b.no_item,
+                                b.tgl_delivery,
+                                b.no_mesin,
+                                b.bruto,
+                                b.rol,
+                                a.jml_rol,
+                                a.qty,
+                                if(a.jml_rol>0,CONCAT(a.jml_rol,'x',a.qty),CONCAT(b.rol,'x',b.bruto)) as qty_bruto,
+                                a.yard,
+                                b.pjng_order,
+                                b.tgl_mulai,
+                                b.tgl_stop,
+                                b.istirahat,
+                                b.lembap_fin,
+                                b.lembap_qcf,
+                                b.nokk,
+                                b.nodemand,
+                                b.qty_loss,
+                                b.note_loss,
+                                a.catatan,
+                                TIMESTAMPDIFF(
+                                MINUTE,
+                                b.tgl_mulai,b.tgl_stop) as waktu,
+                                b.proses,
+                                c.status_produk,
+                                IF
+                                ( c.status_produk = '1', 'OK', IF(c.status_produk = '2', 'TK','PR')) AS sts,
+                            IF
+                                (
+                                NOT c.no_gerobak6 = '',
+                                CONCAT( no_gerobak1, '+', no_gerobak2, '+', no_gerobak3, '+', no_gerobak4, '+', no_gerobak5, '+', no_gerobak6 ),
+                            IF
+                                (
+                                NOT c.no_gerobak5 = '',
+                                CONCAT( no_gerobak1, '+', no_gerobak2, '+', no_gerobak3, '+', no_gerobak4, '+', no_gerobak5 ),
+                            IF
+                                (
+                                NOT c.no_gerobak4 = '',
+                                CONCAT( no_gerobak1, '+', no_gerobak2, '+', no_gerobak3, '+', no_gerobak4 ),
+                            IF
+                                (
+                                NOT c.no_gerobak3 = '',
+                                CONCAT( no_gerobak1, '+', no_gerobak2, '+', no_gerobak3 ),
+                            IF
+                                (
+                                NOT c.no_gerobak2 = '',
+                                CONCAT( no_gerobak1, '+', no_gerobak2 ),
+                            IF
+                                ( NOT c.no_gerobak1 = '', c.no_gerobak1, '' ) 
+                                ) 
+                                ) 
+                                ) 
+                                ) 
+                                ) AS no_grobak 
+                            FROM
+                                tbl_inspection a
+                                INNER JOIN tbl_schedule b ON a.id_schedule = b.id
+                                INNER JOIN tbl_gerobak c ON c.id_schedule = b.id
+                            WHERE
+                                a.`status`='selesai' and
+                                DATE_FORMAT( a.tgl_buat, '%Y-%m-%d %H:%i' ) BETWEEN '$start' 
+                                AND '$end'
+                            ORDER BY
+                                a.id ASC"
         ;
 
         $sql_keluar_packing = " SELECT 
