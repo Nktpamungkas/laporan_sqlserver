@@ -30,9 +30,9 @@
 
     $filename = "SummaryPencarianGerobak-QCF-" . date('Y-m-d_H-i-s') . ".xls";
 
-    header("Content-Type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment; filename=\"$filename\"");
-    header("Cache-Control: max-age=0");
+    // header("Content-Type: application/vnd.ms-excel");
+    // header("Content-Disposition: attachment; filename=\"$filename\"");
+    // header("Cache-Control: max-age=0");
 
     $bulan = [
         1 => 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI',
@@ -194,8 +194,7 @@
                                 INNER JOIN tbl_gerobak c ON c.id_schedule = b.id
                             WHERE
                                 a.`status`='selesai' and
-                                DATE_FORMAT( a.tgl_buat, '%Y-%m-%d %H:%i' ) BETWEEN '$start' 
-                                AND '$end'
+                                a.tgl_buat >= '$start' AND a.tgl_buat < '$end'
                             ORDER BY
                                 a.id ASC"
         ;
@@ -207,7 +206,9 @@
             where 
                 dept = 'PACKING' 
             AND 
-                DATE_FORMAT( CONCAT(tgl_update,' ',jam_update), '%Y-%m-%d %H:%i') between '$start' AND '$end'
+                STR_TO_DATE(CONCAT(tgl_update, ' ', jam_update), '%Y-%m-%d %H:%i:%s') >= '$start'
+            AND
+                STR_TO_DATE(CONCAT(tgl_update, ' ', jam_update), '%Y-%m-%d %H:%i:%s') < '$end'
         ";
 
         $result_keluar = mysqli_query($con_db_qc, $sql_keluar);
