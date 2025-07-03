@@ -30,9 +30,9 @@
 
     $filename = "SummaryPencarianGerobak-QCF-" . date('Y-m-d_H-i-s') . ".xls";
 
-    // header("Content-Type: application/vnd.ms-excel");
-    // header("Content-Disposition: attachment; filename=\"$filename\"");
-    // header("Cache-Control: max-age=0");
+    header("Content-Type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment; filename=\"$filename\"");
+    header("Cache-Control: max-age=0");
 
     $bulan = [
         1 => 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI',
