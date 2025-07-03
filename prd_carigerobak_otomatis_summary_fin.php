@@ -77,27 +77,46 @@
         $PERSIAPAN_QTY, $PERSIAPAN_GEROBAK;
 
         // Mapping prefix ke kategori
-        $prefixMap = [
-            'BLP' => 'BELAH', 'OPW'                => 'BELAH',
-            'STM' => 'STEAMER',
-            'PRE' => 'OVEN_GREIGE', 'OVG'          => 'OVEN_GREIGE',
-            'OVD' => 'OVEN_DYE',
-            'OVN' => 'OVEN_STENTER',
-            'OVB' => 'OVEN_OBAT',
-            'FIN' => 'FINISHING_1',
-            'PAD' => 'PADDER',
-            'FNJ' => 'FINISHING_JADI_ULANG', 'FNV' => 'FINISHING_JADI_ULANG',
-            'CPD' => 'COMPACT', 'CPT'              => 'COMPACT', 'CPF'          => 'COMPACT',
-            'LIP' => 'LIPAT_INSPEK_FIN', 'INS'     => 'LIPAT_INSPEK_FIN', 'TMF' => 'LIPAT_INSPEK_FIN',
+        // $prefixMap = [
+        //     'BLP' => 'BELAH', 'OPW'                => 'BELAH', 'BLD'                => 'BELAH',
+        //     'STM' => 'STEAMER',
+        //     'PRE' => 'OVEN_GREIGE', 'OVG'          => 'OVEN_GREIGE',
+        //     'OVD' => 'OVEN_DYE',
+        //     'OVN' => 'OVEN_STENTER',
+        //     'OVB' => 'OVEN_OBAT',
+        //     'FIN' => 'FINISHING_1',
+        //     'PAD' => 'PADDER',
+        //     'FNJ' => 'FINISHING_JADI_ULANG', 'FNV' => 'FINISHING_JADI_ULANG', 'FNU' => 'FINISHING_JADI_ULANG',
+        //     'CPD' => 'COMPACT', 'CPT'              => 'COMPACT', 'CPF'          => 'COMPACT',
+        //     'LIP' => 'LIPAT_INSPEK_FIN', 'INS'     => 'LIPAT_INSPEK_FIN', 'TMF' => 'LIPAT_INSPEK_FIN',
+        // ];
+
+        // $prefix = strtoupper(substr($operation, 0, 3));
+
+        // if (isset($prefixMap[$prefix])) {
+        //     $category = $prefixMap[$prefix];
+        //     ${$category . '_QTY'} += $qty;
+        //     ${$category . '_GEROBAK'} += $jml;
+        // }
+
+        $ops = [
+            'BLP1' => 'BELAH', 'OPW1' => 'BELAH', 'OPW2' => 'BELAH', 'OPW3' => 'BELAH', 'OPW4' => 'BELAH', 'BLD1' => 'BELAH', 'BLD2' => 'BELAH', 'BLD3' => 'BELAH', 'BLD4' => 'BELAH',
+            'STM1' => 'STEAMER',
+            'PRE1' => 'OVEN_GREIGE','OVG1' => 'OVEN_GREIGE',
+            'OVD1' => 'OVEN_DYE', 'OVD2' => 'OVEN_DYE', 'OVD3' => 'OVEN_DYE', 'OVD4' => 'OVEN_DYE',
+            'OVN1' => 'OVEN_STENTER', 'OVN2' => 'OVEN_STENTER', 'OVN3' => 'OVEN_STENTER', 'OVN4' => 'OVEN_STENTER', 'OVN5' => 'OVEN_STENTER', 'OVN6' => 'OVEN_STENTER',
+            'OVB1' => 'OVEN_OBAT', 'OVB2' => 'OVEN_OBAT',
+            'FIN1' => 'FINISHING_1',
+            'PAD1' => 'PADDER', 'PAD2' => 'PADDER', 'PAD3' => 'PADDER', 'PAD4' => 'PADDER', 'PAD5' => 'PADDER',
+            'FNJ1' => 'FINISHING_JADI_ULANG', 'FNJ2' => 'FINISHING_JADI_ULANG', 'FNJ3' => 'FINISHING_JADI_ULANG','FNJ4' => 'FINISHING_JADI_ULANG','FNJ5' => 'FINISHING_JADI_ULANG','FNJ6' => 'FINISHING_JADI_ULANG','FNU1' => 'FINISHING_JADI_ULANG','FNU2' => 'FINISHING_JADI_ULANG','FNU3' => 'FINISHING_JADI_ULANG','FNU4' => 'FINISHING_JADI_ULANG',
+            'CPD1' => 'COMPACT','CPD2' => 'COMPACT','CPD3' => 'COMPACT','CPD4' => 'COMPACT','CPT1' => 'COMPACT','CPF1' => 'COMPACT','CPF2' => 'COMPACT','CPF3' => 'COMPACT','CPF4' => 'COMPACT',
+            'LIP1' => 'LIPAT_INSPEK_FIN','LIP2' => 'LIPAT_INSPEK_FIN','LIP3' => 'LIPAT_INSPEK_FIN','INS5' => 'LIPAT_INSPEK_FIN','INS6' => 'LIPAT_INSPEK_FIN','TMF1' => 'LIPAT_INSPEK_FIN',
         ];
 
-        $prefix = strtoupper(substr($operation, 0, 3));
+        $category = $ops[$operation];
+        ${$category . '_QTY'} += $qty;
+        ${$category . '_GEROBAK'} += $jml;
 
-        if (isset($prefixMap[$prefix])) {
-            $category = $prefixMap[$prefix];
-            ${$category . '_QTY'} += $qty;
-            ${$category . '_GEROBAK'} += $jml;
-        }
     }
 
     // Cari kolom QTY dan GEROBAK
@@ -105,7 +124,7 @@
             OPERATION,
             DEPARTEMEN,
             GEROBAK,
-            JML_GEROBAK,
+            SUM(JML_GEROBAK) AS JML_GEROBAK,
             SUM(QTY) AS total_qty
         FROM (
             SELECT
@@ -162,31 +181,31 @@
             'Preset (Normal)'                              => 'OVEN_GREIGE_KELUAR',
             'Oven Dyeing (Bantu)'                          => 'OVEN_DYE_KELUAR',
             'Oven Stenter (Normal)'                        => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Stenter Dyeing (Bantu)'                  => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Stenter Ulang (Normal)'                  => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Kering (Normal)'                         => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Fleece (Normal)'                         => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Fleece Ulang (Normal)'                   => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'CURING STENTER (Bantu)'                       => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Kragh (Normal)'                          => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Perbaikan Kragh (Normal)'                => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Tambah Obat (Khusus)'                    => 'OVEN_OBAT_KELUAR',
             'FIN 1X (Normal)'                              => 'FINISHING_1_KELUAR',
@@ -230,7 +249,7 @@
             while ($row = sqlsrv_fetch_array($result_keluar, SQLSRV_FETCH_ASSOC)) {
                 $proses   = $row['proses'];
                 $no_mesin = $row['no_mesin'];
-                $no_mesin = substr('proses', 0, 5);
+                $no_mesin = substr($no_mesin = $row['no_mesin'], 0, 4);
                 $qty      = $row['qty'];
 
                 if (isset($keluar_map[$proses])) {
