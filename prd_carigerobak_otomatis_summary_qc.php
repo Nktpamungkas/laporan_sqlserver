@@ -118,8 +118,8 @@
 
     // Cari Kolom Keluar
     if ($waktu == "PAGI") {
-        $start = date('Y-m-d 06:00:00', strtotime('-1 day'));
-        $end = date('Y-m-d 06:00:00');
+        $start = date('Y-m-d 07:00:00', strtotime('-1 day'));
+        $end = date('Y-m-d 07:00:00');
 
         $sql_keluar = " SELECT
                                 a.id as idins,
@@ -193,7 +193,7 @@
                                 INNER JOIN tbl_schedule b ON a.id_schedule = b.id
                                 INNER JOIN tbl_gerobak c ON c.id_schedule = b.id
                             WHERE
-                                a.`status`='selesai' and
+                                a.status='selesai' and
                                 a.tgl_buat >= '$start' AND a.tgl_buat < '$end'
                             ORDER BY
                                 a.id ASC"
