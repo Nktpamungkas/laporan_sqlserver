@@ -200,7 +200,7 @@
         ;
 
         $sql_keluar_packing = " SELECT 
-            tgl_update, jam_update, jml_roll, bruto 
+            tgl_update, jam_update, jml_roll, bruto, netto
             FROM 
                 tbl_lap_inspeksi 
             where 
@@ -267,7 +267,7 @@
 
         if (mysqli_num_rows($result_packing) > 0) {
             while ($row = mysqli_fetch_assoc($result_packing)) {
-                $qty = $row['bruto'];
+                $qty = $row['netto'];
                 $PACKING_KELUAR += $qty;
             }
         }
