@@ -448,25 +448,35 @@
         const tr = document.createElement("tr");
         // Hilangin dulu yang option row.GrTp Instruction 
         // <option value="100" ${row.GrTp === '100' ? 'selected' : ''}>100 (Instruction)</option>
+        // ${row.Comment ?? ''}
+        // <td>${row.IT === ''? row.IT: `<input type="text" value="${row.IT}" readonly>`}</td>
         tr.innerHTML = `
-            <td>${row.IT === ''? row.Gr: `<input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value)">`}
+            <td>
+                <input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value)">
             </td>
-            <td>${
-                row.IT === ''
-                ? row.GrTp : `<select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
-                    <option value="010" ${row.GrTp === '010' ? 'selected' : ''}>010 (Binder-Filler)</option>
-                    <option value="201" ${row.GrTp === '201' ? 'selected' : ''}>201 (Sub Recipe - Fabric Dye)</option>
+            <td>
+                <select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
                     <option value="001" ${row.GrTp === '001' ? 'selected' : ''}>001 (Dyestuff/Chemical)</option>
-                    </select>`}
+                    <option value="201" ${row.GrTp === '201' ? 'selected' : ''}>201 (Sub Recipe - Fabric Dye)</option>
+                    <option value="100" ${row.GrTp === '100' ? 'selected' : ''}>100 (Instruction)</option>
+                    <option value="010" ${row.GrTp === '010' ? 'selected' : ''}>010 (Binder-Filler)</option>
+                </select>
             </td>
-            <td>${row.IT === ''? row.Sq: `<input type="number" value="${row.Sq}" onchange="updateField(${row.Gr}, 'Sq', this.value)">`}</td>
-            <td>${row.IT === ''? row.SubSq: `<input type="number" value="${row.SubSq}" onchange="updateField(${row.Gr}, 'SubSq', this.value)">`}</td>
-            <td>${row.IT === ''? row.IT: `<input type="text" value="${row.IT}" readonly>`}</td>
-            <td>${row.IT === ''? row.ItemCode: `<select class="select2-itemcode" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
-                                ${row.ItemCode ? `<option value="${row.ItemCode}" selected>${row.ItemCode}</option>` : ''}</select>`}
+            <td>
+                <input type="number" value="${row.Sq}" onchange="updateField(${row.Gr}, 'Sq', this.value)">
+            </td>
+            <td><input type="number" value="${row.SubSq}" onchange="updateField(${row.Gr}, 'SubSq', this.value)"></td>
+            <td style="width: 80px">${row.IT ?? ''}</td>
+            <td>
+                ${row.IT === ''? row.ItemCode: `<select class="select2-itemcode" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
+                ${row.ItemCode ? `<option value="${row.ItemCode}" selected>${row.ItemCode}</option>` : ''}</select>`}
             </td>
             <td>${row.SuffixCode ?? ''}</td>
-            <td>${row.Comment ?? ''}</td>
+            <td>
+                ${row.IT !== ''? row.Comment: `<select class="select2-comment" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
+                ${row.Comment ? `<option value="${row.Comment}" selected>${row.Comment}</option>` : ''}</select>`}
+                
+            </td>
             <td>${row.Description ?? ''}</td>
             <td>${row.IT !== 'DYC'? '': `<select onchange="updateField(${row.Gr}, 'ConsType', this.value)" ${row.IT !== 'DYC' ? 'disabled' : ''}>
                     <option value="" ${row.ConsType === '' ? "selected" : ""}></option>
@@ -483,6 +493,7 @@
 
         tableBody.appendChild(tr);
         initSelect2ForItemCode(tr.querySelector(".select2-itemcode"), index);
+        initSelect2ForComment(tr.querySelector(".select2-comment"), index);
 
         if (row.IT === 'RFF') {
             loadRffDetail(row.ItemCode, row.SuffixCode, row.Gr, tr);
@@ -548,6 +559,82 @@
         row.Cons = '0.00000';
 
         row.ItemCode = selected.id;
+        row.Subcode01 = selected.subcode01;
+        row.Subcode02 = selected.subcode02 || '';
+        row.Subcode03 = selected.subcode03 || '';
+        row.SuffixCode = selected.suffixcode;
+        row.Description = selected.longdescription || '';
+        row.Comment = selected.commentline || '';
+        row.UoM = selected.uom || '';
+        row.Cons = formatDecimal(selected.consumption) || '';
+
+        populateTable();
+    });
+
+    $(selectElement).on('select2:unselect', function () {
+        const row = data[rowIndex];
+        if (row) {
+            row.ItemCode = '';
+            row.Subcode01 = '';
+            row.Subcode02 = '';
+            row.Subcode03 = '';
+            row.SuffixCode = '';
+            row.Description = '';
+            row.Comment = '';
+            row.UoM = '';
+            row.Cons = '0.00000';
+            populateTable();
+        }
+    });   
+    }
+</script>
+
+<!-- Untuk Select2 Comment -->
+<script>
+    function initSelect2ForComment(selectElement, rowIndex) {
+    $(selectElement).select2({
+        theme: 'bootstrap4',
+        placeholder: '',
+        allowClear: true,
+        minimumInputLength: 1,
+        ajax: {
+            url: 'ajax/search_recipe.php',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                const row = data[rowIndex];
+                const groupTypeCode = row?.GrTp || '';
+                console.log('Kirim GROUPTYPECODE:', groupTypeCode, 'Row Index:', params.term);
+                return {
+                    q: params.term,
+                    GROUPTYPECODE: groupTypeCode
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+
+    $(selectElement).on('select2:select', function (e) {
+        const selected = e.params.data;
+        const row = data[rowIndex];
+        if (!row) return;
+
+        row.ItemCode = '';
+        row.Subcode01 = '';
+        row.Subcode02 = '';
+        row.Subcode03 = '';
+        row.SuffixCode = '';
+        row.Description = '';
+        row.Comment = '';
+        row.UoM = '';
+        row.Cons = '0.00000';
+
+        row.ItemCode = '';
         row.Subcode01 = selected.subcode01;
         row.Subcode02 = selected.subcode02 || '';
         row.Subcode03 = selected.subcode03 || '';

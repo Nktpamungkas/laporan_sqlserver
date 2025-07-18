@@ -14,7 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insertPrefix           = "INSERT INTO recipeprefix(recipe_code, suffix) VALUES ('$recipe_code_new', '$suffix_new')";
     $insertPrefixResult     = mysqli_query($con_db_lab, $insertPrefix);
     $IMPORTAUTOCOUNTER      = mysqli_insert_id($con_db_lab);
-
+    $ip = $_SERVER['REMOTE_ADDR'];
+    
     $queryDataMain  = "INSERT INTO RECIPEBEAN (
                                         COMPANYCODE,
                                         IMPORTAUTOCOUNTER,
@@ -279,7 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             '', -- APPROVALUSER
             '1', -- CREATEHEADER
             '5', -- WSOPERATION
-            'Testing.nilo', --IMPOPERATIONUSER
+            '$ip', --IMPOPERATIONUSER --Buat user creationnya
             '0', -- IMPORTSTATUS
             NULL, -- IMPCREATIONDATETIME
             NULL, -- IMPCREATIONUSER
