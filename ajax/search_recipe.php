@@ -27,7 +27,11 @@ switch ($grouptype) {
         $whereLike = "AND TRIM(r2.SUBCODE01) || '-' || TRIM(r2.SUFFIXCODE) LIKE '%$search%'";
         break;
     case '100':
-        $whereLike = "AND TRIM(r2.COMMENTLINE) LIKE '%$search%'";
+        // KALAU MAU DINYALAIN HANDLE NYA BISA DI UNCOMMNET
+        $whereLike = " AND TRIM(r2.COMMENTLINE) LIKE '%$search%'
+                        -- AND TRIM(r2.COMMENTLINE) LIKE '%`C X%'
+                        -- AND TRIM(r2.COMMENTLINE) LIKE '%MNT%'
+                        ";
         break;
     case '001':
         $whereLike = "AND TRIM(r2.SUBCODE01) || '-' || TRIM(r2.SUBCODE02) || '-' || TRIM(r2.SUBCODE03) LIKE '%$search%'";
@@ -92,7 +96,7 @@ $result = db2_exec($conn1, $query);
 
 $data = [];
 while ($row = db2_fetch_assoc($result)) {
-    if($grouptype == '100' OR $grouptype == '001'){
+    if($grouptype == '010' OR $grouptype == '001'){
         $row['COMPONENTUOMCODE'] = 'g';
     }
     $data[] = [

@@ -76,9 +76,9 @@
         $LIPAT_INSPEK_FIN_QTY, $LIPAT_INSPEK_FIN_GEROBAK,
         $PERSIAPAN_QTY, $PERSIAPAN_GEROBAK;
 
-        // Mapping prefix ke kategori
+        //Mapping prefix ke kategori
         $prefixMap = [
-            'BLP' => 'BELAH', 'OPW'                => 'BELAH',
+            'BLP' => 'BELAH', 'OPW'                => 'BELAH', 'BLD'                => 'BELAH',
             'STM' => 'STEAMER',
             'PRE' => 'OVEN_GREIGE', 'OVG'          => 'OVEN_GREIGE',
             'OVD' => 'OVEN_DYE',
@@ -86,7 +86,7 @@
             'OVB' => 'OVEN_OBAT',
             'FIN' => 'FINISHING_1',
             'PAD' => 'PADDER',
-            'FNJ' => 'FINISHING_JADI_ULANG', 'FNV' => 'FINISHING_JADI_ULANG',
+            'FNJ' => 'FINISHING_JADI_ULANG', 'FNV' => 'FINISHING_JADI_ULANG', 'FNU' => 'FINISHING_JADI_ULANG',
             'CPD' => 'COMPACT', 'CPT'              => 'COMPACT', 'CPF'          => 'COMPACT',
             'LIP' => 'LIPAT_INSPEK_FIN', 'INS'     => 'LIPAT_INSPEK_FIN', 'TMF' => 'LIPAT_INSPEK_FIN',
         ];
@@ -140,12 +140,13 @@
 
     // Cari Kolom Keluar
     if ($waktu == "PAGI") {
-        $yesterday = date('Y-m-d', strtotime('-1 day'));
+        $start_datetime = date('Y-m-d H:i:s', strtotime('-2 days 23:00:01'));
+        $end_datetime   = date('Y-m-d H:i:s', strtotime('-1 days 23:00:00'));
 
-        $sql_keluar = "SELECT * FROM db_finishing.tbl_produksi WHERE
-        tbl_produksi.tgl_update = ?";
+        $sql_keluar = "SELECT * FROM db_finishing.tbl_produksi a WHERE
+            CONCAT(a.tgl_update,CONCAT(' ',a.jam_in)) BETWEEN ? AND ?";
 
-        $params  = [$yesterday];
+        $params  = [$start_datetime, $end_datetime];
         $options = ["Scrollable" => SQLSRV_CURSOR_STATIC];
 
         $result_keluar = sqlsrv_query($con_finishing, $sql_keluar, $params, $options);
@@ -161,31 +162,31 @@
             'Preset (Normal)'                              => 'OVEN_GREIGE_KELUAR',
             'Oven Dyeing (Bantu)'                          => 'OVEN_DYE_KELUAR',
             'Oven Stenter (Normal)'                        => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Stenter Dyeing (Bantu)'                  => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Stenter Ulang (Normal)'                  => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Kering (Normal)'                         => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Fleece (Normal)'                         => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Fleece Ulang (Normal)'                   => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'CURING STENTER (Bantu)'                       => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Kragh (Normal)'                          => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Perbaikan Kragh (Normal)'                => [
-                'P3ST1' => 'OVEN_STENTER_KELUAR',
+                'P3ST' => 'OVEN_STENTER_KELUAR',
             ],
             'Oven Tambah Obat (Khusus)'                    => 'OVEN_OBAT_KELUAR',
             'FIN 1X (Normal)'                              => 'FINISHING_1_KELUAR',
@@ -229,7 +230,7 @@
             while ($row = sqlsrv_fetch_array($result_keluar, SQLSRV_FETCH_ASSOC)) {
                 $proses   = $row['proses'];
                 $no_mesin = $row['no_mesin'];
-                $no_mesin = substr('proses', 0, 5);
+                $no_mesin = substr($no_mesin = $row['no_mesin'], 0, 4);
                 $qty      = $row['qty'];
 
                 if (isset($keluar_map[$proses])) {
@@ -267,7 +268,7 @@
 <table border="1" cellspacing="0" cellpadding="3">
     <tr>
     <td colspan="4" align="center" bgcolor="#FFFF00">
-  <b>DEPT. FINISHING /                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <?php echo $tgl . ' ' . $bln . ' ' . $thn . ' (' . strtoupper($waktu) . ')' ?></b>
+  <b>DEPT. FINISHING /                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <?php echo $tgl . ' ' . $bln . ' ' . $thn . ' (' . strtoupper($waktu) . ')' ?></b>
 </td>
 
     </tr>
