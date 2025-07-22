@@ -218,7 +218,7 @@
                                                                                     WHERE
                                                                                         tbl_matching.color_code = '$color_code'
                                                                                         AND NOT tbl_matching.jenis_matching IN ('Perbaikan NOW', 'Perbaikan')
-                                                                                        AND tbl_matching.jenis_matching IN ('Matching Ulang NOW', 'Matching Ulang')
+                                                                                        AND tbl_matching.jenis_matching IN ('Matching Ulang NOW', 'Matching Ulang', 'Matching Development')
                                                                                         AND NOT tbl_matching.recipe_code IN ('', '-')
                                                                                     ORDER BY
                                                                                         tbl_matching.id DESC";
