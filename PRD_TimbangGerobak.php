@@ -65,31 +65,37 @@ include_once "utils/helper.php";
                             <div class="col-sm-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Filter Data</h5> <?php echo $_SERVER['REMOTE_ADDR']; ?>
+                                        <h5>Filter Data</h5>
                                     </div>
                                     <div class="card-block">
-                                        <form action="" method="post" id="exportForm">
-                                            <div class="row">
-                                                <div class="col-sm-12 col-xl-12 m-b-30">
-                                                    <input type="date" class="form-control" name="date" value="<?php if (isset($_POST['submit'])) {
-                                                                                                                    echo $_POST['date'];
-                                                                                                                } ?>" required>
+                                        <form action="" method="post" id="exportForm" class="p-4 border rounded shadow-sm bg-white">
+                                            <div class="row g-3 align-items-end">
+                                                <div class="col-md-4">
+                                                <label for="date" class="form-label fw-semibold">Tanggal Mulai</label>
+                                                <input type="date" class="form-control" id="date" name="date" value="<?php if (isset($_POST['submit'])) echo $_POST['date']; ?>" required>
                                                 </div>
-                                                <div class="col-sm-12 col-xl-4 m-b-30">
-                                                    <button type="submit" name="submit" class="btn btn-primary">
-                                                        <i class="icofont icofont-search-alt-1"></i> Cari data
-                                                    </button>
+
+                                                <div class="col-md-4">
+                                                <label for="date2" class="form-label fw-semibold">Tanggal Selesai</label>
+                                                <input type="date" class="form-control" id="date2" name="date2" value="<?php if (isset($_POST['submit'])) echo $_POST['date2']; ?>" required>
+                                                </div>
+
+                                                <div class="col-md-4 d-grid">
+                                                <button type="submit" name="submit" class="btn btn-primary">
+                                                    <i class="bi bi-search"></i> Cari Data
+                                                </button>
                                                 </div>
                                             </div>
-                                        </form>
+                                            </form>
                                     </div>
 
                                     <?php if (isset($_POST['submit'])): ?>
                                         <script>
                                             // Redirect to the export page with the date parameter
                                             const dateValue = "<?php echo $_POST['date']; ?>";
+                                            const dateValue2 = "<?php echo $_POST['date2']; ?>";
                                             if (dateValue) {
-                                                window.location.href = `export_excel.php?date=${dateValue}`;
+                                                window.location.href = `export_excel.php?date=${dateValue}&date2=${dateValue2}`;
                                             }
                                         </script>
                                     <?php endif; ?>
