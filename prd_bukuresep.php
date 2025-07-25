@@ -91,23 +91,17 @@
                                         <h5>Filter Data</h5>
                                     </div>
                                     <div class="card-block">
-                                        <form action="" method="post">
-                                            <div class="form-row align-items-end">
-                                                <div class="form-group col-md-6">
-                                                    <label for="color_code">Color Code:</label>
-                                                    <input type="text" name="color_code" id="color_code" class="form-control"
-                                                        value="<?php 
-                                                            if (isset($_POST['submit'])) {
-                                                                echo $_POST['color_code'];
-                                                            } elseif (isset($_GET['color_code'])) {
-                                                                echo $_GET['color_code'];
-                                                            } 
-                                                        ?>">
+                                        <form action="" method="post" class="p-4 border rounded shadow-sm bg-white">
+                                            <div class="row g-3 align-items-end">
+                                                <div class="col-md-4">
+                                                    <label for="date" class="form-label fw-semibold">Color Code:</label>
+                                                    <input type="text" class="form-control" id="color_code" name="color_code" value="<?php if (isset($_POST['submit'])) { echo $_POST['color_code'];} elseif (isset($_GET['color_code'])) { echo $_GET['color_code']; } ?>" required>
                                                 </div>
-                                                <div class="form-group col-md-3">
-                                                    <button type="submit" name="submit" class="btn btn-primary btn-block">
-                                                        <i class="icofont icofont-search-alt-1"></i> Cari Data
-                                                    </button>
+
+                                                <div class="col-md-4 d-grid">
+                                                <button type="submit" name="submit" class="btn btn-primary">
+                                                    <i class="bi bi-search"></i> Cari Data
+                                                </button>
                                                 </div>
                                             </div>
                                         </form>
@@ -184,7 +178,7 @@
                                         <div class="col-md-6">
                                             <div class="card">
                                                 <div class="card-header">
-                                                    <h5>RECIPE MATCHING ULANG</h5>
+                                                    <h5>RECIPE MATCHING ULANG & DEVELOPMENT</h5>
                                                 </div>
                                                 <div class="card-block">
                                                     <div class="table-responsive dt-responsive">

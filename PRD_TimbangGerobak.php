@@ -86,7 +86,7 @@ include_once "utils/helper.php";
                                                 </button>
                                                 </div>
                                             </div>
-                                            </form>
+                                        </form>
                                     </div>
 
                                     <?php if (isset($_POST['submit'])): ?>
