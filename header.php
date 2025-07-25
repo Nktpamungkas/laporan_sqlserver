@@ -91,6 +91,7 @@
         $style_active_mkt = in_array($current_page, $active_pages_mkt) ? 'style="background-color: #d4e9fa;"' : '';
         
         $active_pages_prd = ['prd_detail_demand_step.php', 
+                            'prd_bukuresep.php', 
                             'prd_analisaKK.php', 
                             'prd_carigerobak.php', 
                             'prd_outstandingkk.php', 
@@ -379,6 +380,11 @@
                                     <span class="pcoded-mcaret"></span>
                                 </a>
                                 <ul class="pcoded-submenu">
+                                    <li <?= ($current_page == 'prd_bukuresep.php') ? $style_active_prd : ''; ?>>
+                                        <a href="prd_bukuresep.php" data-i18n="nav.animations.main">
+                                            Buku Resep Digital
+                                        </a>
+                                    </li>
                                     <li <?= ($current_page == 'prd_detail_demand_step.php') ? $style_active_prd : ''; ?>>
                                         <a href="prd_detail_demand_step.php" data-i18n="nav.animations.main">
                                             Detail Demand Step
@@ -399,25 +405,34 @@
                                             Outstanding Kartu Kerja
                                         </a>
                                     </li>
-                                    <li <?= ($current_page == 'prd_pinjam_stdcckwarna.php') ? $style_active_prd : ''; ?>>
-                                        <a href="prd_pinjam_stdcckwarna.php" data-i18n="nav.animations.main">
-                                            Pinjam Std Cck Warna RC
+                                    <li class="pcoded-hasmenu">
+                                        <a href="javascript:void(0)">
+                                            <span class="pcoded-micon"><i class="icofont icofont-clipboard"></i></span>
+                                            <span class="pcoded-mtext">Pinjam Std Cck</span>
+                                            <span class="pcoded-mcaret"></span>
                                         </a>
-                                    </li>
-                                    <li <?= ($current_page == 'prd_pinjam_stdcckwarna_ld.php') ? $style_active_prd : ''; ?>>
-                                        <a href="prd_pinjam_stdcckwarna_ld.php" data-i18n="nav.animations.main">
-                                            Pinjam Std Cck Warna LD
-                                        </a>
-                                    </li>
-                                    <li <?= ($current_page == 'prd_pinjam_stdcckwarna_te.php') ? $style_active_prd : ''; ?>>
-                                        <a href="prd_pinjam_stdcckwarna_te.php" data-i18n="nav.animations.main">
-                                            Pinjam Std Cck Warna TE
-                                        </a>
-                                    </li>
-                                    <li <?= ($current_page == 'Login_prd_pinjam_stdcckwarna_dl.php') ? $style_active_prd : ''; ?>>
-                                        <a href="Login_prd_pinjam_stdcckwarna_dl.php" data-i18n="nav.animations.main">
-                                            Pinjam Std Cck Warna DL
-                                        </a>
+                                        <ul class="pcoded-submenu">
+                                            <li <?= ($current_page == 'prd_pinjam_stdcckwarna.php') ? $style_active_prd : ''; ?>>
+                                                <a href="prd_pinjam_stdcckwarna.php" data-i18n="nav.animations.main">
+                                                    Pinjam Std Cck Warna RC
+                                                </a>
+                                            </li>
+                                            <li <?= ($current_page == 'prd_pinjam_stdcckwarna_ld.php') ? $style_active_prd : ''; ?>>
+                                                <a href="prd_pinjam_stdcckwarna_ld.php" data-i18n="nav.animations.main">
+                                                    Pinjam Std Cck Warna LD
+                                                </a>
+                                            </li>
+                                            <li <?= ($current_page == 'prd_pinjam_stdcckwarna_te.php') ? $style_active_prd : ''; ?>>
+                                                <a href="prd_pinjam_stdcckwarna_te.php" data-i18n="nav.animations.main">
+                                                    Pinjam Std Cck Warna TE
+                                                </a>
+                                            </li>
+                                            <li <?= ($current_page == 'Login_prd_pinjam_stdcckwarna_dl.php') ? $style_active_prd : ''; ?>>
+                                                <a href="Login_prd_pinjam_stdcckwarna_dl.php" data-i18n="nav.animations.main">
+                                                    Pinjam Std Cck Warna DL
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </li>
                                     <li <?= ($current_page == 'prd_openticketMTC.php') ? $style_active_prd : ''; ?>>
                                         <a href="prd_openticketMTC.php" data-i18n="nav.animations.main">
