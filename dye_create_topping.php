@@ -1,7 +1,25 @@
 <?php
     require_once "koneksi.php";
     include "utils/helper.php";
+    $menu = 'dye_create_topping.php'; // Set the menu for this login
     $date = date('Y-m-d H:i:s');
+        // Tidak ada session, cek apakah IP-nya masih terdaftar di log
+        $q_cek_login = sqlsrv_query($con_nowprd, "SELECT COUNT(*) OVER() AS COUNT, DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = ? AND menu = ?", [$_SERVER['REMOTE_ADDR'], $menu]);
+        $data_login = sqlsrv_fetch_array($q_cek_login);
+
+    if ($data_login['COUNT'] == 1 && $data_login['selisih_menit'] > 1) {
+            sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = ? AND menu = ?", [$_SERVER['REMOTE_ADDR'], $menu]);
+            header("Location: login_toping.php");
+            exit();
+        }else if(empty($data_login['COUNT'])){
+            header("Location: login_toping.php");
+            exit();
+        }
+
+
+    // Ambil data dari session
+    $loggedInUser = $_SESSION['username'];
+    $option = $_GET['option'];
 
     $recipe_code    = $_POST['recipecode'] ?? null;
     $suffix         = $_POST['suffixcode'] ?? null;
@@ -121,6 +139,8 @@
                                                         <div class="col-sm-6">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="recipecode_new" id="recipecode_new" onkeydown="cekBonResep()" placeholder="Recipe Code">
                                                         </div>
+                                                        <input type="text" class="form-control form-control-sm form-control-danger" name="user_login" id="user_login" 
+                                                            placeholder="User" value="<?php echo htmlspecialchars($loggedInUser); ?>" hidden>
                                                         <div class="col-sm-6">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="suffix_new" id="suffix_new" onkeydown="cekBonResep()" placeholder="Suffix">
                                                         </div>
@@ -129,9 +149,28 @@
                                                         <div class="col-sm-4">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="long_new" id="long_new" onkeydown="cekBonResep()" placeholder="Long Description*">
                                                         </div>
+                                                    <?php if($option == 'Toping' or $option == 'toping'):?>
                                                         <div class="col-sm-4">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="short_new" id="short_new" onkeydown="cekBonResep()" placeholder="Short Description">
                                                         </div>
+                                                    <?php endif;?>
+                                                    <?php if($option == 'Adjust' or $option == 'adjust'):?>
+                                                        <div class="col-sm-4">
+                                                            <select class="form-control form-control-sm form-control-danger" name="short_new" id="short_new" onchange="cekBonResep()">
+                                                                <option value="">-- Pilih Colorist --</option>
+                                                                <?php
+                                                                $queryColorist = "SELECT * FROM tbl_user WHERE jabatan = 'Colorist' ORDER BY username ASC";
+                                                                $stmtColorist = mysqli_query($con_db_lab, $queryColorist);
+                                                                if(mysqli_num_rows($stmtColorist) > 0) {
+                                                                    while ($colorist = mysqli_fetch_assoc($stmtColorist)) {
+                                                                        $selected = (isset($_POST['short_new']) && $_POST['short_new'] == $colorist['username']) ? 'selected' : '';
+                                                                        echo '<option value="'.htmlspecialchars($colorist['username']).'" '.$selected.'>'.htmlspecialchars($colorist['username']).'</option>';
+                                                                    }
+                                                                }
+                                                                ?>
+                                                            </select>
+                                                        </div>
+                                                    <?php endif;?>
                                                         <div class="col-sm-4">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="search_new" id="search_new" onkeydown="cekBonResep()" placeholder="Search Description">
                                                         </div>
@@ -177,6 +216,7 @@
                                             <button type="button" id="exsecute" class="btn btn-danger btn-sm text-black" disabled>
                                                 <strong>SUBMIT FOR IMPORT TO NOW ! <i class="fa fa-save"></i></strong>
                                             </button>
+                                            <!-- buat tes tobi -->
                                             <!-- <button class="btn btn-primary" onclick="generateInsertQueries()">Simpan Semua</button> -->
                                         </center>
 
@@ -200,6 +240,7 @@
 
 <!-- Script Untuk Save Header -->
 <script>
+    const option = <?= json_encode($_SESSION['option'] ?? $_GET['option'] ?? 'Toping') ?>;
     $(document).ready(function() {
         $('#confirmCheck').on('change', function() {
             $('#exsecute').prop('disabled', !this.checked);
@@ -212,7 +253,8 @@
             long_new: $('#long_new').val(),
             short_new: $('#short_new').val(),
             search_new: $('#search_new').val(),
-            lr_new: $('#lr_new').val()
+            lr_new: $('#lr_new').val(),
+            user_login: $('#user_login').val()
         };
 
         if (formData.recipe_code_new && formData.suffix_new) {
@@ -243,7 +285,7 @@
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                location.reload();
+                                window.location.href = "dye_create_topping.php?option=" + option;
                             });
                         },
                         error: function (xhr, status, error) {
@@ -900,7 +942,6 @@ async function generateInsertQueries() {
 }
 
 // await updateAutoCounter(autoCounter);
-
 
 </script>
 

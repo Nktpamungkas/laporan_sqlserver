@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insertPrefixResult     = mysqli_query($con_db_lab, $insertPrefix);
     $IMPORTAUTOCOUNTER      = mysqli_insert_id($con_db_lab);
     $ip = $_SERVER['REMOTE_ADDR'];
+    $user = $_POST['user_login'];
     
     $queryDataMain  = "INSERT INTO RECIPEBEAN (
                                         COMPANYCODE,
@@ -280,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             '', -- APPROVALUSER
             '1', -- CREATEHEADER
             '5', -- WSOPERATION
-            '$ip', --IMPOPERATIONUSER --Buat user creationnya
+            '$user', --IMPOPERATIONUSER --Buat user creationnya
             '0', -- IMPORTSTATUS
             NULL, -- IMPCREATIONDATETIME
             NULL, -- IMPCREATIONUSER
