@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require_once "koneksi.php";
     include "utils/helper.php";
     $menu = 'dye_create_topping.php'; // Set the menu for this login
