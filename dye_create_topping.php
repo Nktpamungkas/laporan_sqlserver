@@ -7,7 +7,7 @@
         $q_cek_login = sqlsrv_query($con_nowprd, "SELECT COUNT(*) OVER() AS COUNT, DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = ? AND menu = ?", [$_SERVER['REMOTE_ADDR'], $menu]);
         $data_login = sqlsrv_fetch_array($q_cek_login);
 
-    if ($data_login['COUNT'] == 1 && $data_login['selisih_menit'] > 1) {
+    if ($data_login['COUNT'] == 1 && $data_login['selisih_menit'] > 15) {
             sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = ? AND menu = ?", [$_SERVER['REMOTE_ADDR'], $menu]);
             header("Location: login_toping.php");
             exit();
