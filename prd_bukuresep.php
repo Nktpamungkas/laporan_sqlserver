@@ -132,6 +132,8 @@
                                                             <tbody>
                                                                 <?php
                                                                     $color_code = $_POST['color_code'];
+                                                                    $color_code_potong = substr($_POST['color_code'], 0, -1);
+
                                                                     $query_labdip = "SELECT
                                                                                         DISTINCT
                                                                                         tbl_matching_detail.id_status,
@@ -147,7 +149,7 @@
                                                                                         tbl_matching 
                                                                                     LEFT JOIN tbl_matching_detail ON tbl_matching_detail.id_matching = tbl_matching.id
                                                                                     WHERE
-                                                                                        tbl_matching.color_code = '$color_code'
+                                                                                        (tbl_matching.color_code LIKE '%$color_code%' OR tbl_matching.color_code LIKE '%$color_code_potong%')
                                                                                         AND NOT tbl_matching.jenis_matching IN ('Perbaikan NOW', 'Perbaikan')
                                                                                         AND tbl_matching.jenis_matching IN ('LD NOW', 'L/D')
                                                                                         AND NOT tbl_matching.recipe_code IN ('', '-')
@@ -161,7 +163,7 @@
                                                                         <td><?= $no_labdip++; ?></td>
                                                                         <td><?= $row_labdip['buyer']; ?></td>
                                                                         <td><?= $row_labdip['warna']; ?></td>
-                                                                        <td><?= $row_mu['recipe_code_1']; ?> <?= $row_mu['recipe_code_2']; ?> <?= $row_mu['no_resep']; ?></td>
+                                                                        <td><?= $row_labdip['recipe_code_1']; ?> <?= $row_labdip['recipe_code_2']; ?> <?= $row_labdip['no_resep']; ?></td>
                                                                         <td>
                                                                             <a href="https://online.indotaichen.com/laborat/pages/cetak/cetak_resep.php?ids=<?= $row_labdip['id_status'] ?>&idm=<?= $row_labdip['no_resep'] ?>&frm=bresep" target="_blank" class="btn-cetak-minimal">
                                                                                 <i class="icofont icofont-print"></i> Cetak
