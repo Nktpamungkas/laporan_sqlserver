@@ -160,7 +160,7 @@
                                                             <select class="form-control form-control-sm form-control-danger" name="short_new" id="short_new" onchange="cekBonResep()">
                                                                 <option value="">-- Pilih Colorist --</option>
                                                                 <?php
-                                                                $queryColorist = "SELECT * FROM tbl_user WHERE jabatan = 'Colorist' ORDER BY username ASC";
+                                                                $queryColorist = "SELECT * FROM tbl_user WHERE jabatan = 'Colorist' AND status = 'Aktif' ORDER BY username ASC";
                                                                 $stmtColorist = mysqli_query($con_db_lab, $queryColorist);
                                                                 if(mysqli_num_rows($stmtColorist) > 0) {
                                                                     while ($colorist = mysqli_fetch_assoc($stmtColorist)) {
