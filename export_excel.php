@@ -11,6 +11,7 @@ require_once "koneksi.php";
     class="table table-striped table-bordered nowrap">
     <thead>
         <tr align="center">
+            <th>TANGGAL</th>
             <th>PRODUCTION ORDER</th>
             <th>PRODUCTION DEMAND</th>
             <th>NO PROJECT</th>
@@ -150,6 +151,7 @@ require_once "koneksi.php";
             <tr>
                 <!-- <td>'<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td> -->
                 <!-- <td>'<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td> -->
+                <td>'<?= $row_timbang['CREATIONDATETIME']; ?></td>
                 <td> <a target="_BLANK" href="https://online.indotaichen.com/nowgerobak/HasilTimbang-<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td>
                 <td> <a target="_BLANK" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td>
                 <td><?= $row_timbang['ORIGDLVSALORDLINESALORDERCODE']; ?></td>
