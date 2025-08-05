@@ -163,7 +163,7 @@
                                                                         <td><?= $no_labdip++; ?></td>
                                                                         <td><?= $row_labdip['buyer']; ?></td>
                                                                         <td><?= $row_labdip['warna']; ?></td>
-                                                                        <td><?= $row_labdip['recipe_code_1']; ?> <?= $row_labdip['recipe_code_2']; ?> <?= $row_labdip['no_resep']; ?></td>
+                                                                        <td><?= $row_labdip['recipe']; ?></td>
                                                                         <td>
                                                                             <a href="https://online.indotaichen.com/laborat/pages/cetak/cetak_resep.php?ids=<?= $row_labdip['id_status'] ?>&idm=<?= $row_labdip['no_resep'] ?>&frm=bresep" target="_blank" class="btn-cetak-minimal">
                                                                                 <i class="icofont icofont-print"></i> Cetak
@@ -226,7 +226,7 @@
                                                                         <td><?= $no_mu++; ?></td>
                                                                         <td><?= $row_mu['buyer']; ?></td>
                                                                         <td><?= $row_mu['warna']; ?></td>
-                                                                        <td><?= $row_mu['recipe_code_1']; ?> <?= $row_mu['recipe_code_2']; ?> <?= $row_mu['no_resep']; ?></td>
+                                                                        <td><?= $row_mu['recipe']; ?></td>
                                                                         <td>
                                                                             <a href="https://online.indotaichen.com/laborat/pages/cetak/cetak_resep.php?ids=<?= $row_mu['id_status'] ?>&idm=<?= $row_mu['no_resep'] ?>&frm=bresep" target="_blank" class="btn-cetak-minimal">
                                                                                 <i class="icofont icofont-print"></i> Cetak
