@@ -3245,7 +3245,7 @@
                                                                                         FROM
                                                                                             ITXVIEWKK
                                                                                         WHERE
-                                                                                            PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'";
+                                                                                            PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]'";
                                                                     $q_gabungProdOrder  = db2_exec($conn1, $gabungProdOrder);
                                                                     $d_gabungProdOrder  = db2_fetch_assoc($q_gabungProdOrder);
 
@@ -3279,7 +3279,7 @@
                                                                             LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                             LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
                                                                             WHERE
-                                                                                p.PRODUCTIONORDERCODE IN ($gabungProdOrder) AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
+                                                                                p.PRODUCTIONORDERCODE IN ($ProdOrderGabung) AND p.PRODUCTIONDEMANDCODE = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' 
                                                                                 -- AND NOT iptip.MULAI IS NULL AND NOT iptop.SELESAI IS NULL
                                                                             ORDER BY iptip.MULAI ASC";
                                                                     $stmt = db2_exec($conn1, $sqlDB2);
