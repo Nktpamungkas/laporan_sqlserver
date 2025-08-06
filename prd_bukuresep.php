@@ -8,7 +8,7 @@
     if ($data_login['COUNT'] == '1') {
         $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
         $data_waktu_login     = sqlsrv_fetch_array($q_waktu_cek_login);
-        if ($data_waktu_login['selisih_menit'] > 30) {
+        if ($data_waktu_login['selisih_menit'] > 5) {
             sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
             header("Location: Login_prd_bukuresep.php");
             exit();
@@ -148,11 +148,13 @@
                                                                                     FROM
                                                                                         tbl_matching 
                                                                                     LEFT JOIN tbl_matching_detail ON tbl_matching_detail.id_matching = tbl_matching.id
+                                                                                    LEFT JOIN tbl_status_matching ON tbl_status_matching.idm = tbl_matching.no_resep
                                                                                     WHERE
                                                                                         (tbl_matching.color_code LIKE '%$color_code%' OR tbl_matching.color_code LIKE '%$color_code_potong%')
                                                                                         AND NOT tbl_matching.jenis_matching IN ('Perbaikan NOW', 'Perbaikan')
                                                                                         AND tbl_matching.jenis_matching IN ('LD NOW', 'L/D')
                                                                                         AND NOT tbl_matching.recipe_code IN ('', '-')
+                                                                                        AND NOT tbl_status_matching.status = 'arsip'
                                                                                     ORDER BY
                                                                                         tbl_matching.id DESC";
                                                                     $result_labdip = mysqli_query($con_db_lab, $query_labdip);
@@ -211,11 +213,13 @@
                                                                                     FROM
                                                                                         tbl_matching 
                                                                                     LEFT JOIN tbl_matching_detail ON tbl_matching_detail.id_matching = tbl_matching.id
+                                                                                    LEFT JOIN tbl_status_matching ON tbl_status_matching.idm = tbl_matching.no_resep
                                                                                     WHERE
                                                                                         tbl_matching.color_code = '$color_code'
                                                                                         AND NOT tbl_matching.jenis_matching IN ('Perbaikan NOW', 'Perbaikan')
                                                                                         AND tbl_matching.jenis_matching IN ('Matching Ulang NOW', 'Matching Ulang', 'Matching Development')
                                                                                         AND NOT tbl_matching.recipe_code IN ('', '-')
+                                                                                        AND NOT tbl_status_matching.status = 'arsip'
                                                                                     ORDER BY
                                                                                         tbl_matching.id DESC";
                                                                     $result_mu = mysqli_query($con_db_lab, $query_mu);
