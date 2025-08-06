@@ -1,21 +1,24 @@
 <?php
+    session_start();
     require_once "koneksi.php";
     include "utils/helper.php";
     $date = date('Y-m-d H:i:s');
     $menu = 'prd_bukuresep.php'; // Set the menu for this login
-    $q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
+    $ip_comp = $_SERVER['REMOTE_ADDR'];
+    session_start();
+    $q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
     $data_login     = sqlsrv_fetch_array($q_cek_login);
     if ($data_login['COUNT'] == '1') {
-        $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
+        $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
         $data_waktu_login     = sqlsrv_fetch_array($q_waktu_cek_login);
         if ($data_waktu_login['selisih_menit'] > 5) {
-            sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
+            sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
             header("Location: Login_prd_bukuresep.php");
             exit();
         } else {
             sqlsrv_query($con_nowprd, "UPDATE nowprd.log_activity_users
                                             SET CREATEDATETIME = '$date'
-                                            WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
+                                            WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
         }
     } else {
         header("Location: Login_prd_bukuresep.php");
@@ -167,7 +170,7 @@
                                                                         <td><?= $row_labdip['warna']; ?></td>
                                                                         <td><?= $row_labdip['recipe']; ?></td>
                                                                         <td>
-                                                                            <a href="https://online.indotaichen.com/laborat/pages/cetak/cetak_resep.php?ids=<?= $row_labdip['id_status'] ?>&idm=<?= $row_labdip['no_resep'] ?>&frm=bresep" target="_blank" class="btn-cetak-minimal">
+                                                                            <a href="https://online.indotaichen.com/laborat/pages/cetak/cetak_resep.php?ids=<?= $row_labdip['id_status'] ?>&idm=<?= $row_labdip['no_resep'] ?>&frm=bresep&created_by=<?= $_SESSION['id']; ?>" target="_blank" class="btn-cetak-minimal">
                                                                                 <i class="icofont icofont-print"></i> Cetak
                                                                             </a>
                                                                         </td>
@@ -232,7 +235,7 @@
                                                                         <td><?= $row_mu['warna']; ?></td>
                                                                         <td><?= $row_mu['recipe']; ?></td>
                                                                         <td>
-                                                                            <a href="https://online.indotaichen.com/laborat/pages/cetak/cetak_resep.php?ids=<?= $row_mu['id_status'] ?>&idm=<?= $row_mu['no_resep'] ?>&frm=bresep" target="_blank" class="btn-cetak-minimal">
+                                                                            <a href="https://online.indotaichen.com/laborat/pages/cetak/cetak_resep.php?ids=<?= $row_mu['id_status'] ?>&idm=<?= $row_mu['no_resep'] ?>&frm=bresep&created_by=<?= $_SESSION['id']; ?>" target="_blank" class="btn-cetak-minimal">
                                                                                 <i class="icofont icofont-print"></i> Cetak
                                                                             </a>
                                                                         </td>
