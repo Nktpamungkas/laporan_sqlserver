@@ -50,6 +50,10 @@
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link href="alert/sweetalert2.min.css" rel="stylesheet" />
     <script src="alert/sweetalert2.all.min.js"></script>
+
+    <!-- Online Card -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 </head>
 <style>
     .btn-cetak-minimal {
@@ -114,8 +118,115 @@
         display: block;
     }
 </style>
-
 <?php require_once 'header.php'; ?>
+
+<!-- ONLINE CARD -->
+    <style>
+        #user-online-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 250px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.2);
+            z-index: 9999;
+            font-size: 14px;
+            overflow: hidden;
+        }
+
+        #user-online-header {
+            padding: 10px;
+            background: #0d6efd;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        #user-online-body {
+            padding: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            background: #ffffff;
+            display: block;
+        }
+
+        #user-online-box ul {
+            padding-left: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        #user-online-box li {
+            background: #f1f1f1;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+
+        #user-online-box li i {
+            margin-right: 8px;
+            color: #0d6efd;
+        }
+    </style>
+
+    <div id="user-online-box">
+        <div id="user-online-header">
+            <span><i class="bi bi-people-fill"></i> Sedang Online (<span id="online-count"><?= $jumlahOnline ?></span>)</span>
+            <span id="toggle-user-online" style="cursor: pointer;">
+                <i class="bi bi-plus-circle"></i>
+            </span>
+        </div>
+
+        <div id="user-online-body" style="display: none;">
+            <ul id="user-online-list">
+                <?= $htmlList ?>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const toggleButton = document.getElementById("toggle-user-online");
+        const bodyBox = document.getElementById("user-online-body");
+        const onlineCount = document.getElementById("online-count");
+        const onlineList = document.getElementById("user-online-list");
+
+        // Toggle minimize
+        toggleButton.addEventListener("click", function () {
+            const isHidden = bodyBox.style.display === "none";
+            bodyBox.style.display = isHidden ? "block" : "none";
+            toggleButton.innerHTML = isHidden 
+                ? '<i class="bi bi-dash-circle"></i>'
+                : '<i class="bi bi-plus-circle"></i>';
+        });
+
+        // Fungsi ambil data online
+        function loadUserOnline() {
+            fetch("get_user_online.php")
+                .then(res => res.json())
+                .then(data => {
+                    onlineCount.textContent = data.jumlah;
+                    onlineList.innerHTML = data.html;
+                })
+                .catch(err => console.error("Gagal ambil data online:", err));
+        }
+
+        // Pertama kali jalan
+        loadUserOnline();
+
+        // Auto-refresh tiap 10 detik
+        setInterval(loadUserOnline, 10000);
+    </script>
+
+
+<!-- ONLINE CARD -->
 
 <body>
     <div class="pcoded-content">
@@ -462,3 +573,4 @@
         event.target.classList.add('active');
     }
 </script>
+
