@@ -73,9 +73,9 @@
                                                 ini_set("error_reporting", 1);
                                                 require_once "koneksi.php";
 
-                                                $demand = $_POST['demand'] ?? '';
-                                                $prod_order = $_POST['prod_order'] ?? '';
-
+                                                // Check by POST and GET method
+                                                $demand = $_POST['demand'] ?? $_GET['demand'] ?? '';
+                                                $prod_order = $_POST['prod_order'] ?? $_GET['prod_order'] ?? '';
 
                                                 if (!empty($demand) && !empty($prod_order)) {
                                                     $q_ITXVIEWKK = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' AND PRODUCTIONORDERCODE = '$prod_order'");
@@ -86,6 +86,7 @@
                                                 } else {
                                                     $q_ITXVIEWKK = false;
                                                 }
+
                                                 $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
 
                                                 $bagikain = db2_exec($conn1, "SELECT v.INITIALUSERPRIMARYQUANTITY 
