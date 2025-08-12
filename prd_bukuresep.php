@@ -1,10 +1,26 @@
 <?php
     session_start();
     require_once "koneksi.php";
-    include "utils/helper.php";
-    $date = date('Y-m-d H:i:s');
     $menu = 'prd_bukuresep.php'; // Set the menu for this login
     $ip_comp = $_SERVER['REMOTE_ADDR'];
+
+    // Cek apakah tombol logout ditekan
+    if (isset($_POST['logout'])) {
+
+        $qLogout    = "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'";
+        sqlsrv_query($con_nowprd, $qLogout);
+
+        // Redirect ke login
+        header("Location: Login_prd_bukuresep.php");
+        exit();
+}
+?>
+<?php
+    session_start();
+    require_once "koneksi.php";
+    include "utils/helper.php";
+    $date = date('Y-m-d H:i:s');
+    
     session_start();
     $q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
     $data_login     = sqlsrv_fetch_array($q_cek_login);
@@ -116,6 +132,28 @@
 
     .tab-content.active {
         display: block;
+    }
+</style>
+<style>
+    .tabs {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .tab-buttons {
+        display: flex;
+        gap: 5px;
+    }
+    .logout-btn {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    .logout-btn:hover {
+        background-color: darkred;
     }
 </style>
 <?php require_once 'header.php'; ?>
@@ -240,8 +278,16 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="tabs">
-                                            <button class="tab-btn active" onclick="openTab('tab-filter')">Filter Data</button>
-                                            <button class="tab-btn" onclick="openTab('tab-password')">Change Password</button>
+                                            <div class="tab-buttons">
+                                                <button class="tab-btn active" onclick="openTab('tab-filter')">Filter Data</button>
+                                                <button class="tab-btn" onclick="openTab('tab-password')">Change Password</button>
+                                            </div>
+                                            <form method="POST" style="margin:0;">
+                                                <button type="submit" name="logout" class="logout-btn"
+                                                        onclick="return confirm('Yakin ingin logout? Data aktivitas akan dihapus.')">
+                                                    LOGOUT
+                                                </button>
+                                            </form>
                                         </div>
                                         <!-- Filter Data Tab -->
                                         <div id="tab-filter" class="tab-content active">
@@ -573,4 +619,5 @@
         event.target.classList.add('active');
     }
 </script>
+
 
