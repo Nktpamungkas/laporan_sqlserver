@@ -441,7 +441,7 @@
     const newRow = {
         Gr: maxGr + 1,
         GrTp: '201',
-        Sq: 10,
+        Sq: 0,
         SubSq: 10,
         IT: 'RFF',
         ItemCode: '',
@@ -463,9 +463,9 @@
 
 <!-- Untuk Update GroupType -->
 <script>
-    function updateGrTp(selectEl, gr) {
+    function updateGrTp(selectEl, gr, sq) {
         const value = selectEl.value;
-        const index = data.findIndex(item => item.Gr === gr);
+            const index = data.findIndex(item => item.Gr == gr && item.Sq == sq);
         if (index !== -1) {
             data[index].GrTp = value;
             data[index].IT =
@@ -485,7 +485,11 @@
     tableBody.innerHTML = "";
 
     // Pastikan .Gr berupa number agar sort bisa berfungsi benar
-    data.sort((a, b) => parseInt(a.Gr) - parseInt(b.Gr));
+    data.sort((a, b) => {
+        const grDiff = parseInt(a.Gr) - parseInt(b.Gr);
+        if (grDiff !== 0) return grDiff; // Urutkan Gr dulu jika berbeda
+        return parseInt(a.Sq) - parseInt(b.Sq); // Jika Gr sama, urutkan Sq
+    });
 
     data.forEach((row, index) => {
         const tr = document.createElement("tr");
@@ -495,10 +499,10 @@
         // <td>${row.IT === ''? row.IT: `<input type="text" value="${row.IT}" readonly>`}</td>
         tr.innerHTML = `
             <td>
-                <input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value)">
+                <input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value, ${row.Sq}, ${row.GrTp} )">
             </td>
             <td>
-                <select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
+                <select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr}, ${row.Sq})">
                     <option value="001" ${row.GrTp === '001' ? 'selected' : ''}>001 (Dyestuff/Chemical)</option>
                     <option value="201" ${row.GrTp === '201' ? 'selected' : ''}>201 (Sub Recipe - Fabric Dye)</option>
                     <option value="100" ${row.GrTp === '100' ? 'selected' : ''}>100 (Instruction)</option>
@@ -506,7 +510,7 @@
                 </select>
             </td>
             <td>
-                <input type="number" value="${row.Sq}" onchange="updateField(${row.Gr}, 'Sq', this.value)">
+                <input type="number" value="${row.Sq}" onchange="updateSq(${row.Gr}, ${row.Sq}, this.value)">
             </td>
             <td><input type="number" value="${row.SubSq}" onchange="updateField(${row.Gr}, 'SubSq', this.value)"></td>
             <td style="width: 80px">${row.IT ?? ''}</td>
@@ -547,10 +551,66 @@
 
 <!-- Untuk Urutin berdasarkan Gr -->
 <script>
-    function updateGr(oldGr, newGr) {
-    const index = data.findIndex(item => item.Gr === oldGr);
+    function updateGr(oldGr, newGr, sq, selectEl) {
+    // Convert to numbers for consistent comparison
+    const oldGrNum = Number(oldGr);
+    const newGrNum = Number(newGr) || 0;
+    const sqNum = Number(sq);
+    const GrTp = Number(selectEl);
+    
+    // Find the exact item to update
+    const index = data.findIndex(item => 
+        Number(item.Gr) === oldGrNum && 
+        Number(item.Sq) === sqNum &&
+        Number(item.GrTp) === GrTp
+    );
+    
     if (index !== -1) {
-        data[index].Gr = parseInt(newGr);
+        // Update the Gr value
+        data[index].Gr = newGrNum;
+        
+        // Re-sort the data
+        data.sort((a, b) => {
+            const grDiff = Number(a.Gr) - Number(b.Gr);
+            return grDiff !== 0 ? grDiff : Number(a.Sq) - Number(b.Sq);
+        });
+        
+        populateTable();
+    }
+ }
+</script>
+
+<!-- Urutin Berdasarkan Sq -->
+ <script>
+//     function updateSq(grValue, field, newSqValue) {
+//     // Cari index data berdasarkan Gr (karena Sq bisa sama di Gr berbeda)
+//     const index = data.findIndex(item => item.Sq == grValue && item[field] == this.previousValue);
+    
+//     if (index !== -1) {
+//         // Update nilai Sq
+//         data[index][field] = parseInt(newSqValue);
+//         populateTable(); // Refresh tabel
+//     }
+// }
+function updateSq(grValue, sqValue, newSqValue) {
+    // Cari item spesifik berdasarkan Gr dan Sq
+    const index = data.findIndex(item => 
+        item.Gr == grValue && 
+        item.Sq == sqValue
+    );
+    
+    if (index !== -1) {
+        // Update nilai Sq
+        data[index].Sq = parseInt(newSqValue) || 0;
+        
+        // Urutkan ulang data dalam Gr yang sama
+        data.sort((a, b) => {
+            if (a.Gr == b.Gr) {
+                return parseInt(a.Sq) - parseInt(b.Sq);
+            }
+            return parseInt(a.Gr) - parseInt(b.Gr);
+        });
+        
         populateTable();
     }
     }
