@@ -4,22 +4,45 @@
     include "utils/helper.php";
     $menu = 'dye_create_topping.php'; // Set the menu for this login
     $date = date('Y-m-d H:i:s');
-        // Tidak ada session, cek apakah IP-nya masih terdaftar di log
-        $q_cek_login = sqlsrv_query($con_nowprd, "SELECT COUNT(*) OVER() AS COUNT, DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = ? AND menu = ?", [$_SERVER['REMOTE_ADDR'], $menu]);
-        $data_login = sqlsrv_fetch_array($q_cek_login);
+    $loggedInUser = $_SESSION['username'];
+
+    // Daftar option yang diizinkan
+    $allowed_options = ['toping', 'adjust']; // ganti sesuai kebutuhan
+
+    // Cek apakah ada parameter option dan valid
+    if (!isset($_GET['option']) || !in_array($_GET['option'], $allowed_options)) {
+        // Logout: hapus log_activity_users untuk IP & menu ini
+        sqlsrv_query(
+            $con_nowprd,
+            "DELETE FROM nowprd.log_activity_users WHERE [user] = ? AND menu = ?",
+            [$loggedInUser, $menu]
+        );
+        header("Location: login_toping.php");
+        exit();
+    }
+
+    // Tidak ada session, cek apakah IP-nya masih terdaftar di log
+    $q_cek_login = sqlsrv_query(
+        $con_nowprd,
+        "SELECT COUNT(*) OVER() AS COUNT, DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit
+        FROM nowprd.log_activity_users
+        WHERE [user] = ? AND menu = ?",
+        [$loggedInUser, $menu]
+    );
+    $data_login = sqlsrv_fetch_array($q_cek_login);
 
     if ($data_login['COUNT'] == 1 && $data_login['selisih_menit'] > 15) {
-            sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = ? AND menu = ?", [$_SERVER['REMOTE_ADDR'], $menu]);
-            header("Location: login_toping.php");
-            exit();
-        }else if(empty($data_login['COUNT'])){
-            header("Location: login_toping.php");
-            exit();
-        }
+        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE [user] = ? AND menu = ?", [$loggedInUser, $menu]);
+        header("Location: login_toping.php");
+        exit();
+    } else if (empty($data_login['COUNT'])) {
+        header("Location: login_toping.php");
+        exit();
+    }
+
 
 
     // Ambil data dari session
-    $loggedInUser = $_SESSION['username'];
     $option = $_GET['option'];
 
     $recipe_code    = $_POST['recipecode'] ?? null;
