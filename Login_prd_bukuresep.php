@@ -3,21 +3,27 @@ session_start();
 
 require_once "koneksi.php";
 $date = date('Y-m-d H:i:s');
-$menu = 'prd_pinjam_stdcckwarna_dl.php'; // Set the menu for this login
-$q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
+$menu = 'prd_bukuresep.php'; // Set the menu for this login
+$ip_comp = $_SERVER['REMOTE_ADDR'];
+$q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
 $data_login     = sqlsrv_fetch_array($q_cek_login);
 if ($data_login['COUNT'] == '1') {
-    $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
+    $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT
+                                                            DATEDIFF( MINUTE, CREATEDATETIME, GETDATE( ) ) AS selisih_menit 
+                                                        FROM
+                                                            nowprd.log_activity_users 
+                                                        WHERE
+                                                            IPADDRESS = '$ip_comp' AND menu = '$menu'");
     $data_waktu_login     = sqlsrv_fetch_array($q_waktu_cek_login);
 
     if ($data_waktu_login['selisih_menit'] > 30) {
-        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
-        header("Location: Login_prd_pinjam_stdcckwarna_dl.php");
+        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
+        header("Location: Login_prd_bukuresep.php");
     } else {
         sqlsrv_query($con_nowprd, "UPDATE nowprd.log_activity_users
                                         SET CREATEDATETIME = '$date'
-                                        WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
-        header("Location: prd_pinjam_stdcckwarna_dl.php");
+                                        WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
+        header("Location: prd_bukuresep.php");
         exit();
     }
 }
@@ -27,23 +33,27 @@ if ($data_login['COUNT'] == '1') {
 if (isset($_POST['submit'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $menu = 'prd_pinjam_stdcckwarna_dl.php'; // Set the menu for this login
+    $menu = 'prd_bukuresep.php'; // Set the menu for this login
 
-    $query = "SELECT * FROM nowprd.users WHERE username = ? AND password = ? AND menu = ?";
-    $params = array($username, $password, $menu);
-    $stmt = sqlsrv_query($con_nowprd, $query, $params);
+    $query      = "SELECT * FROM nowprd.users WHERE username = ? AND password = ? AND menu = ?";
+    $params     = array($username, $password, $menu);
+    $stmt       = sqlsrv_query($con_nowprd, $query, $params);
+
 
     if ($stmt === false) {
         die(print_r(sqlsrv_errors(), true));
     }
-
     if (sqlsrv_has_rows($stmt)) {
+        $userLogin = sqlsrv_fetch_array($stmt);
+        $id_user = $userLogin['id'];
+        
+        $_SESSION['iduser'] = $id_user;
         $_SESSION['username'] = $username;
         $date = date('Y-m-d H:i:s');
         $logQuery = "INSERT INTO nowprd.log_activity_users ([user], IPADDRESS, CREATEDATETIME, menu) VALUES (?, ?, ?, ?)";
         $logParams = array($username, $_SERVER['REMOTE_ADDR'], $date, $menu);
         $query =  sqlsrv_query($con_nowprd, $logQuery, $logParams);
-        header("Location: prd_pinjam_stdcckwarna_dl.php"); // Ganti dengan halaman setelah login
+        header("Location: prd_bukuresep.php"); // Ganti dengan halaman setelah login
     } else {
         $error_message = "Username atau password salah. Silakan coba lagi.";
     }
@@ -56,7 +66,7 @@ if (isset($_POST['submit'])) {
 <html lang="en">
 
 <head>
-    <title>PRD - PINJAM BUKU STD CCK WARNA</title>
+    <title>LOGIN-Buku Resep Digital</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

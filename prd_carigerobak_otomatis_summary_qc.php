@@ -118,89 +118,50 @@
 
     // Cari Kolom Keluar
     if ($waktu == "PAGI") {
-        $start = date('Y-m-d 06:00:00', strtotime('-1 day'));
-        $end = date('Y-m-d 06:00:00');
+        $start = date('Y-m-d 07:00:00', strtotime('-1 day'));
+        $end = date('Y-m-d 07:00:00');
 
-        $sql_keluar = " SELECT
-                                a.id as idins,
-                                b.id as id_schedule,
-                                a.catatan,
-                                a.personil,
-                                b.langganan,
-                                b.buyer,
-                                CONCAT(b.langganan,'/',b.buyer) as pelanggan,
-                                b.po,
-                                b.no_order,
-                                b.jenis_kain,
-                                b.warna,
-                                b.lot,
-                                b.no_item,
-                                b.tgl_delivery,
-                                b.no_mesin,
-                                b.bruto,
-                                b.rol,
-                                a.jml_rol,
-                                a.qty,
-                                if(a.jml_rol>0,CONCAT(a.jml_rol,'x',a.qty),CONCAT(b.rol,'x',b.bruto)) as qty_bruto,
-                                a.yard,
-                                b.pjng_order,
-                                b.tgl_mulai,
-                                b.tgl_stop,
-                                b.istirahat,
-                                b.lembap_fin,
-                                b.lembap_qcf,
-                                b.nokk,
-                                b.nodemand,
-                                b.qty_loss,
-                                b.note_loss,
-                                a.catatan,
-                                TIMESTAMPDIFF(
-                                MINUTE,
-                                b.tgl_mulai,b.tgl_stop) as waktu,
-                                b.proses,
-                                c.status_produk,
-                                IF
-                                ( c.status_produk = '1', 'OK', IF(c.status_produk = '2', 'TK','PR')) AS sts,
-                            IF
-                                (
-                                NOT c.no_gerobak6 = '',
-                                CONCAT( no_gerobak1, '+', no_gerobak2, '+', no_gerobak3, '+', no_gerobak4, '+', no_gerobak5, '+', no_gerobak6 ),
-                            IF
-                                (
-                                NOT c.no_gerobak5 = '',
-                                CONCAT( no_gerobak1, '+', no_gerobak2, '+', no_gerobak3, '+', no_gerobak4, '+', no_gerobak5 ),
-                            IF
-                                (
-                                NOT c.no_gerobak4 = '',
-                                CONCAT( no_gerobak1, '+', no_gerobak2, '+', no_gerobak3, '+', no_gerobak4 ),
-                            IF
-                                (
-                                NOT c.no_gerobak3 = '',
-                                CONCAT( no_gerobak1, '+', no_gerobak2, '+', no_gerobak3 ),
-                            IF
-                                (
-                                NOT c.no_gerobak2 = '',
-                                CONCAT( no_gerobak1, '+', no_gerobak2 ),
-                            IF
-                                ( NOT c.no_gerobak1 = '', c.no_gerobak1, '' ) 
-                                ) 
-                                ) 
-                                ) 
-                                ) 
-                                ) AS no_grobak 
-                            FROM
-                                tbl_inspection a
-                                INNER JOIN tbl_schedule b ON a.id_schedule = b.id
-                                INNER JOIN tbl_gerobak c ON c.id_schedule = b.id
-                            WHERE
-                                a.`status`='selesai' and
-                                a.tgl_buat >= '$start' AND a.tgl_buat < '$end'
-                            ORDER BY
-                                a.id ASC"
+        $sql_keluar = " SELECT 
+                COUNT(DISTINCT a.personil) as inspektor, 
+                SUM( a.qty ) AS bruto, 
+                SUM( a.yard ) AS panjang, b.g_shift, 
+                SUM(IF(c.status_produk = '1' AND (b.proses='Inspect Finish' OR b.proses='Inspect Packing' OR b.proses='Inspect White' OR b.proses='Inspect Qty Kecil'),a.qty,0)) AS `sts_ok`, 
+                SUM(IF(c.status_produk = '2' AND (b.proses='Inspect Finish' OR b.proses='Inspect Packing' OR b.proses='Inspect White' OR b.proses='Inspect Qty Kecil'),a.qty,0)) AS `sts_x`, 
+                SUM(IF(c.status_produk = '3' AND (b.proses='Inspect Finish' OR b.proses='Inspect Packing' OR b.proses='Inspect White' OR b.proses='Inspect Qty Kecil'),a.qty,0)) AS `sts_pr`, 
+                SUM(if(b.proses='Inspect Finish',a.qty,0)) as sts_fin, 
+                SUM(if(b.proses='Inspect Oven',a.qty,0)) as sts_oven, 
+                SUM(if(b.proses='Pisah',a.qty,0)) as sts_pisah, 
+                SUM(if(b.proses='Perbaikan' OR b.proses='Perbaikan Grade' OR b.proses='Tandai Defect' OR b.proses='Inspect Ulang (Setelah Perbaikan)',a.qty,0)) as sts_perbaikan, 
+                SUM(if(b.proses='Kragh',a.qty,0)) as sts_kragh, 
+                SUM(a.qty) as sts_tot, 
+                SUM(a.yard) as sts_yard
+            FROM 
+                tbl_inspection a 
+            INNER JOIN 
+                tbl_schedule b ON a.id_schedule = b.id
+            INNER JOIN 
+                tbl_gerobak c ON c.id_schedule = b.id 
+            WHERE 
+                a.tgl_buat >= '$start' AND a.tgl_buat < '$end'
+            GROUP BY 
+                b.g_shift"
         ;
 
+        $result_keluar = mysqli_query($con_db_qc, $sql_keluar);
+        if (!$result_keluar) {
+            die("Query gagal: " . mysqli_error($con_db_qc));
+        }
+
+        $INSPEK_KELUAR = 0;
+		$PERBAIKAN_KELUAR = 0;
+
+        while ($row1 = mysqli_fetch_array($result_keluar)) {
+            $INSPEK_KELUAR += $row1['sts_tot'];
+            $PERBAIKAN_KELUAR += $row1['sts_perbaikan'];
+        }
+        
         $sql_keluar_packing = " SELECT 
-            tgl_update, jam_update, jml_roll, bruto 
+            tgl_update, jam_update, jml_roll, bruto, netto
             FROM 
                 tbl_lap_inspeksi 
             where 
@@ -211,53 +172,6 @@
                 STR_TO_DATE(CONCAT(tgl_update, ' ', jam_update), '%Y-%m-%d %H:%i:%s') < '$end'
         ";
 
-        $result_keluar = mysqli_query($con_db_qc, $sql_keluar);
-        if (!$result_keluar) {
-            die("Query gagal: " . mysqli_error($con_db_qc));
-        }
-
-        $keluar_map = [
-            'Inspect Finish'                            => 'INSPEK_KELUAR',
-            'Inspect Oven'                              => 'INSPEK_KELUAR',
-            'Perbaikan'                                 => 'INSPEK_KELUAR',
-            'Packing'                                   => 'INSPEK_KELUAR',
-            'Kragh'                                     => 'INSPEK_KELUAR',
-            'Pisah'                                     => 'INSPEK_KELUAR',
-            'Inspect Qty Kecil'                         => 'INSPEK_KELUAR',
-            'Inspect White'                             => 'INSPEK_KELUAR',
-            'Inspect Packing'                           => 'INSPEK_KELUAR',
-            'Perbaikan Grade'                           => 'INSPEK_KELUAR',
-            'Tandai Defect'                             => 'INSPEK_KELUAR',
-            'Inspect Ulang (Setelah Perbaikan)'         => 'INSPEK_KELUAR'
-        ];
-
-        if (mysqli_num_rows($result_keluar) > 0) {
-            while ($row = mysqli_fetch_assoc($result_keluar)) {
-                $proses    = $row['proses'];
-                $no_mesin  = $row['no_mesin'];
-                $jml_rol   = $row['jml_rol'];
-                $qty_raw   = $row['qty'];
-                $bruto     = $row['bruto'];
-
-                $qty = ($jml_rol > 0) ? $qty_raw : $bruto;
-
-                $no_mesin = substr($no_mesin, 0, 5); 
-
-                if (isset($keluar_map[$proses])) {
-                    if (is_array($keluar_map[$proses])) {
-                        if (isset($keluar_map[$proses][$no_mesin])) {
-                            $varName = $keluar_map[$proses][$no_mesin];
-                            $$varName += $qty;
-                        }
-                    } else {
-                        $varName = $keluar_map[$proses];
-                        $$varName += $qty;
-                    }
-                }
-            }
-        }
-
-
         $result_packing = mysqli_query($con_db_qc, $sql_keluar_packing);
         if (!$result_packing) {
             die("Query PACKING gagal: " . mysqli_error($con_db_qc));
@@ -267,7 +181,7 @@
 
         if (mysqli_num_rows($result_packing) > 0) {
             while ($row = mysqli_fetch_assoc($result_packing)) {
-                $qty = $row['bruto'];
+                $qty = $row['netto'];
                 $PACKING_KELUAR += $qty;
             }
         }

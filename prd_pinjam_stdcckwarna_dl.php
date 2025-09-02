@@ -2,19 +2,20 @@
 require_once "koneksi.php";
 include "utils/helper.php";
 $date = date('Y-m-d H:i:s');
-$q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
+$menu = 'prd_pinjam_stdcckwarna_dl.php'; // Set the menu for this login
+$q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
 $data_login     = sqlsrv_fetch_array($q_cek_login);
 if ($data_login['COUNT'] == '1') {
-    $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
+    $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
     $data_waktu_login     = sqlsrv_fetch_array($q_waktu_cek_login);
     if ($data_waktu_login['selisih_menit'] > 30) {
-        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
+        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
         header("Location: Login_prd_pinjam_stdcckwarna_dl.php");
         exit();
     } else {
         sqlsrv_query($con_nowprd, "UPDATE nowprd.log_activity_users
                                         SET CREATEDATETIME = '$date'
-                                        WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
+                                        WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND menu = '$menu'");
     }
 } else {
     header("Location: Login_prd_pinjam_stdcckwarna_dl.php");

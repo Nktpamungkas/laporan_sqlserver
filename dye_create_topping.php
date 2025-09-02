@@ -1,7 +1,49 @@
 <?php
+    session_start();
     require_once "koneksi.php";
     include "utils/helper.php";
+    $menu = 'dye_create_topping.php'; // Set the menu for this login
     $date = date('Y-m-d H:i:s');
+    $loggedInUser = $_SESSION['username'];
+
+    // Daftar option yang diizinkan
+    $allowed_options = ['toping', 'adjust']; // ganti sesuai kebutuhan
+
+    // Cek apakah ada parameter option dan valid
+    if (!isset($_GET['option']) || !in_array($_GET['option'], $allowed_options)) {
+        // Logout: hapus log_activity_users untuk IP & menu ini
+        sqlsrv_query(
+            $con_nowprd,
+            "DELETE FROM nowprd.log_activity_users WHERE [user] = ? AND menu = ?",
+            [$loggedInUser, $menu]
+        );
+        header("Location: login_toping.php");
+        exit();
+    }
+
+    // Tidak ada session, cek apakah IP-nya masih terdaftar di log
+    $q_cek_login = sqlsrv_query(
+        $con_nowprd,
+        "SELECT COUNT(*) OVER() AS COUNT, DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit
+        FROM nowprd.log_activity_users
+        WHERE [user] = ? AND menu = ?",
+        [$loggedInUser, $menu]
+    );
+    $data_login = sqlsrv_fetch_array($q_cek_login);
+
+    if ($data_login['COUNT'] == 1 && $data_login['selisih_menit'] > 15) {
+        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE [user] = ? AND menu = ?", [$loggedInUser, $menu]);
+        header("Location: login_toping.php");
+        exit();
+    } else if (empty($data_login['COUNT'])) {
+        header("Location: login_toping.php");
+        exit();
+    }
+
+
+
+    // Ambil data dari session
+    $option = $_GET['option'];
 
     $recipe_code    = $_POST['recipecode'] ?? null;
     $suffix         = $_POST['suffixcode'] ?? null;
@@ -121,6 +163,8 @@
                                                         <div class="col-sm-6">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="recipecode_new" id="recipecode_new" onkeydown="cekBonResep()" placeholder="Recipe Code">
                                                         </div>
+                                                        <input type="text" class="form-control form-control-sm form-control-danger" name="user_login" id="user_login" 
+                                                            placeholder="User" value="<?php echo htmlspecialchars($loggedInUser); ?>" hidden>
                                                         <div class="col-sm-6">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="suffix_new" id="suffix_new" onkeydown="cekBonResep()" placeholder="Suffix">
                                                         </div>
@@ -129,9 +173,28 @@
                                                         <div class="col-sm-4">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="long_new" id="long_new" onkeydown="cekBonResep()" placeholder="Long Description*">
                                                         </div>
+                                                    <?php if($option == 'Toping' or $option == 'toping'):?>
                                                         <div class="col-sm-4">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="short_new" id="short_new" onkeydown="cekBonResep()" placeholder="Short Description">
                                                         </div>
+                                                    <?php endif;?>
+                                                    <?php if($option == 'Adjust' or $option == 'adjust'):?>
+                                                        <div class="col-sm-4">
+                                                            <select class="form-control form-control-sm form-control-danger" name="short_new" id="short_new" onchange="cekBonResep()">
+                                                                <option value="">-- Pilih Colorist --</option>
+                                                                <?php
+                                                                $queryColorist = "SELECT * FROM tbl_user WHERE jabatan = 'Colorist' AND status = 'Aktif' ORDER BY username ASC";
+                                                                $stmtColorist = mysqli_query($con_db_lab, $queryColorist);
+                                                                if(mysqli_num_rows($stmtColorist) > 0) {
+                                                                    while ($colorist = mysqli_fetch_assoc($stmtColorist)) {
+                                                                        $selected = (isset($_POST['short_new']) && $_POST['short_new'] == $colorist['username']) ? 'selected' : '';
+                                                                        echo '<option value="'.htmlspecialchars($colorist['username']).'" '.$selected.'>'.htmlspecialchars($colorist['username']).'</option>';
+                                                                    }
+                                                                }
+                                                                ?>
+                                                            </select>
+                                                        </div>
+                                                    <?php endif;?>
                                                         <div class="col-sm-4">
                                                             <input type="text" class="form-control form-control-sm form-control-danger" name="search_new" id="search_new" onkeydown="cekBonResep()" placeholder="Search Description">
                                                         </div>
@@ -177,6 +240,7 @@
                                             <button type="button" id="exsecute" class="btn btn-danger btn-sm text-black" disabled>
                                                 <strong>SUBMIT FOR IMPORT TO NOW ! <i class="fa fa-save"></i></strong>
                                             </button>
+                                            <!-- buat tes tobi -->
                                             <!-- <button class="btn btn-primary" onclick="generateInsertQueries()">Simpan Semua</button> -->
                                         </center>
 
@@ -191,7 +255,7 @@
     </div>
 </body>
 <?php require_once 'footer.php'; ?>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 <!-- Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -200,6 +264,7 @@
 
 <!-- Script Untuk Save Header -->
 <script>
+    const option = <?= json_encode($_SESSION['option'] ?? $_GET['option'] ?? 'Toping') ?>;
     $(document).ready(function() {
         $('#confirmCheck').on('change', function() {
             $('#exsecute').prop('disabled', !this.checked);
@@ -212,7 +277,8 @@
             long_new: $('#long_new').val(),
             short_new: $('#short_new').val(),
             search_new: $('#search_new').val(),
-            lr_new: $('#lr_new').val()
+            lr_new: $('#lr_new').val(),
+            user_login: $('#user_login').val()
         };
 
         if (formData.recipe_code_new && formData.suffix_new) {
@@ -243,7 +309,7 @@
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                location.reload();
+                                window.location.href = "dye_create_topping.php?option=" + option;
                             });
                         },
                         error: function (xhr, status, error) {
@@ -398,7 +464,7 @@
     const newRow = {
         Gr: maxGr + 1,
         GrTp: '201',
-        Sq: 10,
+        Sq: 0,
         SubSq: 10,
         IT: 'RFF',
         ItemCode: '',
@@ -420,9 +486,9 @@
 
 <!-- Untuk Update GroupType -->
 <script>
-    function updateGrTp(selectEl, gr) {
+    function updateGrTp(selectEl, gr, sq) {
         const value = selectEl.value;
-        const index = data.findIndex(item => item.Gr === gr);
+            const index = data.findIndex(item => item.Gr == gr && item.Sq == sq);
         if (index !== -1) {
             data[index].GrTp = value;
             data[index].IT =
@@ -442,31 +508,45 @@
     tableBody.innerHTML = "";
 
     // Pastikan .Gr berupa number agar sort bisa berfungsi benar
-    data.sort((a, b) => parseInt(a.Gr) - parseInt(b.Gr));
+    data.sort((a, b) => {
+        const grDiff = parseInt(a.Gr) - parseInt(b.Gr);
+        if (grDiff !== 0) return grDiff; // Urutkan Gr dulu jika berbeda
+        return parseInt(a.Sq) - parseInt(b.Sq); // Jika Gr sama, urutkan Sq
+    });
 
     data.forEach((row, index) => {
         const tr = document.createElement("tr");
         // Hilangin dulu yang option row.GrTp Instruction 
         // <option value="100" ${row.GrTp === '100' ? 'selected' : ''}>100 (Instruction)</option>
+        // ${row.Comment ?? ''}
+        // <td>${row.IT === ''? row.IT: `<input type="text" value="${row.IT}" readonly>`}</td>
         tr.innerHTML = `
-            <td>${row.IT === ''? row.Gr: `<input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value)">`}
+            <td>
+                <input type="number" class="input-field gr-input" style="width: 65px;" value="${row.Gr}" onchange="updateGr(${row.Gr}, this.value, ${row.Sq}, ${row.GrTp} )">
             </td>
-            <td>${
-                row.IT === ''
-                ? row.GrTp : `<select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr})">
-                    <option value="010" ${row.GrTp === '010' ? 'selected' : ''}>010 (Binder-Filler)</option>
-                    <option value="201" ${row.GrTp === '201' ? 'selected' : ''}>201 (Sub Recipe - Fabric Dye)</option>
+            <td>
+                <select class="dropdown" data-oldgr="${row.Gr}" onchange="updateGrTp(this, ${row.Gr}, ${row.Sq})">
                     <option value="001" ${row.GrTp === '001' ? 'selected' : ''}>001 (Dyestuff/Chemical)</option>
-                    </select>`}
+                    <option value="201" ${row.GrTp === '201' ? 'selected' : ''}>201 (Sub Recipe - Fabric Dye)</option>
+                    <option value="100" ${row.GrTp === '100' ? 'selected' : ''}>100 (Instruction)</option>
+                    <option value="010" ${row.GrTp === '010' ? 'selected' : ''}>010 (Binder-Filler)</option>
+                </select>
             </td>
-            <td>${row.IT === ''? row.Sq: `<input type="number" value="${row.Sq}" onchange="updateField(${row.Gr}, 'Sq', this.value)">`}</td>
-            <td>${row.IT === ''? row.SubSq: `<input type="number" value="${row.SubSq}" onchange="updateField(${row.Gr}, 'SubSq', this.value)">`}</td>
-            <td>${row.IT === ''? row.IT: `<input type="text" value="${row.IT}" readonly>`}</td>
-            <td>${row.IT === ''? row.ItemCode: `<select class="select2-itemcode" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
-                                ${row.ItemCode ? `<option value="${row.ItemCode}" selected>${row.ItemCode}</option>` : ''}</select>`}
+            <td>
+                <input type="number" value="${row.Sq}" onchange="updateSq(${row.Gr}, ${row.Sq}, this.value)">
+            </td>
+            <td><input type="number" value="${row.SubSq}" onchange="updateField(${row.Gr}, 'SubSq', this.value)"></td>
+            <td style="width: 80px">${row.IT ?? ''}</td>
+            <td>
+                ${row.IT === ''? row.ItemCode: `<select class="select2-itemcode" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
+                ${row.ItemCode ? `<option value="${row.ItemCode}" selected>${row.ItemCode}</option>` : ''}</select>`}
             </td>
             <td>${row.SuffixCode ?? ''}</td>
-            <td>${row.Comment ?? ''}</td>
+            <td>
+                ${row.IT !== ''? row.Comment: `<select class="select2-comment" data-gr="${row.Gr}" data-grouptype="${row.GrTp}" style="width: 150px">
+                ${row.Comment ? `<option value="${row.Comment}" selected>${row.Comment}</option>` : ''}</select>`}
+                
+            </td>
             <td>${row.Description ?? ''}</td>
             <td>${row.IT !== 'DYC'? '': `<select onchange="updateField(${row.Gr}, 'ConsType', this.value)" ${row.IT !== 'DYC' ? 'disabled' : ''}>
                     <option value="" ${row.ConsType === '' ? "selected" : ""}></option>
@@ -483,6 +563,7 @@
 
         tableBody.appendChild(tr);
         initSelect2ForItemCode(tr.querySelector(".select2-itemcode"), index);
+        initSelect2ForComment(tr.querySelector(".select2-comment"), index);
 
         if (row.IT === 'RFF') {
             loadRffDetail(row.ItemCode, row.SuffixCode, row.Gr, tr);
@@ -493,10 +574,66 @@
 
 <!-- Untuk Urutin berdasarkan Gr -->
 <script>
-    function updateGr(oldGr, newGr) {
-    const index = data.findIndex(item => item.Gr === oldGr);
+    function updateGr(oldGr, newGr, sq, selectEl) {
+    // Convert to numbers for consistent comparison
+    const oldGrNum = Number(oldGr);
+    const newGrNum = Number(newGr) || 0;
+    const sqNum = Number(sq);
+    const GrTp = Number(selectEl);
+    
+    // Find the exact item to update
+    const index = data.findIndex(item => 
+        Number(item.Gr) === oldGrNum && 
+        Number(item.Sq) === sqNum &&
+        Number(item.GrTp) === GrTp
+    );
+    
     if (index !== -1) {
-        data[index].Gr = parseInt(newGr);
+        // Update the Gr value
+        data[index].Gr = newGrNum;
+        
+        // Re-sort the data
+        data.sort((a, b) => {
+            const grDiff = Number(a.Gr) - Number(b.Gr);
+            return grDiff !== 0 ? grDiff : Number(a.Sq) - Number(b.Sq);
+        });
+        
+        populateTable();
+    }
+ }
+</script>
+
+<!-- Urutin Berdasarkan Sq -->
+ <script>
+//     function updateSq(grValue, field, newSqValue) {
+//     // Cari index data berdasarkan Gr (karena Sq bisa sama di Gr berbeda)
+//     const index = data.findIndex(item => item.Sq == grValue && item[field] == this.previousValue);
+    
+//     if (index !== -1) {
+//         // Update nilai Sq
+//         data[index][field] = parseInt(newSqValue);
+//         populateTable(); // Refresh tabel
+//     }
+// }
+function updateSq(grValue, sqValue, newSqValue) {
+    // Cari item spesifik berdasarkan Gr dan Sq
+    const index = data.findIndex(item => 
+        item.Gr == grValue && 
+        item.Sq == sqValue
+    );
+    
+    if (index !== -1) {
+        // Update nilai Sq
+        data[index].Sq = parseInt(newSqValue) || 0;
+        
+        // Urutkan ulang data dalam Gr yang sama
+        data.sort((a, b) => {
+            if (a.Gr == b.Gr) {
+                return parseInt(a.Sq) - parseInt(b.Sq);
+            }
+            return parseInt(a.Gr) - parseInt(b.Gr);
+        });
+        
         populateTable();
     }
     }
@@ -548,6 +685,82 @@
         row.Cons = '0.00000';
 
         row.ItemCode = selected.id;
+        row.Subcode01 = selected.subcode01;
+        row.Subcode02 = selected.subcode02 || '';
+        row.Subcode03 = selected.subcode03 || '';
+        row.SuffixCode = selected.suffixcode;
+        row.Description = selected.longdescription || '';
+        row.Comment = selected.commentline || '';
+        row.UoM = selected.uom || '';
+        row.Cons = formatDecimal(selected.consumption) || '';
+
+        populateTable();
+    });
+
+    $(selectElement).on('select2:unselect', function () {
+        const row = data[rowIndex];
+        if (row) {
+            row.ItemCode = '';
+            row.Subcode01 = '';
+            row.Subcode02 = '';
+            row.Subcode03 = '';
+            row.SuffixCode = '';
+            row.Description = '';
+            row.Comment = '';
+            row.UoM = '';
+            row.Cons = '0.00000';
+            populateTable();
+        }
+    });   
+    }
+</script>
+
+<!-- Untuk Select2 Comment -->
+<script>
+    function initSelect2ForComment(selectElement, rowIndex) {
+    $(selectElement).select2({
+        theme: 'bootstrap4',
+        placeholder: '',
+        allowClear: true,
+        minimumInputLength: 1,
+        ajax: {
+            url: 'ajax/search_recipe.php',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                const row = data[rowIndex];
+                const groupTypeCode = row?.GrTp || '';
+                console.log('Kirim GROUPTYPECODE:', groupTypeCode, 'Row Index:', params.term);
+                return {
+                    q: params.term,
+                    GROUPTYPECODE: groupTypeCode
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+
+    $(selectElement).on('select2:select', function (e) {
+        const selected = e.params.data;
+        const row = data[rowIndex];
+        if (!row) return;
+
+        row.ItemCode = '';
+        row.Subcode01 = '';
+        row.Subcode02 = '';
+        row.Subcode03 = '';
+        row.SuffixCode = '';
+        row.Description = '';
+        row.Comment = '';
+        row.UoM = '';
+        row.Cons = '0.00000';
+
+        row.ItemCode = '';
         row.Subcode01 = selected.subcode01;
         row.Subcode02 = selected.subcode02 || '';
         row.Subcode03 = selected.subcode03 || '';
@@ -813,7 +1026,6 @@ async function generateInsertQueries() {
 }
 
 // await updateAutoCounter(autoCounter);
-
 
 </script>
 

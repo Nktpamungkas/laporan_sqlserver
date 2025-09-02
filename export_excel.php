@@ -11,6 +11,7 @@ require_once "koneksi.php";
     class="table table-striped table-bordered nowrap">
     <thead>
         <tr align="center">
+            <th>TANGGAL</th>
             <th>PRODUCTION ORDER</th>
             <th>PRODUCTION DEMAND</th>
             <th>NO PROJECT</th>
@@ -58,7 +59,7 @@ require_once "koneksi.php";
                 LEFT JOIN PRODUCTIONORDER p4 ON p4.CODE = p.PRODUCTIONORDERCODE 
                 LEFT JOIN PRODUCTIONDEMAND p5 ON p5.CODE = p3.PRODUCTIONDEMANDCODE 
                 WHERE
-                    CAST(p.CREATIONDATETIME AS DATE) = '$_GET[date]'
+                    CAST(p.CREATIONDATETIME AS DATE) BETWEEN '$_GET[date]' AND  '$_GET[date2]'
                     AND NOT p.OPERATIONCODE IN ('RTW1', 'AKJ1', 'AKJ2', 'AKW1', 'AMC', 'BAT1', 'BAT3', 'BBS1', 'BBS2', 'BBS3', 'BBS4', 'BBS5', 'BBS6', 'BBS7', 'BBS8', 'BBS9', 
                                             'BKR1', 'BLD1', 'BLD2', 'BLD3', 'BLD4', 'BLP1', 'BRD1', 'BS10', 'BS11', 'BS12', 'CCK1', 'CCK10', 'CCK2', 'CCK3', 'CCK4', 'CCK5', 
                                             'CCK6', 'CCK7', 'CCK8', 'CCK9', 'CNP1', 'DIP1', 'DRY1', 'DY1-001', 'DY1-002', 'DY1-003', 'DY1-004', 'DY1-005', 'DY1-006', 'GKF1', 
@@ -150,6 +151,7 @@ require_once "koneksi.php";
             <tr>
                 <!-- <td>'<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td> -->
                 <!-- <td>'<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td> -->
+                <td>'<?= $row_timbang['CREATIONDATETIME']; ?></td>
                 <td> <a target="_BLANK" href="https://online.indotaichen.com/nowgerobak/HasilTimbang-<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONORDERCODE']; ?></td>
                 <td> <a target="_BLANK" href="https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?= $row_timbang['PRODUCTIONORDERCODE']; ?>">`<?= $row_timbang['PRODUCTIONDEMANDCODE']; ?></td>
                 <td><?= $row_timbang['ORIGDLVSALORDLINESALORDERCODE']; ?></td>

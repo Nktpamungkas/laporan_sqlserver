@@ -98,9 +98,9 @@
                                                                             TRIM(i.SUBCODE02) || '-' || TRIM(i.SUBCODE03) AS ITEM,
                                                                             i.WARNA,
                                                                             ROUND(i.BASEPRIMARYQUANTITY) AS NETTO,
-                                                                            SUM(qb.KFF) AS BRUTO,
+                                                                            SUM(COALESCE(a2.VALUEDECIMAL, qb.KFF)) AS BRUTO,
                                                                             SUM(p2.USEDUSERPRIMARYQUANTITY) AS SUDAH_BAGI_KAIN,
-                                                                            SUM(qb.KFF) - SUM(p2.USEDUSERPRIMARYQUANTITY) AS BALANCE_BELUM_BAGI_KAIN
+                                                                            SUM(COALESCE(a2.VALUEDECIMAL, qb.KFF)) - SUM(p2.USEDUSERPRIMARYQUANTITY) AS BALANCE_BELUM_BAGI_KAIN
                                                                         FROM
                                                                             ITXVIEWBONORDER i 
                                                                         LEFT JOIN PRODUCTIONDEMAND p ON p.CODE = i.DEMAND 
@@ -117,6 +117,7 @@
                                                                                                 AND i2.SUBCODE09 = i.SUBCODE09 
                                                                                                 AND i2.SUBCODE10 = i.SUBCODE10
                                                                         LEFT JOIN QTY_BRUTO qb ON qb.ORIGDLVSALORDLINESALORDERCODE = i.SALESORDERCODE AND qb.ORIGDLVSALORDERLINEORDERLINE = i.ORDERLINE AND qb.CODE = p.CODE
+                                                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalBruto'
                                                                         LEFT JOIN PRODUCTIONRESERVATION p2 ON p2.ORDERCODE = i.DEMAND AND p2.ITEMTYPEAFICODE = 'KGF'
                                                                         WHERE 
                                                                             i.SALESORDERCODE = '$no_order'
