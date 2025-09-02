@@ -14,14 +14,14 @@
     $delete = "DELETE FROM tmp_cari_gerobak_otomatis";
     mysqli_query($con_now_gerobak, $delete);
 
-    function tmpData($operation, $departemen, $qty, $jml, $gerobak)
+    function tmpData($operation, $departemen, $qty, $jml, $gerobak,$status)
     {
         global $con_now_gerobak;
 
         if (! empty($operation) || ! empty($departemen)) {
             $sql = "INSERT INTO tmp_cari_gerobak_otomatis (OPERATION, DEPARTEMEN,
-            QTY, JML_GEROBAK,GEROBAK)
-                    VALUES ('$operation', '$departemen', $qty, $jml,'$gerobak')";
+            QTY, JML_GEROBAK,GEROBAK,STATUS)
+                    VALUES ('$operation', '$departemen', $qty, $jml,'$gerobak','$status')";
             mysqli_query($con_now_gerobak, $sql);
         }
     }
@@ -365,6 +365,7 @@
                     $qty_choice       = 0;
                     $jml_choice       = 0;
                     $gerobak_choice   = "";
+                    $status_choice    = "";
                 ?>
                 <td><?php echo $row_iptip['STEPNUMBER'] ?></td>
                 <td><?php echo $row_iptip['HANGER'] ?> -<?php echo $row_iptip['SUBCODE06'] ?></td>
@@ -393,7 +394,14 @@
                             echo 'style="background-color:#41CC11;"';
                         } else {
                             echo 'style="background-color:#CECECE;"';
-                    }
+                        }
+
+                        if ($row_iptip['STATUS_OPERATION'] == 'Progress') {
+                            $status_choice = $row_iptip['STATUS_OPERATION'];
+                        } elseif ($row_iptip['STATUS_OPERATION'] == 'Entered') {
+                            $status_choice = $row_iptip['STATUS_OPERATION'];
+                        }
+
                     ?>>
                     <center><?php echo $row_iptip['STATUS_OPERATION']; ?></center>
                 </td>
@@ -502,7 +510,7 @@
                 </td>
                 <?php
                     tmpData($operation_choice, $dept_choice,
-                        $qty_choice, $jml_choice, $gerobak_choice);
+                        $qty_choice, $jml_choice, $gerobak_choice,$status_choice);
                 ?>
             </tr>
 <?php else: ?>
@@ -519,6 +527,8 @@
                     $qty_choice       = 0;
                     $jml_choice       = 0;
                     $gerobak_choice   = "";
+                    $status_choice    = "";
+
                 ?>
                     <td><?php echo $row_iptip['STEPNUMBER'] ?></td>
                     <td><?php echo $row_iptip['HANGER'] ?> -<?php echo $row_iptip['SUBCODE06'] ?></td>
@@ -547,7 +557,13 @@
                                 echo 'style="background-color:#41CC11;"';
                             } else {
                                 echo 'style="background-color:#CECECE;"';
-                        }
+                            }
+
+                            if ($row_iptip['STATUS_OPERATION'] == 'Progress') {
+                                $status_choice = $row_iptip['STATUS_OPERATION'];
+                            } elseif ($row_iptip['STATUS_OPERATION'] == 'Entered') {
+                                $status_choice = $row_iptip['STATUS_OPERATION'];
+                            }
                         ?>>
                         <center><?php echo $row_iptip['STATUS_OPERATION']; ?></center>
                     </td>
@@ -629,7 +645,7 @@
                     </td>
                     <?php
                         tmpData($operation_choice, $dept_choice,
-                            $qty_choice, $jml_choice, $gerobak_choice);
+                            $qty_choice, $jml_choice, $gerobak_choice,$status_choice);
                     ?>
                 </tr>
 <?php else: ?>
