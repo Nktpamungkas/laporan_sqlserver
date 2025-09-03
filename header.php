@@ -44,6 +44,7 @@
     <?php
         $current_page = basename($_SERVER['PHP_SELF']);
         $active_pages_ppc = ['ppc_filter.php', 
+                            'login_ppc_laporan_summary_order_ppc.php',
                             'ppc_filter_order_perminggu.php', 
                             'ppc_filter_persediaan_kain_jadi.php', 
                             'ppc_filter_poselesai.php', 
@@ -134,6 +135,11 @@
                                     <span class="pcoded-mcaret"></span>
                                 </a>
                                 <ul class="pcoded-submenu">
+                                    <li <?= ($current_page == 'login_ppc_laporan_summary_order_ppc.php') ? $style_active_ppc : ''; ?>>
+                                        <a href="login_ppc_laporan_summary_order_ppc.php" data-i18n="nav.animations.main">
+                                            Laporan Summary Order PPC 
+                                        </a>
+                                    </li>
                                     <li <?= ($current_page == 'ppc_filter.php') ? $style_active_ppc : ''; ?>>
                                         <a href="ppc_filter.php" data-i18n="nav.animations.main">
                                             Memo Penting
