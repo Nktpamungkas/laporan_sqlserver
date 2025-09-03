@@ -14,14 +14,16 @@
     $delete = "DELETE FROM tmp_cari_gerobak_otomatis";
     mysqli_query($con_now_gerobak, $delete);
 
-    function tmpData($operation, $departemen, $qty, $jml, $gerobak,$status)
+    function tmpData($operation, $departemen, $qty, $jml, $gerobak,
+    $status,$productionordercode,$productiondemandcode)
     {
         global $con_now_gerobak;
 
         if (! empty($operation) || ! empty($departemen)) {
             $sql = "INSERT INTO tmp_cari_gerobak_otomatis (OPERATION, DEPARTEMEN,
-            QTY, JML_GEROBAK,GEROBAK,STATUS)
-                    VALUES ('$operation', '$departemen', $qty, $jml,'$gerobak','$status')";
+            QTY, JML_GEROBAK,GEROBAK,STATUS,PRODUCTIONORDERCODE,PRODUCTIONDEMANDCODE)
+                    VALUES ('$operation', '$departemen', $qty, $jml,
+                    '$gerobak','$status','$productionordercode','$productiondemandcode')";
             mysqli_query($con_now_gerobak, $sql);
         }
     }
@@ -366,13 +368,22 @@
                     $jml_choice       = 0;
                     $gerobak_choice   = "";
                     $status_choice    = "";
+                    $productionordercode_choice="";
+                    $productiondemandcode_choice="";
                 ?>
                 <td><?php echo $row_iptip['STEPNUMBER'] ?></td>
                 <td><?php echo $row_iptip['HANGER'] ?> -<?php echo $row_iptip['SUBCODE06'] ?></td>
                 <td><?php echo $row_iptip['NO_WARNA']; ?></td>
                 <td><?php echo $row_iptip['WARNA']; ?></td>
                 <td><?php echo $row_iptip['PRODUCTIONORDERCODE'] ?></td>
-                <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?php echo $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?php echo $row_iptip['PRODUCTIONORDERCODE']; ?>"><?php echo $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
+                <td>
+                    <a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?php echo $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?php echo $row_iptip['PRODUCTIONORDERCODE']; ?>"><?php echo $row_iptip['PRODUCTIONDEMANDCODE'] ?>
+                    </a>
+                    <?php
+                        $productionordercode_choice  = $row_iptip['PRODUCTIONORDERCODE'];
+                        $productiondemandcode_choice = $row_iptip['PRODUCTIONDEMANDCODE'];
+                    ?>
+                </td>
                 <td align="center">
                     <?php
                         $operation_choice = $row_iptip['OPERATIONCODE'];
@@ -510,7 +521,8 @@
                 </td>
                 <?php
                     tmpData($operation_choice, $dept_choice,
-                        $qty_choice, $jml_choice, $gerobak_choice,$status_choice);
+                        $qty_choice, $jml_choice, $gerobak_choice,$status_choice,
+                        $productionordercode_choice,$productiondemandcode_choice);
                 ?>
             </tr>
 <?php else: ?>
@@ -528,14 +540,22 @@
                     $jml_choice       = 0;
                     $gerobak_choice   = "";
                     $status_choice    = "";
-
+                    $productionordercode_choice  = "";
+                    $productiondemandcode_choice = "";
                 ?>
                     <td><?php echo $row_iptip['STEPNUMBER'] ?></td>
                     <td><?php echo $row_iptip['HANGER'] ?> -<?php echo $row_iptip['SUBCODE06'] ?></td>
                     <td><?php echo $row_iptip['NO_WARNA']; ?></td>
                     <td><?php echo $row_iptip['WARNA']; ?></td>
                     <td><?php echo $row_iptip['PRODUCTIONORDERCODE'] ?></td>
-                    <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?php echo $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?php echo $row_iptip['PRODUCTIONORDERCODE']; ?>"><?php echo $row_iptip['PRODUCTIONDEMANDCODE'] ?></a></td>
+                    <td>
+                        <a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?php echo $row_iptip['PRODUCTIONDEMANDCODE']; ?>&prod_order=<?php echo $row_iptip['PRODUCTIONORDERCODE']; ?>"><?php echo $row_iptip['PRODUCTIONDEMANDCODE'] ?>
+                        </a>
+                        <?php
+                            $productionordercode_choice=$row_iptip['PRODUCTIONORDERCODE'];
+                            $productiondemandcode_choice=$row_iptip['PRODUCTIONDEMANDCODE'];
+                        ?>
+                    </td>
                     <td align="center">
                         <?php
                             $operation_choice = $row_iptip['OPERATIONCODE'];
@@ -645,7 +665,8 @@
                     </td>
                     <?php
                         tmpData($operation_choice, $dept_choice,
-                            $qty_choice, $jml_choice, $gerobak_choice,$status_choice);
+                            $qty_choice, $jml_choice, $gerobak_choice,$status_choice,
+                            $productionordercode_choice,$productiondemandcode_choice);
                     ?>
                 </tr>
 <?php else: ?>
