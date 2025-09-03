@@ -1,4 +1,32 @@
 <?php
+    session_start();
+    require_once "koneksi.php"; // koneksi ke MySQL
+
+    // --- Ambil IP user
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+
+    // --- Jam masuk (SQL Server akan auto pakai GETDATE(), tapi bisa kirim manual juga)
+    $jamMasuk = date("Y-m-d H:i:s");
+
+    // --- Nama halaman
+    $page = basename(__FILE__);
+
+    // --- Insert log
+    $sql = "INSERT INTO nowprd.log_sales_report (ip_address, access_time, page_name) VALUES (?, ?, ?)";
+    $params = [$ip, $jamMasuk, $page];
+    $stmt = sqlsrv_query($con_nowprd, $sql, $params);
+
+    if ($stmt === false) {
+        die(print_r(sqlsrv_errors(), true));
+    }
+?>
+<?php
     if (isset($_POST['update'])) {
         require_once "koneksi.php";
         $tgl1   = $_POST['tgl1'];
