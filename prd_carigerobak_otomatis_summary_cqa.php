@@ -51,24 +51,25 @@
     $TOLAK_BASAH_QTY   = $TOLAK_BASAH_GEROBAK   = 0;
     $NCP_CQA_QTY      = $NCP_CQA_GEROBAK      = 0;
 
-    function brs_summary($operation, $qty, $jml)
+    function cqa_summary($operation, $qty, $jml)
     {
         global 
-        $COLOR_CHECK_QTY, $COLOR_CHECK_GEROBAK,
-        $ADM_CQA_QTY, $ADM_CQA_GEROBAK,
-        $TOLAK_BASAH_QTY, $TOLAK_BASAH_GEROBAK,
-        $NCP_CQA_QTY, $NCP_CQA_GEROBAK;
+        $COLOR_CHECK_OPR, $COLOR_CHECK_QTY, $COLOR_CHECK_GEROBAK,
+        $ADM_CQA_OPR, $ADM_CQA_QTY, $ADM_CQA_GEROBAK,
+        $TOLAK_BASAH_OPR, $TOLAK_BASAH_QTY, $TOLAK_BASAH_GEROBAK,
+        $NCP_CQA_OPR, $NCP_CQA_QTY, $NCP_CQA_GEROBAK;
 
         $ops = [
             'CCK2'   => 'COLOR_CHECK', 
             'WAIT45' => 'ADM_CQA',
+            'NCP24'   => 'NCP_CQA',
             'TBS1'   => 'TOLAK_BASAH',
-            'NCP14'   => 'NCP_CQA',
         ];
 
         $category = $ops[$operation];
         ${$category . '_QTY'} += $qty;
         ${$category . '_GEROBAK'} += $jml;
+        ${$category . '_OPR'} = $operation;
     }
 
     $sql = "SELECT
@@ -103,7 +104,7 @@
     if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_assoc($result)) {
             if ($row['DEPARTEMEN'] == "CQA") {
-                brs_summary($row['OPERATION'], $row['total_qty'], $row['JML_GEROBAK']);
+                cqa_summary($row['OPERATION'], $row['total_qty'], $row['JML_GEROBAK']);
             }
         }
     }
@@ -119,28 +120,29 @@
 
 <table border="1" cellspacing="0" cellpadding="3">
     <tr>
-        <td colspan="3" align="center" bgcolor="#FFFF00"><b>SISA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 <?php echo $tgl . ' ' . $bln . ' ' . $thn ?> (<?php echo $waktu ?>)</b></td>
+        <td colspan="4" align="center" bgcolor="#FFFF00"><b>SISA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 <?php echo $tgl . ' ' . $bln . ' ' . $thn ?> (<?php echo $waktu ?>)</b></td>
     </tr>
     <tr style="font-weight:bold; background:#f2f2f2;">
         <td align="center">PROSES</td>
+        <td align="center">OPERATION</td>
         <td align="center">QTY</td>
         <td align="center">GEROBAK</td>
     </tr>
     <?php
         $rows = [
-            'COLOR CHECK AFTER FIN'         => [$COLOR_CHECK_QTY, $COLOR_CHECK_GEROBAK],
-            'ADM CQA'                       => [$ADM_CQA_QTY, $ADM_CQA_GEROBAK],
-            'NCP CQA'                       => [$NCP_CQA_QTY, $NCP_CQA_GEROBAK],
-            'TOLAK BASAH CQA'               => [$TOLAK_BASAH_QTY, $TOLAK_BASAH_GEROBAK],
+            'COLOR CHECK AFTER FIN'         => ['CCK2',$COLOR_CHECK_QTY, $COLOR_CHECK_GEROBAK],
+            'ADM CQA'                       => ['WAIT45',$ADM_CQA_QTY, $ADM_CQA_GEROBAK],
+            'NCP CQA'                       => ['NCP24',$NCP_CQA_QTY, $NCP_CQA_GEROBAK],
+            'TOLAK BASAH CQA'               => ['TBS1',$TOLAK_BASAH_QTY, $TOLAK_BASAH_GEROBAK],
         ];
 
-        foreach ($rows as $proses => [$qty, $gerobak]) {
+        foreach ($rows as $proses => [$operation, $qty, $gerobak]) {
             $formattedQty = $qty !== null ? number_format($qty, 2) : '-';
-            echo "<tr><td>$proses</td><td align='center'>$formattedQty</td><td align='center'>" . ($gerobak ?: '-') . "</td></tr>";
+            echo "<tr><td>$proses</td><td align='center'>$operation</td><td align='center'>$formattedQty</td><td align='center'>" . ($gerobak ?: '-') . "</td></tr>";
         }
     ?>
     <tr style="font-weight:bold; background:#f9f9f9;">
-        <td align="center" bgcolor="#FFFF00"><b>TOTAL</b></td>
+        <td align="center" bgcolor="#FFFF00" colspan='2'><b>TOTAL</b></td>
         <td align="center" bgcolor="#FFFF00"><b><?php echo number_format($TOTAL_QTY_SUMMARY, 2) ?></b></td>
         <td align="center" bgcolor="#FFFF00"><b><?php echo $TOTAL_GEROBAK_SUMMARY ?></b></td>
     </tr>
