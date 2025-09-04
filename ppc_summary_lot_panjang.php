@@ -98,9 +98,9 @@
                                                                             TRIM(i.SUBCODE02) || '-' || TRIM(i.SUBCODE03) AS ITEM,
                                                                             i.WARNA,
                                                                             ROUND(i.BASEPRIMARYQUANTITY) AS NETTO,
-                                                                            SUM(COALESCE(a2.VALUEDECIMAL, qb.KFF)) AS BRUTO,
+                                                                            SUM(COALESCE(qb.KFF, p.USERPRIMARYQUANTITY)) AS BRUTO,
                                                                             SUM(p2.USEDUSERPRIMARYQUANTITY) AS SUDAH_BAGI_KAIN,
-                                                                            SUM(COALESCE(a2.VALUEDECIMAL, qb.KFF)) - SUM(p2.USEDUSERPRIMARYQUANTITY) AS BALANCE_BELUM_BAGI_KAIN
+                                                                            SUM(COALESCE(qb.KFF, p.USERPRIMARYQUANTITY)) - SUM(p2.USEDUSERPRIMARYQUANTITY) AS BALANCE_BELUM_BAGI_KAIN
                                                                         FROM
                                                                             ITXVIEWBONORDER i 
                                                                         LEFT JOIN PRODUCTIONDEMAND p ON p.CODE = i.DEMAND 
@@ -121,7 +121,11 @@
                                                                         LEFT JOIN PRODUCTIONRESERVATION p2 ON p2.ORDERCODE = i.DEMAND AND p2.ITEMTYPEAFICODE = 'KGF'
                                                                         WHERE 
                                                                             i.SALESORDERCODE = '$no_order'
-                                                                            AND a.VALUESTRING IS NULL
+                                                                            AND p.ITEMTYPEAFICODE = 'KFF'
+                                                                            AND (
+                                                                                a.VALUESTRING IS NULL-- asli (bukan salinan)
+                                                                                OR p.CREATIONUSER IN ('kukuh.bayu','yogi.rahmansyah')-- salinan tapi hanya 2 user ini
+                                                                                )
                                                                         GROUP BY
                                                                             i.SALESORDERCODE,
                                                                             i.ORDERLINE,
