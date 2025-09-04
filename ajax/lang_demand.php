@@ -378,8 +378,7 @@ function fmtNumber($val) {
 // BRUTO PER KK
     $qBrutoPerKK = "SELECT VALUEDECIMAL
                     FROM ADSTORAGE
-                    WHERE UNIQUEID = ? AND FIELDNAME = 'BrutoKK'
-                    FETCH FIRST 1 ROW ONLY";
+                    WHERE UNIQUEID = ? AND FIELDNAME = 'OriginalBruto'";
     $stmtBrutoPerKK = db2_prepare($conn1, $qBrutoPerKK);
     if (!$stmtBrutoPerKK) {
         echo json_encode(['error' => db2_stmt_errormsg()]);
@@ -397,7 +396,7 @@ function fmtNumber($val) {
                                     SUM(a.VALUEDECIMAL) AS BRUTO_SALESORDER_LINE
                                 FROM
                                     PRODUCTIONDEMAND p
-                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'BrutoKK'
+                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalBruto'
                                 WHERE 
                                     NOT a.VALUEDECIMAL IS NULL
                                     AND p.ORIGDLVSALORDLINESALORDERCODE = ?
@@ -553,7 +552,7 @@ function fmtNumber($val) {
 
 // KETERANGAN / STATUS TERAKHIR
     $qStatusTerakhir = "SELECT
-                            DEPT || ' - ' || LONGDESCRIPTION AS STATUS_TERAKHIR
+                            COALESCE(DEPT, OPERATIONCODE) || ' - ' || LONGDESCRIPTION AS STATUS_TERAKHIR
                         FROM
                             ITXVIEW_POSISI_KARTU_KERJA
                         WHERE
@@ -561,7 +560,7 @@ function fmtNumber($val) {
                             AND PRODUCTIONDEMANDCODE = ?
                             AND NOT STATUS_OPERATION = 'Closed'
                         ORDER BY
-                            STEPNUMBER ASC
+                            STEPNUMBER DESC
                         LIMIT 1";
     $stmtStatusTerakhir = db2_prepare($conn1, $qStatusTerakhir);
     if (!$stmtStatusTerakhir) {
@@ -612,6 +611,26 @@ function fmtNumber($val) {
     $uniqSalesorder = null;
     db2_bind_param($stmtTglTerimaOrder, 1, "uniqSalesorder", DB2_PARAM_IN);
 // TGL TERIMA ORDER
+
+// DELIVERY ACTUAL
+    $qDelActual = "SELECT
+                        COALESCE(s2.CONFIRMEDDELIVERYDATE, s.CONFIRMEDDUEDATE) AS ACTUAL_DELIVERY
+                    FROM
+                        SALESORDER s 
+                    LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = s.CODE AND s2.SALORDLINESALORDERCOMPANYCODE = s.COMPANYCODE AND s2.SALORDLINESALORDERCOUNTERCODE = s.COUNTERCODE 
+                    WHERE
+                        s2.SALESORDERLINESALESORDERCODE = ?
+                        AND s2.SALESORDERLINEORDERLINE = ?";
+    $stmtDelActual = db2_prepare($conn1, $qDelActual);
+    if (!$stmtDelActual) {
+        echo json_encode(['error' => db2_stmt_errormsg()]);
+        exit;
+    }
+    $salesOrderCode  = null;
+    $orderline = null;
+    db2_bind_param($stmtDelActual, 1, "salesOrderCode", DB2_PARAM_IN);
+    db2_bind_param($stmtDelActual, 2, "orderline", DB2_PARAM_IN);
+// DELIVERY ACTUAL
 
 $data = [];
 while ($row = db2_fetch_assoc($stmt)) {
@@ -815,6 +834,18 @@ while ($row = db2_fetch_assoc($stmt)) {
         }
     // TGL TERIMA ORDER
 
+    // DELIVERY ACTUAL
+        $rowDelActual = null;
+        $salesOrderCode = $row['SALESORDER'] ?? null;
+        $orderline = $row['ORDERLINE'] ?? null;
+
+        if($salesOrderCode && $orderline){
+            if (db2_execute($stmtDelActual)) {
+                $rowDelActual = db2_fetch_assoc($stmtDelActual);
+            }
+        }
+    // DELIVERY ACTUAL
+
     $data[] = [
         'MKT'                   => $row['MKT'] ?? '',
         'NO_MC'                 => $rowMCDyeing['VALUESTRING'] ?? '',
@@ -829,12 +860,12 @@ while ($row = db2_fetch_assoc($stmt)) {
         'PRODUCTIONORDERCODE'   => $row['PRODUCTIONORDERCODE'] ?? '',
         'DEMAND'                => $row['DEMAND'] ?? '',
         'DEL_INTERNAL'          => fmtDate($row['DEL_INTERNAL'] ?? null),
-        'DEL_ACTUAL'            => fmtDate($row['DEL_ACTUAL'] ?? null),
+        'DEL_ACTUAL'            => fmtDate($rowDelActual['ACTUAL_DELIVERY'] ?? null),
         'LBR'                   => $rowLebar['LEBAR'] ?? '0',
         'GRMS'                  => $rowGramasi['GRAMASI'] ?? '',
         'BRUTO_PER_KK'          => fmtNumber($rowBrutoPerKK['VALUEDECIMAL'] ?? null),
         'BRUTO_SOL'             => fmtNumber($rowBrutoPerSalesOrderLine['BRUTO_SALESORDER_LINE'] ?? null),
-        'NETTO'                 => fmtNumber($rowNettoPerSalesOrderLine['USERPRIMARYQUANTITY'] ?? null),
+        'NETTO'                 => fmtNumber(ROUND($rowNettoPerSalesOrderLine['USERPRIMARYQUANTITY'], 2) ?? null),
         'PO_GREIGE_GREIGE_AWAL_GREIGE_AKHIR'             => 'Klik Disini',
         'VARIAN_GREIGE'         => $rowITXVIEWKK['RESERVATION_SUBCODE04'] ?? '',
         'ROLL'                  => $rowRoll['ROLL'] ?? '0',
