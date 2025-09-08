@@ -63,7 +63,7 @@ $orderCol = $columns[$orderColIdx] ?? 's.CREATIONDATETIME';
 
 // filter tanggal
 $startDate = post('start_date', '2025-01-01');
-$endDate   = post('end_date',   '2025-08-31');
+$endDate = post('end_date', date('Y-m-d'));
 
 // base filter
 $where = " CAST(s.CREATIONDATETIME AS DATE) BETWEEN ? AND ?
