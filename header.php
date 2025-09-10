@@ -346,7 +346,7 @@
                                     </li>
                                 </ul>
                             </li> -->
-                            <li class="pcoded-hasmenu">
+                            <!-- <li class="pcoded-hasmenu">
                                 <a href="javascript:void(0)" <?= $style_active_mkt; ?>>
                                     <span class="pcoded-micon"><i class="icofont icofont-chart-histogram"></i></span>
                                     <span class="pcoded-mtext">MKT</span>
@@ -379,7 +379,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <li class="pcoded-hasmenu">
                                 <a href="javascript:void(0)" <?= $style_active_prd; ?>>
                                     <span class="pcoded-micon"><i class="icofont icofont-industries-alt-3"></i></span>
