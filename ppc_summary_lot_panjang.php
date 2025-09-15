@@ -98,9 +98,9 @@
                                                                             TRIM(i.SUBCODE02) || '-' || TRIM(i.SUBCODE03) AS ITEM,
                                                                             i.WARNA,
                                                                             ROUND(i.BASEPRIMARYQUANTITY) AS NETTO,
-                                                                            SUM(COALESCE(qb.KFF, p.USERPRIMARYQUANTITY)) AS BRUTO,
+                                                                            SUM(COALESCE(a2.VALUEDECIMAL, qb.KFF)) AS BRUTO,
                                                                             SUM(p2.USEDUSERPRIMARYQUANTITY) AS SUDAH_BAGI_KAIN,
-                                                                            SUM(COALESCE(qb.KFF, p.USERPRIMARYQUANTITY)) - SUM(p2.USEDUSERPRIMARYQUANTITY) AS BALANCE_BELUM_BAGI_KAIN
+                                                                            SUM(COALESCE(a2.VALUEDECIMAL, qb.KFF)) - SUM(p2.USEDUSERPRIMARYQUANTITY) AS BALANCE_BELUM_BAGI_KAIN
                                                                         FROM
                                                                             ITXVIEWBONORDER i 
                                                                         LEFT JOIN PRODUCTIONDEMAND p ON p.CODE = i.DEMAND 
