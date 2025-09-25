@@ -68,7 +68,9 @@ $endDate = post('end_date', date('Y-m-d'));
 // base filter
 $where = " CAST(s.CREATIONDATETIME AS DATE) BETWEEN ? AND ?
            AND p.PROGRESSSTATUS <> 6
-           AND p.ITEMTYPEAFICODE = 'KFF' ";
+           AND p.ITEMTYPEAFICODE = 'KFF' 
+           AND NOT PRODUCTIONDEMANDSTEP.PRODUCTIONORDERCODE IS NULL 
+           AND a.VALUESTRING IS NULL";
 
 // search (opsional, OR across beberapa kolom)
 $params = [$startDate, $endDate];
@@ -193,6 +195,7 @@ $sqlData = "SELECT DISTINCT
                                 AND p2.SUBCODE08 = p.SUBCODE08 
                                 AND p2.SUBCODE09 = p.SUBCODE09 
                                 AND p2.SUBCODE10 = p.SUBCODE10
+            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND FIELDNAME = 'OriginalPDCode'                    
             WHERE 
                 $where
                 $searchSql
