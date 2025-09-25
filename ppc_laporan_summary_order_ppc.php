@@ -183,7 +183,31 @@
                                         </div>
                                         <!-- Filter Data Tab -->
                                         <div id="tab-filter" class="tab-content active">
-                                            <b>Fitur tidak tersedia.</b>
+                                            <form method="post" class="row align-items-end">
+                                                 <div class="col-sm-12 col-xl-2 m-b-30">
+                                                    <label>From Date</label>
+                                                    <input type="date" name="tgl1" class="form-control" id="tgl1" 
+                                                        value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl1']; } ?>">
+                                                </div>
+                                                <div class="col-sm-12 col-xl-2 m-b-30">
+                                                    <label>To Date</label>
+                                                    <input type="date" name="tgl2" class="form-control" id="tgl2" 
+                                                        value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>">
+                                                </div>
+                                                <div class="col-sm-12 col-xl-2 m-b-30">
+                                                    <button type="submit" name="submit" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+                                                    <?php
+                                                    if (isset($_POST['submit']) && !empty($_POST['tgl1']) && !empty($_POST['tgl2'])) {
+                                                    ?>
+                                                        <a href="http://localhost/laporan_sqlserver/ppc_laporan_summary_order_ppc_excel.php?tgl1=<?= $_POST['tgl1'] ?>&tgl2=<?= $_POST['tgl2'] ?>" 
+                                                        class="btn btn-warning ml-2">
+                                                            <i class="fa fa-search"></i> Export Excel
+                                                        </a>
+                                                    <?php  
+                                                    }
+                                                    ?>
+                                                </div>
+                                            </form>
                                         </div>
 
                                         <!-- Change Password Tab -->
@@ -227,6 +251,7 @@
                                                             <tr>
                                                                 <th>MKT</th>
                                                                 <th>NO MC</th>
+                                                                <th>AKJ/AKW</th>
                                                                 <th>LANGGANAN</th>
                                                                 <th>BUYER</th>
                                                                 <th>ITEM</th>
@@ -235,6 +260,7 @@
                                                                 <th>WARNA</th>
                                                                 <th>NO WARNA</th>
                                                                 <th>LOT</th>
+                                                                <th>FIRST LOT</th>
                                                                 <th>PRODUCTION ORDER</th>
                                                                 <th>DEMAND</th>
                                                                 <th>DEL. INTERNAL</th>
@@ -255,6 +281,7 @@
                                                                 <th>KETERANGAN</th>
                                                                 <th>LEADTIME ACTUAL</th>
                                                                 <th>TGL TERIMA ORDER</th>
+                                                                <th>TGL BUKA KK</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -392,11 +419,16 @@
         event.target.classList.add('active');
     }
 </script>
+<?php
+    // Filter tanggal default jika tidak ada input 
+    $defaultStart = $_POST['tgl1'];
+    $defaultEnd   = $_POST['tgl2'];
+?>
 <script>
     $(function () {
         // optional: input filter tanggal kalau mau
-        const defaultStart = '2025-01-01';
-        const defaultEnd   = '2025-09-01';
+        const defaultStart = "<?= $defaultStart ?>";
+        const defaultEnd   = "<?= $defaultEnd ?>";
 
         $('#demandTable').DataTable({
             processing: true,
@@ -415,6 +447,7 @@
             columns: [
                 { data: 'MKT' },
                 { data: 'NO_MC' },
+                { data: 'AKJ_AKW' },
                 { data: 'LANGGANAN' },
                 { data: 'BUYER' },
                 { data: 'ITEM' },
@@ -423,6 +456,7 @@
                 { data: 'WARNA' },
                 { data: 'NO_WARNA' },
                 { data: 'LOT' },
+                { data: 'FIRSTLOT' },
                 { data: 'PRODUCTIONORDERCODE' },
                 { 
                     data: 'DEMAND',
@@ -468,6 +502,7 @@
                 { data: 'KETERANGAN' },
                 { data: 'LEADTIME_ACTUAL' },
                 { data: 'TGL_TERIMA_ORDER' },
+                { data: 'TGL_BUKA_KK' },
             ]
         });
     });

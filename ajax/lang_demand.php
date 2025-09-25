@@ -62,15 +62,24 @@ $orderColIdx = (int)$orderReq['column'];
 $orderCol = $columns[$orderColIdx] ?? 's.CREATIONDATETIME';
 
 // filter tanggal
-$startDate = post('start_date', '2025-01-01');
-$endDate = post('end_date', date('Y-m-d'));
+$startDate = post('start_date') || post('start_date') != '' ?  post('start_date') : '2025-01-01';
+$endDate = post('end_date') || post('end_date') != '' ?  post('end_date') : date('Y-m-d');
+
 
 // base filter
-$where = " CAST(s.CREATIONDATETIME AS DATE) BETWEEN ? AND ?
-           AND p.PROGRESSSTATUS <> 6
-           AND p.ITEMTYPEAFICODE = 'KFF' 
-           AND NOT PRODUCTIONDEMANDSTEP.PRODUCTIONORDERCODE IS NULL 
-           AND a.VALUESTRING IS NULL";
+$whereDate = (post('start_date') && post('end_date')) 
+    ? "CAST(s.REQUIREDDUEDATE  AS DATE) BETWEEN ? AND ?"
+    : "CAST(s.CREATIONDATETIME AS DATE) BETWEEN ? AND ?";
+    
+$where = "  AND p.PROGRESSSTATUS <> 6
+            AND p.ITEMTYPEAFICODE = 'KFF'
+            AND a1.VALUESTRING IS NULL
+            AND NOT PRODUCTIONDEMANDSTEP.PRODUCTIONORDERCODE IS NULL
+            AND COALESCE(SUBSTR(s.CODE, 1, 3), '') IN (
+                'EXP', 'DOM', 'SAM', 'SME', 'REP',
+                'RPE', 'RFD', 'DMB', 'TBG', 'RBG',
+                'OPN', 'MNB'
+            )";
 
 // search (opsional, OR across beberapa kolom)
 $params = [$startDate, $endDate];
@@ -96,8 +105,12 @@ $sqlCount = "SELECT
                 FROM PRODUCTIONDEMANDSTEP) PRODUCTIONDEMANDSTEP ON PRODUCTIONDEMANDSTEP.PRODUCTIONDEMANDCODE = p.CODE
             LEFT JOIN SALESORDERLINE s2 ON s2.SALESORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE AND s2.ORDERLINE = p.ORIGDLVSALORDERLINEORDERLINE 
             LEFT JOIN SALESORDER s ON s.CODE = p.ORIGDLVSALORDLINESALORDERCODE
-            WHERE $where";
-$stmtCount = db2_prepare($conn1, $sqlCount);
+            LEFT JOIN ADSTORAGE a1 ON a1.UNIQUEID = p.ABSUNIQUEID AND a1.FIELDNAME = 'OriginalPDCode'
+            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = s2.ABSUNIQUEID AND a2.FIELDNAME = 'FirstLot'
+            LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = s2.ABSUNIQUEID AND a3.FIELDNAME = 'KainAKJ'
+            WHERE $whereDate $where";
+            
+$stmtCount = db2_prepare($conn1, $sqlCount);    
 if (!$stmtCount) {
     echo json_encode(['error' => db2_stmt_errormsg()]);
     exit;
@@ -176,7 +189,10 @@ $sqlData = "SELECT DISTINCT
                 p.SUBCODE07,
                 p.SUBCODE08,
                 p.SUBCODE09,
-                p.SUBCODE10
+                p.SUBCODE10,
+                a2.VALUEBOOLEAN AS FIRSTLOT,
+                a3.VALUESTRING AS AKJAKW,
+                CAST(po.CREATIONDATETIME AS DATE) AS TGL_BUKA_KK
             FROM PRODUCTIONDEMAND p
             LEFT JOIN (
                 SELECT DISTINCT PRODUCTIONDEMANDCODE, PRODUCTIONORDERCODE
@@ -195,8 +211,12 @@ $sqlData = "SELECT DISTINCT
                                 AND p2.SUBCODE08 = p.SUBCODE08 
                                 AND p2.SUBCODE09 = p.SUBCODE09 
                                 AND p2.SUBCODE10 = p.SUBCODE10
-            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND FIELDNAME = 'OriginalPDCode'                    
+            LEFT JOIN ADSTORAGE a1 ON a1.UNIQUEID = p.ABSUNIQUEID AND a1.FIELDNAME = 'OriginalPDCode'                    
+            LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = s2.ABSUNIQUEID AND a2.FIELDNAME = 'FirstLot'
+            LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = s2.ABSUNIQUEID AND a3.FIELDNAME = 'KainAKJ'
+            LEFT JOIN PRODUCTIONORDER po ON po.CODE = PRODUCTIONDEMANDSTEP.PRODUCTIONORDERCODE
             WHERE 
+                $whereDate
                 $where
                 $searchSql
             ORDER BY 
@@ -205,6 +225,7 @@ $sqlData = "SELECT DISTINCT
 
 $stmt = db2_prepare($conn1, $sqlData);
 if (!$stmt) {
+    echo "SQLSTATE: " . db2_stmt_error() . "\n";
     echo json_encode(['error' => db2_stmt_errormsg()]);
     exit;
 }
@@ -849,9 +870,26 @@ while ($row = db2_fetch_assoc($stmt)) {
         }
     // DELIVERY ACTUAL
 
+    // AKJ / AKW / Non-AKJ
+        switch ($row['AKJAKW'] ?? '') {
+            case 0:
+                $akj_akw = 'Non-AKJ';
+                break;
+            case 1:
+                $akj_akw = 'AKJ';
+                break;
+            case 2:
+                $akj_akw = 'AKW';
+                break;
+            default:
+                $akj_akw = '';
+        };
+    // AKJ / AKW / Non-AKJ
+
     $data[] = [
         'MKT'                   => $row['MKT'] ?? '',
         'NO_MC'                 => $rowMCDyeing['VALUESTRING'] ?? '',
+        'AKJ_AKW'               => $akj_akw,
         'LANGGANAN'             => $rowLangganan['LANGGANAN'] ?? '',
         'BUYER'                 => $rowLangganan['BUYER'] ?? '',
         'ITEM'                  => $row['ITEM'] ?? '',
@@ -860,6 +898,7 @@ while ($row = db2_fetch_assoc($stmt)) {
         'WARNA'                 => $rowWarna['WARNA'] ?? '',
         'NO_WARNA'              => $row['NO_WARNA'] ?? '',
         'LOT'                   => $row['LOT'] ?? '',
+        'FIRSTLOT'              => $row['FIRSTLOT'] ? 'First Lot' : '',
         'PRODUCTIONORDERCODE'   => $row['PRODUCTIONORDERCODE'] ?? '',
         'DEMAND'                => $row['DEMAND'] ?? '',
         'DEL_INTERNAL'          => fmtDate($row['DEL_INTERNAL'] ?? null),
@@ -879,7 +918,8 @@ while ($row = db2_fetch_assoc($stmt)) {
         'CELUP_GREIGE'          => fmtDate($rowTglCelupGreige['MULAI'] ?? null),
         'KETERANGAN'            => $rowStatusTerakhir['STATUS_TERAKHIR'] ?? '',
         'LEADTIME_ACTUAL'       => $leadTimeActual ?? '',
-        'TGL_TERIMA_ORDER'      => fmtDate($rowTglTerimaOrder['VALUEDATE'] ?? null) 
+        'TGL_TERIMA_ORDER'      => fmtDate($rowTglTerimaOrder['VALUEDATE'] ?? null),
+        'TGL_BUKA_KK'           => fmtDate($row['TGL_BUKA_KK'] ?? null) 
     ];
 }
 
