@@ -199,7 +199,7 @@
                                                     <?php
                                                     if (isset($_POST['submit']) && !empty($_POST['tgl1']) && !empty($_POST['tgl2'])) {
                                                     ?>
-                                                        <a href="http://localhost/laporan_sqlserver/ppc_laporan_summary_order_ppc_excel.php?tgl1=<?= $_POST['tgl1'] ?>&tgl2=<?= $_POST['tgl2'] ?>" 
+                                                        <a href="http://online.indotaichen.com/laporan/ppc_laporan_summary_order_ppc_excel.php?tgl1=<?= $_POST['tgl1'] ?>&tgl2=<?= $_POST['tgl2'] ?>" 
                                                         class="btn btn-warning ml-2">
                                                             <i class="fa fa-search"></i> Export Excel
                                                         </a>
