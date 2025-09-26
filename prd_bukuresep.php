@@ -27,7 +27,7 @@
     if ($data_login['COUNT'] == '1') {
         $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
         $data_waktu_login     = sqlsrv_fetch_array($q_waktu_cek_login);
-        if ($data_waktu_login['selisih_menit'] > 5) {
+        if ($data_waktu_login['selisih_menit'] > 30) {
             sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
             header("Location: Login_prd_bukuresep.php");
             exit();
