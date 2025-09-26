@@ -27,7 +27,7 @@
     if ($data_login['COUNT'] == '1') {
         $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
         $data_waktu_login     = sqlsrv_fetch_array($q_waktu_cek_login);
-        if ($data_waktu_login['selisih_menit'] > 5) {
+        if ($data_waktu_login['selisih_menit'] > 10) {
             sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
             header("Location: login_ppc_laporan_summary_order_ppc.php");
             exit();
@@ -199,7 +199,7 @@
                                                     <?php
                                                     if (isset($_POST['submit']) && !empty($_POST['tgl1']) && !empty($_POST['tgl2'])) {
                                                     ?>
-                                                        <a href="http://online.indotaichen.com/laporan/ppc_laporan_summary_order_ppc_excel.php?tgl1=<?= $_POST['tgl1'] ?>&tgl2=<?= $_POST['tgl2'] ?>" 
+                                                        <a href="https://online.indotaichen.com/laporan/ppc_laporan_summary_order_ppc_excel.php?tgl1=<?= $_POST['tgl1'] ?>&tgl2=<?= $_POST['tgl2'] ?>" 
                                                         class="btn btn-warning ml-2">
                                                             <i class="fa fa-search"></i> Export Excel
                                                         </a>
