@@ -210,6 +210,7 @@
                                                         $r_itxview_detail_qa_data[]        = "('" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONDEMANDCODE'])) . "',"
                                                             . "'" . TRIM(addslashes($row_itxview_detail_qa_data['PRODUCTIONORDERCODE'])) . "',"
                                                             . "'" . TRIM(addslashes($row_itxview_detail_qa_data['WORKCENTERCODE'])) . "',"
+                                                            . "'" . TRIM(addslashes($row_itxview_detail_qa_data['VALUEINT']))."',"
                                                             . "'" . TRIM(addslashes($row_itxview_detail_qa_data['OPERATIONCODE'])) . "',"
                                                             . "'" . TRIM(addslashes($row_itxview_detail_qa_data['LINE'])) . "',"
                                                             . "'" . TRIM(addslashes($row_itxview_detail_qa_data['QUALITYDOCUMENTHEADERNUMBERID'])) . "',"
@@ -222,7 +223,7 @@
                                                     }
                                                     if (!empty($r_itxview_detail_qa_data)) {
                                                         $value_itxview_detail_qa_data        = implode(',', $r_itxview_detail_qa_data);
-                                                        $insert_itxview_detail_qa_data       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_detail_qa_data(PRODUCTIONDEMANDCODE,PRODUCTIONORDERCODE,WORKCENTERCODE,OPERATIONCODE,LINE,QUALITYDOCUMENTHEADERNUMBERID,CHARACTERISTICCODE,LONGDESCRIPTION,VALUEQUANTITY,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_itxview_detail_qa_data");
+                                                        $insert_itxview_detail_qa_data       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_detail_qa_data(PRODUCTIONDEMANDCODE,PRODUCTIONORDERCODE,WORKCENTERCODE,STEPNUMBER,OPERATIONCODE,LINE,QUALITYDOCUMENTHEADERNUMBERID,CHARACTERISTICCODE,LONGDESCRIPTION,VALUEQUANTITY,IPADDRESS,CREATEDATETIME,STATUS) VALUES $value_itxview_detail_qa_data");
                                                     }
                                                 ?>
                                                 <table width="100%" style="border: 1px solid black; border-collapse: collapse;">
@@ -246,6 +247,54 @@
                                                             <th>Original PD Code</th>
                                                             <th>:</th>
                                                             <th><?= $d_ITXVIEWKK['ORIGINALPDCODE'] && substr($d_ITXVIEWKK['ORIGINALPDCODE'], 4, 8); ?></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>QTY Summary Bagi Kain</th>
+                                                            <th>:</th>
+                                                            <?php
+                                                            $get_summary_bagi_kain = db2_exec($conn1, "SELECT
+                                                                    PRODUCTIONDEMAND.CODE,
+                                                                    A.PRODUCTIONORDERCODE,
+                                                                    COUNT(STOCKTRANSACTION.ITEMELEMENTCODE) AS ROL,
+                                                                    SUM(STOCKTRANSACTION.USERPRIMARYQUANTITY) AS QTY_KG,
+                                                                    STOCKTRANSACTION.USERPRIMARYUOMCODE,
+                                                                    SUM(STOCKTRANSACTION.USERSECONDARYQUANTITY) AS QTY_YD,
+                                                                    STOCKTRANSACTION.USERSECONDARYUOMCODE
+                                                                FROM
+                                                                    PRODUCTIONDEMAND PRODUCTIONDEMAND
+                                                                LEFT JOIN (
+                                                                    SELECT
+                                                                        PRODUCTIONRESERVATION.ORDERCODE,
+                                                                        PRODUCTIONRESERVATION.PRODUCTIONORDERCODE
+                                                                    FROM
+                                                                        PRODUCTIONRESERVATION PRODUCTIONRESERVATION
+                                                                    WHERE
+                                                                        (PRODUCTIONRESERVATION.ITEMTYPEAFICODE = 'KGF'
+                                                                            OR PRODUCTIONRESERVATION.ITEMTYPEAFICODE = 'FKG')
+                                                                ) A ON
+                                                                    PRODUCTIONDEMAND.CODE = A.ORDERCODE
+                                                                LEFT JOIN STOCKTRANSACTION STOCKTRANSACTION
+                                                                ON
+                                                                    A.PRODUCTIONORDERCODE = STOCKTRANSACTION.ORDERCODE
+                                                                WHERE
+                                                                    STOCKTRANSACTION.ONHANDUPDATE > 1
+                                                                    AND (STOCKTRANSACTION.ITEMTYPECODE = 'KGF'
+                                                                        OR STOCKTRANSACTION.ITEMTYPECODE = 'FKG')
+                                                                    AND PRODUCTIONDEMAND.CODE='$demand'    
+                                                                GROUP BY 
+                                                                PRODUCTIONDEMAND.CODE,
+                                                                    A.PRODUCTIONORDERCODE,
+                                                                    STOCKTRANSACTION.USERPRIMARYUOMCODE,
+                                                                    STOCKTRANSACTION.USERSECONDARYUOMCODE");
+
+                                                            $dt_summary_bagi_kain = db2_fetch_assoc($get_summary_bagi_kain);
+                                                            ?>
+                                                            <th><?= $dt_summary_bagi_kain['ROL']??0 ?> X <?= number_format($dt_summary_bagi_kain['QTY_KG']??0,2) ?></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Warna</th>
+                                                            <th>:</th>
+                                                            <th><?= $d_ITXVIEWKK['WARNA'] ?></th>
                                                         </tr>
                                                         <tr>
                                                             <th style="vertical-align: text-top;">Item Code</th>
@@ -491,7 +540,8 @@
                                                                     $value_benang        = implode(',', $r_benang);
 
                                                                     $q_lotcode  = db2_exec($conn1, "SELECT 
-                                                                                                        LISTAGG(TRIM(LOTCODE), ', ') AS LOTCODE,
+                                                                                                        LISTAGG(distinct TRIM(LOTCODE), ', ') AS LOTCODE,
+                                                                                                        LISTAGG(distinct TRIM(SHORTNAME), ', ') AS SHORTNAME,
                                                                                                         LONGDESCRIPTION
                                                                                                         FROM
                                                                                                         (SELECT DISTINCT 
@@ -499,6 +549,7 @@
                                                                                                                         WHEN LOCATE('+', s.LOTCODE) > 1 THEN SUBSTR(s.LOTCODE, 1, LOCATE('+', s.LOTCODE)-1)
                                                                                                                         ELSE s.LOTCODE
                                                                                                                     END AS LOTCODE,
+                                                                                                                    p.SHORTNAME,
                                                                                                                     p2.LONGDESCRIPTION
                                                                                                                 FROM
                                                                                                                     STOCKTRANSACTION s
@@ -512,6 +563,9 @@
                                                                                                                                             p2.SUBCODE05 = s.DECOSUBCODE05 AND 
                                                                                                                                             p2.SUBCODE06 = s.DECOSUBCODE06 AND
                                                                                                                                             p2.SUBCODE07 = s.DECOSUBCODE07 
+                                                                                                                LEFT JOIN LOT l ON l.CODE = s.LOTCODE
+                                                                                                                LEFT JOIN CUSTOMERSUPPLIERDATA c ON c.CODE = l.SUPPLIERCODE
+                                                                                                                LEFT JOIN BUSINESSPARTNER p ON p.NUMBERID = c.BUSINESSPARTNERNUMBERID
                                                                                                                 WHERE
                                                                                                                     ORDERCODE IN ($value_benang)
                                                                                                                     AND (TEMPLATECODE = '125' OR TEMPLATECODE = '120'))
@@ -520,7 +574,7 @@
                                                                     while ($d_lotcode = db2_fetch_assoc($q_lotcode)) {
                                                                     ?>
                                                                         <span style="color:#000000; font-size:12px; font-family: Microsoft Sans Serif;">
-                                                                            <?= $no++; ?>. <?= $d_lotcode['LONGDESCRIPTION']; ?> - <?= $d_lotcode['LOTCODE']; ?>
+                                                                            <?= $no++; ?>. <?= $d_lotcode['LONGDESCRIPTION']; ?> - <?= $d_lotcode['LOTCODE']; ?> (<?= $d_lotcode['SHORTNAME']; ?>)
                                                                         </span><br>
                                                                     <?php } ?>
                                                                 <?php } ?>
@@ -981,6 +1035,7 @@
                                                                                         AND WORKCENTERCODE = '$rowdb4[WORKCENTERCODE]' 
                                                                                         AND OPERATIONCODE = '$rowdb4[OPERATIONCODE]' 
                                                                                         AND IPADDRESS = '$_SERVER[REMOTE_ADDR]'
+                                                                                        AND STEPNUMBER = '$rowdb4[STEPNUMBER]'
                                                                                         AND STATUS = 'Analisa KK'
                                                                                         ORDER BY LINE ASC";
                                                                     $q_QA_DATAcek   = sqlsrv_query($con_nowprd, $sqlQAData);
