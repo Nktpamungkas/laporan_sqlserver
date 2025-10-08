@@ -517,7 +517,7 @@
                                                                 <?php
                                                                 ini_set("error_reporting", 1);
                                                                 $sql_benang = "SELECT DISTINCT
-                                                                                    TRIM(p.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE
+                                                                                    TRIM(p.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,s2.ITEMTYPECODE,s2.DECOSUBCODE01,s2.DECOSUBCODE02,s2.DECOSUBCODE03,s2.DECOSUBCODE04,s2.DECOSUBCODE05,s2.DECOSUBCODE06
                                                                                 FROM  
                                                                                     STOCKTRANSACTION s 
                                                                                 LEFT JOIN STOCKTRANSACTION s2 ON s2.ITEMELEMENTCODE = s.ITEMELEMENTCODE AND s2.TEMPLATECODE = '204'
@@ -531,46 +531,106 @@
                                                                 $q_benang2   = db2_exec($conn1, $sql_benang);
                                                                 $no = 1;
                                                                 $cekada_benang  = db2_fetch_assoc($q_benang);
+                                                                $kode_benang=array();
                                                                 ?>
                                                                 <?php if (!empty($cekada_benang['PRODUCTIONORDERCODE'])) { ?>
                                                                     <?php
                                                                     while ($d_benang = db2_fetch_assoc($q_benang2)) {
                                                                         $r_benang[]      = "'" . $d_benang['PRODUCTIONORDERCODE'] . "'";
+                                                                        $kode_benang['item']=$d_benang['ITEMTYPECODE'];
+                                                                        $kode_benang['1']=$d_benang['DECOSUBCODE01'];
+                                                                        $kode_benang['2']=$d_benang['DECOSUBCODE02'];
+                                                                        $kode_benang['3']=$d_benang['DECOSUBCODE03'];
+                                                                        $kode_benang['4']=$d_benang['DECOSUBCODE04'];
+                                                                        $kode_benang['5']=$d_benang['DECOSUBCODE05'];
+                                                                        $kode_benang['6']=$d_benang['DECOSUBCODE06'];
                                                                     }
                                                                     $value_benang        = implode(',', $r_benang);
 
-                                                                    $q_lotcode  = db2_exec($conn1, "SELECT 
-                                                                                                        LISTAGG(distinct TRIM(LOTCODE), ', ') AS LOTCODE,
-                                                                                                        LISTAGG(distinct TRIM(SHORTNAME), ', ') AS SHORTNAME,
-                                                                                                        LONGDESCRIPTION
-                                                                                                        FROM
-                                                                                                        (SELECT DISTINCT 
-                                                                                                                    CASE
-                                                                                                                        WHEN LOCATE('+', s.LOTCODE) > 1 THEN SUBSTR(s.LOTCODE, 1, LOCATE('+', s.LOTCODE)-1)
-                                                                                                                        ELSE s.LOTCODE
-                                                                                                                    END AS LOTCODE,
-                                                                                                                    p.SHORTNAME,
-                                                                                                                    p2.LONGDESCRIPTION
-                                                                                                                FROM
-                                                                                                                    STOCKTRANSACTION s
-                                                                                                                LEFT JOIN PRODUCT p2 ON p2.ITEMTYPECODE = s.ITEMTYPECODE AND NOT 
-                                                                                                                                            p2.ITEMTYPECODE = 'DYC' AND NOT 
-                                                                                                                                            p2.ITEMTYPECODE = 'WTR' AND 
-                                                                                                                                            p2.SUBCODE01 = s.DECOSUBCODE01  AND 
-                                                                                                                                            p2.SUBCODE02 = s.DECOSUBCODE02 AND
-                                                                                                                                            p2.SUBCODE03 = s.DECOSUBCODE03 AND 
-                                                                                                                                            p2.SUBCODE04 = s.DECOSUBCODE04 AND
-                                                                                                                                            p2.SUBCODE05 = s.DECOSUBCODE05 AND 
-                                                                                                                                            p2.SUBCODE06 = s.DECOSUBCODE06 AND
-                                                                                                                                            p2.SUBCODE07 = s.DECOSUBCODE07 
-                                                                                                                LEFT JOIN LOT l ON l.CODE = s.LOTCODE
-                                                                                                                LEFT JOIN CUSTOMERSUPPLIERDATA c ON c.CODE = l.SUPPLIERCODE
-                                                                                                                LEFT JOIN BUSINESSPARTNER p ON p.NUMBERID = c.BUSINESSPARTNERNUMBERID
-                                                                                                                WHERE
-                                                                                                                    ORDERCODE IN ($value_benang)
-                                                                                                                    AND (TEMPLATECODE = '125' OR TEMPLATECODE = '120'))
-                                                                                                        GROUP BY
-                                                                                                            LONGDESCRIPTION");
+                                                                    $q_lotcode  = db2_exec($conn1, "SELECT RESERVATIONLINE,LOTCODE,SHORTNAME,LONGDESCRIPTION 
+                                                                    FROM (	
+                                                                        SELECT DISTINCT p3.RESERVATIONLINE,p3.ITEMTYPEAFICODE,p3.SUBCODE01,p3.SUBCODE02,p3.SUBCODE03,p3.SUBCODE04,p3.SUBCODE05,p3.SUBCODE06,p3.SUBCODE07,p3.SUBCODE08 FROM 
+                                                                        DB2ADMIN.PRODUCTIONRESERVATION p3
+                                                                        WHERE p3.RELATEDCMPBILLOFMATITEMTYPECOD = '".$kode_benang['item']."'
+                                                                            AND COALESCE(p3.RELATEDCMPBILLOFMATSUBCODE01,'') = '".$kode_benang['1']."'
+                                                                            AND COALESCE(p3.RELATEDCMPBILLOFMATSUBCODE02,'') = '".$kode_benang['2']."'
+                                                                            AND COALESCE(p3.RELATEDCMPBILLOFMATSUBCODE03,'') = '".$kode_benang['3']."'
+                                                                            AND COALESCE(p3.RELATEDCMPBILLOFMATSUBCODE04,'') = '".$kode_benang['4']."'
+                                                                            AND COALESCE(p3.RELATEDCMPBILLOFMATSUBCODE05,'') = '".$kode_benang['5']."'
+                                                                            AND COALESCE(p3.RELATEDCMPBILLOFMATSUBCODE06,'') = '".$kode_benang['6']."'
+                                                                        ) pr		
+                                                                    FULL OUTER JOIN (	
+                                                                        SELECT 
+                                                                            LISTAGG(distinct TRIM(LOTCODE), ', ') AS LOTCODE,
+                                                                            LISTAGG(distinct TRIM(SHORTNAME), ', ') AS SHORTNAME,
+                                                                            LONGDESCRIPTION,
+                                                                            ITEMTYPECODE,
+                                                                            DECOSUBCODE01,
+                                                                            DECOSUBCODE02,
+                                                                            DECOSUBCODE03,
+                                                                            DECOSUBCODE04,
+                                                                            DECOSUBCODE05,
+                                                                            DECOSUBCODE06,
+                                                                            DECOSUBCODE07,
+                                                                            DECOSUBCODE08
+                                                                        FROM
+                                                                            (SELECT DISTINCT 
+                                                                                CASE
+                                                                                    WHEN LOCATE('+', s.LOTCODE) > 1 THEN SUBSTR(s.LOTCODE, 1, LOCATE('+', s.LOTCODE)-1)
+                                                                                    ELSE s.LOTCODE
+                                                                                END AS LOTCODE,
+                                                                                p.SHORTNAME,
+                                                                                s.ITEMTYPECODE,
+                                                                                s.DECOSUBCODE01,
+                                                                                s.DECOSUBCODE02,
+                                                                                s.DECOSUBCODE03,
+                                                                                s.DECOSUBCODE04,
+                                                                                s.DECOSUBCODE05,
+                                                                                s.DECOSUBCODE06,
+                                                                                s.DECOSUBCODE07,
+                                                                                s.DECOSUBCODE08,
+                                                                                p2.LONGDESCRIPTION
+                                                                            FROM
+                                                                                STOCKTRANSACTION s
+                                                                            LEFT JOIN PRODUCT p2 ON p2.ITEMTYPECODE = s.ITEMTYPECODE AND NOT 
+                                                                                                        p2.ITEMTYPECODE = 'DYC' AND NOT 
+                                                                                                        p2.ITEMTYPECODE = 'WTR' AND 
+                                                                                                        p2.SUBCODE01 = s.DECOSUBCODE01  AND 
+                                                                                                        p2.SUBCODE02 = s.DECOSUBCODE02 AND
+                                                                                                        p2.SUBCODE03 = s.DECOSUBCODE03 AND 
+                                                                                                        p2.SUBCODE04 = s.DECOSUBCODE04 AND
+                                                                                                        p2.SUBCODE05 = s.DECOSUBCODE05 AND 
+                                                                                                        p2.SUBCODE06 = s.DECOSUBCODE06 AND
+                                                                                                        p2.SUBCODE07 = s.DECOSUBCODE07 
+                                                                            LEFT JOIN LOT l ON l.CODE = s.LOTCODE
+                                                                            LEFT JOIN CUSTOMERSUPPLIERDATA c ON c.CODE = l.SUPPLIERCODE
+                                                                            LEFT JOIN BUSINESSPARTNER p ON p.NUMBERID = c.BUSINESSPARTNERNUMBERID
+                                                                            WHERE
+                                                                                ORDERCODE IN ($value_benang)
+                                                                                AND (TEMPLATECODE = '125' OR TEMPLATECODE = '120')
+                                                                            )
+                                                                        GROUP BY
+                                                                            LONGDESCRIPTION,
+                                                                            ITEMTYPECODE,
+                                                                            DECOSUBCODE01,
+                                                                            DECOSUBCODE02,
+                                                                            DECOSUBCODE03,
+                                                                            DECOSUBCODE04,
+                                                                            DECOSUBCODE05,
+                                                                            DECOSUBCODE06,
+                                                                            DECOSUBCODE07,
+                                                                            DECOSUBCODE08
+                                                                    ) tr ON tr.ITEMTYPECODE  = pr.ITEMTYPEAFICODE
+                                                                        AND tr.DECOSUBCODE01 = pr.SUBCODE01
+                                                                        AND tr.DECOSUBCODE02 = pr.SUBCODE02
+                                                                        AND	tr.DECOSUBCODE03 = pr.SUBCODE03
+                                                                        AND	tr.DECOSUBCODE04 = pr.SUBCODE04
+                                                                        AND	tr.DECOSUBCODE05 = pr.SUBCODE05
+                                                                        AND	tr.DECOSUBCODE06 = pr.SUBCODE06
+                                                                        AND	tr.DECOSUBCODE07 = pr.SUBCODE07
+                                                                        AND	tr.DECOSUBCODE08 = pr.SUBCODE08
+                                                                    WHERE tr.LONGDESCRIPTION IS NOT NULL 
+                                                                    ORDER BY RESERVATIONLINE ASC");
                                                                     while ($d_lotcode = db2_fetch_assoc($q_lotcode)) {
                                                                     ?>
                                                                         <span style="color:#000000; font-size:12px; font-family: Microsoft Sans Serif;">
