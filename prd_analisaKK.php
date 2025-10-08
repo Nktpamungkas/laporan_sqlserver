@@ -517,7 +517,7 @@
                                                                 <?php
                                                                 ini_set("error_reporting", 1);
                                                                 $sql_benang = "SELECT DISTINCT
-                                                                                    TRIM(p.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,s2.ITEMTYPECODE,s2.DECOSUBCODE01,s2.DECOSUBCODE02,s2.DECOSUBCODE03,s2.DECOSUBCODE04,s2.DECOSUBCODE05,s2.DECOSUBCODE06
+                                                                                    s.LOTCODE, TRIM(p.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,s2.ITEMTYPECODE,s2.DECOSUBCODE01,s2.DECOSUBCODE02,s2.DECOSUBCODE03,s2.DECOSUBCODE04,s2.DECOSUBCODE05,s2.DECOSUBCODE06
                                                                                 FROM  
                                                                                     STOCKTRANSACTION s 
                                                                                 LEFT JOIN STOCKTRANSACTION s2 ON s2.ITEMELEMENTCODE = s.ITEMELEMENTCODE AND s2.TEMPLATECODE = '204'
@@ -544,6 +544,7 @@
                                                                         $kode_benang['4']=$d_benang['DECOSUBCODE04'];
                                                                         $kode_benang['5']=$d_benang['DECOSUBCODE05'];
                                                                         $kode_benang['6']=$d_benang['DECOSUBCODE06'];
+                                                                        $kode_benang['lot']=$d_benang['LOTCODE'];
                                                                     }
                                                                     $value_benang        = implode(',', $r_benang);
 
@@ -558,6 +559,7 @@
                                                                             AND COALESCE(p3.RELATEDCMPBILLOFMATSUBCODE04,'') = '".$kode_benang['4']."'
                                                                             AND COALESCE(p3.RELATEDCMPBILLOFMATSUBCODE05,'') = '".$kode_benang['5']."'
                                                                             AND COALESCE(p3.RELATEDCMPBILLOFMATSUBCODE06,'') = '".$kode_benang['6']."'
+                                                                            AND ORDERCODE = '".$kode_benang['lot']."'
                                                                         ) pr		
                                                                     FULL OUTER JOIN (	
                                                                         SELECT 
