@@ -241,9 +241,9 @@ if (isset($_POST['simpanin_catch'])) {
             /* Sudut melengkung */
             position: absolute;
             /* Posisi absolut untuk label */
-            top: -10px;
+            top: -35px;
             /* Atur posisi vertikal */
-            right: -10px;
+            right: 500px;
             /* Atur posisi horizontal */
             font-weight: bold;
             /* Tebal */
@@ -287,6 +287,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                 </div>
                                                 <div class="col-sm-4 col-xl-4 m-b-30">
                                                     <h4 class="sub-title">Operation ( Progress ):</h4>
+                                                    <span class="new-label">Fitur Baru</span>
                                                     <select name="progressBukaResep" class="form-control select2">
                                                         <option value="">-- Pilih --</option>
                                                          <?php
@@ -295,11 +296,13 @@ if (isset($_POST['simpanin_catch'])) {
                                                             require_once "koneksi.php";
 
                                                             $sqlDB2 = " SELECT DISTINCT
-                                                                    o.CODE,
-                                                                    o.LONGDESCRIPTION
-                                                                FROM 
-                                                                    OPERATION o
-                                                                ORDER BY o.CODE";
+                                                                            o.CODE,
+                                                                            o.LONGDESCRIPTION
+                                                                        FROM 
+                                                                            OPERATION o
+                                                                        WHERE
+	                                                                        NOT LONGDESCRIPTION LIKE '%DO NOT USE%'
+                                                                        ORDER BY o.CODE";
 
                                                             $stmt = db2_exec($conn1, $sqlDB2);
                                                             while ($operation = db2_fetch_assoc($stmt)): 
@@ -318,7 +321,6 @@ if (isset($_POST['simpanin_catch'])) {
                                                         <a href="http://online.indotaichen.com/NOWGerobak/IdentitasGerobak-<?= $demand; ?>" class="btn btn-danger" target="_blank">
                                                             <i class="icofont icofont-print"></i> Cetak Kartu Gerobak
                                                         </a>
-                                                        <span class="new-label">Fitur Baru</span>
                                                     </div>
                                                 </div>
                                             </div>
