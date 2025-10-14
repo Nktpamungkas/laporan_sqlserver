@@ -3,6 +3,7 @@ ini_set("error_reporting", 0);
 session_start();
 require_once "koneksi.php";
 include "utils/helper.php";
+include "ajax/fetch_ppc_filter_steps_bkr_progres.php";
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3
 WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3 WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]'");
@@ -196,7 +197,6 @@ if (isset($_POST['simpanin_catch'])) {
     }
 }
 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -221,6 +221,9 @@ if (isset($_POST['simpanin_catch'])) {
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\pages\data-table\css\buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+
     <style>
         .button-container {
             position: relative;
@@ -228,15 +231,24 @@ if (isset($_POST['simpanin_catch'])) {
         }
 
         .new-label {
-            background-color: yellow; /* Warna latar belakang label */
-            color: black; /* Warna teks label */
-            padding: 5px 10px; /* Padding untuk label */
-            border-radius: 5px; /* Sudut melengkung */
-            position: absolute; /* Posisi absolut untuk label */
-            top: -10px; /* Atur posisi vertikal */
-            right: -10px; /* Atur posisi horizontal */
-            font-weight: bold; /* Tebal */
-            font-size: 12px; /* Ukuran font */
+            background-color: yellow;
+            /* Warna latar belakang label */
+            color: black;
+            /* Warna teks label */
+            padding: 5px 10px;
+            /* Padding untuk label */
+            border-radius: 5px;
+            /* Sudut melengkung */
+            position: absolute;
+            /* Posisi absolut untuk label */
+            top: -10px;
+            /* Atur posisi vertikal */
+            right: -10px;
+            /* Atur posisi horizontal */
+            font-weight: bold;
+            /* Tebal */
+            font-size: 12px;
+            /* Ukuran font */
         }
     </style>
 </head>
@@ -257,7 +269,7 @@ if (isset($_POST['simpanin_catch'])) {
                                     <div class="card-block">
                                         <form action="" method="post">
                                             <div class="row">
-                                                <div class="col-sm-6 col-xl-6 m-b-30">
+                                                <div class="col-sm-4 col-xl-4 m-b-30">
                                                     <h4 class="sub-title">Production Order:</h4>
                                                     <input type="text" name="prod_order" class="form-control" value="<?php if (isset($_POST['submit'])) {
                                                                                                                             echo $_POST['prod_order'];
@@ -265,13 +277,40 @@ if (isset($_POST['simpanin_catch'])) {
                                                                                                                             echo $_GET['prod_order'];
                                                                                                                         } ?>">
                                                 </div>
-                                                <div class="col-sm-6 col-xl-6 m-b-30">
+                                                <div class="col-sm-4 col-xl-4 m-b-30">
                                                     <h4 class="sub-title">Production Demand:</h4>
                                                     <input type="text" name="demand" class="form-control" placeholder="Wajib di isi" required value="<?php if (isset($_POST['submit'])) {
                                                                                                                                                             echo $_POST['demand'];
                                                                                                                                                         } elseif (isset($_GET['demand'])) {
                                                                                                                                                             echo $_GET['demand'];
                                                                                                                                                         } ?>">
+                                                </div>
+                                                <div class="col-sm-4 col-xl-4 m-b-30">
+                                                    <h4 class="sub-title">Operation ( Progress ):</h4>
+                                                    <select name="progressBukaResep" class="form-control select2">
+                                                        <option value="">-- Pilih --</option>
+                                                         <?php
+                                                            ini_set("error_reporting", 1);
+                                                            session_start();
+                                                            require_once "koneksi.php";
+
+                                                            $sqlDB2 = " SELECT DISTINCT
+                                                                    o.CODE,
+                                                                    o.LONGDESCRIPTION
+                                                                FROM 
+                                                                    OPERATION o
+                                                                ORDER BY o.CODE";
+
+                                                            $stmt = db2_exec($conn1, $sqlDB2);
+                                                            while ($operation = db2_fetch_assoc($stmt)): 
+                                                        ?>
+                                                            <option value="<?= $operation['CODE'] ?>" 
+                                                                <?= (isset($_POST['submit']) && $_POST['progressBukaResep'] == $operation['CODE']) ? 'selected' : '' ?>
+                                                            >
+                                                                <?= $operation['CODE'] ?> - <?= $operation['LONGDESCRIPTION'] ?>
+                                                            </option>
+                                                        <?php endwhile; ?>
+                                                    </select>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i class="icofont icofont-search-alt-1"></i> Cari data</button>
@@ -286,109 +325,112 @@ if (isset($_POST['simpanin_catch'])) {
                                         </form>
                                     </div>
                                 </div>
-                                <?php if (isset($_POST['submit']) or isset($_GET['demand']) or isset($_GET['prod_order'])) : ?>
+
+                                <?php if (isset($_POST['submit'])) : ?>
                                     <div class="card">
-                                        <div class="card-header">
-                                            <?php
-                                            ini_set("error_reporting", 0);
-                                            session_start();
-                                            require_once "koneksi.php";
-
-                                            if ($_GET['demand']) {
-                                                $demand     = $_GET['demand'];
-                                            } else {
-                                                $demand     = $_POST['demand'];
-                                            }
-
-                                            $q_demand   = db2_exec($conn1, "SELECT * FROM PRODUCTIONDEMAND WHERE CODE = '$demand'");
-                                            $d_demand   = db2_fetch_assoc($q_demand);
-
-                                            $sql_warna        = db2_exec($conn1, "SELECT DISTINCT TRIM(WARNA) AS WARNA FROM ITXVIEWCOLOR 
-                                                                                        WHERE ITEMTYPECODE = '$d_demand[ITEMTYPEAFICODE]' 
-                                                                                        AND SUBCODE01 = '$d_demand[SUBCODE01]' 
-                                                                                        AND SUBCODE02 = '$d_demand[SUBCODE02]'
-                                                                                        AND SUBCODE03 = '$d_demand[SUBCODE03]' 
-                                                                                        AND SUBCODE04 = '$d_demand[SUBCODE04]'
-                                                                                        AND SUBCODE05 = '$d_demand[SUBCODE05]' 
-                                                                                        AND SUBCODE06 = '$d_demand[SUBCODE06]'
-                                                                                        AND SUBCODE07 = '$d_demand[SUBCODE07]' 
-                                                                                        AND SUBCODE08 = '$d_demand[SUBCODE08]'
-                                                                                        AND SUBCODE09 = '$d_demand[SUBCODE09]' 
-                                                                                        AND SUBCODE10 = '$d_demand[SUBCODE10]'");
-                                            $dt_warna        = db2_fetch_assoc($sql_warna);
-                                            ?>
-                                            <table border="0" style='font-family:"Microsoft Sans Serif"'>
-                                                <tr>
-                                                    <td>Kode Product/Kode Warna </td>
-                                                    <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
-                                                    <td><?= TRIM($d_demand['SUBCODE02']) . TRIM($d_demand['SUBCODE03']) . '-' . TRIM($d_demand['SUBCODE05']); ?></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Warna</td>
-                                                    <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
-                                                    <td><?= $dt_warna['WARNA']; ?></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>No Order</td>
-                                                    <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
-                                                    <td><?= $d_demand['ORIGDLVSALORDLINESALORDERCODE']; ?></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Original PD Code</td>
-                                                    <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
-                                                    <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= substr($d_ITXVIEWKK['ORIGINALPDCODE'], 4); ?>"><b><?= substr($d_ITXVIEWKK['ORIGINALPDCODE'], 4); ?></b></a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>LOT</td>
-                                                    <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
-                                                    <td><?= $d_demand['DESCRIPTION']; ?></td>
-                                                </tr>
+                                        <?php if (isset($_POST['submit']) or isset($_GET['demand']) or isset($_GET['prod_order'])) : ?>
+                                            <div class="card-header">
                                                 <?php
-                                                $sql_lebargramasi    = db2_exec($conn1, "SELECT i.LEBAR,
-                                                                                            CASE
-                                                                                                WHEN i2.GRAMASI_KFF IS NULL THEN i2.GRAMASI_FKF
-                                                                                                ELSE i2.GRAMASI_KFF
-                                                                                            END AS GRAMASI 
-                                                                                            FROM 
-                                                                                                ITXVIEWLEBAR i 
-                                                                                            LEFT JOIN ITXVIEWGRAMASI i2 ON i2.SALESORDERCODE = '$d_ITXVIEWKK[PROJECTCODE]' 
-                                                                                            AND i2.ORDERLINE = '$d_ITXVIEWKK[ORIGDLVSALORDERLINEORDERLINE]'
-                                                                                            WHERE 
-                                                                                            i.SALESORDERCODE = '$d_ITXVIEWKK[PROJECTCODE]' AND i.ORDERLINE = '$d_ITXVIEWKK[ORIGDLVSALORDERLINEORDERLINE]'");
-                                                $dt_lg                = db2_fetch_assoc($sql_lebargramasi);
+                                                ini_set("error_reporting", 0);
+                                                session_start();
+                                                require_once "koneksi.php";
+
+                                                if ($_GET['demand']) {
+                                                    $demand     = $_GET['demand'];
+                                                } else {
+                                                    $demand     = $_POST['demand'];
+                                                }
+
+                                                $q_demand   = db2_exec($conn1, "SELECT * FROM PRODUCTIONDEMAND WHERE CODE = '$demand'");
+                                                $d_demand   = db2_fetch_assoc($q_demand);
+
+                                                $sql_warna        = db2_exec($conn1, "SELECT DISTINCT TRIM(WARNA) AS WARNA FROM ITXVIEWCOLOR 
+                                                                                            WHERE ITEMTYPECODE = '$d_demand[ITEMTYPEAFICODE]' 
+                                                                                            AND SUBCODE01 = '$d_demand[SUBCODE01]' 
+                                                                                            AND SUBCODE02 = '$d_demand[SUBCODE02]'
+                                                                                            AND SUBCODE03 = '$d_demand[SUBCODE03]' 
+                                                                                            AND SUBCODE04 = '$d_demand[SUBCODE04]'
+                                                                                            AND SUBCODE05 = '$d_demand[SUBCODE05]' 
+                                                                                            AND SUBCODE06 = '$d_demand[SUBCODE06]'
+                                                                                            AND SUBCODE07 = '$d_demand[SUBCODE07]' 
+                                                                                            AND SUBCODE08 = '$d_demand[SUBCODE08]'
+                                                                                            AND SUBCODE09 = '$d_demand[SUBCODE09]' 
+                                                                                            AND SUBCODE10 = '$d_demand[SUBCODE10]'");
+                                                $dt_warna        = db2_fetch_assoc($sql_warna);
                                                 ?>
-                                                <tr>
-                                                    <td>Lebar x Gramasi</td>
-                                                    <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
-                                                    <td><?= floor($dt_lg['LEBAR']); ?> x <?= floor($dt_lg['GRAMASI']); ?></td>
-                                                </tr>
-                                                <tr rowspan='5'>
-                                                    <td>KETERANGAN</td>
-                                                    <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
-                                                    <td>
-                                                        <?php
-                                                        $cek_keterangan     = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.posisikk_keterangan 
-                                                                                                                WHERE 
-                                                                                                                    productionorder = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
-                                                                                                                    AND productiondemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'");
-                                                        $data_keterangan    = sqlsrv_fetch_array($cek_keterangan);
-                                                        ?>
-                                                        <?php if ($data_keterangan['keterangan']) :  ?>
-                                                            <span style="background-color: #A5CEA8; color: black;"><?= $data_keterangan['keterangan']; ?></span>
-                                                        <?php else : ?>
-                                                            <form action="" method="POST">
-                                                                <input type="hidden" name="productionorder" value="<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>">
-                                                                <input type="hidden" name="productiondemand" value="<?= $d_ITXVIEWKK['PRODUCTIONDEMANDCODE']; ?>">
-                                                                <input type="hidden" name="ipaddress" value="<?= $_SERVER['REMOTE_ADDR'] ?>">
-                                                                <input type="hidden" name="createdatetime" value="<?= date('Y-m-d H:i:s'); ?>">
-                                                                <input type="text" name="keterangan" class="form-control input-sm" value="">
-                                                                <button class="btn btn-primary btn-mini" name="simpan_keterangan">Save</button>
-                                                            </form>
-                                                        <?php endif; ?>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
+                                                <table border="0" style='font-family:"Microsoft Sans Serif"'>
+                                                    <tr>
+                                                        <td>Kode Product/Kode Warna </td>
+                                                        <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
+                                                        <td><?= TRIM($d_demand['SUBCODE02']) . TRIM($d_demand['SUBCODE03']) . '-' . TRIM($d_demand['SUBCODE05']); ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Warna</td>
+                                                        <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
+                                                        <td><?= $dt_warna['WARNA']; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>No Order</td>
+                                                        <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
+                                                        <td><?= $d_demand['ORIGDLVSALORDLINESALORDERCODE']; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Original PD Code</td>
+                                                        <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
+                                                        <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= substr($d_ITXVIEWKK['ORIGINALPDCODE'], 4); ?>"><b><?= substr($d_ITXVIEWKK['ORIGINALPDCODE'], 4); ?></b></a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>LOT</td>
+                                                        <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
+                                                        <td><?= $d_demand['DESCRIPTION']; ?></td>
+                                                    </tr>
+                                                    <?php
+                                                    $sql_lebargramasi    = db2_exec($conn1, "SELECT i.LEBAR,
+                                                                                                CASE
+                                                                                                    WHEN i2.GRAMASI_KFF IS NULL THEN i2.GRAMASI_FKF
+                                                                                                    ELSE i2.GRAMASI_KFF
+                                                                                                END AS GRAMASI 
+                                                                                                FROM 
+                                                                                                    ITXVIEWLEBAR i 
+                                                                                                LEFT JOIN ITXVIEWGRAMASI i2 ON i2.SALESORDERCODE = '$d_ITXVIEWKK[PROJECTCODE]' 
+                                                                                                AND i2.ORDERLINE = '$d_ITXVIEWKK[ORIGDLVSALORDERLINEORDERLINE]'
+                                                                                                WHERE 
+                                                                                                i.SALESORDERCODE = '$d_ITXVIEWKK[PROJECTCODE]' AND i.ORDERLINE = '$d_ITXVIEWKK[ORIGDLVSALORDERLINEORDERLINE]'");
+                                                    $dt_lg                = db2_fetch_assoc($sql_lebargramasi);
+                                                    ?>
+                                                    <tr>
+                                                        <td>Lebar x Gramasi</td>
+                                                        <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
+                                                        <td><?= floor($dt_lg['LEBAR']); ?> x <?= floor($dt_lg['GRAMASI']); ?></td>
+                                                    </tr>
+                                                    <tr rowspan='5'>
+                                                        <td>KETERANGAN</td>
+                                                        <td>&nbsp;&nbsp;&nbsp; : &nbsp;</td>
+                                                        <td>
+                                                            <?php
+                                                            $cek_keterangan     = sqlsrv_query($con_nowprd, "SELECT * FROM nowprd.posisikk_keterangan 
+                                                                                                                    WHERE 
+                                                                                                                        productionorder = '$d_ITXVIEWKK[PRODUCTIONORDERCODE]' 
+                                                                                                                        AND productiondemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'");
+                                                            $data_keterangan    = sqlsrv_fetch_array($cek_keterangan);
+                                                            ?>
+                                                            <?php if ($data_keterangan['keterangan']) :  ?>
+                                                                <span style="background-color: #A5CEA8; color: black;"><?= $data_keterangan['keterangan']; ?></span>
+                                                            <?php else : ?>
+                                                                <form action="" method="POST">
+                                                                    <input type="hidden" name="productionorder" value="<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>">
+                                                                    <input type="hidden" name="productiondemand" value="<?= $d_ITXVIEWKK['PRODUCTIONDEMANDCODE']; ?>">
+                                                                    <input type="hidden" name="ipaddress" value="<?= $_SERVER['REMOTE_ADDR'] ?>">
+                                                                    <input type="hidden" name="createdatetime" value="<?= date('Y-m-d H:i:s'); ?>">
+                                                                    <input type="text" name="keterangan" class="form-control input-sm" value="">
+                                                                    <button class="btn btn-primary btn-mini" name="simpan_keterangan">Save</button>
+                                                                </form>
+                                                            <?php endif; ?>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                         <?php endif; ?>
                                         <div class="card-block">
                                             <div class="table-responsive dt-responsive">
                                                 <table border="1" style='font-family:"Microsoft Sans Serif"' width="100%">
@@ -415,6 +457,46 @@ if (isset($_POST['simpanin_catch'])) {
                                                         ini_set("error_reporting", 1);
                                                         session_start();
                                                         require_once "koneksi.php";
+
+                                                        $is_filter_progres_BKR = false;
+
+                                                        // Jika filter progress buka resep aktif (kumpulkan nodemand)
+                                                        if (isset($_POST['progressBukaResep']) && $_POST['progressBukaResep'] != ""){
+                                                            $operationRequest = $_POST['progressBukaResep'];
+
+                                                            var_dump($_POST['progressBukaResep']);
+
+                                                            $sqlDB2 = " SELECT DISTINCT
+                                                                    p.PRODUCTIONORDERCODE,
+                                                                    p.PRODUCTIONDEMANDCODE
+                                                                FROM 
+                                                                    PRODUCTIONDEMANDSTEP p
+                                                                WHERE 
+                                                                    p.PROGRESSSTATUS = '2'
+                                                                    AND p.OPERATIONCODE = '$operationRequest'
+                                                                    -- AND p.CREATIONDATETIME > '2025-01-01'
+                                                            ";
+
+                                                            $stmt = db2_exec($conn1, $sqlDB2);
+                                                            $pairs = [];
+
+                                                            while ($row = db2_fetch_assoc($stmt)) {
+                                                                $pairs[] = [
+                                                                    'order' => trim($row['PRODUCTIONORDERCODE']),
+                                                                    'demand' => trim($row['PRODUCTIONDEMANDCODE']),
+                                                                ];
+                                                            }
+
+                                                            // Kumpulkan semua hasil
+                                                            $allRows = [];
+
+                                                            foreach ($pairs as $pair) {
+                                                                $rows = getProductionDetail($conn1, $pair['order'], $pair['demand']);
+                                                                $allRows = array_merge($allRows, $rows);
+                                                            }
+
+                                                            $is_filter_progres_BKR = true;
+                                                        }
 
                                                         // itxview_posisikk_tgl_in_prodorder_ins3
                                                         $posisikk_ins3 = db2_exec($conn1, "SELECT * FROM ITXVIEW_POSISIKK_TGL_IN_PRODORDER_INS3 WHERE PRODUCTIONORDERCODE = '$prod_order'");
@@ -452,94 +534,103 @@ if (isset($_POST['simpanin_catch'])) {
                                                             $insert_posisikk_cnp1       = sqlsrv_query($con_nowprd, "INSERT INTO nowprd.itxview_posisikk_tgl_in_prodorder_cnp1(PRODUCTIONORDERCODE,OPERATIONCODE,PROPROGRESSPROGRESSNUMBER,DEMANDSTEPSTEPNUMBER,PROGRESSTEMPLATECODE,MULAI,OP,IPADDRESS,CREATEDATETIME) VALUES $value_posisikk_cnp1");
                                                         }
 
-                                                        $sqlDB2 = "SELECT
-                                                                            p.PRODUCTIONORDERCODE,
-                                                                            p.STEPNUMBER AS STEPNUMBER,
-                                                                            CASE
-                                                                                WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
-                                                                                ELSE TRIM(p.PRODRESERVATIONLINKGROUPCODE)
-                                                                            END AS OPERATIONCODE,
-                                                                            TRIM(o.OPERATIONGROUPCODE) AS DEPT,
-                                                                            o.LONGDESCRIPTION,
-                                                                            CASE
-                                                                                WHEN p.PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                                WHEN p.PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                                WHEN p.PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                                WHEN p.PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                            END AS STATUS_OPERATION,
-                                                                            iptip.MULAI,
-                                                                            CASE
-                                                                                WHEN p.PROGRESSSTATUS = 3 THEN COALESCE(iptop.SELESAI, SUBSTRING(p.LASTUPDATEDATETIME, 1, 19) || '(Run Manual Closures)')
-                                                                                ELSE iptop.SELESAI
-                                                                            END AS SELESAI,
-                                                                            p.PRODUCTIONORDERCODE,
-                                                                            p.PRODUCTIONDEMANDCODE,
-                                                                            iptip.LONGDESCRIPTION AS OP1,
-                                                                            iptop.LONGDESCRIPTION AS OP2,
-                                                                            CASE
-                                                                                WHEN a.VALUEBOOLEAN = 1 THEN 'Tidak Perlu Gerobak'
-                                                                                ELSE 
-                                                                                    CASE
-                                                                                        WHEN LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') = '1' THEN 'PLASTIK'
-                                                                                        WHEN LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') = '2' THEN 'TONG'
-                                                                                        WHEN LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') = '3' THEN 'DALAM MESIN'
-                                                                                        ELSE LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ')
-                                                                                    END
-                                                                            END AS GEROBAK,
-                                                                            iptip.MACHINECODE
-                                                                        FROM 
-                                                                            PRODUCTIONDEMANDSTEP p 
-                                                                        LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
-                                                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = o.ABSUNIQUEID AND a.FIELDNAME = 'Gerobak'
-                                                                        LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
-                                                                        LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
-                                                                        LEFT JOIN ITXVIEW_DETAIL_QA_DATA idqd ON idqd.PRODUCTIONDEMANDCODE = p.PRODUCTIONDEMANDCODE AND idqd.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE
-                                                                                                            -- AND idqd.OPERATIONCODE = COALESCE(p.PRODRESERVATIONLINKGROUPCODE, p.OPERATIONCODE)
-                                                                                                            AND idqd.OPERATIONCODE = CASE
-                                                                                                                                        WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
-                                                                                                                                        ELSE TRIM(p.PRODRESERVATIONLINKGROUPCODE)
-                                                                                                                                    END
-                                                                                                            AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER) 
-                                                                                                            AND (idqd.CHARACTERISTICCODE = 'GRB1' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB2' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB3' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB4' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB5' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB6' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB7' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB8' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB9' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB10' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB11' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB12' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB13' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB14' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB15' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'GRB16' OR
-                                                                                                                idqd.CHARACTERISTICCODE = 'AREA')
-                                                                                                            AND NOT (idqd.VALUEQUANTITY = 999 OR idqd.VALUEQUANTITY = 9999 OR idqd.VALUEQUANTITY = 99999 OR idqd.VALUEQUANTITY = 99 OR idqd.VALUEQUANTITY = 91)
-                                                                        WHERE
-                                                                            p.PRODUCTIONORDERCODE  = '$prod_order' AND p.PRODUCTIONDEMANDCODE = '$demand'  
-                                                                        GROUP BY
-                                                                            p.PRODUCTIONORDERCODE,
-                                                                            p.STEPNUMBER,
-                                                                            p.OPERATIONCODE,
-                                                                            p.PRODRESERVATIONLINKGROUPCODE,
-                                                                            o.OPERATIONGROUPCODE,
-                                                                            o.LONGDESCRIPTION,
-                                                                            p.PROGRESSSTATUS,
-                                                                            iptip.MULAI,
-                                                                            iptop.SELESAI,
-                                                                            p.LASTUPDATEDATETIME,
-                                                                            p.PRODUCTIONORDERCODE,
-                                                                            p.PRODUCTIONDEMANDCODE,
-                                                                            iptip.LONGDESCRIPTION,
-                                                                            iptop.LONGDESCRIPTION,
-                                                                            a.VALUEBOOLEAN,
-                                                                            iptip.MACHINECODE
-                                                                        ORDER BY p.STEPNUMBER ASC";
-                                                        $stmt = db2_exec($conn1, $sqlDB2);
-                                                        while ($rowdb2 = db2_fetch_assoc($stmt)) {
+                                                        if($is_filter_progres_BKR){
+                                                            $dataTable = $allRows;
+                                                        } else {
+                                                            $sqlDB2 = "SELECT
+                                                                                p.PRODUCTIONORDERCODE,
+                                                                                p.STEPNUMBER AS STEPNUMBER,
+                                                                                CASE
+                                                                                    WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
+                                                                                    ELSE TRIM(p.PRODRESERVATIONLINKGROUPCODE)
+                                                                                END AS OPERATIONCODE,
+                                                                                TRIM(o.OPERATIONGROUPCODE) AS DEPT,
+                                                                                o.LONGDESCRIPTION,
+                                                                                CASE
+                                                                                    WHEN p.PROGRESSSTATUS = 0 THEN 'Entered'
+                                                                                    WHEN p.PROGRESSSTATUS = 1 THEN 'Planned'
+                                                                                    WHEN p.PROGRESSSTATUS = 2 THEN 'Progress'
+                                                                                    WHEN p.PROGRESSSTATUS = 3 THEN 'Closed'
+                                                                                END AS STATUS_OPERATION,
+                                                                                iptip.MULAI,
+                                                                                CASE
+                                                                                    WHEN p.PROGRESSSTATUS = 3 THEN COALESCE(iptop.SELESAI, SUBSTRING(p.LASTUPDATEDATETIME, 1, 19) || '(Run Manual Closures)')
+                                                                                    ELSE iptop.SELESAI
+                                                                                END AS SELESAI,
+                                                                                p.PRODUCTIONDEMANDCODE,
+                                                                                iptip.LONGDESCRIPTION AS OP1,
+                                                                                iptop.LONGDESCRIPTION AS OP2,
+                                                                                CASE
+                                                                                    WHEN a.VALUEBOOLEAN = 1 THEN 'Tidak Perlu Gerobak'
+                                                                                    ELSE 
+                                                                                        CASE
+                                                                                            WHEN LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') = '1' THEN 'PLASTIK'
+                                                                                            WHEN LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') = '2' THEN 'TONG'
+                                                                                            WHEN LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ') = '3' THEN 'DALAM MESIN'
+                                                                                            ELSE LISTAGG(DISTINCT FLOOR(idqd.VALUEQUANTITY), ', ')
+                                                                                        END
+                                                                                END AS GEROBAK,
+                                                                                iptip.MACHINECODE
+                                                                            FROM 
+                                                                                PRODUCTIONDEMANDSTEP p 
+                                                                            LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
+                                                                            LEFT JOIN ADSTORAGE a ON a.UNIQUEID = o.ABSUNIQUEID AND a.FIELDNAME = 'Gerobak'
+                                                                            LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
+                                                                            LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
+                                                                            LEFT JOIN ITXVIEW_DETAIL_QA_DATA idqd ON idqd.PRODUCTIONDEMANDCODE = p.PRODUCTIONDEMANDCODE AND idqd.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE
+                                                                                                                -- AND idqd.OPERATIONCODE = COALESCE(p.PRODRESERVATIONLINKGROUPCODE, p.OPERATIONCODE)
+                                                                                                                AND idqd.OPERATIONCODE = CASE
+                                                                                                                                            WHEN TRIM(p.PRODRESERVATIONLINKGROUPCODE) IS NULL OR TRIM(p.PRODRESERVATIONLINKGROUPCODE) = '' THEN TRIM(p.OPERATIONCODE)
+                                                                                                                                            ELSE TRIM(p.PRODRESERVATIONLINKGROUPCODE)
+                                                                                                                                        END
+                                                                                                                AND (idqd.VALUEINT = p.STEPNUMBER OR idqd.VALUEINT = p.GROUPSTEPNUMBER) 
+                                                                                                                AND (idqd.CHARACTERISTICCODE = 'GRB1' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB2' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB3' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB4' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB5' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB6' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB7' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB8' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB9' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB10' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB11' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB12' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB13' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB14' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB15' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'GRB16' OR
+                                                                                                                    idqd.CHARACTERISTICCODE = 'AREA')
+                                                                                                                AND NOT (idqd.VALUEQUANTITY = 999 OR idqd.VALUEQUANTITY = 9999 OR idqd.VALUEQUANTITY = 99999 OR idqd.VALUEQUANTITY = 99 OR idqd.VALUEQUANTITY = 91)
+                                                                            WHERE
+                                                                                p.PRODUCTIONORDERCODE = '$prod_order' AND p.PRODUCTIONDEMANDCODE = '$demand'
+                                                                            GROUP BY
+                                                                                p.PRODUCTIONORDERCODE,
+                                                                                p.STEPNUMBER,
+                                                                                p.OPERATIONCODE,
+                                                                                p.PRODRESERVATIONLINKGROUPCODE,
+                                                                                o.OPERATIONGROUPCODE,
+                                                                                o.LONGDESCRIPTION,
+                                                                                p.PROGRESSSTATUS,
+                                                                                iptip.MULAI,
+                                                                                iptop.SELESAI,
+                                                                                p.LASTUPDATEDATETIME,
+                                                                                p.PRODUCTIONDEMANDCODE,
+                                                                                iptip.LONGDESCRIPTION,
+                                                                                iptop.LONGDESCRIPTION,
+                                                                                a.VALUEBOOLEAN,
+                                                                                iptip.MACHINECODE
+                                                                            ORDER BY p.STEPNUMBER ASC";
+
+                                                            $stmt = db2_exec($conn1, $sqlDB2);
+                                                            if ($stmt) {
+                                                                while ($row = db2_fetch_assoc($stmt)) {
+                                                                    $dataTable[] = array_map('trim', $row);
+                                                                }
+                                                            }
+                                                        }
+                                                            
+                                                        foreach ($dataTable as $rowdb2): 
                                                         ?>
                                                             <tr>
                                                                 <td align="center"><?= $rowdb2['STEPNUMBER']; ?></td>
@@ -601,7 +692,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                             $cache_MULAI    = $d_cache['tanggal_in'];
                                                                             ?>
                                                                             <?php if ($cache_MULAI) : ?>
-                                                                                <span style="background-color: #A5CEA8;"><?= cek($cache_MULAI,'Y-m-d H:i:s'); ?></span>
+                                                                                <span style="background-color: #A5CEA8;"><?= cek($cache_MULAI, 'Y-m-d H:i:s'); ?></span>
                                                                             <?php else : ?>
                                                                                 <?php if ($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
                                                                                     <form action="" method="POST">
@@ -690,7 +781,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                             $cache_SELESAI    = $d_cache['tanggal_out'];
                                                                             ?>
                                                                             <?php if ($cache_SELESAI) : ?>
-                                                                                <span style="background-color: #A5CEA8;"><?= cek($cache_SELESAI,'Y-m-d H:i:s'); ?></span>
+                                                                                <span style="background-color: #A5CEA8;"><?= cek($cache_SELESAI, 'Y-m-d H:i:s'); ?></span>
                                                                             <?php else : ?>
                                                                                 <?php if ($rowdb2['STATUS_OPERATION'] != 'Closed') : ?>
                                                                                     <form action="" method="POST">
@@ -869,7 +960,7 @@ if (isset($_POST['simpanin_catch'])) {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        <?php } ?>
+                                                        <?php endforeach; ?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -884,6 +975,47 @@ if (isset($_POST['simpanin_catch'])) {
         </div>
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script src="files\assets\js\pcoded.min.js"></script>
 <script type="text/javascript" src="files\assets\js\script.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            width: '100%', // agar pas dengan form-control
+            placeholder: $(this).data('placeholder'),
+            allowClear: true
+        });
+
+        const operation = $('select[name="progressBukaResep"]');
+        const demand = $('input[name="demand"]');
+        const prodOrder = $('input[name="prod_order"]');
+
+        function toggleInputs() {
+            const selectedValue = operation.val();
+
+            if (selectedValue && selectedValue !== "") {
+                // Semua input selain checkbox diubah jadi readonly & hapus required
+                demand.prop('readonly', true).removeAttr('required');
+                demand.val(null);
+                prodOrder.prop('readonly', true).removeAttr('required');
+                prodOrder.val(null);
+
+            } else {
+                // Kembalikan ke normal
+                prodOrder.prop('readonly', false);
+                demand.prop('readonly', false).attr('required', true);
+            }
+        }
+
+        // Jalankan saat pertama kali halaman dimuat
+        toggleInputs();
+
+        // Jalankan setiap kali checkbox berubah
+        operation.on('change', toggleInputs);
+    });
+</script>
+</script>
 <?php require_once 'footer.php'; ?>
