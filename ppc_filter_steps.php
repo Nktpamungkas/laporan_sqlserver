@@ -328,7 +328,7 @@ if (isset($_POST['simpanin_catch'])) {
                                     </div>
                                 </div>
 
-                                <?php if (isset($_POST['submit'])) : ?>
+                                <?php if (isset($_POST['submit']) or isset($_GET['demand']) or isset($_GET['prod_order'])) : ?>
                                     <div class="card">
                                         <?php if (isset($_POST['submit']) or isset($_GET['demand']) or isset($_GET['prod_order'])) : ?>
                                             <div class="card-header">
