@@ -50,7 +50,9 @@ $headers = [
     'QTY BAGIKAIN',
     'RCODE',
     'SUFFIX CODE',
-    'LOT'
+    'LOT',
+    'NO MESIN',
+    'NO URUT'
 ];
 $sheet->fromArray($headers, null, 'A1');
 
@@ -100,6 +102,11 @@ while ($r = db2_fetch_assoc($stmt)) {
     // skip kalau tidak ada hasil
     if (!$d_groupStepNumber) continue;
 
+    $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT * FROM `tbl_schedule` WHERE nokk = '$r[PRODUCTIONORDERCODE]' AND NOT `status` = 'selesai'");
+    $data_schedule_dye  = mysqli_fetch_assoc($q_schedule_dye);
+    $nomesin            = $data_schedule_dye['no_mesin'];
+    $nourut             = $data_schedule_dye['no_urut'];
+
     // Tambahkan data ke sheet
     $sheet->fromArray([
         $r['CREATIONDATETIME'],
@@ -109,7 +116,9 @@ while ($r = db2_fetch_assoc($stmt)) {
         $r['QTY_BAGIKAIN'],
         $r['SUBCODE01'],
         $r['SUFFIXCODE'],
-        $r['LOT']
+        $r['LOT'],
+        $nomesin,
+        $nourut
     ], null, "A{$row}");
 
     $row++;
