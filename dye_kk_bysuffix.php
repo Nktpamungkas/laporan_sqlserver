@@ -30,6 +30,7 @@
     <link rel="stylesheet" type="text/css" href="files\assets\css\jquery.mCustomScrollbar.css">
 </head>
 <?php require_once 'header.php'; ?>
+<?php $hasData = false?>
 
 <body>
     <div class="pcoded-content">
@@ -59,6 +60,8 @@
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i
                                                             class="icofont icofont-search-alt-1"></i> Cari data</button>
+                                                    <button type="button" name="exportCQA" id="btnExportCQA" class="btn btn-warning ml-2" style="visibility: hidden;"><i
+                                                            class="icofont icofont-file-excel"></i> Export CQA</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -99,8 +102,10 @@
                                                             }
                                                             $db2_reservation = "SELECT * FROM ITXVIEWPROD_SUFFIX $WHERE ORDER BY PRODUCTIONORDERCODE DESC";
                                                             $stmt   = db2_exec($conn1, $db2_reservation);
+
                                                             $no     = 1;
                                                             while ($row_prod = db2_fetch_assoc($stmt)) {
+                                                                $hasData = true;
                                                         ?>
                                                     <tr>
                                                         <td><?= $row_prod['CREATIONDATETIME']; ?></td>
@@ -183,6 +188,28 @@
     <script src="files\assets\js\menu\menu-hori-fixed.js"></script>
     <script src="files\assets\js\jquery.mCustomScrollbar.concat.min.js"></script>
     <script type="text/javascript" src="files\assets\js\script.js"></script>
+
+    <script>
+        console.log(<?= $hasData ?>)
+        const hasData = <?= $hasData ? 'true' : 'false' ?>;
+
+        $(document).ready(function() {
+            if (typeof hasData !== 'undefined' && hasData) {
+                $('#btnExportCQA').css('visibility', 'visible');
+            } else {
+                $('#btnExportCQA').css('visibility', 'hidden');
+            }
+
+            $('#btnExportCQA').on('click', function() {
+                const subcode01 = $('input[name="subcode01"]').val();
+                const suffix = $('input[name="suffix"]').val();
+
+                const url = 'dye_kk_bysuffix_excel_cqa.php?subcode01=' + encodeURIComponent(subcode01) +
+                            '&suffix=' + encodeURIComponent(suffix);
+                window.open(url, '_blank');
+            });
+        });
+    </script>
 </body>
 
 </html>
