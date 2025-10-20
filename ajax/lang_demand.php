@@ -71,15 +71,14 @@ $whereDate = (post('start_date') && post('end_date'))
     ? "CAST(s.REQUIREDDUEDATE  AS DATE) BETWEEN ? AND ?"
     : "CAST(s.CREATIONDATETIME AS DATE) BETWEEN ? AND ?";
     
-$where = "  AND p.PROGRESSSTATUS <> 6
-            AND p.ITEMTYPEAFICODE = 'KFF'
-            AND a1.VALUESTRING IS NULL
-            AND NOT PRODUCTIONDEMANDSTEP.PRODUCTIONORDERCODE IS NULL
-            AND COALESCE(SUBSTR(s.CODE, 1, 3), '') IN (
-                'EXP', 'DOM', 'SAM', 'SME', 'REP',
-                'RPE', 'RFD', 'DMB', 'TBG', 'RBG',
-                'OPN', 'MNB'
-            )";
+$where = "AND p.ITEMTYPEAFICODE = 'KFF'
+          AND a1.VALUESTRING IS NULL
+          AND NOT PRODUCTIONDEMANDSTEP.PRODUCTIONORDERCODE IS NULL
+          AND COALESCE(SUBSTR(s.CODE, 1, 3), '') IN (
+            'EXP', 'DOM', 'SAM', 'SME', 'REP',
+            'RPE', 'RFD', 'DMB', 'TBG', 'RBG',
+            'OPN', 'MNB'
+        )";
 
 // search (opsional, OR across beberapa kolom)
 $params = [$startDate, $endDate];
