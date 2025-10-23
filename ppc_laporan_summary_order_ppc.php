@@ -1,45 +1,45 @@
 <?php
-    session_start();
-    require_once "koneksi.php";
-    $menu = 'ppc_laporan_summary_order_ppc.php'; // Set the menu for this login
-    $ip_comp = $_SERVER['REMOTE_ADDR'];
+session_start();
+require_once "koneksi.php";
+$menu = 'ppc_laporan_summary_order_ppc.php'; // Set the menu for this login
+$ip_comp = $_SERVER['REMOTE_ADDR'];
 
-    // Cek apakah tombol logout ditekan
-    if (isset($_POST['logout'])) {
+// Cek apakah tombol logout ditekan
+if (isset($_POST['logout'])) {
 
-        $qLogout    = "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'";
-        sqlsrv_query($con_nowprd, $qLogout);
+    $qLogout    = "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'";
+    sqlsrv_query($con_nowprd, $qLogout);
 
-        // Redirect ke login
+    // Redirect ke login
+    header("Location: login_ppc_laporan_summary_order_ppc.php");
+    exit();
+}
+?>
+<?php
+session_start();
+require_once "koneksi.php";
+include "utils/helper.php";
+$date = date('Y-m-d H:i:s');
+
+session_start();
+$q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
+$data_login     = sqlsrv_fetch_array($q_cek_login);
+if ($data_login['COUNT'] == '1') {
+    $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
+    $data_waktu_login     = sqlsrv_fetch_array($q_waktu_cek_login);
+    if ($data_waktu_login['selisih_menit'] > 10) {
+        sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
         header("Location: login_ppc_laporan_summary_order_ppc.php");
         exit();
-    }
-    ?>
-    <?php
-    session_start();
-    require_once "koneksi.php";
-    include "utils/helper.php";
-    $date = date('Y-m-d H:i:s');
-
-    session_start();
-    $q_cek_login    = sqlsrv_query($con_nowprd, "SELECT COUNT(*) AS COUNT FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
-    $data_login     = sqlsrv_fetch_array($q_cek_login);
-    if ($data_login['COUNT'] == '1') {
-        $q_waktu_cek_login    = sqlsrv_query($con_nowprd, "SELECT DATEDIFF(MINUTE, CREATEDATETIME, GETDATE()) AS selisih_menit FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
-        $data_waktu_login     = sqlsrv_fetch_array($q_waktu_cek_login);
-        if ($data_waktu_login['selisih_menit'] > 10) {
-            sqlsrv_query($con_nowprd, "DELETE FROM nowprd.log_activity_users WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
-            header("Location: login_ppc_laporan_summary_order_ppc.php");
-            exit();
-        } else {
-            sqlsrv_query($con_nowprd, "UPDATE nowprd.log_activity_users
+    } else {
+        sqlsrv_query($con_nowprd, "UPDATE nowprd.log_activity_users
                                                 SET CREATEDATETIME = '$date'
                                                 WHERE IPADDRESS = '$ip_comp' AND menu = '$menu'");
-        }
-    } else {
-        header("Location: login_ppc_laporan_summary_order_ppc.php");
-        exit();
     }
+} else {
+    header("Location: login_ppc_laporan_summary_order_ppc.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,6 +53,7 @@
     <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="#">
     <link rel="icon" href="files\assets\images\favicon.ico" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" type="text/css" href="files\bower_components\bootstrap\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\themify-icons\themify-icons.css">
     <link rel="stylesheet" type="text/css" href="files\assets\icon\icofont\css\icofont.css">
@@ -156,6 +157,56 @@
         background-color: darkred;
     }
 </style>
+
+<!-- Chart Styling -->
+<style>
+    .chart-row {
+    display: flex;
+    align-items: stretch;
+    }
+
+    .chart-col {
+    flex: 1;
+    padding: 20px;
+    }
+
+    .border-right-col {
+    border-right: 1px solid #ccc;
+    }
+
+    /* Optional: styling tambahan biar rapi */
+    .chart-container {
+    text-align: center;
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    }
+
+    h6 {
+    font-weight: 600;
+    margin-bottom: 10px;
+    }
+
+    /* Loader spinner */
+    .chart-loader {
+    display: none;
+    text-align: center;
+    padding: 40px 0;
+    }
+
+    .chart-loader .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: #007bff;
+    }
+
+    .chart-loader span {
+    display: block;
+    margin-top: 10px;
+    font-weight: 500;
+    color: #555;
+    }
+</style>
 <?php require_once 'header.php'; ?>
 
 <body>
@@ -173,6 +224,7 @@
                                             <div class="tab-buttons">
                                                 <button class="tab-btn active" onclick="openTab('tab-filter')">Filter Data</button>
                                                 <button class="tab-btn" onclick="openTab('tab-password')">Change Password</button>
+                                                <button class="tab-btn" onclick="openTab('tab-status-mesin')">Status Mesin</button>
                                             </div>
                                             <form method="POST" style="margin:0;">
                                                 <button type="submit" name="logout" class="logout-btn"
@@ -184,26 +236,30 @@
                                         <!-- Filter Data Tab -->
                                         <div id="tab-filter" class="tab-content active">
                                             <form method="post" class="row align-items-end">
-                                                 <div class="col-sm-12 col-xl-2 m-b-30">
+                                                <div class="col-sm-12 col-xl-2 m-b-30">
                                                     <label>From Date</label>
-                                                    <input type="date" name="tgl1" class="form-control" id="tgl1" 
-                                                        value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl1']; } ?>">
+                                                    <input type="date" name="tgl1" class="form-control" id="tgl1"
+                                                        value="<?php if (isset($_POST['submit'])) {
+                                                                    echo $_POST['tgl1'];
+                                                                } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
                                                     <label>To Date</label>
-                                                    <input type="date" name="tgl2" class="form-control" id="tgl2" 
-                                                        value="<?php if (isset($_POST['submit'])){ echo $_POST['tgl2']; } ?>">
+                                                    <input type="date" name="tgl2" class="form-control" id="tgl2"
+                                                        value="<?php if (isset($_POST['submit'])) {
+                                                                    echo $_POST['tgl2'];
+                                                                } ?>">
                                                 </div>
                                                 <div class="col-sm-12 col-xl-2 m-b-30">
                                                     <button type="submit" name="submit" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
                                                     <?php
                                                     if (isset($_POST['submit']) && !empty($_POST['tgl1']) && !empty($_POST['tgl2'])) {
                                                     ?>
-                                                        <a href="https://online.indotaichen.com/laporan/ppc_laporan_summary_order_ppc_excel.php?tgl1=<?= $_POST['tgl1'] ?>&tgl2=<?= $_POST['tgl2'] ?>" 
-                                                        class="btn btn-warning ml-2">
+                                                        <a href="https://online.indotaichen.com/laporan/ppc_laporan_summary_order_ppc_excel.php?tgl1=<?= $_POST['tgl1'] ?>&tgl2=<?= $_POST['tgl2'] ?>"
+                                                            class="btn btn-warning ml-2">
                                                             <i class="fa fa-search"></i> Export Excel
                                                         </a>
-                                                    <?php  
+                                                    <?php
                                                     }
                                                     ?>
                                                 </div>
@@ -234,6 +290,37 @@
                                                             <i class="bi bi-shield-lock"></i> Ubah Password
                                                         </button>
                                                     </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Status Mesin Tab -->
+                                        <div id="tab-status-mesin" class="tab-content">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>Status Mesin</h5>
+                                                </div>
+                                                <div class="card-block">
+                                                    <!-- Loader placeholder -->
+                                                    <div id="chartLoader" class="chart-loader">
+                                                        <div class="spinner-border" role="status"></div>
+                                                        <span>Loading data, please wait...</span>
+                                                    </div>
+                                                    <div class="row chart-row">
+                                                        <div class="col chart-col border-right-col">
+                                                            <div class="chart-container">
+                                                                <h6>JUMLAH MESIN SUDAH BAGI KAIN</h6>
+                                                                <canvas id="status_mesin_sudah_bagi_kain"></canvas>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col chart-col">
+                                                            <div class="chart-container">
+                                                                <h6>JUMLAH MESIN BELUM BAGI KAIN</h6>
+                                                                <canvas id="status_mesin_belum_bagi_kain"></canvas>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -285,7 +372,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            
+
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -386,6 +473,49 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modal Detail Mesin -->
+             <div class="modal fade" id="modalDetailMesin" tabindex="-1" role="dialog" aria-labelledby="modalDetailMesin" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-fullscreen" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="detailModalLabel">Machine Details</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="loadingSpinner" class="text-center" style="display:none;">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <p>Loading data, please wait...</p>
+                            </div>
+                            <!-- <div class="table-responsive">
+                                <table class="table table-bordered" id="machineDetailsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Dyelot</th>
+                                            <th>Ip Address</th>
+                                            <th>Start Stop</th>
+                                            <th>End Stop</th>
+                                            <th>Total Stop</th>
+                                            <th>Reason</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div> -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </body>
@@ -410,6 +540,10 @@
 </script>
 <script>
     function openTab(tabId) {
+        let mesinSudahBagiKainChart = null; // simpan chart instance global
+        let mesinBelumBagiKainChart = null; // simpan chart instance global
+        let mesinLoaded = false; // biar load AJAX hanya sekali
+
         // Hide all tabs
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -417,92 +551,290 @@
         // Activate selected tab
         document.getElementById(tabId).classList.add('active');
         event.target.classList.add('active');
+
+        // Jika tab status mesin aktif, load chart via AJAX (sekali saja)
+        if (tabId === "tab-status-mesin" && !mesinLoaded) {
+            loadStatusMesin();
+            mesinLoaded = true;
+        }
     }
+
+    function loadStatusMesin() {
+        const loader = $("#chartLoader");
+        const chartRow = $(".chart-row");
+
+        $.ajax({
+            url: "ajax/fetch_status_mesin_dye.php", // ganti dengan file PHP-mu
+            method: "GET",
+            dataType: "json",
+            beforeSend: function() {
+                // Tampilkan loader
+                loader.show();
+                chartRow.hide();
+
+                // $("#status_mesin_belum_bagi_kain").replaceWith(
+                //     `<canvas id="status_mesin_belum_bagi_kain"></canvas>`
+                // );
+                // $("#status_mesin_sudah_bagi_kain").replaceWith(
+                //     `<canvas id="status_mesin_sudah_bagi_kain"></canvas>`
+                // );
+            },
+            success: function(response) {
+                loader.hide(); // Sembunyikan loader
+                chartRow.show(); // Tampilkan chart container
+
+                const ctxSudahBagiKain = document.getElementById("status_mesin_sudah_bagi_kain").getContext("2d");
+                const ctxBelumBagiKain = document.getElementById("status_mesin_belum_bagi_kain").getContext("2d");
+                
+                const {dataSudahBagiKain, dataBelumBagiKain} = response
+
+                // Chart 1
+                const labelsSudahBagiKain = dataSudahBagiKain.map(item => item.machine);
+                const countsSudahBagiKain = dataSudahBagiKain.map(item => item.count);
+                mesinSudahBagiKainChart = new Chart(ctxSudahBagiKain, {
+                    type: "bar",
+                    data: {
+                        labels: labelsSudahBagiKain,
+                        datasets: [{
+                            label: "Jumlah Mesin",
+                            data: countsSudahBagiKain,
+                            backgroundColor: "rgba(54, 162, 235, 0.7)",
+                            borderColor: "rgba(54, 162, 235, 1)",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 2
+                                }
+                            }
+                        },
+                        onClick: function(evt, elements) {
+                            if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const machine = this.data.labels[index];
+                            showDetailModal(machine, "sudah");
+                            }
+                        },
+                        plugins: { legend: { display: false } },
+                    }
+                });
+
+                // Chart 2
+                const labelsBelumBagiKain = dataBelumBagiKain.map(item => item.machine);
+                const countsBelumBagiKain = dataBelumBagiKain.map(item => item.count);
+                mesinBelumBagiKainChart = new Chart(ctxBelumBagiKain, {
+                    type: "bar",
+                    data: {
+                        labels: labelsBelumBagiKain,
+                        datasets: [{
+                            label: "Jumlah Mesin",
+                            data: countsBelumBagiKain,
+                            backgroundColor: "rgba(54, 162, 235, 0.7)",
+                            borderColor: "rgba(54, 162, 235, 1)",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 2
+                                }
+                            }
+                        },
+                        onClick: function(evt, elements) {
+                            if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const machine = this.data.labels[index];
+                            showDetailModal(machine, "belum");
+                            }
+                        },
+                        plugins: { legend: { display: false } },
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error loading data:", error);
+            }
+        });
+    }
+
+    function showDetailModal(machine, status) {
+        $("#modalDetailMesin").modal("show");
+        $("#detailModalLabel").text(`Detail Mesin ${machine} (${status.toUpperCase()})`);
+        $("#modalContent").empty();
+        // $("#modalLoader").show();
+
+        // $.ajax({
+        //     url: "ajax/fetch_detail_mesin.php",
+        //     method: "GET",
+        //     data: { machine, status },
+        //     dataType: "html",
+        //     success: function(res) {
+        //     $("#modalLoader").hide();
+        //     $("#modalContent").html(res);
+        //     },
+        //     error: function(xhr, status, error) {
+        //     $("#modalLoader").hide();
+        //     $("#modalContent").html(
+        //         `<div class="alert alert-danger">Gagal memuat data: ${error}</div>`
+        //     );
+        //     }
+        // });
+        }
 </script>
 <?php
-    // Filter tanggal default jika tidak ada input 
-    $defaultStart = $_POST['tgl1'];
-    $defaultEnd   = $_POST['tgl2'];
+// Filter tanggal default jika tidak ada input 
+$defaultStart = $_POST['tgl1'];
+$defaultEnd   = $_POST['tgl2'];
 ?>
 <script>
-    $(function () {
+    $(function() {
         // optional: input filter tanggal kalau mau
         const defaultStart = "<?= $defaultStart ?>";
-        const defaultEnd   = "<?= $defaultEnd ?>";
+        const defaultEnd = "<?= $defaultEnd ?>";
 
         $('#demandTable').DataTable({
             processing: true,
-            serverSide: true,   // paging/sort/search di server
-            searching: true,   // aktifkan pencarian
-            ordering: true,       // aktifkan sorting
+            serverSide: true, // paging/sort/search di server
+            searching: true, // aktifkan pencarian
+            ordering: true, // aktifkan sorting
             ajax: {
-            url: 'ajax/lang_demand.php',
-            type: 'POST',
-            data: function (d) {
+                url: 'ajax/lang_demand.php',
+                type: 'POST',
+                data: function(d) {
                     // kirim filter tanggal (bisa diganti dari datepicker)
                     d.start_date = defaultStart;
-                    d.end_date   = defaultEnd;
+                    d.end_date = defaultEnd;
                 }
             },
-            columns: [
-                { data: 'MKT' },
-                { data: 'NO_MC' },
-                { data: 'AKJ_AKW' },
-                { data: 'LANGGANAN' },
-                { data: 'BUYER' },
-                { data: 'ITEM' },
-                { data: 'SALESORDER' },
-                { data: 'JENIS_KAIN' },
-                { data: 'WARNA' },
-                { data: 'NO_WARNA' },
-                { data: 'LOT' },
-                { data: 'FIRSTLOT' },
-                { data: 'PRODUCTIONORDERCODE' },
-                { 
+            columns: [{
+                    data: 'MKT'
+                },
+                {
+                    data: 'NO_MC'
+                },
+                {
+                    data: 'AKJ_AKW'
+                },
+                {
+                    data: 'LANGGANAN'
+                },
+                {
+                    data: 'BUYER'
+                },
+                {
+                    data: 'ITEM'
+                },
+                {
+                    data: 'SALESORDER'
+                },
+                {
+                    data: 'JENIS_KAIN'
+                },
+                {
+                    data: 'WARNA'
+                },
+                {
+                    data: 'NO_WARNA'
+                },
+                {
+                    data: 'LOT'
+                },
+                {
+                    data: 'FIRSTLOT'
+                },
+                {
+                    data: 'PRODUCTIONORDERCODE'
+                },
+                {
                     data: 'DEMAND',
-                    render: function (data, type, row) {
+                    render: function(data, type, row) {
                         if (type === 'display' && data) {
-                            return '<a target="_blank" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' 
-                                + encodeURIComponent(data) 
-                                + '&prod_order=' 
-                                + encodeURIComponent(row.PRODUCTIONORDERCODE) 
-                                + '">' + data + '</a>';
+                            return '<a target="_blank" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' +
+                                encodeURIComponent(data) +
+                                '&prod_order=' +
+                                encodeURIComponent(row.PRODUCTIONORDERCODE) +
+                                '">' + data + '</a>';
                         }
                         return data;
                     }
                 },
-                { data: 'DEL_INTERNAL' },
-                { data: 'DEL_ACTUAL' },
-                { data: 'LBR' },
-                { data: 'GRMS' },
-                { data: 'BRUTO_PER_KK' },
-                { data: 'BRUTO_SOL' },
-                { data: 'NETTO' },
-                { 
+                {
+                    data: 'DEL_INTERNAL'
+                },
+                {
+                    data: 'DEL_ACTUAL'
+                },
+                {
+                    data: 'LBR'
+                },
+                {
+                    data: 'GRMS'
+                },
+                {
+                    data: 'BRUTO_PER_KK'
+                },
+                {
+                    data: 'BRUTO_SOL'
+                },
+                {
+                    data: 'NETTO'
+                },
+                {
                     data: 'PO_GREIGE_GREIGE_AWAL_GREIGE_AKHIR',
-                    render: function (data, type, row) {
+                    render: function(data, type, row) {
                         if (type === 'display' && data) {
                             // Kirim 3 parameter via GET
-                            var url = 'po_greige_detail.php?prod_order=' 
-                                + encodeURIComponent(row.PRODUCTIONORDERCODE)
-                                + '&demand=' + encodeURIComponent(row.DEMAND)
-                                + '&del_actual=' + encodeURIComponent(row.DEL_ACTUAL);
+                            var url = 'po_greige_detail.php?prod_order=' +
+                                encodeURIComponent(row.PRODUCTIONORDERCODE) +
+                                '&demand=' + encodeURIComponent(row.DEMAND) +
+                                '&del_actual=' + encodeURIComponent(row.DEL_ACTUAL);
                             return '<a href="' + url + '" target="_blank">' + data + '</a>';
                         }
                         return data;
                     }
                 },
-                { data: 'VARIAN_GREIGE' },
-                { data: 'ROLL' },
-                { data: 'QTY' },
-                { data: 'PROSES_PRETREATMENT' },
-                { data: 'TGL_BAGI_KAIN' },
-                { data: 'TGL_PRESET' },
-                { data: 'CELUP_GREIGE' },
-                { data: 'KETERANGAN' },
-                { data: 'LEADTIME_ACTUAL' },
-                { data: 'TGL_TERIMA_ORDER' },
-                { data: 'TGL_BUKA_KK' },
+                {
+                    data: 'VARIAN_GREIGE'
+                },
+                {
+                    data: 'ROLL'
+                },
+                {
+                    data: 'QTY'
+                },
+                {
+                    data: 'PROSES_PRETREATMENT'
+                },
+                {
+                    data: 'TGL_BAGI_KAIN'
+                },
+                {
+                    data: 'TGL_PRESET'
+                },
+                {
+                    data: 'CELUP_GREIGE'
+                },
+                {
+                    data: 'KETERANGAN'
+                },
+                {
+                    data: 'LEADTIME_ACTUAL'
+                },
+                {
+                    data: 'TGL_TERIMA_ORDER'
+                },
+                {
+                    data: 'TGL_BUKA_KK'
+                },
             ]
         });
     });
