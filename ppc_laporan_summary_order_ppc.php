@@ -163,6 +163,7 @@ if ($data_login['COUNT'] == '1') {
     .chart-row {
         display: flex;
         align-items: stretch;
+        justify-content: center;
     }
 
     .chart-col {
@@ -362,13 +363,15 @@ if ($data_login['COUNT'] == '1') {
                                                         <span>Loading data, please wait...</span>
                                                     </div>
                                                     <div class="row chart-row">
-                                                        <div class="col-6 chart-col border-right-col">
+                                                        <div class="col-10 chart-col">
                                                             <div class="chart-container">
                                                                 <h6>JUMLAH MESIN SUDAH BAGI KAIN</h6>
                                                                 <canvas id="status_mesin_sudah_bagi_kain"></canvas>
                                                             </div>
                                                         </div>
-                                                        <div class="col-6 chart-col">
+                                                    </div>
+                                                    <div class="row chart-row">
+                                                        <div class="col-10 chart-col">
                                                             <div class="chart-container">
                                                                 <h6>JUMLAH MESIN BELUM BAGI KAIN</h6>
                                                                 <canvas id="status_mesin_belum_bagi_kain"></canvas>
