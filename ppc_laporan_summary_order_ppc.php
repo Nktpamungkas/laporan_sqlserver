@@ -294,12 +294,12 @@ if ($data_login['COUNT'] == '1') {
                                             </div>
                                         </div>
 
-
                                         <!-- Status Mesin Tab -->
                                         <div id="tab-status-mesin" class="tab-content">
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h5>Status Mesin</h5>
+                                                    <p id="loadedTime" class="text-muted">Not loaded yet</p>
                                                 </div>
                                                 <div class="card-block">
                                                     <!-- Loader placeholder -->
@@ -308,13 +308,13 @@ if ($data_login['COUNT'] == '1') {
                                                         <span>Loading data, please wait...</span>
                                                     </div>
                                                     <div class="row chart-row">
-                                                        <div class="col chart-col border-right-col">
+                                                        <div class="col-6 chart-col border-right-col">
                                                             <div class="chart-container">
                                                                 <h6>JUMLAH MESIN SUDAH BAGI KAIN</h6>
                                                                 <canvas id="status_mesin_sudah_bagi_kain"></canvas>
                                                             </div>
                                                         </div>
-                                                        <div class="col chart-col">
+                                                        <div class="col-6 chart-col">
                                                             <div class="chart-container">
                                                                 <h6>JUMLAH MESIN BELUM BAGI KAIN</h6>
                                                                 <canvas id="status_mesin_belum_bagi_kain"></canvas>
@@ -476,7 +476,7 @@ if ($data_login['COUNT'] == '1') {
 
             <!-- Modal Detail Mesin -->
             <div class="modal fade" id="modalDetailMesin" tabindex="-1" role="dialog" aria-labelledby="modalDetailMesin" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-fullscreen" role="document">
+                <div class="modal-dialog modal-lg" style="max-width: 1000px" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="detailModalLabel">Machine Details</h5>
@@ -546,7 +546,8 @@ if ($data_login['COUNT'] == '1') {
     function loadStatusMesin() {
         const loader = $("#chartLoader");
         const chartRow = $(".chart-row");
-
+        const loadedText = $("#loadedTime");
+        
         $.ajax({
             url: "ajax/fetch_status_mesin_dye.php", // ganti dengan file PHP-mu
             method: "GET",
@@ -555,7 +556,7 @@ if ($data_login['COUNT'] == '1') {
                 // Tampilkan loader
                 loader.show();
                 chartRow.hide();
-
+                loadedText.text("Loading...");
                 // $("#status_mesin_belum_bagi_kain").replaceWith(
                 //     `<canvas id="status_mesin_belum_bagi_kain"></canvas>`
                 // );
@@ -566,6 +567,10 @@ if ($data_login['COUNT'] == '1') {
             success: function(response) {
                 loader.hide(); // Sembunyikan loader
                 chartRow.show(); // Tampilkan chart container
+                // 🕒 tampilkan waktu terakhir load
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString("id-ID", { hour12: false }); // format 24 jam
+                loadedText.html(`✅ Loaded at <strong>${timeStr}</strong>`);
 
                 const ctxSudahBagiKain = document.getElementById("status_mesin_sudah_bagi_kain").getContext("2d");
                 const ctxBelumBagiKain = document.getElementById("status_mesin_belum_bagi_kain").getContext("2d");
@@ -608,11 +613,13 @@ if ($data_login['COUNT'] == '1') {
                                 showDetailModal(machineData, "Sudah Bagi Kain"); // langsung pakai items-nya
                             }
                         },
+                        responsive: true,
                         plugins: {
                             legend: {
                                 display: false
                             }
                         },
+
                     }
                 });
 
@@ -649,6 +656,7 @@ if ($data_login['COUNT'] == '1') {
                                 showDetailModal(machineData, "Belum Bagi Kain"); // langsung pakai items-nya
                             }
                         },
+                        responsive: true,
                         plugins: {
                             legend: {
                                 display: false
@@ -697,8 +705,7 @@ if ($data_login['COUNT'] == '1') {
                 ordering: true,
                 info: true,
                 autoWidth: false,
-                columns: [
-                    {
+                columns: [{
                         data: "production_order"
                     },
                     {
