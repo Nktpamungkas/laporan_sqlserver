@@ -591,7 +591,7 @@ if ($data_login['COUNT'] == '1') {
                     data: {
                         labels: labelsSudahBagiKain,
                         datasets: [{
-                            label: "Jumlah Mesin",
+                            label: "Jumlah KK",
                             data: countsSudahBagiKain,
                             backgroundColor: "rgba(54, 162, 235, 0.7)",
                             borderColor: "rgba(54, 162, 235, 1)",
@@ -634,7 +634,7 @@ if ($data_login['COUNT'] == '1') {
                     data: {
                         labels: labelsBelumBagiKain,
                         datasets: [{
-                            label: "Jumlah Mesin",
+                            label: "Jumlah KK",
                             data: countsBelumBagiKain,
                             backgroundColor: "rgba(54, 162, 235, 0.7)",
                             borderColor: "rgba(54, 162, 235, 1)",
