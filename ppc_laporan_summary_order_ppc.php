@@ -670,7 +670,8 @@ if ($data_login['COUNT'] == '1') {
             <table id="detailTableMesin" class="table table-striped table-bordered nowrap" width="100%">
                 <thead>
                     <tr>
-                        <th>No Demand</th>
+                        <th>Production Order</th>
+                        <th>Production Demand</th>
                         <th>No Order</th>
                         <th>QTY Bruto</th>
                         <th>Status Terakhir</th>
@@ -698,10 +699,13 @@ if ($data_login['COUNT'] == '1') {
                 autoWidth: false,
                 columns: [
                     {
+                        data: "production_order"
+                    },
+                    {
                         data: "production_demand"
                     },
                     {
-                        data: "production_order"
+                        data: "code"
                     },
                     {
                         data: "qty_bruto"

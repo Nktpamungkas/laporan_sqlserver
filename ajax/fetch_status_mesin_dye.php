@@ -3,52 +3,55 @@ require_once "../koneksi.php";
 header('Content-Type: application/json');
 
 $query = "WITH KAINAKJ AS (
-          SELECT 
-            s2.SALESORDERCODE,
-            s2.ORDERLINE,
-            a3.VALUESTRING
+            SELECT 
+              s2.SALESORDERCODE,
+              s2.ORDERLINE,
+              a3.VALUESTRING
+            FROM 
+              SALESORDERLINE s2
+            LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = s2.ABSUNIQUEID AND a3.FIELDNAME = 'KainAKJ'
+            WHERE 
+              a3.VALUESTRING IN ('0', '2')
+          )
+          SELECT DISTINCT 
+            TRIM(p2.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
+            LISTAGG(TRIM(p.CODE), ', ') AS PRODUCTIONDEMAND,
+            a.VALUESTRING AS NOMOR_MESIN,
+            p.PROGRESSSTATUS,
+            a2.VALUESTRING AS ORIGINALPDCODE,
+            s.TEMPLATECODE,
+            LISTAGG(TRIM(s.CODE), ', ') AS CODE,
+            k_akj.VALUESTRING AS KAINAKJ,
+            SUM(a3.VALUEDECIMAL) AS BRUTO
           FROM 
-            SALESORDERLINE s2
-          LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = s2.ABSUNIQUEID AND a3.FIELDNAME = 'KainAKJ'
-          WHERE 
-            a3.VALUESTRING IN ('0', '2')
-        )
-        SELECT DISTINCT 
-          TRIM(p2.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
-        	TRIM(p.CODE) AS PRODUCTIONDEMAND,
-          a.VALUESTRING AS NOMOR_MESIN,
-          p.PROGRESSSTATUS,
-          a2.VALUESTRING AS ORIGINALPDCODE,
-          p.CREATIONUSER,
-          s.TEMPLATECODE,
-          s.CODE,
-          k_akj.VALUESTRING AS KAINAKJ,
-          p3.CREATIONDATETIME,
-          a3.VALUEDECIMAL AS BRUTO
-        FROM 
-          PRODUCTIONDEMAND p 
-        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DYEMachineNoCode'
-        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
-        LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = p.ABSUNIQUEID AND a3.FIELDNAME = 'OriginalBruto'
-        LEFT JOIN SALESORDER s ON s.CODE = p.ORIGDLVSALORDLINESALORDERCODE 
-        LEFT JOIN KAINAKJ k_akj ON k_akj.SALESORDERCODE = s.CODE AND k_akj.ORDERLINE = p.ORIGDLVSALORDERLINEORDERLINE
-        LEFT JOIN (
-                SELECT
-                    DISTINCT PRODUCTIONDEMANDCODE,
-                    PRODUCTIONORDERCODE
-                FROM
-                    PRODUCTIONDEMANDSTEP p2 
-            ) p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-        LEFT JOIN PRODUCTIONORDER p3 ON p3.CODE = p2.PRODUCTIONORDERCODE
-        WHERE 	
-          a.VALUESTRING IS NOT NULL
-          AND NOT p.PROGRESSSTATUS = '6'
-          AND (TRIM(p.CREATIONUSER) = 'yogi.rahmansyah' OR a2.VALUESTRING IS NULL)
-          AND s.TEMPLATECODE IN ('DOM', 'EXP', 'SME', 'SAM', 'REP', 'RPE', 'OPN', 'DMB', 'MNB', 'TBG', 'RBG')
-          AND p2.PRODUCTIONORDERCODE IS NOT NULL
-          AND NOT p3.PROGRESSSTATUS = '6'
-        ORDER BY 
-          p3.CREATIONDATETIME ASC";
+            PRODUCTIONDEMAND p 
+          LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DYEMachineNoCode'
+          LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+          LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = p.ABSUNIQUEID AND a3.FIELDNAME = 'OriginalBruto'
+          LEFT JOIN SALESORDER s ON s.CODE = p.ORIGDLVSALORDLINESALORDERCODE 
+          LEFT JOIN KAINAKJ k_akj ON k_akj.SALESORDERCODE = s.CODE AND k_akj.ORDERLINE = p.ORIGDLVSALORDERLINEORDERLINE
+          LEFT JOIN (
+                  SELECT
+                      DISTINCT PRODUCTIONDEMANDCODE,
+                      PRODUCTIONORDERCODE
+                  FROM
+                      PRODUCTIONDEMANDSTEP p2 
+              ) p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
+          LEFT JOIN PRODUCTIONORDER p3 ON p3.CODE = p2.PRODUCTIONORDERCODE
+          WHERE 	
+            a.VALUESTRING IS NOT NULL
+            AND NOT p.PROGRESSSTATUS = '6'
+            AND (TRIM(p.CREATIONUSER) = 'yogi.rahmansyah' OR a2.VALUESTRING IS NULL)
+            AND s.TEMPLATECODE IN ('DOM', 'EXP', 'SME', 'SAM', 'REP', 'RPE', 'OPN', 'DMB', 'MNB', 'TBG', 'RBG')
+            AND p2.PRODUCTIONORDERCODE IS NOT NULL
+            AND NOT p3.PROGRESSSTATUS = '6'
+          GROUP BY 
+            p2.PRODUCTIONORDERCODE,
+            a.VALUESTRING,
+            p.PROGRESSSTATUS,
+            a2.VALUESTRING,
+            s.TEMPLATECODE,
+            k_akj.VALUESTRING";
 $result = db2_exec($conn1, $query);
 
 if (!$result) {
@@ -149,10 +152,42 @@ while ($row = db2_fetch_assoc($result)) {
       ];
     }
     $data_status[$status][$machine]['count']++;
+    $brutoRaw = isset($row['BRUTO']) ? trim($row['BRUTO']) : '';
+    if ($brutoRaw === '') {
+      $formattedBruto = '';
+    } else {
+      // normalisasi input: tangani kemungkinan pemisah ribuan/decimal dengan koma
+      $s = $brutoRaw;
+      if (strpos($s, ',') !== false && strpos($s, '.') !== false) {
+        // asumsikan koma pemisah ribuan, hapus koma
+        $s = str_replace(',', '', $s);
+      } elseif (strpos($s, ',') !== false && strpos($s, '.') === false) {
+        // asumsikan koma sebagai pemisah desimal
+        $s = str_replace(',', '.', $s);
+      }
+      // tentukan apakah ada bagian desimal non-zero
+      if (strpos($s, '.') !== false) {
+        list($intPart, $fracPart) = explode('.', $s, 2);
+        $fracPart = rtrim($fracPart, '0');
+        if ($fracPart === '') {
+      // tidak ada desimal berarti tampilkan sebagai integer dengan pemisah ribuan
+      $formattedBruto = number_format((int)$intPart, 0, '.', ',');
+        } else {
+      // ada desimal, tampilkan sesuai jumlah digit desimal yang signifikan
+      $decimals = strlen($fracPart);
+      $formattedBruto = number_format((float)$s, $decimals, '.', ',');
+        }
+      } else {
+        // murni integer
+        $formattedBruto = number_format((int)$s, 0, '.', ',');
+      }
+    }
     $data_status[$status][$machine]['items'][] = [
       'production_order' => $productionOrder,
       'production_demand' => trim($row['PRODUCTIONDEMAND']),
-      'qty_bruto' => trim($row['BRUTO']),
+      'code' => trim($row['CODE']),
+      // format qty bruto: show decimals only if non-zero, always use thousands separator
+      'qty_bruto' => $formattedBruto,
       'status_terakhir' => $posisiTerakhirValue,
     ];
   }
