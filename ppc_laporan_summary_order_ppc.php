@@ -567,8 +567,13 @@ if ($data_login['COUNT'] == '1') {
                 chartRow.show(); // Tampilkan chart container
                 // 🕒 tampilkan waktu terakhir load
                 const now = new Date();
-                const timeStr = now.toLocaleTimeString("id-ID", { hour12: false }); // format 24 jam
-                loadedText.html(`✅ Loaded at <strong>${timeStr}</strong>`);
+                const timeStr = now.toLocaleTimeString("id-ID", { 
+                    hour12: false,
+                    hour: "2-digit",
+                    minute: "2-digit", 
+                    second: "2-digit"
+                }).replace(/\./g, ':'); // replace dots with colons
+                loadedText.html(`🕒 Data terakhir diperbarui pada jam <strong>${timeStr}</strong>`);
 
                 const ctxSudahBagiKain = document.getElementById("status_mesin_sudah_bagi_kain").getContext("2d");
                 const ctxBelumBagiKain = document.getElementById("status_mesin_belum_bagi_kain").getContext("2d");
