@@ -161,50 +161,50 @@ if ($data_login['COUNT'] == '1') {
 <!-- Chart Styling -->
 <style>
     .chart-row {
-    display: flex;
-    align-items: stretch;
+        display: flex;
+        align-items: stretch;
     }
 
     .chart-col {
-    flex: 1;
-    padding: 20px;
+        flex: 1;
+        padding: 20px;
     }
 
     .border-right-col {
-    border-right: 1px solid #ccc;
+        border-right: 1px solid #ccc;
     }
 
     /* Optional: styling tambahan biar rapi */
     .chart-container {
-    text-align: center;
-    background: #fff;
-    border-radius: 8px;
-    padding: 10px;
+        text-align: center;
+        background: #fff;
+        border-radius: 8px;
+        padding: 10px;
     }
 
     h6 {
-    font-weight: 600;
-    margin-bottom: 10px;
+        font-weight: 600;
+        margin-bottom: 10px;
     }
 
     /* Loader spinner */
     .chart-loader {
-    display: none;
-    text-align: center;
-    padding: 40px 0;
+        display: none;
+        text-align: center;
+        padding: 40px 0;
     }
 
     .chart-loader .spinner-border {
-    width: 3rem;
-    height: 3rem;
-    color: #007bff;
+        width: 3rem;
+        height: 3rem;
+        color: #007bff;
     }
 
     .chart-loader span {
-    display: block;
-    margin-top: 10px;
-    font-weight: 500;
-    color: #555;
+        display: block;
+        margin-top: 10px;
+        font-weight: 500;
+        color: #555;
     }
 </style>
 <?php require_once 'header.php'; ?>
@@ -475,7 +475,7 @@ if ($data_login['COUNT'] == '1') {
             </div>
 
             <!-- Modal Detail Mesin -->
-             <div class="modal fade" id="modalDetailMesin" tabindex="-1" role="dialog" aria-labelledby="modalDetailMesin" aria-hidden="true">
+            <div class="modal fade" id="modalDetailMesin" tabindex="-1" role="dialog" aria-labelledby="modalDetailMesin" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-fullscreen" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -491,23 +491,7 @@ if ($data_login['COUNT'] == '1') {
                                 </div>
                                 <p>Loading data, please wait...</p>
                             </div>
-                            <!-- <div class="table-responsive">
-                                <table class="table table-bordered" id="machineDetailsTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Dyelot</th>
-                                            <th>Ip Address</th>
-                                            <th>Start Stop</th>
-                                            <th>End Stop</th>
-                                            <th>Total Stop</th>
-                                            <th>Reason</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div> -->
+                            <div id="detailDataMesin"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -585,8 +569,11 @@ if ($data_login['COUNT'] == '1') {
 
                 const ctxSudahBagiKain = document.getElementById("status_mesin_sudah_bagi_kain").getContext("2d");
                 const ctxBelumBagiKain = document.getElementById("status_mesin_belum_bagi_kain").getContext("2d");
-                
-                const {dataSudahBagiKain, dataBelumBagiKain} = response
+
+                const {
+                    dataSudahBagiKain,
+                    dataBelumBagiKain
+                } = response
 
                 // Chart 1
                 const labelsSudahBagiKain = dataSudahBagiKain.map(item => item.machine);
@@ -604,7 +591,6 @@ if ($data_login['COUNT'] == '1') {
                         }]
                     },
                     options: {
-                        responsive: true,
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -615,12 +601,18 @@ if ($data_login['COUNT'] == '1') {
                         },
                         onClick: function(evt, elements) {
                             if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const machine = this.data.labels[index];
-                            showDetailModal(machine, "sudah");
+                                const index = elements[0].index;
+                                const machine = this.data.labels[index];
+                                const machineData = dataSudahBagiKain.find(m => m.machine === machine);
+
+                                showDetailModal(machineData, "Sudah Bagi Kain"); // langsung pakai items-nya
                             }
                         },
-                        plugins: { legend: { display: false } },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
                     }
                 });
 
@@ -640,7 +632,6 @@ if ($data_login['COUNT'] == '1') {
                         }]
                     },
                     options: {
-                        responsive: true,
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -651,12 +642,18 @@ if ($data_login['COUNT'] == '1') {
                         },
                         onClick: function(evt, elements) {
                             if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const machine = this.data.labels[index];
-                            showDetailModal(machine, "belum");
+                                const index = elements[0].index;
+                                const machine = this.data.labels[index];
+                                const machineData = dataBelumBagiKain.find(m => m.machine === machine);
+
+                                showDetailModal(machineData, "Belum Bagi Kain"); // langsung pakai items-nya
                             }
                         },
-                        plugins: { legend: { display: false } },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
                     }
                 });
             },
@@ -666,29 +663,65 @@ if ($data_login['COUNT'] == '1') {
         });
     }
 
-    function showDetailModal(machine, status) {
+    function showDetailModal(machineData, status) {
         $("#modalDetailMesin").modal("show");
-        $("#detailModalLabel").text(`Detail Mesin ${machine} (${status.toUpperCase()})`);
-        $("#modalContent").empty();
-        // $("#modalLoader").show();
+        $("#detailModalLabel").text(`Detail Mesin ${machineData?.machine} (${status})`);
+        $("#detailDataMesin").html(`
+            <table id="detailTableMesin" class="table table-striped table-bordered nowrap" width="100%">
+                <thead>
+                    <tr>
+                        <th>No Demand</th>
+                        <th>No Order</th>
+                        <th>QTY Bruto</th>
+                        <th>Status Terakhir</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        `);
 
-        // $.ajax({
-        //     url: "ajax/fetch_detail_mesin.php",
-        //     method: "GET",
-        //     data: { machine, status },
-        //     dataType: "html",
-        //     success: function(res) {
-        //     $("#modalLoader").hide();
-        //     $("#modalContent").html(res);
-        //     },
-        //     error: function(xhr, status, error) {
-        //     $("#modalLoader").hide();
-        //     $("#modalContent").html(
-        //         `<div class="alert alert-danger">Gagal memuat data: ${error}</div>`
-        //     );
-        //     }
-        // });
-        }
+        // Tunggu modal benar-benar terbuka sebelum inisialisasi DataTable
+        $("#modalDetailMesin").on("shown.bs.modal", function() {
+            // Pastikan tidak re-init DataTable
+            if ($.fn.DataTable.isDataTable("#detailTableMesin")) {
+                $("#detailTableMesin").DataTable().clear().destroy();
+            }
+
+            // Render data ke DataTable
+            $("#detailTableMesin").DataTable({
+                data: machineData.items,
+                responsive: true,
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                autoWidth: false,
+                columns: [
+                    {
+                        data: "production_demand"
+                    },
+                    {
+                        data: "production_order"
+                    },
+                    {
+                        data: "qty_bruto"
+                    },
+                    {
+                        data: "status_terakhir"
+                    },
+                ],
+                pageLength: 10,
+                lengthChange: false
+            });
+        });
+
+        // Reset event listener agar tidak dobel
+        $("#modalDetailMesin").off("hidden.bs.modal").on("hidden.bs.modal", function() {
+            if ($.fn.DataTable.isDataTable("#detailTableMesin")) {
+                $("#detailTableMesin").DataTable().clear().destroy();
+            }
+        });
+    }
 </script>
 <?php
 // Filter tanggal default jika tidak ada input 

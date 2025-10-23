@@ -15,7 +15,7 @@ $query = "WITH KAINAKJ AS (
         )
         SELECT DISTINCT 
           TRIM(p2.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
-        --	TRIM(p.CODE) AS PRODUCTIONDEMAND,
+        	TRIM(p.CODE) AS PRODUCTIONDEMAND,
           a.VALUESTRING AS NOMOR_MESIN,
           p.PROGRESSSTATUS,
           a2.VALUESTRING AS ORIGINALPDCODE,
@@ -23,11 +23,13 @@ $query = "WITH KAINAKJ AS (
           s.TEMPLATECODE,
           s.CODE,
           k_akj.VALUESTRING AS KAINAKJ,
-          p3.CREATIONDATETIME
+          p3.CREATIONDATETIME,
+          a3.VALUEDECIMAL AS BRUTO
         FROM 
           PRODUCTIONDEMAND p 
         LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DYEMachineNoCode'
         LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
+        LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = p.ABSUNIQUEID AND a3.FIELDNAME = 'OriginalBruto'
         LEFT JOIN SALESORDER s ON s.CODE = p.ORIGDLVSALORDLINESALORDERCODE 
         LEFT JOIN KAINAKJ k_akj ON k_akj.SALESORDERCODE = s.CODE AND k_akj.ORDERLINE = p.ORIGDLVSALORDERLINEORDERLINE
         LEFT JOIN (
@@ -59,12 +61,23 @@ $data_status = [
   'BELUM BAGI KAIN' => []
 ];
 
+$seenOrders = []; // 🧠 untuk melacak production order yang sudah diproses
+
 while ($row = db2_fetch_assoc($result)) {
   $productionOrder = trim($row['PRODUCTIONORDERCODE']);
   $machine = trim($row['NOMOR_MESIN']);
 
+  // jika sudah pernah diproses, skip
+  if (isset($seenOrders[$productionOrder])) {
+    continue;
+  }
+
+  // tandai sebagai sudah diproses
+  $seenOrders[$productionOrder] = true;
+
   if ($productionOrder === '' || $machine === '') continue;
 
+  // Check Status SUDAH / BELUM BAGI KAIN
   $subQuery = " SELECT DISTINCT 
                   ipkk.PRODUCTIONORDERCODE,
                   CASE
@@ -104,7 +117,7 @@ while ($row = db2_fetch_assoc($result)) {
   $subResult = db2_exec($conn1, $subQuery);
   if (!$subResult) continue;
 
-    // Ambil hasil status
+  // Ambil hasil status
   $status = null;
 
   while ($subRow = db2_fetch_assoc($subResult)) {
@@ -113,10 +126,35 @@ while ($row = db2_fetch_assoc($result)) {
 
   // Hanya ambil 2 status yang relevan
   if ($status === 'SUDAH BAGI KAIN' || $status === 'BELUM BAGI KAIN') {
-    if (!isset($data_status[$status][$machine])) {
-      $data_status[$status][$machine] = 0;
+    $posisiTerakhirQuery = "SELECT
+            COALESCE(DEPT, OPERATIONCODE) || ' - ' || LONGDESCRIPTION AS STATUS_TERAKHIR
+        FROM
+            ITXVIEW_POSISI_KARTU_KERJA
+        WHERE
+            PRODUCTIONORDERCODE = '$productionOrder'
+            AND NOT STATUS_OPERATION = 'Closed'
+        ORDER BY
+            STEPNUMBER ASC
+        LIMIT 1";
+    $posisiTerakhirResult = db2_exec($conn1, $posisiTerakhirQuery);
+
+    while ($posisiTerakhirRow = db2_fetch_assoc($posisiTerakhirResult)) {
+      $posisiTerakhirValue = trim($posisiTerakhirRow['STATUS_TERAKHIR']);
     }
-    $data_status[$status][$machine]++;
+
+    if (!isset($data_status[$status][$machine])) {
+      $data_status[$status][$machine] = [
+        'count' => 0,
+        'items' => [] // simpan detail
+      ];
+    }
+    $data_status[$status][$machine]['count']++;
+    $data_status[$status][$machine]['items'][] = [
+      'production_order' => $productionOrder,
+      'production_demand' => trim($row['PRODUCTIONDEMAND']),
+      'qty_bruto' => trim($row['BRUTO']),
+      'status_terakhir' => $posisiTerakhirValue,
+    ];
   }
 }
 
@@ -125,12 +163,12 @@ $output = [
   'dataBelumBagiKain' => []
 ];
 
-foreach ($data_status['SUDAH BAGI KAIN'] as $machine => $count) {
-  $output['dataSudahBagiKain'][] = ['machine' => $machine, 'count' => $count];
+foreach ($data_status['SUDAH BAGI KAIN'] as $machine => $data) {
+  $output['dataSudahBagiKain'][] = ['machine' => $machine, 'count' => $data['count'], 'items' => $data['items']];
 }
 
-foreach ($data_status['BELUM BAGI KAIN'] as $machine => $count) {
-  $output['dataBelumBagiKain'][] = ['machine' => $machine, 'count' => $count];
+foreach ($data_status['BELUM BAGI KAIN'] as $machine => $data) {
+  $output['dataBelumBagiKain'][] = ['machine' => $machine, 'count' => $data['count'], 'items' => $data['items']];
 }
 
 echo json_encode($output, JSON_PRETTY_PRINT);
