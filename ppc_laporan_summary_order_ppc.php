@@ -264,6 +264,60 @@ if ($data_login['COUNT'] == '1') {
                                                     ?>
                                                 </div>
                                             </form>
+                                            <!-- Card Hasil -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="card">
+                                                        <div class="card-block">
+                                                            <div class="dt-responsive table-responsive">
+                                                                <table id="demandTable" class="table table-striped table-bordered nowrap">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>MKT</th>
+                                                                            <th>NO MC</th>
+                                                                            <th>AKJ/AKW</th>
+                                                                            <th>LANGGANAN</th>
+                                                                            <th>BUYER</th>
+                                                                            <th>ITEM</th>
+                                                                            <th>SALES ORDER</th>
+                                                                            <th>JENIS KAIN</th>
+                                                                            <th>WARNA</th>
+                                                                            <th>NO WARNA</th>
+                                                                            <th>LOT</th>
+                                                                            <th>FIRST LOT</th>
+                                                                            <th>PRODUCTION ORDER</th>
+                                                                            <th>DEMAND</th>
+                                                                            <th>DEL. INTERNAL</th>
+                                                                            <th>DEL. ACTUAL</th>
+                                                                            <th>LBR</th>
+                                                                            <th>GRMS</th>
+                                                                            <th>Bruto Per KK</th>
+                                                                            <th>Bruto Sales Order Line</th>
+                                                                            <th>NETTO</th>
+                                                                            <th>PO GREIGE | GREIGE AWAL | GREIGE AKHIR</th>
+                                                                            <th>VARIAN GREIGE</th>
+                                                                            <th>ROLL</th>
+                                                                            <th>QTY</th>
+                                                                            <th>PROSES PRETREATMENT</th>
+                                                                            <th>TGL BAGI KAN</th>
+                                                                            <th>TGL PRESET</th>
+                                                                            <th>CELUP GREIGE</th>
+                                                                            <th>KETERANGAN</th>
+                                                                            <th>LEADTIME ACTUAL</th>
+                                                                            <th>TGL TERIMA ORDER</th>
+                                                                            <th>TGL BUKA KK</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- End Card Hasil -->
                                         </div>
 
                                         <!-- Change Password Tab -->
@@ -326,62 +380,6 @@ if ($data_login['COUNT'] == '1') {
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Card Hasil -->
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="card">
-                                            <div class="card-block">
-                                                <div class="dt-responsive table-responsive">
-                                                    <table id="demandTable" class="table table-striped table-bordered nowrap">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>MKT</th>
-                                                                <th>NO MC</th>
-                                                                <th>AKJ/AKW</th>
-                                                                <th>LANGGANAN</th>
-                                                                <th>BUYER</th>
-                                                                <th>ITEM</th>
-                                                                <th>SALES ORDER</th>
-                                                                <th>JENIS KAIN</th>
-                                                                <th>WARNA</th>
-                                                                <th>NO WARNA</th>
-                                                                <th>LOT</th>
-                                                                <th>FIRST LOT</th>
-                                                                <th>PRODUCTION ORDER</th>
-                                                                <th>DEMAND</th>
-                                                                <th>DEL. INTERNAL</th>
-                                                                <th>DEL. ACTUAL</th>
-                                                                <th>LBR</th>
-                                                                <th>GRMS</th>
-                                                                <th>Bruto Per KK</th>
-                                                                <th>Bruto Sales Order Line</th>
-                                                                <th>NETTO</th>
-                                                                <th>PO GREIGE | GREIGE AWAL | GREIGE AKHIR</th>
-                                                                <th>VARIAN GREIGE</th>
-                                                                <th>ROLL</th>
-                                                                <th>QTY</th>
-                                                                <th>PROSES PRETREATMENT</th>
-                                                                <th>TGL BAGI KAN</th>
-                                                                <th>TGL PRESET</th>
-                                                                <th>CELUP GREIGE</th>
-                                                                <th>KETERANGAN</th>
-                                                                <th>LEADTIME ACTUAL</th>
-                                                                <th>TGL TERIMA ORDER</th>
-                                                                <th>TGL BUKA KK</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Card Hasil -->
-
                                 <?php
                                 if (isset($_POST['change_password'])) {
                                     $user_id = $_SESSION['iduser'];
