@@ -364,7 +364,7 @@ if ($data_login['COUNT'] == '1') {
                                                     <div class="row chart-row">
                                                         <div class="col-6 chart-col border-right-col">
                                                             <div class="chart-container">
-                                                                <h6>JUMLAH MESIN SUDAH BAGI KAIN</h6>
+                                                                <h6>JUMLAH MESIN SUDAH BAGI KAIN (Belum Celup)</h6>
                                                                 <canvas id="status_mesin_sudah_bagi_kain"></canvas>
                                                             </div>
                                                         </div>
