@@ -2,6 +2,26 @@
 require_once "../koneksi.php";
 header('Content-Type: application/json');
 
+$queryResource = "SELECT 
+                    r.BATHVOLUME, 
+                    r.CODE, 
+                    r.SHORTDESCRIPTION 
+                  FROM RESOURCES r 
+                  WHERE CODE LIKE 'P3%' AND TYPE = 2
+                  ORDER BY r.BATHVOLUME DESC";
+$resultResource = db2_exec($conn1, $queryResource);
+$machineCapacities = [];
+while ($row = db2_fetch_assoc($resultResource)) {
+    // Hilangkan koma dari angka (contoh: 3,200 -> 3200)
+    $volume = str_replace(',', '', $row['BATHVOLUME']);
+    $machineCapacities[trim($row['CODE'])] = (int)$volume;
+}
+
+if (!$resultResource) {
+  echo json_encode(["error" => db2_stmt_errormsg()]);
+  exit;
+}
+
 $query = "WITH KAINAKJ AS (
             SELECT 
               s2.SALESORDERCODE,
@@ -16,6 +36,8 @@ $query = "WITH KAINAKJ AS (
           SELECT DISTINCT 
             TRIM(p2.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
             LISTAGG(TRIM(p.CODE), ', ') AS PRODUCTIONDEMAND,
+            TRIM(p.SUBCODE02) || '' || TRIM(p.SUBCODE03) AS ITEM,
+            TRIM(p.SUBCODE03) || '/' || TRIM(p.SUBCODE05) AS WARNA,
             a.VALUESTRING AS NOMOR_MESIN,
             p.PROGRESSSTATUS,
             a2.VALUESTRING AS ORIGINALPDCODE,
@@ -47,6 +69,8 @@ $query = "WITH KAINAKJ AS (
             AND NOT p3.PROGRESSSTATUS = '6'
           GROUP BY 
             p2.PRODUCTIONORDERCODE,
+            TRIM(p.SUBCODE02) || '' || TRIM(p.SUBCODE03),
+            TRIM(p.SUBCODE03) || '/' || TRIM(p.SUBCODE05),
             a.VALUESTRING,
             p.PROGRESSSTATUS,
             a2.VALUESTRING,
@@ -186,6 +210,9 @@ while ($row = db2_fetch_assoc($result)) {
       'production_order' => $productionOrder,
       'production_demand' => trim($row['PRODUCTIONDEMAND']),
       'code' => trim($row['CODE']),
+      'item' => trim($row['ITEM']),
+      'warna' => trim($row['WARNA']),
+      'del_internal' => trim($row['WARNA']),
       // format qty bruto: show decimals only if non-zero, always use thousands separator
       'qty_bruto' => $formattedBruto,
       'status_terakhir' => $posisiTerakhirValue,
@@ -195,7 +222,8 @@ while ($row = db2_fetch_assoc($result)) {
 
 $output = [
   'dataSudahBagiKain' => [],
-  'dataBelumBagiKain' => []
+  'dataBelumBagiKain' => [],
+  'machineCapacities' => $machineCapacities,
 ];
 
 foreach ($data_status['SUDAH BAGI KAIN'] as $machine => $data) {

@@ -363,7 +363,7 @@ if ($data_login['COUNT'] == '1') {
                                                         <span>Loading data, please wait...</span>
                                                     </div>
                                                     <div class="row chart-row">
-                                                        <div class="col-10 chart-col">
+                                                        <div class="col-11 chart-col">
                                                             <div class="chart-container">
                                                                 <h6>JUMLAH MESIN SUDAH BAGI KAIN (Belum Celup)</h6>
                                                                 <canvas id="status_mesin_sudah_bagi_kain"></canvas>
@@ -371,7 +371,7 @@ if ($data_login['COUNT'] == '1') {
                                                         </div>
                                                     </div>
                                                     <div class="row chart-row">
-                                                        <div class="col-10 chart-col">
+                                                        <div class="col-11 chart-col">
                                                             <div class="chart-container">
                                                                 <h6>JUMLAH MESIN BELUM BAGI KAIN</h6>
                                                                 <canvas id="status_mesin_belum_bagi_kain"></canvas>
@@ -477,7 +477,7 @@ if ($data_login['COUNT'] == '1') {
 
             <!-- Modal Detail Mesin -->
             <div class="modal fade" id="modalDetailMesin" tabindex="-1" role="dialog" aria-labelledby="modalDetailMesin" aria-hidden="true">
-                <div class="modal-dialog modal-lg" style="max-width: 1000px" role="document">
+                <div class="modal-dialog modal-lg" style="max-width: 1500px" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="detailModalLabel">Machine Details</h5>
@@ -549,6 +549,79 @@ if ($data_login['COUNT'] == '1') {
         const chartRow = $(".chart-row");
         const loadedText = $("#loadedTime");
         
+        // const machineCapacities = {
+        //     "P3DY4409": 3200,
+        //     "P3DY4411": 3200,
+        //     "P3DY4412": 2400,
+        //     "P3DY4413": 2400,
+        //     "P3DY1401": 2400,
+        //     "P3DY1406": 2400,
+        //     "P3DY1103": 1800,
+        //     "P3DY1107": 1800,
+        //     "P3DY1410": 1800,
+        //     "P3DY1104": 1200,
+        //     "P3DY1108": 1200,
+        //     "P3DY1402": 1200,
+        //     "P3DY1414": 1200,
+        //     "P3DY1415": 1200,
+        //     "P3DY2343": 1200,
+        //     "P3DY1150": 900,
+        //     "P3DY2241": 800,
+        //     "P3DY2223": 800,
+        //     "P3DY2242": 800,
+        //     "P3DY2619": 800,
+        //     "P3DY2621": 800,
+        //     "P3DY1146": 600,
+        //     "P3DY1147": 600,
+        //     "P3DY1149": 600,
+        //     "P3DY1445": 600,
+        //     "P3DY1448": 600,
+        //     "P3DY2626": 600,
+        //     "P3DY3444": 600,
+        //     "P3DY2224": 400,
+        //     "P3DY2225": 400,
+        //     "P3DY1154": 300,
+        //     "P3DY1455": 300,
+        //     "P3DY1456": 300,
+        //     "P3DY1457": 300,
+        //     "P3DY1458": 300,
+        //     "P3DY3453": 300,
+        //     "P3DY2222": 200,
+        //     "P3DY1451": 150,
+        //     "P3DY1452": 150,
+        //     "P3DY3476": 150,
+        //     "P3DY1459": 100,
+        //     "P3DY1460": 100,
+        //     "P3DY1461": 100,
+        //     "P3DY2616": 100,
+        //     "P3DY2617": 100,
+        //     "P3DY3462": 100,
+        //     "P3DY3463": 100,
+        //     "P3DY3464": 100,
+        //     "P3DY1465": 50,
+        //     "P3DY1466": 50,
+        //     "P3DY1467": 50,
+        //     "P3DY1477": 50,
+        //     "P3DY1478": 50,
+        //     "P3DY3470": 50,
+        //     "P3DY3471": 50,
+        //     "P3DY3474": 50,
+        //     "P3DY3475": 50,
+        //     "P3DY1475": 30,
+        //     "P3DY2620": 30,
+        //     "P3DY3468": 30,
+        //     "P3DY3472": 30,
+        //     "P3DY2632": 20,
+        //     "P3DY2634": 20,
+        //     "P3DY2631": 10,
+        //     "P3DY3435": 5,
+        //     "P3DY3436": 5,
+        //     "P3DY3437": 5,
+        //     "P3DY3438": 5,
+        //     "P3DY3439": 5,
+        //     "P3DY3440": 5,
+        // };
+
         $.ajax({
             url: "ajax/fetch_status_mesin_dye.php", // ganti dengan file PHP-mu
             method: "GET",
@@ -583,10 +656,80 @@ if ($data_login['COUNT'] == '1') {
 
                 const {
                     dataSudahBagiKain,
-                    dataBelumBagiKain
+                    dataBelumBagiKain,
+                    machineCapacities
                 } = response
 
+                // 🧩 Plugin custom untuk menambah label grup di bawah sumbu X
+                const machineGroupLabelPlugin = {
+                    id: "machineGroupLabel",
+                    afterDraw(chart) {
+                        const { ctx, chartArea, scales } = chart
+                        const xAxis = scales.x
+                        const yAxis = scales.y
+                        const labels = chart.data.labels
+
+                        const getCapacity = (machine) => machineCapacities[machine] || 0
+
+                        // 🔹 Kelompokkan berdasarkan kapasitas
+                        const groups = []
+                        let currentGroup = { label: null, from: 0, to: 0 }
+
+                        labels.forEach((machine, i) => {
+                        const cap = getCapacity(machine)
+                        if (cap !== currentGroup.label) {
+                            if (currentGroup.label !== null) groups.push({ ...currentGroup })
+                            currentGroup = { label: cap, from: i, to: i }
+                        } else {
+                            currentGroup.to = i
+                        }
+                        })
+                        if (currentGroup.label !== null) groups.push(currentGroup)
+
+                        // 🔹 Gambar label kapasitas per grup
+                        ctx.save()
+                        ctx.font = "12px sans-serif"
+                        ctx.textAlign = "center"
+                        ctx.fillStyle = "#e53935"
+                        ctx.strokeStyle = "#e53935"
+
+                        groups.forEach((g) => {
+                            const xFrom = xAxis.getPixelForTick(g.from)
+                            const xTo = xAxis.getPixelForTick(g.to)
+                            const center = (xFrom + xTo) / 2
+
+                            // garis kurung bawah
+                            ctx.beginPath()
+                            ctx.moveTo(xFrom + 3, yAxis.bottom + 50)
+                            ctx.lineTo(xFrom + 3, yAxis.bottom + 70)
+                            ctx.lineTo(xTo - 3, yAxis.bottom + 70)
+                            ctx.lineTo(xTo - 3, yAxis.bottom + 50)
+                            ctx.stroke()
+
+                            // label di tengah kurung
+                            const cap = `${g.label}`
+                            const unit = `Kg`
+                            ctx.fillText(cap, center, yAxis.bottom + 85)
+                            ctx.fillText(unit, center, yAxis.bottom + 99)
+                            // ctx.translate(center, yAxis.bottom + 45) // posisi teks
+                            // ctx.rotate((-45 * Math.PI) / 180) // rotasi -45 derajat
+                            // ctx.fillText(text, 0, 0)
+                        })
+
+                        ctx.restore()
+                    },
+                }
+
                 // Chart 1
+                dataSudahBagiKain.sort((a, b) => {
+                    const capA = machineCapacities[a.machine] || 0
+                    const capB = machineCapacities[b.machine] || 0
+                    if (capA === capB) {
+                        // kalau kapasitas sama, urutkan alfabet mesin
+                        return a.machine.localeCompare(b.machine)
+                    }
+                    return capB - capA
+                })
                 const labelsSudahBagiKain = dataSudahBagiKain.map(item => item.machine);
                 const countsSudahBagiKain = dataSudahBagiKain.map(item => item.count);
                 mesinSudahBagiKainChart = new Chart(ctxSudahBagiKain, {
@@ -602,6 +745,11 @@ if ($data_login['COUNT'] == '1') {
                         }]
                     },
                     options: {
+                        layout: {
+                            padding: {
+                                bottom: 60, // tambah ruang bawah
+                            },
+                        },
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -626,10 +774,20 @@ if ($data_login['COUNT'] == '1') {
                             }
                         },
 
-                    }
+                    },
+                    plugins: [machineGroupLabelPlugin],
                 });
 
                 // Chart 2
+                dataBelumBagiKain.sort((a, b) => {
+                    const capA = machineCapacities[a.machine] || 0
+                    const capB = machineCapacities[b.machine] || 0
+                    if (capA === capB) {
+                        // kalau kapasitas sama, urutkan alfabet mesin
+                        return a.machine.localeCompare(b.machine)
+                    }
+                    return capB - capA
+                })
                 const labelsBelumBagiKain = dataBelumBagiKain.map(item => item.machine);
                 const countsBelumBagiKain = dataBelumBagiKain.map(item => item.count);
                 mesinBelumBagiKainChart = new Chart(ctxBelumBagiKain, {
@@ -645,6 +803,11 @@ if ($data_login['COUNT'] == '1') {
                         }]
                     },
                     options: {
+                        layout: {
+                            padding: {
+                                bottom: 60, // tambah ruang bawah
+                            },
+                        },
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -668,7 +831,8 @@ if ($data_login['COUNT'] == '1') {
                                 display: false
                             }
                         },
-                    }
+                    },
+                    plugins: [machineGroupLabelPlugin],
                 });
             },
             error: function(xhr, status, error) {
@@ -687,6 +851,9 @@ if ($data_login['COUNT'] == '1') {
                         <th>Production Order</th>
                         <th>Production Demand</th>
                         <th>No Order</th>
+                        <th>Item</th>
+                        <th>Warna</th>
+                        <th>Del Internal</th>
                         <th>QTY Bruto</th>
                         <th>Status Terakhir</th>
                     </tr>
@@ -719,6 +886,15 @@ if ($data_login['COUNT'] == '1') {
                     },
                     {
                         data: "code"
+                    },
+                    {
+                        data: "item"
+                    },
+                    {
+                        data: "warna"
+                    },
+                    {
+                        data: "del_internal"
                     },
                     {
                         data: "qty_bruto"
