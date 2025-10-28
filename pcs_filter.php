@@ -62,7 +62,8 @@
                                                                         CASE WHEN a.SUBCODE07 = ' ' THEN '-' ELSE TRIM( a.SUBCODE07 ) END || ' ' || 
                                                                         CASE WHEN a.SUBCODE08 = ' ' THEN '-' ELSE TRIM( a.SUBCODE08 ) END || ' ' || 
                                                                         CASE WHEN a.SUBCODE09 = ' ' THEN '-' ELSE TRIM( a.SUBCODE09 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE10 = ' ' THEN '-' ELSE TRIM( a.SUBCODE10 ) END AS KODE_BARANG 
+                                                                        CASE WHEN a.SUBCODE10 = ' ' THEN '-' ELSE TRIM( a.SUBCODE10 ) END AS KODE_BARANG,
+                                                                        p.PURCHASEORDERCODE
                                                                     FROM
                                                                         PRODUCT a
                                                                     RIGHT JOIN PURCHASEORDERLINE p ON CASE WHEN p.SUBCODE01 = ' ' THEN '-' ELSE TRIM( p.SUBCODE01 ) END = CASE WHEN a.SUBCODE01 = ' ' THEN '-' ELSE TRIM( a.SUBCODE01 ) END AND
@@ -89,7 +90,8 @@
                                                                         a.SUBCODE07,
                                                                         a.SUBCODE08,
                                                                         a.SUBCODE09,
-                                                                        a.SUBCODE10";
+                                                                        a.SUBCODE10,
+                                                                        p.PURCHASEORDERCODE";
                                                             $stmt=db2_exec($conn1, $sqlDB);
                                                             while ($rowdb = db2_fetch_assoc($stmt)) {
                                                         ?>
@@ -116,6 +118,7 @@
                                                             <th>NAMA BARANG</th>
                                                             <th>VENDOR</th>
                                                             <th>TANGGAL PEMESANAN</th>
+                                                            <th>NOMOR PO</th>
                                                             <th>MATA UANG</th>
                                                             <th>HARGA SATUAN</th>
                                                             <th>SATUAN</th=>
@@ -142,7 +145,8 @@
                                                                                     p.USERPRIMARYQUANTITY,
                                                                                     p.NETVALUEINCLUDINGTAX,
                                                                                     TRIM(p2.CURRENCYCODE) AS CURRENCYCODE,
-                                                                                    b.LEGALNAME1  
+                                                                                    b.LEGALNAME1,
+                                                                                    p.PURCHASEORDERCODE
                                                                                 FROM
                                                                                     PURCHASEORDERLINE p 
                                                                                 LEFT JOIN PURCHASEORDER p2 ON p2.CODE = p.PURCHASEORDERCODE 
@@ -171,7 +175,8 @@
                                                                                     p.USERPRIMARYQUANTITY,
                                                                                     p.NETVALUEINCLUDINGTAX,
                                                                                     p2.CURRENCYCODE,
-                                                                                    b.LEGALNAME1 
+                                                                                    b.LEGALNAME1,
+                                                                                    p.PURCHASEORDERCODE
                                                                                 ORDER BY 
                                                                                     p.CREATIONDATETIME DESC";
                                                             $stmt = db2_exec($conn1,$sqlDB2, array('cursor'=>DB2_SCROLLABLE));
@@ -182,6 +187,7 @@
                                                             <td><?= $rowdb2['ITEMDESCRIPTION']; ?></td> <!-- NAMA BARANG -->
                                                             <td><?= $rowdb2['LEGALNAME1']; ?></td> <!-- VENDOR -->
                                                             <td><?= $rowdb2['TGL_PEMESANAN']; ?></td> <!-- TANGGAL PEMESANAN -->
+                                                            <td><?= $rowdb2['PURCHASEORDERCODE']; ?></td> <!-- NOMOR PO -->
                                                             <td align="center"><?= $rowdb2['CURRENCYCODE']; ?></td> <!-- MATA UANG -->
                                                             <td align="right"> 
                                                                 <!-- HARGA SATUAN -->
