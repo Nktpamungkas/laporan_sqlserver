@@ -95,7 +95,12 @@
                                                     }else{
                                                         $demand         = $_POST['demand'];
                                                     }
-                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand'");
+                                                    if($_POST['prod_order']){
+                                                        $whereprod_order     = "AND PRODUCTIONORDERCODE = '$_POST[prod_order]'";
+                                                    }else{
+                                                        $whereprod_order     = "";
+                                                    }
+                                                    $q_ITXVIEWKK    = db2_exec($conn1, "SELECT * FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$demand' $whereprod_order ORDER BY CREATIONDATETIME DESC");
                                                     $d_ITXVIEWKK    = db2_fetch_assoc($q_ITXVIEWKK);
                                                     
                                                     if($d_ITXVIEWKK != null) {
