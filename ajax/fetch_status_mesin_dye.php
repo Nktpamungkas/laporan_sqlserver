@@ -35,22 +35,29 @@ $query = "WITH KAINAKJ AS (
           )
           SELECT DISTINCT 
             TRIM(p2.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
-            LISTAGG(TRIM(p.CODE), ', ') AS PRODUCTIONDEMAND,
+            LISTAGG(DISTINCT TRIM(p.CODE), ', ') AS PRODUCTIONDEMAND,
             TRIM(p.SUBCODE02) || '' || TRIM(p.SUBCODE03) AS ITEM,
-            TRIM(p.SUBCODE03) || '/' || TRIM(p.SUBCODE05) AS WARNA,
+            itxcolor.WARNA AS WARNA,
             a.VALUESTRING AS NOMOR_MESIN,
             p.PROGRESSSTATUS,
             a2.VALUESTRING AS ORIGINALPDCODE,
             s.TEMPLATECODE,
-            LISTAGG(TRIM(s.CODE), ', ') AS CODE,
+            LISTAGG(DISTINCT TRIM(s.CODE), ', ') AS CODE,
             k_akj.VALUESTRING AS KAINAKJ,
-            SUM(a3.VALUEDECIMAL) AS BRUTO
+            SUM(a3.VALUEDECIMAL) AS BRUTO,
+            LISTAGG(DISTINCT TRIM(sd.DELIVERYDATE), ', ') AS DEL_INTERNAL
           FROM 
             PRODUCTIONDEMAND p 
           LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DYEMachineNoCode'
           LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
           LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = p.ABSUNIQUEID AND a3.FIELDNAME = 'OriginalBruto'
-          LEFT JOIN SALESORDER s ON s.CODE = p.ORIGDLVSALORDLINESALORDERCODE 
+          LEFT JOIN SALESORDER s ON s.CODE = p.ORIGDLVSALORDLINESALORDERCODE
+          LEFT JOIN ITXVIEWCOLOR AS itxcolor ON 
+            p.SUBCODE01 = itxcolor.SUBCODE01 
+            AND p.SUBCODE02 = itxcolor.SUBCODE02 
+            AND p.SUBCODE03 = itxcolor.SUBCODE03
+            AND p.SUBCODE04 = itxcolor.SUBCODE04
+            AND p.SUBCODE05 = itxcolor.SUBCODE05 
           LEFT JOIN KAINAKJ k_akj ON k_akj.SALESORDERCODE = s.CODE AND k_akj.ORDERLINE = p.ORIGDLVSALORDERLINEORDERLINE
           LEFT JOIN (
                   SELECT
@@ -60,6 +67,8 @@ $query = "WITH KAINAKJ AS (
                       PRODUCTIONDEMANDSTEP p2 
               ) p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
           LEFT JOIN PRODUCTIONORDER p3 ON p3.CODE = p2.PRODUCTIONORDERCODE
+          LEFT JOIN SALESORDERDELIVERY sd ON sd.SALESORDERLINESALESORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
+            AND sd.SALESORDERLINEORDERLINE = p.DLVSALESORDERLINEORDERLINE
           WHERE 	
             a.VALUESTRING IS NOT NULL
             AND NOT p.PROGRESSSTATUS = '6'
@@ -70,7 +79,7 @@ $query = "WITH KAINAKJ AS (
           GROUP BY 
             p2.PRODUCTIONORDERCODE,
             TRIM(p.SUBCODE02) || '' || TRIM(p.SUBCODE03),
-            TRIM(p.SUBCODE03) || '/' || TRIM(p.SUBCODE05),
+            itxcolor.WARNA,
             a.VALUESTRING,
             p.PROGRESSSTATUS,
             a2.VALUESTRING,
@@ -211,8 +220,8 @@ while ($row = db2_fetch_assoc($result)) {
       'production_demand' => trim($row['PRODUCTIONDEMAND']),
       'code' => trim($row['CODE']),
       'item' => trim($row['ITEM']),
-      'warna' => trim($row['WARNA']),
-      'del_internal' => trim($row['WARNA']),
+      'warna' => $row['WARNA'],
+      'del_internal' => trim($row['DEL_INTERNAL']),
       // format qty bruto: show decimals only if non-zero, always use thousands separator
       'qty_bruto' => $formattedBruto,
       'status_terakhir' => $posisiTerakhirValue,

@@ -548,79 +548,6 @@ if ($data_login['COUNT'] == '1') {
         const loader = $("#chartLoader");
         const chartRow = $(".chart-row");
         const loadedText = $("#loadedTime");
-        
-        // const machineCapacities = {
-        //     "P3DY4409": 3200,
-        //     "P3DY4411": 3200,
-        //     "P3DY4412": 2400,
-        //     "P3DY4413": 2400,
-        //     "P3DY1401": 2400,
-        //     "P3DY1406": 2400,
-        //     "P3DY1103": 1800,
-        //     "P3DY1107": 1800,
-        //     "P3DY1410": 1800,
-        //     "P3DY1104": 1200,
-        //     "P3DY1108": 1200,
-        //     "P3DY1402": 1200,
-        //     "P3DY1414": 1200,
-        //     "P3DY1415": 1200,
-        //     "P3DY2343": 1200,
-        //     "P3DY1150": 900,
-        //     "P3DY2241": 800,
-        //     "P3DY2223": 800,
-        //     "P3DY2242": 800,
-        //     "P3DY2619": 800,
-        //     "P3DY2621": 800,
-        //     "P3DY1146": 600,
-        //     "P3DY1147": 600,
-        //     "P3DY1149": 600,
-        //     "P3DY1445": 600,
-        //     "P3DY1448": 600,
-        //     "P3DY2626": 600,
-        //     "P3DY3444": 600,
-        //     "P3DY2224": 400,
-        //     "P3DY2225": 400,
-        //     "P3DY1154": 300,
-        //     "P3DY1455": 300,
-        //     "P3DY1456": 300,
-        //     "P3DY1457": 300,
-        //     "P3DY1458": 300,
-        //     "P3DY3453": 300,
-        //     "P3DY2222": 200,
-        //     "P3DY1451": 150,
-        //     "P3DY1452": 150,
-        //     "P3DY3476": 150,
-        //     "P3DY1459": 100,
-        //     "P3DY1460": 100,
-        //     "P3DY1461": 100,
-        //     "P3DY2616": 100,
-        //     "P3DY2617": 100,
-        //     "P3DY3462": 100,
-        //     "P3DY3463": 100,
-        //     "P3DY3464": 100,
-        //     "P3DY1465": 50,
-        //     "P3DY1466": 50,
-        //     "P3DY1467": 50,
-        //     "P3DY1477": 50,
-        //     "P3DY1478": 50,
-        //     "P3DY3470": 50,
-        //     "P3DY3471": 50,
-        //     "P3DY3474": 50,
-        //     "P3DY3475": 50,
-        //     "P3DY1475": 30,
-        //     "P3DY2620": 30,
-        //     "P3DY3468": 30,
-        //     "P3DY3472": 30,
-        //     "P3DY2632": 20,
-        //     "P3DY2634": 20,
-        //     "P3DY2631": 10,
-        //     "P3DY3435": 5,
-        //     "P3DY3436": 5,
-        //     "P3DY3437": 5,
-        //     "P3DY3438": 5,
-        //     "P3DY3439": 5,
-        //     "P3DY3440": 5,
-        // };
 
         $.ajax({
             url: "ajax/fetch_status_mesin_dye.php", // ganti dengan file PHP-mu
@@ -700,17 +627,17 @@ if ($data_login['COUNT'] == '1') {
 
                             // garis kurung bawah
                             ctx.beginPath()
-                            ctx.moveTo(xFrom + 3, yAxis.bottom + 50)
-                            ctx.lineTo(xFrom + 3, yAxis.bottom + 70)
-                            ctx.lineTo(xTo - 3, yAxis.bottom + 70)
+                            ctx.moveTo(xFrom + 3, yAxis.bottom + 30)
+                            ctx.lineTo(xFrom + 3, yAxis.bottom + 50)
                             ctx.lineTo(xTo - 3, yAxis.bottom + 50)
+                            ctx.lineTo(xTo - 3, yAxis.bottom + 30)
                             ctx.stroke()
 
                             // label di tengah kurung
                             const cap = `${g.label}`
                             const unit = `Kg`
-                            ctx.fillText(cap, center, yAxis.bottom + 85)
-                            ctx.fillText(unit, center, yAxis.bottom + 99)
+                            ctx.fillText(cap, center, yAxis.bottom + 65)
+                            ctx.fillText(unit, center, yAxis.bottom + 79)
                             // ctx.translate(center, yAxis.bottom + 45) // posisi teks
                             // ctx.rotate((-45 * Math.PI) / 180) // rotasi -45 derajat
                             // ctx.fillText(text, 0, 0)
@@ -756,7 +683,15 @@ if ($data_login['COUNT'] == '1') {
                                 ticks: {
                                     stepSize: 2
                                 }
-                            }
+                            },
+                            x: {
+                                ticks: {
+                                    callback: function(value, index, ticks) {
+                                    const label = this.getLabelForValue(value);
+                                    return label.slice(-4); // tampilkan hanya 4 huruf terakhir
+                                    },
+                                },
+                            },
                         },
                         onClick: function(evt, elements) {
                             if (elements.length > 0) {
@@ -814,7 +749,15 @@ if ($data_login['COUNT'] == '1') {
                                 ticks: {
                                     stepSize: 2
                                 }
-                            }
+                            },
+                            x: {
+                                ticks: {
+                                    callback: function(value, index, ticks) {
+                                    const label = this.getLabelForValue(value);
+                                    return label.slice(-4); // tampilkan hanya 4 huruf terakhir
+                                    },
+                                },
+                            },
                         },
                         onClick: function(evt, elements) {
                             if (elements.length > 0) {
