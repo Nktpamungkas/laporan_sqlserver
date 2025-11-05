@@ -3,6 +3,7 @@ ini_set("error_reporting", 0);
 session_start();
 require_once "koneksi.php";
 include "utils/helper.php";
+include "utils/log_general_helper.php";
 include "ajax/fetch_ppc_filter_steps_bkr_progres.php";
 sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3
 WHERE CREATEDATETIME BETWEEN DATEADD(DAY, -3, GETDATE()) AND DATEADD(DAY, -1, GETDATE())");
@@ -116,6 +117,62 @@ if (isset($_POST['simpanin_catch'])) {
                                                                     '$ipaddress',
                                                                     '$createdatetime')");
     if ($simpan_keterangan) {
+        header('Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . TRIM($productiondemand) . '&prod_order=' . TRIM($productionorder) . '');
+        exit;
+    } else {
+        echo ("Error description: " . sqlsrv_errors($simpan_keterangan));
+    }
+} elseif (isset($_POST['edit_keterangan'])) {
+    $productionorder    = $_POST['productionorder'];
+    $productiondemand   = $_POST['productiondemand'];
+    $keterangan         = $_POST['keterangan'];
+    $ipaddress          = $_POST['ipaddress'];
+    $createdatetime     = $_POST['createdatetime'];
+
+    // Old Data
+    $get_old = sqlsrv_query($con_nowprd, "
+        SELECT TOP 1 * FROM nowprd.posisikk_keterangan
+        WHERE productionorder = ? AND productiondemand = ?
+    ", [$productionorder, $productiondemand]);
+
+    $oldDataResult = sqlsrv_fetch_array($get_old, SQLSRV_FETCH_ASSOC);
+    $oldDataFiltered = [
+        'keterangan'     => $oldDataResult['keterangan'] ?? null,
+        'ipaddress'      => $oldDataResult['ipaddress'] ?? null,
+        'createdatetime' => $oldDataResult['createdatetime'] ?? null,
+    ];
+
+    // Query update
+    $update_keterangan = sqlsrv_query($con_nowprd, " UPDATE nowprd.posisikk_keterangan
+        SET 
+            keterangan = ?,
+            ipaddress = ?,
+            createdatetime = ?
+        WHERE 
+            productionorder = ?
+            AND productiondemand = ?
+    ", [$keterangan, $ipaddress, $createdatetime, $productionorder, $productiondemand]);
+
+    
+    if ($update_keterangan) {
+        $newDataFiltered = [
+            'keterangan'     => $keterangan,
+            'ipaddress'      => $ipaddress,
+            'createdatetime' => $createdatetime,
+        ];
+    
+        $entity_id = $oldDataResult['id'];
+    
+        // Insert to log_general
+        $insertingLog = insertLog(
+            $con_nowprd,
+            'posisikk_keterangan',
+            $entity_id,
+            'UPDATE',
+            $oldDataFiltered,
+            $newDataFiltered
+        );
+
         header('Location: https://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' . TRIM($productiondemand) . '&prod_order=' . TRIM($productionorder) . '');
         exit;
     } else {
@@ -249,6 +306,19 @@ if (isset($_POST['simpanin_catch'])) {
             /* Tebal */
             font-size: 12px;
             /* Ukuran font */
+        }
+        .floating-tooltip {
+            position: absolute;
+            top: -10px;       /* posisi di atas tombol */
+            right: -30px;      /* sedikit ke kiri agar seperti “menempel” */
+            background-color: yellow;
+            color: black !important;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            text-align: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            /* animation: floatUpDown 2s ease-in-out infinite; */
         }
     </style>
 </head>
@@ -416,9 +486,37 @@ if (isset($_POST['simpanin_catch'])) {
                                                                                                                         AND productiondemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]'");
                                                             $data_keterangan    = sqlsrv_fetch_array($cek_keterangan);
                                                             ?>
-                                                            <?php if ($data_keterangan['keterangan']) :  ?>
-                                                                <span style="background-color: #A5CEA8; color: black;"><?= $data_keterangan['keterangan']; ?></span>
-                                                            <?php else : ?>
+                                                            <div class="d-flex align-items-start" style="gap: 8px">
+                                                                <?php if ($data_keterangan['keterangan']) : ?>
+                                                                    <!-- Label -->
+                                                                    <span id="label-keterangan" style="background-color: #A5CEA8; color: black; padding: 2px 6px; border-radius: 4px; margin:0px">
+                                                                        <?= htmlspecialchars($data_keterangan['keterangan']); ?>
+                                                                    </span>
+
+                                                                    <!-- Form (hidden by default) -->
+                                                                    <form id="form-edit-keterangan" action="" method="POST" style="display: none;">
+                                                                        <input type="hidden" name="productionorder" value="<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>">
+                                                                        <input type="hidden" name="productiondemand" value="<?= $d_ITXVIEWKK['PRODUCTIONDEMANDCODE']; ?>">
+                                                                        <input type="hidden" name="ipaddress" value="<?= $_SERVER['REMOTE_ADDR'] ?>">
+                                                                        <input type="hidden" name="createdatetime" value="<?= date('Y-m-d H:i:s'); ?>">
+                                                                        <input type="text" name="keterangan" class="form-control input-sm" 
+                                                                            value="<?= htmlspecialchars($data_keterangan['keterangan']); ?>" 
+                                                                        >
+                                                                        <button class="btn btn-primary btn-mini" name="edit_keterangan">
+                                                                            Update
+                                                                        </button>
+                                                                    </form>
+
+                                                                    <!-- Toggle button -->
+                                                                    <div class="btn-edit-wrapper" style="position: relative; display: inline-block;">
+                                                                        <button type="button" id="btn-toggle-edit-keterangan" class="btn btn-primary btn-mini d-flex align-items-center gap-1">
+                                                                            <i class="icofont icofont-edit"></i> Edit
+                                                                        </button>
+                                                                        <div class="floating-tooltip">
+                                                                            Fitur Baru
+                                                                        </div>
+                                                                    </div>
+                                                                <?php else : ?>
                                                                 <form action="" method="POST">
                                                                     <input type="hidden" name="productionorder" value="<?= $d_ITXVIEWKK['PRODUCTIONORDERCODE']; ?>">
                                                                     <input type="hidden" name="productiondemand" value="<?= $d_ITXVIEWKK['PRODUCTIONDEMANDCODE']; ?>">
@@ -427,7 +525,8 @@ if (isset($_POST['simpanin_catch'])) {
                                                                     <input type="text" name="keterangan" class="form-control input-sm" value="">
                                                                     <button class="btn btn-primary btn-mini" name="simpan_keterangan">Save</button>
                                                                 </form>
-                                                            <?php endif; ?>
+                                                                <?php endif; ?>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -1017,6 +1116,34 @@ if (isset($_POST['simpanin_catch'])) {
 
         // Jalankan setiap kali checkbox berubah
         operation.on('change', toggleInputs);
+
+        // Toggle Edit Keterangan
+        $('#btn-toggle-edit-keterangan').click(function() {
+            const $label = $('#label-keterangan');
+            const $form = $('#form-edit-keterangan');
+            const $btn = $(this);
+
+            const isEditing = $form.is(':visible');
+
+            // Toggle tampilan
+            $label.toggle(!isEditing ? false : true);
+            $form.toggle(isEditing ? false : true);
+
+            // Ubah tampilan tombol
+            if (isEditing) {
+                // Kembali ke mode tampilan
+                $btn
+                    .removeClass('btn-danger')
+                    .addClass('btn-primary')
+                    .html('<i class="icofont icofont-edit"></i>Edit');
+            } else {
+                // Masuk ke mode edit
+                $btn
+                    .removeClass('btn-primary')
+                    .addClass('btn-danger')
+                    .html('<i class="icofont icofont-close"></i>Cancel');
+            }
+        });
     });
 </script>
 </script>
