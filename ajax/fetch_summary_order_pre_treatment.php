@@ -237,7 +237,7 @@ $output = [
   'dataSudahBagiKain' => [],
   'dataBelumBagiKain' => [],
 ];
-$operations = ['RLX1', 'CBL1', 'BBL1', 'SCO1', 'PRE1', 'OVG1', 'SUE1', 'STM1']; // operasi yang ingin dicek
+$operations = ['RLX1', 'BBL1', 'CBL1', 'SCO1', 'OVG1', 'PRE1', 'STM1', 'SUE1']; // operasi yang ingin dicek
 
 foreach ($data_status as $statusName => $statusData) {
   // tentukan target key
