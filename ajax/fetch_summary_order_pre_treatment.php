@@ -2,26 +2,6 @@
 require_once "../koneksi.php";
 header('Content-Type: application/json');
 
-$queryResource = "SELECT 
-                    r.BATHVOLUME, 
-                    r.CODE, 
-                    r.SHORTDESCRIPTION 
-                  FROM RESOURCES r 
-                  WHERE CODE LIKE 'P3%' AND TYPE = 2
-                  ORDER BY r.BATHVOLUME DESC";
-$resultResource = db2_exec($conn1, $queryResource);
-$machineCapacities = [];
-while ($row = db2_fetch_assoc($resultResource)) {
-    // Hilangkan koma dari angka (contoh: 3,200 -> 3200)
-    $volume = str_replace(',', '', $row['BATHVOLUME']);
-    $machineCapacities[trim($row['CODE'])] = (int)$volume;
-}
-
-if (!$resultResource) {
-  echo json_encode(["error" => db2_stmt_errormsg()]);
-  exit;
-}
-
 $query = "WITH KAINAKJ AS (
             SELECT 
               s2.SALESORDERCODE,
@@ -102,7 +82,6 @@ $seenOrders = []; // 🧠 untuk melacak production order yang sudah diproses
 
 while ($row = db2_fetch_assoc($result)) {
   $productionOrder = trim($row['PRODUCTIONORDERCODE']);
-  $machine = trim($row['NOMOR_MESIN']);
 
   // jika sudah pernah diproses, skip
   if (isset($seenOrders[$productionOrder])) {
@@ -112,7 +91,7 @@ while ($row = db2_fetch_assoc($result)) {
   // tandai sebagai sudah diproses
   $seenOrders[$productionOrder] = true;
 
-  if ($productionOrder === '' || $machine === '') continue;
+  if ($productionOrder === '') continue;
 
   // Check Status SUDAH / BELUM BAGI KAIN
   $subQuery = " SELECT DISTINCT 
@@ -145,7 +124,7 @@ while ($row = db2_fetch_assoc($result)) {
               FROM 
                   ITXVIEW_POSISI_KARTU_KERJA ipkk
               WHERE 
-                  ipkk.PRODUCTIONORDERCODE = '$productionOrder'
+                  ipkk.PRODUCTIONORDERCODE = ?
                   AND ipkk.OPERATIONCODE IN ('BAT1','DYE1','DYE2','DYE3','DYE4','DYE5','DYE6')
               GROUP BY 
                   ipkk.PRODUCTIONORDERCODE,
@@ -153,11 +132,11 @@ while ($row = db2_fetch_assoc($result)) {
 
   $subStmt = db2_prepare($conn1, $subQuery);
   if (!$subStmt) {
-      continue;
+    continue;
   }
   $subResult = db2_execute($subStmt, [$productionOrder]);
   if (!$subResult) {
-      continue;
+    continue;
   }
 
   // Ambil hasil status
@@ -201,14 +180,13 @@ while ($row = db2_fetch_assoc($result)) {
         $posisiTerakhirValue = null;
       }
     }
-
-    if (!isset($data_status[$status][$machine])) {
-      $data_status[$status][$machine] = [
+    if (!isset($data_status[$status])) {
+      $data_status[$status] = [
         'count' => 0,
         'items' => [] // simpan detail
       ];
     }
-    $data_status[$status][$machine]['count']++;
+    $data_status[$status]['count']++;
     $brutoRaw = isset($row['BRUTO']) ? trim($row['BRUTO']) : '';
     if ($brutoRaw === '') {
       $formattedBruto = '';
@@ -227,19 +205,20 @@ while ($row = db2_fetch_assoc($result)) {
         list($intPart, $fracPart) = explode('.', $s, 2);
         $fracPart = rtrim($fracPart, '0');
         if ($fracPart === '') {
-      // tidak ada desimal berarti tampilkan sebagai integer dengan pemisah ribuan
-      $formattedBruto = number_format((int)$intPart, 0, '.', ',');
+          // tidak ada desimal berarti tampilkan sebagai integer dengan pemisah ribuan
+          $formattedBruto = number_format((int)$intPart, 0, '.', ',');
         } else {
-      // ada desimal, tampilkan sesuai jumlah digit desimal yang signifikan
-      $decimals = strlen($fracPart);
-      $formattedBruto = number_format((float)$s, $decimals, '.', ',');
+          // ada desimal, tampilkan sesuai jumlah digit desimal yang signifikan
+          $decimals = strlen($fracPart);
+          $formattedBruto = number_format((float)$s, $decimals, '.', ',');
         }
       } else {
         // murni integer
         $formattedBruto = number_format((int)$s, 0, '.', ',');
       }
     }
-    $data_status[$status][$machine]['items'][] = [
+
+    $data_status[$status]['items'][] = [
       'production_order' => $productionOrder,
       'production_demand' => trim($row['PRODUCTIONDEMAND']),
       'code' => trim($row['CODE']),
@@ -257,15 +236,51 @@ while ($row = db2_fetch_assoc($result)) {
 $output = [
   'dataSudahBagiKain' => [],
   'dataBelumBagiKain' => [],
-  'machineCapacities' => $machineCapacities,
 ];
+$operations = ['RLX1', 'CBL1', 'BBL1', 'SCO1', 'PRE1', 'OVG1', 'SUE1', 'STM1']; // operasi yang ingin dicek
 
-foreach ($data_status['SUDAH BAGI KAIN'] as $machine => $data) {
-  $output['dataSudahBagiKain'][] = ['machine' => $machine, 'count' => $data['count'], 'items' => $data['items']];
-}
+foreach ($data_status as $statusName => $statusData) {
+  // tentukan target key
+  $targetKey = $statusName === 'SUDAH BAGI KAIN'
+    ? 'dataSudahBagiKain'
+    : 'dataBelumBagiKain';
 
-foreach ($data_status['BELUM BAGI KAIN'] as $machine => $data) {
-  $output['dataBelumBagiKain'][] = ['machine' => $machine, 'count' => $data['count'], 'items' => $data['items']];
+  foreach ($operations as $operation) {
+
+    $filteredItems = []; // items yg match operation ini
+
+    foreach ($statusData['items'] as $item) {
+
+      $productionOrder = $item['production_order'];
+
+      $queryOp = " SELECT 1 
+                FROM ITXVIEW_POSISI_KARTU_KERJA
+                WHERE PRODUCTIONORDERCODE = ?
+                  AND OPERATIONCODE = ?
+                FETCH FIRST 1 ROW ONLY
+            ";
+
+      $stmtOp = db2_prepare($conn1, $queryOp);
+      if (!$stmtOp) continue;
+
+      $exec = db2_execute($stmtOp, [$productionOrder, $operation]);
+      if (!$exec) continue;
+
+      $match = db2_fetch_assoc($stmtOp);
+
+      if ($match) {
+        // cocok → tambahkan item ini
+        $filteredItems[] = $item;
+      }
+    }
+
+    // simpan hasil grouping per operation
+    $output[$targetKey][] = [
+      'operation' => $operation,
+      'count'     => count($filteredItems),
+      'items'     => $filteredItems
+    ];
+  }
 }
 
 echo json_encode($output, JSON_PRETTY_PRINT);

@@ -226,6 +226,7 @@ if ($data_login['COUNT'] == '1') {
                                                 <button class="tab-btn active" onclick="openTab('tab-filter')">Filter Data</button>
                                                 <button class="tab-btn" onclick="openTab('tab-password')">Change Password</button>
                                                 <button class="tab-btn" onclick="openTab('tab-status-mesin')">Status Mesin</button>
+                                                <button class="tab-btn" onclick="openTab('tab-pre-treatment')">Pre Treatment</button>
                                             </div>
                                             <form method="POST" style="margin:0;">
                                                 <button type="submit" name="logout" class="logout-btn"
@@ -381,6 +382,39 @@ if ($data_login['COUNT'] == '1') {
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Pre Treatment Tab -->
+                                        <div id="tab-pre-treatment" class="tab-content">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>Pre Treatment</h5>
+                                                    <p id="loadedPreTreatmentTime" class="text-muted">Not loaded yet</p>
+                                                </div>
+                                                <div class="card-block">
+                                                    <!-- Loader placeholder -->
+                                                    <div id="chartPreTreatmentLoader" class="chart-loader">
+                                                        <div class="spinner-border" role="status"></div>
+                                                        <span>Loading data, please wait...</span>
+                                                    </div>
+                                                    <div class="row chart-pre-treatment-row">
+                                                        <div class="col-11 chart-col">
+                                                            <div class="chart-container">
+                                                                <h6>PRE TREATMENT SUDAH BAGI KAIN (Belum Celup)</h6>
+                                                                <canvas id="pre_treatment_sudah_bagi_kain"></canvas>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row chart-pre-treatment-row">
+                                                        <div class="col-11 chart-col">
+                                                            <div class="chart-container">
+                                                                <h6>PRE TREATMENT BELUM BAGI KAIN</h6>
+                                                                <canvas id="pre_treatment_belum_bagi_kain"></canvas>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <?php
@@ -524,11 +558,12 @@ if ($data_login['COUNT'] == '1') {
     });
 </script>
 <script>
-    function openTab(tabId) {
-        let mesinSudahBagiKainChart = null; // simpan chart instance global
-        let mesinBelumBagiKainChart = null; // simpan chart instance global
-        let mesinLoaded = false; // biar load AJAX hanya sekali
+    let mesinSudahBagiKainChart = null; // simpan chart instance global
+    let mesinBelumBagiKainChart = null; // simpan chart instance global
+    let mesinLoaded = false; // biar load AJAX hanya sekali
+    let preTreatmentLoaded = false; // biar load AJAX hanya sekali
 
+    function openTab(tabId) {
         // Hide all tabs
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -539,8 +574,13 @@ if ($data_login['COUNT'] == '1') {
 
         // Jika tab status mesin aktif, load chart via AJAX (sekali saja)
         if (tabId === "tab-status-mesin" && !mesinLoaded) {
-            loadStatusMesin();
             mesinLoaded = true;
+            loadStatusMesin();
+        }
+
+        if (tabId === "tab-pre-treatment" && !preTreatmentLoaded) {
+            preTreatmentLoaded = true;
+            loadPreTreatment();
         }
     }
 
@@ -784,6 +824,159 @@ if ($data_login['COUNT'] == '1') {
         });
     }
 
+    function loadPreTreatment() {
+        const loader = $("#chartPreTreatmentLoader");
+        const chartRow = $(".chart-pre-treatment-row");
+        const loadedText = $("#loadedPreTreatmentTime");
+
+        $.ajax({
+            url: "ajax/fetch_summary_order_pre_treatment.php", // ganti dengan file PHP-mu
+            method: "GET",
+            dataType: "json",
+            beforeSend: function() {
+                // Tampilkan loader
+                loader.show();
+                chartRow.hide();
+                loadedText.text("Loading...");
+            },
+            success: function(response) {
+                loader.hide(); // Sembunyikan loader
+                chartRow.show(); // Tampilkan chart container
+                // 🕒 tampilkan waktu terakhir load
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString("id-ID", { 
+                    hour12: false,
+                    hour: "2-digit",
+                    minute: "2-digit", 
+                    second: "2-digit"
+                }).replace(/\./g, ':'); // replace dots with colons
+                loadedText.html(`🕒 Data terakhir diperbarui pada jam <strong>${timeStr}</strong>`);
+
+                const ctxSudahBagiKain = document.getElementById("pre_treatment_sudah_bagi_kain").getContext("2d");
+                const ctxBelumBagiKain = document.getElementById("pre_treatment_belum_bagi_kain").getContext("2d");
+
+                const {
+                    dataSudahBagiKain,
+                    dataBelumBagiKain,
+                } = response
+
+                // Chart 1
+                const labelsSudahBagiKain = dataSudahBagiKain.map(item => item.operation);
+                const countsSudahBagiKain = dataSudahBagiKain.map(item => item.count);
+                mesinSudahBagiKainChart = new Chart(ctxSudahBagiKain, {
+                    type: "bar",
+                    data: {
+                        labels: labelsSudahBagiKain,
+                        datasets: [{
+                            label: "Jumlah KK",
+                            data: countsSudahBagiKain,
+                            backgroundColor: "rgba(54, 162, 235, 0.7)",
+                            borderColor: "rgba(54, 162, 235, 1)",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        layout: {
+                            padding: {
+                                bottom: 60, // tambah ruang bawah
+                            },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 2
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    callback: function(value, index, ticks) {
+                                    const label = this.getLabelForValue(value);
+                                    return label.slice(-4); // tampilkan hanya 4 huruf terakhir
+                                    },
+                                },
+                            },
+                        },
+                        onClick: function(evt, elements) {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const operation = this.data.labels[index];
+                                const operationData = dataSudahBagiKain.find(m => m.operation === operation);
+
+                                showDetailModalPreTreatment(operationData, "Sudah Bagi Kain"); // langsung pakai items-nya
+                            }
+                        },
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+
+                    },
+                });
+
+                // Chart 2
+                const labelsBelumBagiKain = dataBelumBagiKain.map(item => item.operation);
+                const countsBelumBagiKain = dataBelumBagiKain.map(item => item.count);
+                mesinBelumBagiKainChart = new Chart(ctxBelumBagiKain, {
+                    type: "bar",
+                    data: {
+                        labels: labelsBelumBagiKain,
+                        datasets: [{
+                            label: "Jumlah KK",
+                            data: countsBelumBagiKain,
+                            backgroundColor: "rgba(54, 162, 235, 0.7)",
+                            borderColor: "rgba(54, 162, 235, 1)",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        layout: {
+                            padding: {
+                                bottom: 60, // tambah ruang bawah
+                            },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 2
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    callback: function(value, index, ticks) {
+                                    const label = this.getLabelForValue(value);
+                                    return label.slice(-4); // tampilkan hanya 4 huruf terakhir
+                                    },
+                                },
+                            },
+                        },
+                        onClick: function(evt, elements) {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const operation = this.data.labels[index];
+                                const operationData = dataBelumBagiKain.find(m => m.operation === operation);
+
+                                showDetailModalPreTreatment(operationData, "Belum Bagi Kain"); // langsung pakai items-nya
+                            }
+                        },
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                    },
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error loading data:", error);
+            }
+        });
+    }
+
     function showDetailModal(machineData, status) {
         $("#modalDetailMesin").modal("show");
         $("#detailModalLabel").text(`Detail Mesin ${machineData?.machine} (${status})`);
@@ -796,6 +989,7 @@ if ($data_login['COUNT'] == '1') {
                         <th>No Order</th>
                         <th>Item</th>
                         <th>Warna</th>
+                        <th>Lot</th>
                         <th>Del Internal</th>
                         <th>QTY Bruto</th>
                         <th>Status Terakhir</th>
@@ -835,6 +1029,88 @@ if ($data_login['COUNT'] == '1') {
                     },
                     {
                         data: "warna"
+                    },
+                    {
+                        data: "lot"
+                    },
+                    {
+                        data: "del_internal"
+                    },
+                    {
+                        data: "qty_bruto"
+                    },
+                    {
+                        data: "status_terakhir"
+                    },
+                ],
+                pageLength: 10,
+                lengthChange: false
+            });
+        });
+
+        // Reset event listener agar tidak dobel
+        $("#modalDetailMesin").off("hidden.bs.modal").on("hidden.bs.modal", function() {
+            if ($.fn.DataTable.isDataTable("#detailTableMesin")) {
+                $("#detailTableMesin").DataTable().clear().destroy();
+            }
+        });
+    }
+
+    function showDetailModalPreTreatment(operationData, status) {
+        $("#modalDetailMesin").modal("show");
+        $("#detailModalLabel").text(`Detail Operation ${operationData?.operation} (${status})`);
+        $("#detailDataMesin").html(`
+            <table id="detailTableMesin" class="table table-striped table-bordered nowrap" width="100%">
+                <thead>
+                    <tr>
+                        <th>Production Order</th>
+                        <th>Production Demand</th>
+                        <th>No Order</th>
+                        <th>Item</th>
+                        <th>Warna</th>
+                        <th>Lot</th>
+                        <th>Del Internal</th>
+                        <th>QTY Bruto</th>
+                        <th>Status Terakhir</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        `);
+
+        // Tunggu modal benar-benar terbuka sebelum inisialisasi DataTable
+        $("#modalDetailMesin").on("shown.bs.modal", function() {
+            // Pastikan tidak re-init DataTable
+            if ($.fn.DataTable.isDataTable("#detailTableMesin")) {
+                $("#detailTableMesin").DataTable().clear().destroy();
+            }
+
+            // Render data ke DataTable
+            $("#detailTableMesin").DataTable({
+                data: operationData.items,
+                responsive: true,
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                autoWidth: false,
+                columns: [{
+                        data: "production_order"
+                    },
+                    {
+                        data: "production_demand"
+                    },
+                    {
+                        data: "code"
+                    },
+                    {
+                        data: "item"
+                    },
+                    {
+                        data: "warna"
+                    },
+                    {
+                        data: "lot"
                     },
                     {
                         data: "del_internal"
