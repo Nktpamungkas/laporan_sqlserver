@@ -257,6 +257,7 @@ foreach ($data_status as $statusName => $statusData) {
                 FROM ITXVIEW_POSISI_KARTU_KERJA
                 WHERE PRODUCTIONORDERCODE = ?
                   AND OPERATIONCODE = ?
+                  AND STATUS_OPERATION <> 'Closed'
                 FETCH FIRST 1 ROW ONLY
             ";
 
