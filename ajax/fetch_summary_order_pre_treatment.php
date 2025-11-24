@@ -12,6 +12,16 @@ $query = "WITH KAINAKJ AS (
             LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = s2.ABSUNIQUEID AND a3.FIELDNAME = 'KainAKJ'
             WHERE 
               a3.VALUESTRING IN ('0', '2')
+          ),
+          BRUTO_PER_CODE AS (
+              SELECT 
+                  pd.CODE,
+                  SUM(a3.VALUEDECIMAL) AS BRUTO
+              FROM PRODUCTIONDEMAND pd
+              LEFT JOIN ADSTORAGE a3 
+                  ON a3.UNIQUEID = pd.ABSUNIQUEID
+                AND a3.FIELDNAME = 'OriginalBruto'
+              GROUP BY pd.CODE
           )
           SELECT DISTINCT 
             TRIM(p2.PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
@@ -24,14 +34,14 @@ $query = "WITH KAINAKJ AS (
             s.TEMPLATECODE,
             LISTAGG(DISTINCT TRIM(s.CODE), ', ') AS CODE,
             k_akj.VALUESTRING AS KAINAKJ,
-            SUM(a3.VALUEDECIMAL) AS BRUTO,
+            SUM(DISTINCT bp.BRUTO) AS BRUTO,
             LISTAGG(DISTINCT TRIM(sd.DELIVERYDATE), ', ') AS DEL_INTERNAL,
             LISTAGG(DISTINCT TRIM(p.DESCRIPTION), ', ') AS LOT
           FROM 
             PRODUCTIONDEMAND p 
           LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'DYEMachineNoCode'
           LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'OriginalPDCode'
-          LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = p.ABSUNIQUEID AND a3.FIELDNAME = 'OriginalBruto'
+          LEFT JOIN BRUTO_PER_CODE bp ON bp.CODE = p.CODE
           LEFT JOIN SALESORDER s ON s.CODE = p.ORIGDLVSALORDLINESALORDERCODE
           LEFT JOIN ITXVIEWCOLOR AS itxcolor ON 
             p.SUBCODE01 = itxcolor.SUBCODE01 
