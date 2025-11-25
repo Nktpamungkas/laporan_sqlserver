@@ -1094,6 +1094,15 @@ if ($data_login['COUNT'] == '1') {
                 ordering: true,
                 info: true,
                 autoWidth: false,
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        title: 'detail_mesin_export',
+                        text: 'Export Excel',
+                        className: 'btn btn-success'
+                    }
+                ],
                 columns: [{
                         data: "production_order"
                     },
