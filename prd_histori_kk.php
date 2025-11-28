@@ -231,7 +231,7 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.log_history(KET,PRODUCTIONORDER,IP
                                                 function getQtyPacking($noDemand) {
                                                     global $con_db_qc;
 
-                                                    $query = "SELECT SUM(netto) AS TOTAL_NETTO
+                                                    $query = "SELECT SUM(mutasi) AS TOTAL_NETTO
                                                             FROM tbl_lap_inspeksi 
                                                             WHERE dept = 'PACKING' AND nodemand = '$noDemand'";
                                                     
@@ -244,11 +244,11 @@ sqlsrv_query($con_nowprd, "INSERT INTO nowprd.log_history(KET,PRODUCTIONORDER,IP
                                                     global $con;
 
                                                     $query = "SELECT
-                                                                USERPRIMARYQUANTITY AS QTY_SALIN
+                                                                p.USEDUSERPRIMARYQUANTITY AS QTY_SALIN
                                                             FROM
-                                                                PRODUCTIONDEMAND p
+                                                                ITXVIEW_RESERVATION_KK p
                                                             WHERE
-                                                                p.CODE = '$noDemand'";
+                                                                p.ORDERCODE = '$noDemand'";
                                                     
                                                     $stmt = db2_exec($con, $query);
                                                     $row = db2_fetch_assoc($stmt);
