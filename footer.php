@@ -369,21 +369,24 @@ echo '</script>';
               tableBody.empty(); // Clear existing rows
 
               let currentGroup = null; // Track the current group number
+              let currentCode = null; // Track the current CODE
               let callOff = 0; // Start with a call off of 1
               let counter = 1; // Start counter from 1
 
               data.recipes.forEach(recipe => {
                 const groupNumber = recipe.GROUPNUMBER;
+                const code = recipe.CODE;
 
                 // If the group number changes, increment callOff and reset counter
                 // pengecekan SUBCODE (untuk comment SUBCODEnya tidak ada / null), tidak perlu menghitung callof dan counter
                 if (recipe.SUBCODE) {
-                  if (currentGroup !== groupNumber) {
+                  if (currentGroup !== groupNumber || currentCode !== code) {
                     callOff++;
                     counter = 1; // Reset counter to 1
                     currentGroup = groupNumber; // Update current group
+                    currentCode = code; // Update current code
                   } else {
-                    counter++; // Increment counter if the group number is the same
+                    counter++; // Increment counter if the group number and code are the same
                   }
                 }
                 tableBody.append(`
@@ -524,21 +527,24 @@ echo '</script>';
               tableBody.empty(); // Clear existing rows
 
               let currentGroup = null; // Track the current group number
+              let currentCode = null; // Track the current CODE
               let callOff = 0; // Start with a call off of 1
               let counter = 1; // Start counter from 1
 
               data.recipes.forEach(recipe => {
                 const groupNumber = recipe.GROUPNUMBER;
+                const code = recipe.CODE;
 
                 // If the group number changes, increment callOff and reset counter
                 // pengecekan SUBCODE (untuk comment SUBCODEnya tidak ada / null), tidak perlu menghitung callof dan counter
                 if (recipe.SUBCODE) {
-                  if (currentGroup !== groupNumber) {
+                  if (currentGroup !== groupNumber || currentCode !== code) {
                     callOff++;
                     counter = 1; // Reset counter to 1
                     currentGroup = groupNumber; // Update current group
+                    currentCode = code; // Update current code
                   } else {
-                    counter++; // Increment counter if the group number is the same
+                    counter++; // Increment counter if the group number and code are the same
                   }
                 }
                 tableBody.append(`

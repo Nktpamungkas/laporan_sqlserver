@@ -106,16 +106,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($grouped as $callOffKey => $payload) {
             $suffix = $payload['codeSuffix'] !== '' ? $payload['codeSuffix'] : $callOffKey;
             $dyelotWithCode = $dyelot . $suffix;
-            // gunakan dyelot dasar + "-" + CallOff sebagai dyelot insert
-            $dyelotForInsert = $dyelot . '-' . $callOffKey;
+            $dyelotForInsert = $dyelotWithCode;
+            $dyelotForInsert2 = $dyelot . '-' . $callOffKey;
 
             $treatmentList = [];
             $cnt = 1;
             $treatmentList[] = ['TreatmentCnt' => $cnt++, 'TreatmentNo' => 9990]; // Start
 
             // filter treatment berdasar Item yang disanitasi, cocok dengan suffix dyelot atau dyelot lengkap
-            $dyelotSanitized = $sanitizeFull($dyelotForInsert);
-            $suffixSanitized = $sanitizeFull($callOffKey);
+            $dyelotSanitized = $sanitizeFull($dyelotWithCode);
+            $suffixSanitized = $sanitizeFull($suffix);
             $matchedTreatments = array_values(array_filter($treatments, function ($t) use ($sanitizeFull, $dyelotSanitized, $suffixSanitized) {
                 if (!isset($t['Item'])) {
                     return false;
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             @IPADDRESS = :currentIP");
 
             // Bind parameters
-            $stmt->bindParam(':dyelot', $dyelotForInsert);
+            $stmt->bindParam(':dyelot', $dyelotForInsert2);
             $stmt->bindParam(':redye', $redye);
             $stmt->bindParam(':machine', $machine);
             $stmt->bindParam(':procedureType', $procedureType);
