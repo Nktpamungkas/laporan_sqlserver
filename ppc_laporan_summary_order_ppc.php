@@ -1169,8 +1169,10 @@ if ($data_login['COUNT'] == '1') {
             serverSide: true, // paging/sort/search di server
             searching: true, // aktifkan pencarian
             ordering: true, // aktifkan sorting
+            pageLength: 10, // set default jumlah baris per halaman
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]], // opsi jumlah halaman
 
-            dom: 'Btfrip',
+            dom: 'Bfltip', // tambah 'l' untuk length menu
             buttons: [
                 {
                     extend: 'excelHtml5',
