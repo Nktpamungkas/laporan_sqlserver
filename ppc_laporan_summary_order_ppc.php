@@ -67,7 +67,7 @@ if ($data_login['COUNT'] == '1') {
     <link rel="stylesheet" type="text/css" href="files\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css">
     <link href="alert/sweetalert2.min.css" rel="stylesheet" />
     <script src="alert/sweetalert2.all.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <style>
     .btn-cetak-minimal {
@@ -208,8 +208,8 @@ if ($data_login['COUNT'] == '1') {
         color: #555;
     }
 </style>
-<?php require_once 'header.php'; ?>
 
+<?php require_once 'header.php'; ?>
 <body>
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
@@ -1154,9 +1154,9 @@ if ($data_login['COUNT'] == '1') {
     }
 </script>
 <?php
-// Filter tanggal default jika tidak ada input 
-$defaultStart = $_POST['tgl1'];
-$defaultEnd   = $_POST['tgl2'];
+    // Filter tanggal default jika tidak ada input 
+    $defaultStart = $_POST['tgl1'];
+    $defaultEnd   = $_POST['tgl2'];
 ?>
 <script>
     $(function() {
@@ -1169,6 +1169,16 @@ $defaultEnd   = $_POST['tgl2'];
             serverSide: true, // paging/sort/search di server
             searching: true, // aktifkan pencarian
             ordering: true, // aktifkan sorting
+
+            dom: 'Btfrip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    title: 'Laporan Summary Order PPC',
+                    text: '<i class="fa fa-file-excel-o"></i> Export Excel',
+                    className: 'btn btn-success'
+                }
+            ],
             ajax: {
                 url: 'ajax/lang_demand.php',
                 type: 'POST',
