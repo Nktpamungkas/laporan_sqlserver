@@ -262,7 +262,7 @@ function getDetailData($conn1, $productionOrder, $productionDemand)
                                         PRODUCTIONDEMAND p
                                     LEFT JOIN ADSTORAGE a 
                                         ON a.UNIQUEID = p.ABSUNIQUEID
-                                        AND a.FIELDNAME = 'BrutoKK'
+                                        AND a.FIELDNAME = 'OriginalBruto'
                                     WHERE
                                         p.CODE = '$productionDemand'
     ");

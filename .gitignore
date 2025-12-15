@@ -1,7 +1,7 @@
 # koneksi.php
 # default
 # files
-#dist/barcode_ttd_bagi_kain
+dist/barcode_ttd_bagi_kain
 # img
 # .git itc
 # xeditable
@@ -10,4 +10,4 @@
 # PhpSpreadsheet
 # phpqrcode
 # temp
-# phpqrcode
+phpqrcode
