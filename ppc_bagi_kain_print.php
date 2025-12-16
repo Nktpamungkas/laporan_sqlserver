@@ -375,7 +375,7 @@ while ($page <= $totalPages) :
 ?>
 
     <div class="header-title">SERAH TERIMA KARTU KERJA KE GUDANG GREIGE</div>
-    <div class="sub-title">FW-14-PPC-08/04</div>
+    <div class="sub-title">FW-14-PPC-08/05</div>
     <div class="sub-title">BULAN <?= strtoupper(date("F Y", strtotime($tgl))) ?></div>
 
     <b>TANGGAL : <span><?= $tgl_indo ?></span></b>
