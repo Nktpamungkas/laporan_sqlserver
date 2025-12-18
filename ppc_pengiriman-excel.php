@@ -51,8 +51,34 @@
             ini_set("error_reporting", 1);
             session_start();
             require_once "koneksi.php";
+            include "phpqrcode/qrlib.php";
+
             $tgl1     = $_GET['tgl1'];
             $no_order = $_GET['no_order'];
+
+            $tgl_indo = date("d F Y", strtotime($tgl1));
+            if (date('N', strtotime($tgl1)) == 6) { // 6 means Saturday
+                $tgl_indo = date("d F Y", strtotime("+2 days", strtotime($tgl1)));
+            } else {
+                $tgl_indo = date("d F Y", strtotime("+1 days", strtotime($tgl1)));
+            }
+            $tanggal_print = date("Y-m-d H:i:s");
+            $approve1 = "ARIS - $tgl_indo -".uniqid();
+            $approve2 = "SEPTIAN HADI SAPUTRA - $tgl_indo -".uniqid();
+            // Simpan QR ke file lalu pakai URL absolut agar Excel tidak menganggap path lokal invalid
+            $tempdir1 = "dist/barcode_ttd_bagi_kain/";
+            if (!file_exists($tempdir1)) {
+                mkdir($tempdir1, 0777, true);
+            }
+            $nama_file1 = preg_replace('/[^A-Za-z0-9_\\-]/', '_', $approve1).".png";
+            $nama_file2 = preg_replace('/[^A-Za-z0-9_\\-]/', '_', $approve2).".png";
+            QRcode::png($approve1, $tempdir1.$nama_file1, QR_ECLEVEL_M, 3, 1);
+            QRcode::png($approve2, $tempdir1.$nama_file2, QR_ECLEVEL_M, 3, 1);
+
+            // URL absolut (http/https) supaya Excel bisa fetch gambar dari server
+            $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\').'/';
+            $barcode1_src = $baseUrl.$tempdir1.$nama_file1;
+            $barcode2_src = $baseUrl.$tempdir1.$nama_file2;
 
             if($tgl1){
                 $where_date     = "i.GOODSISSUEDATE = '$tgl1'";
@@ -900,14 +926,50 @@
             <th colspan="1" align="center">
                 <?= number_format($fetch_roll_harian_local_hariH['QTY_SJ_YARD'] + $fetch_roll_harian_export_hariH['QTY_SJ_YARD'], 2); ?>
             </th>
-            <th colspan="4" align="center"><?php $date = date_create($_GET['tgl1'] ); echo date_format($date,"d-M-Y"); ?></th>
-            <th colspan="6" align="center"><?php $date = date_create($_GET['tgl1'] ); echo date_format($date,"d-M-Y"); ?></th>
+            <th colspan="4" align="center"><?php 
+                $date = date_create($_GET['tgl1']); 
+                if ($date->format('N') == 6) { // Check if it's Saturday
+                    $date->modify('+2 days'); 
+                } else {
+                    $date->modify('+1 day'); 
+                }
+                echo date_format($date,"d-M-Y"); 
+            ?></th>
+            <th colspan="6" align="center"><?php 
+                $date = date_create($_GET['tgl1']); 
+                if ($date->format('N') == 6) { // Check if it's Saturday
+                    $date->modify('+2 days'); 
+                } else {
+                    $date->modify('+1 day'); 
+                }
+                echo date_format($date,"d-M-Y"); 
+            ?></th>
         </tr>
         <tr>
-            <th colspan="5"><br></th>
-            <th colspan="2"><br></th>
-            <th colspan="4"><br><br><br></th>
-            <th colspan="6"><br><br><br></th>
+            <th colspan="5" rowspan="6"><br></th>
+            <th colspan="2" rowspan="6"><br></th>
+            <th colspan="4" rowspan="6" align="center" valign="middle" style="padding:0;height:140px;">
+                <table border="0" style="width:100%;height:100%;border-collapse:collapse;">
+                    <tr>
+                        <td style="width:33%;"></td>
+                        <td align="center" valign="middle" style="width:34%;text-align:center;vertical-align:middle;padding:0;">
+                            <img src="<?= $barcode1_src ?>" alt="Barcode 1" width="100" height="100">
+                        </td>
+                        <td style="width:33%;"></td>
+                    </tr>
+                </table>
+            </th>
+            <th colspan="6" rowspan="6" align="center" valign="middle" style="padding:0;height:140px;">
+                <table border="0" style="width:100%;height:100%;border-collapse:collapse;">
+                    <tr>
+                        <td style="width:33%;"></td>
+                        <td align="center" valign="middle" style="width:34%;text-align:center;vertical-align:middle;padding:0;">
+                            <img src="<?= $barcode2_src ?>" alt="Barcode 2" width="100" height="100">
+                        </td>
+                        <td style="width:33%;"></td>
+                    </tr>
+                </table>
+            </th>
         </tr>       
     </tfoot>
 </table>
