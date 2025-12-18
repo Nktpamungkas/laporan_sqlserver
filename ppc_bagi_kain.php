@@ -77,10 +77,11 @@
                                                             <th width="100px" style="text-align: center;">BRUTO</th>
                                                             <th width="100px" style="text-align: center;">NETTO</th>
                                                             <th width="100px" style="text-align: center;">LOT</th>
+                                                            <th width="100px" style="text-align: center;">PRODUCTION ORDER</th>
                                                             <th width="100px" style="text-align: center;">DEMAND</th>
                                                             <th width="100px" style="text-align: center;">QTY PLAN BAGI</th>
                                                             <th width="100px" style="text-align: center;">QTY ACTUAL BAGI</th>
-                                                            <th width="100px" style="text-align: center;">KETERANGAN</th>
+                                                            <!-- <th width="100px" style="text-align: center;">KETERANGAN</th> -->
                                                             <th width="100px" style="text-align: center;">STATUS TERAKHIR</th>
                                                         </tr>
                                                     </thead>
@@ -98,7 +99,24 @@
                                                                             AND p.OPERATIONCODE IN ('WAIT2','WAIT23','WAIT26','WAIT27','WAIT3','WAIT31')";
                                                             $resultMain = db2_exec($conn1, $sqlMain);
                                                             $no = 1;
-                                                            while ($dataMain = db2_fetch_assoc($resultMain)) {
+                                                            $dataList=[];
+                                                            while ($row = db2_fetch_assoc($resultMain)) {
+                                                                $row['PRODUCTIONORDERCODE'] = trim($row['PRODUCTIONORDERCODE']);
+                                                                $row['PRODUCTIONDEMANDCODE'] = trim($row['PRODUCTIONDEMANDCODE']);
+                                                                $dataList[] = $row;
+                                                            }
+
+                                                            $countOrder = [];
+                                                            foreach ($dataList as $d) {
+                                                                $poc = $d['PRODUCTIONORDERCODE'];
+                                                                if (!isset($countOrder[$poc])) {
+                                                                    $countOrder[$poc] = 0;
+                                                                }
+                                                                $countOrder[$poc]++;
+                                                            }
+
+                                                            // print_r($countOrder);
+                                                            foreach ($dataList as $dataMain) {
                                                                 $sqlDetail = "SELECT
                                                                                     *
                                                                                 FROM
@@ -237,7 +255,20 @@
                                                                                                                     ipkk.STEPNUMBER ASC
                                                                                                                 FETCH FIRST 1 ROW ONLY;");
                                                                     $dataMain_StatusTerakhir = db2_fetch_assoc($sqlMain_StatusTerakhir);
+                                                                    $sqlBruto = db2_exec($conn1, "SELECT
+                                                                                                        p.*,
+                                                                                                        a.VALUEDECIMAL AS BRUTO_KK
+                                                                                                    FROM
+                                                                                                        PRODUCTIONDEMAND p
+                                                                                                    LEFT JOIN ADSTORAGE a 
+                                                                                                        ON a.UNIQUEID = p.ABSUNIQUEID
+                                                                                                        AND a.FIELDNAME = 'OriginalBruto'
+                                                                                                    WHERE
+                                                                                                        p.CODE = '$dataMain[PRODUCTIONDEMANDCODE]'");
+                                                                    $rowBruto = db2_fetch_assoc($sqlBruto);
                                                                     $StatusTerakhir = $dataMain_StatusTerakhir['STATUSTERAKHIR'] ?? '';
+                                                                    $productionorder = trim($dataDetail['PRODUCTIONORDERCODE']);
+                                                                    $color = (isset($countOrder[$productionorder]) && $countOrder[$productionorder] >= 2) ? "color:red;" : "";
                                                         ?>
                                                             <tr>
                                                                 <td width="100px" style="text-align: center;"><?= $dataActDevliery['ACTUAL_DELIVERY'] ?></td> <!-- TGL DEL -->
@@ -247,13 +278,16 @@
                                                                 <td width="100px" style="text-align: center;"><?= $row_main_salesorder['CODE'] ?></td> <!-- ORDER -->
                                                                 <td width="100px" style="text-align: center;"><?= TRIM($row_main_demand['SUBCODE02']).TRIM($row_main_demand['SUBCODE03']); ?></td> <!-- NO. ITEM -->
                                                                 <td width="100px" style="text-align: center;"><?= $data_warna['WARNA']; ?></td> <!-- WARNA -->
-                                                                <td width="100px" style="text-align: center;"><?= number_format($data_bruto['BRUTO'], 2); ?></td> <!-- BRUTO -->
+                                                                <td width="100px" style="text-align: center;"><?= number_format($rowBruto['BRUTO_KK']?? 0, 2); ?></td> <!-- BRUTO -->
+                                                                <!-- <td width="100px" style="text-align: center;"><?= number_format($data_bruto['BRUTO'], 2); ?></td> BRUTO -->
                                                                 <td width="100px" style="text-align: center;"><?= number_format($data_netto['NETTO'], 2) ?></td> <!-- NETTO -->
                                                                 <td width="100px" style="text-align: center;"><?= $row_main_demand['DESCRIPTION']; ?></td> <!-- LOT -->
+                                                                <td width="100px" style="text-align:center; <?= $color ?>"><?= $productionorder ?></td>
                                                                 <td width="100px" style="text-align: center;"><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $dataDetail['PRODUCTIONDEMANDCODE'] ?>&prod_order=<?= $dataDetail['PRODUCTIONORDERCODE'] ?>"><?= $dataDetail['PRODUCTIONDEMANDCODE'] ?></a></td> <!-- DEMAND -->
-                                                                <td width="100px" style="text-align: center;"><?= number_format($data_bruto_plan_bagikain['BRUTO'], 2); ?></td> <!-- QTY PLAN BAGI -->
+                                                                <td width="100px" style="text-align: center;"><?= number_format($rowBruto['BRUTO_KK']?? 0, 2); ?></td><!-- QTY PLAN BAGI -->
+                                                                <!-- <td width="100px" style="text-align: center;"><?= number_format($data_bruto_plan_bagikain['BRUTO'], 2); ?></td> QTY PLAN BAGI -->
                                                                 <td width="100px" style="text-align: center;"><?= number_format($data_bruto_actual_bagikain['BRUTO'], 2); ?></td> <!-- QTY ACTUAL BAGI -->
-                                                                <td width="100px" style="text-align: center;"></td> <!-- KETERANGAN -->
+                                                                <!-- <td width="100px" style="text-align: center;"></td> KETERANGAN -->
                                                                 <td width="100px" style="text-align: center;"><?= $StatusTerakhir ?></td> <!-- STATUS TERAKHIR -->
                                                             </tr>
                                                         <?php } } ?>
@@ -306,12 +340,15 @@
 <script type="text/javascript" src="files\assets\js\script.js"></script>
 <script>
     $('#download-excel').DataTable({
-        order: [
-            [2, 'asc']
-        ],
-        dom: 'Bfrtip',
-        buttons: [{
+    order: [
+        [2, 'asc']
+    ],
+    dom: 'Bfrtip',
+    buttons: [
+        {
             extend: 'excelHtml5',
+            text: 'Export Excel',
+            className: 'btn btn-success',
             customize: function(xlsx) {
                 var sheet = xlsx.xl.worksheets['sheet1.xml'];
                 $('row c[r^="F"]', sheet).each(function() {
@@ -320,7 +357,16 @@
                     }
                 });
             }
-        }]
-    });
+        },
+        {
+            text: 'Cetak Report',
+            className: 'btn btn-primary',
+            action: function() {
+                window.open('ppc_bagi_kain_print.php?tgl=<?= $_POST['tgl1'] ?>', '_blank');
+            }
+        }
+    ]
+});
+
 </script>
 <?php require_once 'footer.php'; ?>
