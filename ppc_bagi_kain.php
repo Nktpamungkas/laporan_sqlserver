@@ -255,7 +255,7 @@
                                                                                                                     ipkk.STEPNUMBER ASC
                                                                                                                 FETCH FIRST 1 ROW ONLY;");
                                                                     $dataMain_StatusTerakhir = db2_fetch_assoc($sqlMain_StatusTerakhir);
-                                                                    $sqlBruto = db2_exec($conn1, "SELECT
+                                                                    $sqlBruto2 = db2_exec($conn1, "SELECT
                                                                                                         p.*,
                                                                                                         a.VALUEDECIMAL AS BRUTO_KK
                                                                                                     FROM
@@ -263,6 +263,48 @@
                                                                                                     LEFT JOIN ADSTORAGE a 
                                                                                                         ON a.UNIQUEID = p.ABSUNIQUEID
                                                                                                         AND a.FIELDNAME = 'OriginalBruto'
+                                                                                                    WHERE
+                                                                                                        p.CODE = '$dataMain[PRODUCTIONDEMANDCODE]'");
+                                                                    $rowBruto2 = db2_fetch_assoc($sqlBruto2);
+                                                                    $sqlBruto = db2_exec($conn1, "SELECT
+                                                                                                        p.CODE,
+                                                                                                        CASE 
+                                                                                                            WHEN a.VALUESTRING IS NOT NULL THEN a2.VALUEDECIMAL
+                                                                                                            ELSE b.QTY_BRUTO
+                                                                                                        END AS BRUTO_KK
+                                                                                                    FROM
+                                                                                                        PRODUCTIONDEMAND p
+                                                                                                    LEFT JOIN ADSTORAGE a2 ON
+                                                                                                        a2.UNIQUEID = p.ABSUNIQUEID
+                                                                                                        AND a2.FIELDNAME = 'OriginalBruto'
+                                                                                                    LEFT JOIN ADSTORAGE a ON
+                                                                                                        p.ABSUNIQUEID = a.UNIQUEID
+                                                                                                        AND a.FIELDNAME = 'OriginalPDCode'
+                                                                                                    LEFT JOIN (
+                                                                                                        SELECT
+                                                                                                            SUM(a2.VALUEDECIMAL) AS QTY_BRUTO,
+                                                                                                            ORIGDLVSALORDLINESALORDERCODE,
+                                                                                                            ORIGDLVSALORDERLINEORDERLINE
+                                                                                                        FROM
+                                                                                                            PRODUCTIONDEMAND p
+                                                                                                        LEFT JOIN ADSTORAGE a ON
+                                                                                                            p.ABSUNIQUEID = a.UNIQUEID
+                                                                                                            AND a.FIELDNAME = 'OriginalPDCode'
+                                                                                                        LEFT JOIN ADSTORAGE a2 ON
+                                                                                                            p.ABSUNIQUEID = a2.UNIQUEID
+                                                                                                            AND a2.FIELDNAME = 'OriginalBruto'
+                                                                                                        WHERE
+                                                                                                            --	p.CODE = '00391976'
+                                                                                                            --	AND 
+                                                                                                            a.VALUESTRING IS NULL
+                                                                                                            AND p.ITEMTYPEAFICODE = 'KFF'
+                                                                                                            --	AND ORIGDLVSALORDLINESALORDERCODE ='OPN2500443'
+                                                                                                            --	AND ORIGDLVSALORDERLINEORDERLINE ='10'
+                                                                                                        GROUP BY
+                                                                                                            ORIGDLVSALORDLINESALORDERCODE,
+                                                                                                            ORIGDLVSALORDERLINEORDERLINE) b ON
+                                                                                                        b.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
+                                                                                                        AND b.ORIGDLVSALORDERLINEORDERLINE = p.ORIGDLVSALORDERLINEORDERLINE
                                                                                                     WHERE
                                                                                                         p.CODE = '$dataMain[PRODUCTIONDEMANDCODE]'");
                                                                     $rowBruto = db2_fetch_assoc($sqlBruto);
@@ -284,7 +326,7 @@
                                                                 <td width="100px" style="text-align: center;"><?= $row_main_demand['DESCRIPTION']; ?></td> <!-- LOT -->
                                                                 <td width="100px" style="text-align:center; <?= $color ?>"><?= $productionorder ?></td>
                                                                 <td width="100px" style="text-align: center;"><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $dataDetail['PRODUCTIONDEMANDCODE'] ?>&prod_order=<?= $dataDetail['PRODUCTIONORDERCODE'] ?>"><?= $dataDetail['PRODUCTIONDEMANDCODE'] ?></a></td> <!-- DEMAND -->
-                                                                <td width="100px" style="text-align: center;"><?= number_format($rowBruto['BRUTO_KK']?? 0, 2); ?></td><!-- QTY PLAN BAGI -->
+                                                                <td width="100px" style="text-align: center;"><?= number_format($rowBruto2['BRUTO_KK']?? 0, 2); ?></td><!-- QTY PLAN BAGI -->
                                                                 <!-- <td width="100px" style="text-align: center;"><?= number_format($data_bruto_plan_bagikain['BRUTO'], 2); ?></td> QTY PLAN BAGI -->
                                                                 <td width="100px" style="text-align: center;"><?= number_format($data_bruto_actual_bagikain['BRUTO'], 2); ?></td> <!-- QTY ACTUAL BAGI -->
                                                                 <!-- <td width="100px" style="text-align: center;"></td> KETERANGAN -->

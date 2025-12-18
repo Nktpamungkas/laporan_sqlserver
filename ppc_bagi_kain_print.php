@@ -148,21 +148,43 @@ $totalPages = ceil($totalRows / $rowsPerPage);
 
         @page {
             size: A4 landscape;
-            /* margin: 5mm;     kecilkan margin biar cukup 70 row */
-        }
-        thead { 
-                display: table-header-group; 
-            }
-        tfoot { 
-                display: table-footer-group; 
-            }
-        body {
-            margin: 0;
+            margin: 10mm 5mm; /* Margin atas-bawah 10mm, kanan-kiri 5mm */
         }
 
+        body {
+            margin: 0;
+            -webkit-print-color-adjust: exact; /* Menjaga warna/background tetap tercetak */
+        }
+
+        table {
+            width: 100%;
+            table-layout: auto; /* Membiarkan browser menghitung lebar berdasarkan konten */
+            border-collapse: collapse;
+            font-size: 8pt; /* Mengecilkan font sedikit agar kolom warna punya ruang */
+        }
+
+        /* Targetkan kolom Warna (asumsi kolom ke-5) */
+        table th:nth-child(5), 
+        table td:nth-child(5) {
+            width: 25%; /* Berikan porsi lebih besar (misal 25% dari lebar kertas) */
+            word-wrap: break-word; /* Memaksa bungkus teks jika terlalu panjang */
+            white-space: normal; /* Pastikan teks bisa turun ke bawah (wrap) */
+            text-align: left;
+            padding: 2px 4px;
+        }
+
+        /* Kolom angka lainnya bisa dibuat pas-pasan (fit) */
+        table th:not(:nth-child(5)), 
+        table td:not(:nth-child(5)) {
+            white-space: nowrap; /* Jangan biarkan kolom angka/ID terpotong barisnya */
+        }
+
+        thead { display: table-header-group; }
+        tfoot { display: table-footer-group; }
+
         tr {
-            height: 10px;   /* Ini kunci agar 70 baris muat dalam 1 halaman */
             page-break-inside: avoid;
+            /* Hapus height: 10px; karena jika warna panjang, baris harus bisa membesar */
         }
     }
 </style>
@@ -255,7 +277,7 @@ function getDetailData($conn1, $productionOrder, $productionDemand)
     $warnaRes = db2_exec($conn1, $sqlWarna);
     $rowWarna = db2_fetch_assoc($warnaRes);
 
-    $sqlBruto = db2_exec($conn1, "SELECT
+    $sqlBruto2 = db2_exec($conn1, "SELECT
                                         p.*,
                                         a.VALUEDECIMAL AS BRUTO_KK
                                     FROM
@@ -266,6 +288,48 @@ function getDetailData($conn1, $productionOrder, $productionDemand)
                                     WHERE
                                         p.CODE = '$productionDemand'
     ");
+    $rowBruto2 = db2_fetch_assoc($sqlBruto2);
+    $sqlBruto = db2_exec($conn1, "SELECT
+                                        p.CODE,
+                                        CASE 
+                                            WHEN a.VALUESTRING IS NOT NULL THEN a2.VALUEDECIMAL
+                                            ELSE b.QTY_BRUTO
+                                        END AS BRUTO_KK
+                                    FROM
+                                        PRODUCTIONDEMAND p
+                                    LEFT JOIN ADSTORAGE a2 ON
+                                        a2.UNIQUEID = p.ABSUNIQUEID
+                                        AND a2.FIELDNAME = 'OriginalBruto'
+                                    LEFT JOIN ADSTORAGE a ON
+                                        p.ABSUNIQUEID = a.UNIQUEID
+                                        AND a.FIELDNAME = 'OriginalPDCode'
+                                    LEFT JOIN (
+                                        SELECT
+                                            SUM(a2.VALUEDECIMAL) AS QTY_BRUTO,
+                                            ORIGDLVSALORDLINESALORDERCODE,
+                                            ORIGDLVSALORDERLINEORDERLINE
+                                        FROM
+                                            PRODUCTIONDEMAND p
+                                        LEFT JOIN ADSTORAGE a ON
+                                            p.ABSUNIQUEID = a.UNIQUEID
+                                            AND a.FIELDNAME = 'OriginalPDCode'
+                                        LEFT JOIN ADSTORAGE a2 ON
+                                            p.ABSUNIQUEID = a2.UNIQUEID
+                                            AND a2.FIELDNAME = 'OriginalBruto'
+                                        WHERE
+                                            --	p.CODE = '00391976'
+                                            --	AND 
+                                            a.VALUESTRING IS NULL
+                                            AND p.ITEMTYPEAFICODE = 'KFF'
+                                            --	AND ORIGDLVSALORDLINESALORDERCODE ='OPN2500443'
+                                            --	AND ORIGDLVSALORDERLINEORDERLINE ='10'
+                                        GROUP BY
+                                            ORIGDLVSALORDLINESALORDERCODE,
+                                            ORIGDLVSALORDERLINEORDERLINE) b ON
+                                        b.ORIGDLVSALORDLINESALORDERCODE = p.ORIGDLVSALORDLINESALORDERCODE
+                                        AND b.ORIGDLVSALORDERLINEORDERLINE = p.ORIGDLVSALORDERLINEORDERLINE
+                                    WHERE
+                                        p.CODE = '$productionDemand'");
     $rowBruto = db2_fetch_assoc($sqlBruto);
     // $sqlBruto = db2_exec($conn1, "SELECT 
     //                                 SUM(p2.USERPRIMARYQUANTITY) AS BRUTO
@@ -363,10 +427,11 @@ function getDetailData($conn1, $productionOrder, $productionDemand)
         'item'          => trim($rowDemand['SUBCODE02'] . $rowDemand['SUBCODE03']),
         'warna'         => $rowWarna['WARNA'] ?? '',
         'bruto'         => $rowBruto['BRUTO_KK'] ?? 0,
+        'qty_plan'        => $rowBruto2['BRUTO_KK'] ?? 0,
         'netto'         => $rowNetto['NETTO'] ?? 0,
         'lot'           => $rowDemand['DESCRIPTION'] ?? '',
         'status'        => $rowStatus['STATUSTERAKHIR'] ?? '',
-        'qty_plan'      => $rowBruto['BRUTO_KK'] ?? 0,
+        'bruto2'      => $rowBruto['BRUTO_KK'] ?? 0,
         'qty_actual'    => $data_bruto_actual_bagikain['BRUTO'] ?? '',
     ];
 }
@@ -390,11 +455,11 @@ while ($page <= $totalPages) :
                 <th>BUYER</th>
                 <th>ORDER</th>
                 <th>NO. ITEM</th>
-                <th>WARNA</th>
+                <th style="text-align:center">WARNA</th>
                 <th>BRUTO</th>
                 <th>NETTO</th>
                 <th>LOT</th>
-                <th>PROD. ORDER</th>
+                <th>PROD.<br>ORDER</th>
                 <th>DEMAND</th>
                 <th>QTY PLAN BAGI</th>
                 <th>QTY ACTUAL BAGI</th>
@@ -446,17 +511,17 @@ while ($page <= $totalPages) :
                 $index++;
                 }?>
         </tbody>
-    </table>
 
 <?php if ($page == $totalPages) : ?>
 <!-- Kolom Total -->
-    <table>
         <tr>
             <td colspan="10" style="text-align:center;font-weight:bold;">TOTAL</td>
             <td><?= number_format($grand_total_plan,2); ?></td>
             <td><?= number_format($grand_total_actual,2); ?></td>
         </tr>
+<?php endif; ?>
     </table>
+<?php if ($page == $totalPages) : ?>
 <!-- Tanda Tangan -->
     <table class="footer">
         <tr>
