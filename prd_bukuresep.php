@@ -438,7 +438,8 @@
                                                                 <?php
                                                                     $color_code = $_POST['color_code'];
                                                                     $query_mu = "SELECT DISTINCT
-                                                                        tbl_matching_detail.id_status,
+                                                                        -- tbl_matching_detail.id_status,
+                                                                        tbl_status_matching.id AS id_status,
                                                                         tbl_matching.color_code,
                                                                         CONCAT(tbl_matching.recipe_code, '-', tbl_matching.no_resep) AS recipe,
                                                                         tbl_matching.no_resep,
