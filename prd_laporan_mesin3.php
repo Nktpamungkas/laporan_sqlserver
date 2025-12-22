@@ -3,16 +3,16 @@ ini_set("error_reporting", 1);
 session_start();
 set_time_limit(0);
 require_once "koneksi.php";
-$tgl1 = @$_POST['tgl'];
-$tgl2 = @$_POST['tgl2'];
-
+$kategori = $_POST['pilihan'];
+$date1 = $_POST['date1'];
+$date2 = $_POST['date2'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <!-- Macro Plan BRS -->
 
 <head>
-    <title>PRD - laporan Macro Mesin</title>
+    <title>PRD - Laporan Macro</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -56,36 +56,158 @@ $tgl2 = @$_POST['tgl2'];
                                     </div>
                                     <div class="card-block">
                                         <form action="" method="post">
-                                            <div class="row">
-                                                <div class="col-sm-12 col-xl-2 m-b-0">
-                                                    <h4 class="sub-title">Tanggal Awal</h4>
-                                                    <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" required
-                                                            placeholder="input-group-sm" name="tgl" value="<?php if (isset($_POST['submit'])) {
-                                                                echo $_POST['tgl'];
-                                                            } ?>" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 col-xl-2 m-b-0">
-                                                    <h4 class="sub-title">Tanggal Akhir</h4>
-                                                    <div class="input-group input-group-sm">
-                                                        <input type="date" class="form-control" required
-                                                            placeholder="input-group-sm" name="tgl2" value="<?php if (isset($_POST['submit'])) {
-                                                                echo $_POST['tgl2'];
-                                                            } ?>" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 col-xl-2">
-                                                    <h4 class="sub-title">&nbsp;</h4>
-                                                    <button type="submit" name="submit"
-                                                        class="btn btn-primary btn-sm"><i
-                                                            class="icofont icofont-search-alt-1"></i> Cari data</button>
-                                                </div>
-                                            </div>
+                                             <div class="row">
+                                                 <div class="col-sm-12 col-md-6">
+                                                     <h4 class="sub-title">Delivery Date</h4>
+                                                     <div class="row">
+                                                         <div class="col-sm-6">
+                                                             <label for="date1">Tanggal Awal</label>
+                                                             <input type='date' id="date1" name='date1' class="form-control" value="<?= $_POST['date1'] ?? '' ?>">
+                                                         </div>
+                                                         <div class="col-sm-6">
+                                                             <label for="date2">Tanggal Akhir</label>
+                                                             <input type='date' id="date2" name='date2' class="form-control" value="<?= $_POST['date2'] ?? '' ?>">
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-sm-12 col-md-6">
+                                                     <h4 class="sub-title">Status Progress</h4><label>Status Progress Prod Demand</label><br>
+                                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                         <label class="btn btn-outline-primary btn-sm <?= ($kategori == "= '0'") ? 'active' : ''; ?>">
+                                                             <input type="radio" name="pilihan" id="pilihan1" value="= '0'" required autocomplete="off" <?= ($kategori == "= '0'") ? 'checked' : ''; ?>> Only Open
+                                                         </label>
+                                                         <label class="btn btn-outline-primary btn-sm <?= ($kategori == "IN ('0','1','2')") ? 'active' : ''; ?>">
+                                                             <input type="radio" name="pilihan" id="pilihan2" value="IN ('0','1','2')" required autocomplete="off" <?= ($kategori == "IN ('0','1','2')") ? 'checked' : ''; ?>> In Progress
+                                                         </label>
+                                                         <label class="btn btn-outline-primary btn-sm <?= ($kategori == "= '3'") ? 'active' : ''; ?>">
+                                                             <input type="radio" name="pilihan" id="pilihan3" value="= '3'" required autocomplete="off" <?= ($kategori == "= '3'") ? 'checked' : ''; ?>> Closed
+                                                         </label>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                             <div class="row mt-3">
+                                                 <div class="col-sm-12">
+                                                     <button type="submit" name="submit" class="btn btn-primary btn-sm">
+                                                         <i class="icofont icofont-search-alt-1"></i> Cari data
+                                                     </button>
+                                                 </div>
+                                             </div>
                                         </form>
                                     </div>
                                 </div>
                                 <?php if (isset($_POST['submit'])): ?>
+                                    <?php 
+                                    // echo $kategori;
+                                    $date_filter = "";
+                                    if (!empty($_POST['date1']) && !empty($_POST['date2'])) {
+                                        $date1 = $_POST['date1'];
+                                        $date2 = $_POST['date2'];
+                                        $date_filter = "DELIVERYDATE BETWEEN '$date1' AND '$date2'";
+                                    } else if (!empty($_POST['date1']) && empty($_POST['date2'])) {
+                                        $current_year = date('Y');
+                                        $date_filter = "DELIVERYDATE BETWEEN '$date1' AND '$current_year-12-31'";
+                                    } else if (empty($_POST['date1']) && !empty($_POST['date2'])) {
+                                        $current_year = date('Y');
+                                        $date_filter = "DELIVERYDATE BETWEEN '$current_year-01-01' AND '$date2'";
+                                    } else {
+                                        $current_year = date('Y');
+                                        $date_filter = "DELIVERYDATE BETWEEN '$current_year-01-01' AND '$current_year-12-31'";
+                                    }
+
+                                    $query_macro = "SELECT
+                                                        DISTINCT
+                                                        Tanggal_Bon_Order,
+                                                        CODE,
+                                                        DEMAND,
+                                                        DELIVERYDATE,
+                                                        ACTUAL_DELIVERY,
+                                                        GREIGE_AWAL,
+                                                        GREIGE_AKHIR,
+                                                        S1,
+                                                        S2,
+                                                        S3,
+                                                        S4,
+                                                        S5,
+                                                        S6,
+                                                        LANGGANAN,
+                                                        WORKCENTERCODE,
+                                                        CASE
+                                                            WHEN S1 IN ('TC', 'CVC', 'TCX', 'CVCX')
+                                                            AND OPERATIONCODE IN ('DYE2', 'DYE4') THEN 'DYE2'
+                                                            ELSE OPERATIONCODE
+                                                        END AS OPERATIONCODE,
+                                                        qty
+                                                    FROM
+                                                        (
+                                                        SELECT
+                                                            DISTINCT 
+                                                            s.CREATIONDATETIME,
+                                                            DATE(s.CREATIONDATETIME) AS Tanggal_Bon_Order,
+                                                            s.CODE,
+                                                            p.CODE AS DEMAND,
+                                                            s2.DELIVERYDATE,
+                                                            trim(p.SUBCODE01)AS S1,
+                                                            trim(p.SUBCODE02)AS S2,
+                                                            trim(p.SUBCODE03)AS S3,
+                                                            trim(p.SUBCODE04)AS S4,
+                                                            trim(p.SUBCODE05)AS S5,
+                                                            trim(p.SUBCODE06)AS S6,
+                                                            ip.LANGGANAN || '(' || ip.BUYER || ')' AS LANGGANAN,
+                                                            p2.WORKCENTERCODE,
+                                                            CASE
+                                                                WHEN p2.PRODRESERVATIONLINKGROUPCODE IS NULL
+                                                                OR p2.PRODRESERVATIONLINKGROUPCODE = '' THEN p2.OPERATIONCODE
+                                                                ELSE p2.PRODRESERVATIONLINKGROUPCODE
+                                                            END AS OPERATIONCODE,
+                                                            COALESCE(s2.CONFIRMEDDELIVERYDATE, s.CONFIRMEDDUEDATE) AS ACTUAL_DELIVERY,
+                                                            CASE
+                                                                WHEN p.ITEMTYPEAFICODE = 'KFF' THEN p.USERPRIMARYQUANTITY
+                                                                WHEN p.ITEMTYPEAFICODE = 'FKF' THEN p.USERSECONDARYQUANTITY
+                                                            END AS qty,
+                                                            COALESCE(a2.VALUEDATE, a4.VALUEDATE) AS GREIGE_AWAL,
+                                                            a.VALUEDATE AS GREIGE_AKHIR
+                                                        FROM
+                                                            SALESORDER s
+                                                        LEFT JOIN PRODUCTIONDEMAND p ON	p.DLVSALORDERLINESALESORDERCODE = s.CODE
+                                                        LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE
+                                                        LEFT JOIN ITXVIEW_PELANGGAN ip ON ip.CODE = p.ORIGDLVSALORDLINESALORDERCODE
+                                                        LEFT JOIN ITXVIEWKGBRUTOBONORDER2_FKF f ON f.CODE = p.CODE
+                                                        LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = s.CODE	AND s2.SALESORDERLINEORDERLINE = p.DLVSALESORDERLINEORDERLINE
+                                                        LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'RMPGreigeReqDateTo'
+                                                        LEFT JOIN ADSTORAGE a2 ON a2.UNIQUEID = p.ABSUNIQUEID AND a2.FIELDNAME = 'RMPReqDate'
+                                                        LEFT JOIN ADSTORAGE a3 ON a3.UNIQUEID = p.ABSUNIQUEID AND a3.FIELDNAME = 'ProAllow'
+                                                        LEFT JOIN ADSTORAGE a4 ON a4.UNIQUEID = p.ABSUNIQUEID AND a4.FIELDNAME = 'ProAllowDate'
+                                                        WHERE
+                                                            (p2.WORKCENTERCODE = 'P3RS1'
+                                                                OR p2.WORKCENTERCODE = 'P3SU1'
+                                                                OR p2.WORKCENTERCODE = 'P3ST1'
+                                                                OR p2.WORKCENTERCODE = 'P3CP1'
+                                                                OR p2.WORKCENTERCODE = 'P3TD1'
+                                                                OR p2.WORKCENTERCODE = 'P3SH1'
+                                                                OR p2.WORKCENTERCODE = 'P3CO1'
+                                                                OR p2.WORKCENTERCODE = 'P3AR1'
+                                                                OR p2.WORKCENTERCODE = 'P3BC1'
+                                                                OR p2.WORKCENTERCODE = 'P3DY1'
+                                                                OR p2.WORKCENTERCODE = 'P3RX1'
+                                                                OR p2.WORKCENTERCODE = 'P3CB1'
+                                                                OR p2.WORKCENTERCODE = 'P3SM1'	
+                                                                OR p2.WORKCENTERCODE = 'P3IN3')
+                                                    --		AND s.CREATIONDATETIME BETWEEN '2025-01-01' AND '2025-02-21'
+                                                    --		AND p.SUBCODE01 IN ('TC','CVC','TCX','CVCX')
+                                                            AND NOT p.ORIGDLVSALORDLINESALORDERCODE IS NULL
+                                                    --		AND p.CODE = '00331086'
+                                                            AND p2.STEPTYPE = '0'
+                                                    --		AND p2.PROGRESSSTATUS = '0' --Progress Status OPEN
+                                                    --		AND p2.PROGRESSSTATUS = '3' --Progress Status Closed
+                                                            -- AND p2.PROGRESSSTATUS IN ('0','1','2') --Progress Status OPEN
+                                                            AND p2.PROGRESSSTATUS $kategori --Progress Status OPEN
+                                                            --AND p2.OPERATIONCODE IN ('DYE1','DYE2','DYE3','DYE4','DYE5','DYE6')
+                                                            --AND p.CODE ='00208479     '		
+                                                    )
+                                                        WHERE $date_filter";
+                                                        $stmt = db2_exec($conn1, $query_macro);
+                                                        // echo $query_macro;
+                                    ?>
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="card">
@@ -97,791 +219,50 @@ $tgl2 = @$_POST['tgl2'];
                                                         <table id="basic-btn" class="table compact table-bordered nowrap">
                                                             <thead>
                                                                 <tr>
-                                                                    <!-- <th>No</th> -->
-                                                                    <th></th>
-                                                                    <th>Buyer</th>
-                                                                    <th>Operation</th>
-                                                                    <th>Hanger</th>
-                                                                    <th>Bulan 1 Minggu 1</th>
-                                                                    <th>Bulan 1 Minggu 2</th>
-                                                                    <th>Bulan 1 Minggu 3</th>
-                                                                    <th>Bulan 1 Minggu 4</th>
-                                                                    <th>Bulan 2 Minggu 1</th>
-                                                                    <th>Bulan 2 Minggu 2</th>
-                                                                    <th>Bulan 2 Minggu 3</th>
-                                                                    <th>Bulan 2 Minggu 4</th>
-                                                                    <th>Bulan 3 Minggu 1</th>
-                                                                    <th>Bulan 3 Minggu 2</th>
-                                                                    <th>Bulan 3 Minggu 3</th>
-                                                                    <th>Bulan 3 Minggu 4</th>
-                                                                    <th>Bulan 4 Minggu 1</th>
-                                                                    <th>Bulan 4 Minggu 2</th>
-                                                                    <th>Bulan 4 Minggu 3</th>
-                                                                    <th>Bulan 4 Minggu 4</th>
-                                                                    <th>Bulan 5 Minggu 1</th>
-                                                                    <th>Bulan 5 Minggu 2</th>
-                                                                    <th>Bulan 5 Minggu 3</th>
-                                                                    <th>Bulan 5 Minggu 4</th>
-                                                                    <th>Bulan 6 Minggu 1</th>
-                                                                    <th>Bulan 6 Minggu 2</th>
-                                                                    <th>Bulan 6 Minggu 3</th>
-                                                                    <th>Bulan 6 Minggu 4</th>
-                                                                    <th>Bulan 7 Minggu 1</th>
-                                                                    <th>Bulan 7 Minggu 2</th>
-                                                                    <th>Bulan 7 Minggu 3</th>
-                                                                    <th>Bulan 7 Minggu 4</th>
-                                                                    <th>Bulan 8 Minggu 1</th>
-                                                                    <th>Bulan 8 Minggu 2</th>
-                                                                    <th>Bulan 8 Minggu 3</th>
-                                                                    <th>Bulan 8 Minggu 4</th>
-                                                                    <th>Bulan 9 Minggu 1</th>
-                                                                    <th>Bulan 9 Minggu 2</th>
-                                                                    <th>Bulan 9 Minggu 3</th>
-                                                                    <th>Bulan 9 Minggu 4</th>
-                                                                    <th>Bulan 10 Minggu 1</th>
-                                                                    <th>Bulan 10 Minggu 2</th>
-                                                                    <th>Bulan 10 Minggu 3</th>
-                                                                    <th>Bulan 10 Minggu 4</th>
-                                                                    <th>Bulan 11 Minggu 1</th>
-                                                                    <th>Bulan 11 Minggu 2</th>
-                                                                    <th>Bulan 11 Minggu 3</th>
-                                                                    <th>Bulan 11 Minggu 4</th>
-                                                                    <th>Bulan 12 Minggu 1</th>
-                                                                    <th>Bulan 12 Minggu 2</th>
-                                                                    <th>Bulan 12 Minggu 3</th>
-                                                                    <th>Bulan 12 Minggu 4</th>
-                                                                    <th>Grand Total</th>
+                                                                    <th>No</th>
+                                                                    <th>TANGGAL BON ORDER</th>
+                                                                    <th>CODE</th>
+                                                                    <th>DEMAND</th>
+                                                                    <th>DELIVERYDATE</th>
+                                                                    <th>ACTUAL DELIVERY</th>
+                                                                    <th>GREIGE AWAL</th>
+                                                                    <th>GREIGE AKHIR</th>
+                                                                    <th>S1</th>
+                                                                    <th>S2</th>
+                                                                    <th>S3</th>
+                                                                    <th>S4</th>
+                                                                    <th>S5</th>
+                                                                    <th>S6</th>
+                                                                    <th>LANGGANAN</th>
+                                                                    <th>WORKCENTERCODE</th>
+                                                                    <th>OPERATIONCODE</th>
+                                                                    <th>QTY</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <?php
-                                                                $query4 = "SELECT DISTINCT 
-                                                                t.ORDERPARTNERBRANDCODE AS CUSTOMER,
-                                                                --t.OPERATIONCODE AS operation,
-                                                                --t.HANGER,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 1 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM1_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 1 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM1_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 1 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM1_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 1 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM1_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 2 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM2_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 2 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM2_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 2 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM2_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 2 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM2_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 3 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM3_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 3 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM3_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 3 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM3_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 3 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM3_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 4 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM4_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 4 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM4_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 4 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM4_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 4 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM4_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 5 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM5_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 5 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM5_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 5 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM5_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 5 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM5_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 6 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM6_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 6 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM6_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 6 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM6_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 6 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM6_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 7 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM7_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 7 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM7_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 7 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM7_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 7 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM7_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 8 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM8_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 8 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM8_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 8 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM8_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 8 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM8_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 9 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM9_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 9 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM9_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 9 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM9_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 9 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM9_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 10 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM10_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 10 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM10_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 10 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM10_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 10 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM10_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 11 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM11_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 11 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM11_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 11 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM11_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 11 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM11_W4,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 12 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                END),0) AS QTYM12_W1,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 12 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                END),0) AS QTYM12_W2,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 12 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                END),0) AS QTYM12_W3,
-                                                                ROUND(sum(CASE 
-                                                                    WHEN t.bulan = 12 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                END),0) AS QTYM12_W4,
-                                                                ROUND(sum(T.QTY),0) AS Total
-                                                                FROM (
-                                                                SELECT DISTINCT 
-                                                                --s.CODE,
-                                                                s.ORDERPARTNERBRANDCODE,
-                                                                p2.OPERATIONCODE,
-                                                                trim(p.SUBCODE02)||trim(p.SUBCODE03)AS HANGER,
-                                                                MONTH(s2.DELIVERYDATE) AS bulan,
-                                                                DAY(s2.DELIVERYDATE) AS tanggal,
-                                                                CASE 
-                                                                    WHEN p.ITEMTYPEAFICODE ='KFF' THEN p.USERPRIMARYQUANTITY
-                                                                    WHEN p.ITEMTYPEAFICODE ='FKF' THEN p.USERSECONDARYQUANTITY 
-                                                                END AS qty
-                                                                FROM 
-                                                                    SALESORDER s
-                                                                LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = s.CODE  
-                                                                LEFT JOIN PRODUCTIONDEMAND p ON p.DLVSALORDERLINESALESORDERCODE = s.CODE 
-                                                                LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                                                WHERE 
-                                                                (p2.WORKCENTERCODE = 'P3RS1' OR p2.WORKCENTERCODE = 'P3SU1' OR p2.WORKCENTERCODE = 'P3ST1' OR p2.WORKCENTERCODE = 'P3CP1' OR p2.WORKCENTERCODE = 'P3TD1' OR p2.WORKCENTERCODE = 'P3SH1'
-                                                                    OR p2.WORKCENTERCODE = 'P3CO1'OR p2.WORKCENTERCODE = 'P3AR1'OR p2.WORKCENTERCODE = 'P3BC1')
-                                                                AND s.CREATIONDATETIME BETWEEN '$tgl1' AND '$tgl2'
-                                                                AND NOT p.ORIGDLVSALORDLINESALORDERCODE IS NULL
-                                                                --AND ORDERPARTNERBRANDCODE ='TOYMIZ'
-                                                                --AND p2.OPERATIONCODE ='FNJ1'
-                                                                ) t
-                                                                GROUP BY
-                                                                t.ORDERPARTNERBRANDCODE
-                                                                --t.OPERATIONCODE
-                                                                --t.HANGER
-                                                                            ";
-                                                                $db_sumbuy = db2_exec($conn1, $query4, array('cursor' => DB2_SCROLLABLE));
-                                                                while ($row_sumbuy = db2_fetch_assoc($db_sumbuy)) {
-
-                                                                    $query5 = "SELECT DISTINCT 
-                                                                    -- t.ORDERPARTNERBRANDCODE AS CUSTOMER,
-                                                                    t.OPERATIONCODE AS OPERATION,
-                                                                    --t.HANGER,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 1 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM1_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 1 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM1_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 1 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM1_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 1 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM1_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 2 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM2_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 2 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM2_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 2 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM2_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 2 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM2_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 3 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM3_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 3 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM3_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 3 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM3_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 3 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM3_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 4 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM4_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 4 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM4_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 4 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM4_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 4 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM4_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 5 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM5_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 5 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM5_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 5 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM5_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 5 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM5_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 6 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM6_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 6 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM6_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 6 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM6_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 6 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM6_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 7 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM7_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 7 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM7_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 7 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM7_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 7 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM7_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 8 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM8_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 8 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM8_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 8 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM8_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 8 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM8_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 9 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM9_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 9 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM9_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 9 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM9_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 9 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM9_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 10 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM10_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 10 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM10_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 10 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM10_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 10 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM10_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 11 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM11_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 11 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM11_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 11 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM11_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 11 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM11_W4,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 12 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                    END),0) AS QTYM12_W1,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 12 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                    END),0) AS QTYM12_W2,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 12 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                    END),0) AS QTYM12_W3,
-                                                                    ROUND(sum(CASE 
-                                                                        WHEN t.bulan = 12 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                    END),0) AS QTYM12_W4,
-                                                                    ROUND(sum(T.QTY),0) AS Total
-                                                                    FROM (
-                                                                    SELECT DISTINCT 
-                                                                    --s.CODE,
-                                                                    s.ORDERPARTNERBRANDCODE,
-                                                                    p2.OPERATIONCODE,
-                                                                    trim(p.SUBCODE02)||trim(p.SUBCODE03)AS HANGER,
-                                                                    MONTH(s2.DELIVERYDATE) AS bulan,
-                                                                    DAY(s2.DELIVERYDATE) AS tanggal,
-                                                                    CASE 
-                                                                        WHEN p.ITEMTYPEAFICODE ='KFF' THEN p.USERPRIMARYQUANTITY
-                                                                        WHEN p.ITEMTYPEAFICODE ='FKF' THEN p.USERSECONDARYQUANTITY 
-                                                                    END AS qty
-                                                                    FROM 
-                                                                        SALESORDER s
-                                                                    LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = s.CODE  
-                                                                    LEFT JOIN PRODUCTIONDEMAND p ON p.DLVSALORDERLINESALESORDERCODE = s.CODE 
-                                                                    LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                                                    WHERE 
-                                                                    (p2.WORKCENTERCODE = 'P3RS1' OR p2.WORKCENTERCODE = 'P3SU1' OR p2.WORKCENTERCODE = 'P3ST1' OR p2.WORKCENTERCODE = 'P3CP1' OR p2.WORKCENTERCODE = 'P3TD1' OR p2.WORKCENTERCODE = 'P3SH1'
-                                                                        OR p2.WORKCENTERCODE = 'P3CO1'OR p2.WORKCENTERCODE = 'P3AR1'OR p2.WORKCENTERCODE = 'P3BC1')
-                                                                    AND s.CREATIONDATETIME BETWEEN '$tgl1' AND '$tgl2'
-                                                                    AND NOT p.ORIGDLVSALORDLINESALORDERCODE IS NULL
-                                                                    AND ORDERPARTNERBRANDCODE ='$row_sumbuy[CUSTOMER]'
-                                                                    --AND p2.OPERATIONCODE ='FNJ1'
-                                                                    ) t
-                                                                    GROUP BY
-                                                                    -- t.ORDERPARTNERBRANDCODE
-                                                                    t.OPERATIONCODE
-                                                                    --t.HANGER
-                                                                            ";
-                                                                    $db_sumop = db2_exec($conn1, $query5, array('cursor' => DB2_SCROLLABLE));
-                                                                    while ($row_sumop = db2_fetch_assoc($db_sumop)) {
-
-                                                                        $query6 = "SELECT DISTINCT 
-                                                                        -- t.ORDERPARTNERBRANDCODE AS CUSTOMER,
-                                                                        --t.OPERATIONCODE AS operation,
-                                                                        t.HANGER,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 1 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM1_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 1 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM1_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 1 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM1_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 1 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM1_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 2 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM2_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 2 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM2_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 2 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM2_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 2 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM2_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 3 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM3_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 3 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM3_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 3 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM3_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 3 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM3_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 4 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM4_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 4 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM4_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 4 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM4_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 4 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM4_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 5 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM5_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 5 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM5_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 5 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM5_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 5 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM5_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 6 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM6_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 6 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM6_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 6 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM6_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 6 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM6_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 7 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM7_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 7 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM7_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 7 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM7_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 7 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM7_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 8 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM8_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 8 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM8_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 8 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM8_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 8 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM8_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 9 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM9_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 9 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM9_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 9 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM9_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 9 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM9_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 10 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM10_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 10 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM10_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 10 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM10_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 10 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM10_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 11 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM11_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 11 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM11_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 11 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM11_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 11 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM11_W4,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 12 AND t.tanggal BETWEEN 1 AND 7 THEN t.QTY
-                                                                        END),0) AS QTYM12_W1,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 12 AND t.tanggal BETWEEN 8 AND 15 THEN t.QTY
-                                                                        END),0) AS QTYM12_W2,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 12 AND t.tanggal BETWEEN 16 AND 23 THEN t.QTY
-                                                                        END),0) AS QTYM12_W3,
-                                                                        ROUND(sum(CASE 
-                                                                            WHEN t.bulan = 12 AND t.tanggal BETWEEN 24 AND 31 THEN t.QTY
-                                                                        END),0) AS QTYM12_W4,
-                                                                        ROUND(sum(T.QTY),0) AS Total
-                                                                        FROM (
-                                                                        SELECT DISTINCT 
-                                                                        --s.CODE,
-                                                                        s.ORDERPARTNERBRANDCODE,
-                                                                        p2.OPERATIONCODE,
-                                                                        trim(p.SUBCODE02)||trim(p.SUBCODE03)AS HANGER,
-                                                                        MONTH(s2.DELIVERYDATE) AS bulan,
-                                                                        DAY(s2.DELIVERYDATE) AS tanggal,
-                                                                        CASE 
-                                                                            WHEN p.ITEMTYPEAFICODE ='KFF' THEN p.USERPRIMARYQUANTITY
-                                                                            WHEN p.ITEMTYPEAFICODE ='FKF' THEN p.USERSECONDARYQUANTITY 
-                                                                        END AS qty
-                                                                        FROM 
-                                                                            SALESORDER s
-                                                                        LEFT JOIN SALESORDERDELIVERY s2 ON s2.SALESORDERLINESALESORDERCODE = s.CODE  
-                                                                        LEFT JOIN PRODUCTIONDEMAND p ON p.DLVSALORDERLINESALESORDERCODE = s.CODE 
-                                                                        LEFT JOIN PRODUCTIONDEMANDSTEP p2 ON p2.PRODUCTIONDEMANDCODE = p.CODE 
-                                                                        WHERE 
-                                                                        (p2.WORKCENTERCODE = 'P3RS1' OR p2.WORKCENTERCODE = 'P3SU1' OR p2.WORKCENTERCODE = 'P3ST1' OR p2.WORKCENTERCODE = 'P3CP1' OR p2.WORKCENTERCODE = 'P3TD1' OR p2.WORKCENTERCODE = 'P3SH1'
-                                                                            OR p2.WORKCENTERCODE = 'P3CO1'OR p2.WORKCENTERCODE = 'P3AR1'OR p2.WORKCENTERCODE = 'P3BC1')
-                                                                        AND s.CREATIONDATETIME BETWEEN '$tgl1' AND '$tgl2'
-                                                                        AND NOT p.ORIGDLVSALORDLINESALORDERCODE IS NULL
-                                                                        AND ORDERPARTNERBRANDCODE ='$row_sumbuy[CUSTOMER]'
-                                                                        AND p2.OPERATIONCODE ='$row_sumop[OPERATION]'
-                                                                        ) t
-                                                                        GROUP BY
-                                                                        -- t.ORDERPARTNERBRANDCODE
-                                                                        --t.OPERATIONCODE
-                                                                        t.HANGER 
-                                                                        ";
-                                                                        $db_sumhang = db2_exec($conn1, $query6, array('cursor' => DB2_SCROLLABLE));
-                                                                        while ($row_sumhang = db2_fetch_assoc($db_sumhang)) {
-
-
-                                                                            if ($current_buyer != $row_sumbuy['CUSTOMER']) {
-                                                                                echo "<tr bgcolor = '#fbff0a'>";
-                                                                                echo "<td></td>";
-                                                                                echo "<td>" . $row_sumbuy['CUSTOMER'] . "</td>";
-                                                                                echo "<td></td>";
-                                                                                echo "<td></td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM1_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM1_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM1_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM1_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM2_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM2_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM2_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM2_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM3_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM3_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM3_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM3_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM4_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM4_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM4_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM4_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM5_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM5_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM5_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM5_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM6_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM6_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM6_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM6_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM7_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM7_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM7_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM7_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM8_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM8_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM8_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM8_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM9_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM9_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM9_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM9_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM10_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM10_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM10_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM10_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM11_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM11_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM11_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM11_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM12_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM12_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM12_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM12_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumbuy['QTYM1_W1'] + $row_sumbuy['QTYM1_W2'] + $row_sumbuy['QTYM1_W3'] + $row_sumbuy['QTYM1_W4'] + $row_sumbuy['QTYM2_W1'] + $row_sumbuy['QTYM2_W2'] + $row_sumbuy['QTYM2_W3'] + $row_sumbuy['QTYM2_W4'] + $row_sumbuy['QTYM3_W1'] + $row_sumbuy['QTYM3_W2'] + $row_sumbuy['QTYM3_W3'] + $row_sumbuy['QTYM3_W4'] + $row_sumbuy['QTYM4_W1'] + $row_sumbuy['QTYM4_W2'] + $row_sumbuy['QTYM4_W3'] + $row_sumbuy['QTYM4_W4'] + $row_sumbuy['QTYM5_W1'] + $row_sumbuy['QTYM5_W2'] + $row_sumbuy['QTYM5_W3'] + $row_sumbuy['QTYM5_W4'] + $row_sumbuy['QTYM6_W1'] + $row_sumbuy['QTYM6_W2'] + $row_sumbuy['QTYM6_W3'] + $row_sumbuy['QTYM6_W4'] + $row_sumbuy['QTYM7_W1'] + $row_sumbuy['QTYM7_W2'] + $row_sumbuy['QTYM7_W3'] + $row_sumbuy['QTYM7_W4'] + $row_sumbuy['QTYM8_W1'] + $row_sumbuy['QTYM8_W2'] + $row_sumbuy['QTYM8_W3'] + $row_sumbuy['QTYM8_W4'] + $row_sumbuy['QTYM9_W1'] + $row_sumbuy['QTYM9_W2'] + $row_sumbuy['QTYM9_W3'] + $row_sumbuy['QTYM9_W4'] + $row_sumbuy['QTYM10_W1'] + $row_sumbuy['QTYM10_W2'] + $row_sumbuy['QTYM10_W3'] + $row_sumbuy['QTYM10_W4'] + $row_sumbuy['QTYM11_W1'] + $row_sumbuy['QTYM11_W2'] + $row_sumbuy['QTYM11_W3'] + $row_sumbuy['QTYM11_W4'] + $row_sumbuy['QTYM12_W1'] + $row_sumbuy['QTYM12_W2'] + $row_sumbuy['QTYM12_W3'] + $row_sumbuy['QTYM12_W4']) . "</td>";
-                                                                                // echo "<td>" . number_format($row_sumbuy['TOTAL'])."</td>";
-                                                                                echo "</tr>";
-                                                                                $current_buyer = $row_sumbuy['CUSTOMER'];
-                                                                            }
-
-                                                                            if ($current_operation != $row_sumop['OPERATION']) {
-                                                                                // Tampilkan operasi dan data transaksi
-                                                                                echo "<tr bgcolor= '#0ae2ff'>";
-                                                                                echo "<td></td>";
-                                                                                echo "<td></td>"; // Kolom nomor kosong
-                                                                                echo "<td>" . $row_sumop['OPERATION'] . "</td>";
-                                                                                echo "<td></td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM1_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM1_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM1_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM1_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM2_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM2_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM2_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM2_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM3_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM3_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM3_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM3_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM4_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM4_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM4_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM4_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM5_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM5_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM5_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM5_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM6_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM6_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM6_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM6_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM7_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM7_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM7_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM7_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM8_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM8_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM8_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM8_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM9_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM9_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM9_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM9_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM10_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM10_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM10_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM10_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM11_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM11_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM11_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM11_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM12_W1']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM12_W2']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM12_W3']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM12_W4']) . "</td>";
-                                                                                echo "<td>" . number_format($row_sumop['QTYM1_W1'] + $row_sumop['QTYM1_W2'] + $row_sumop['QTYM1_W3'] + $row_sumop['QTYM1_W4'] + $row_sumop['QTYM2_W1'] + $row_sumop['QTYM2_W2'] + $row_sumop['QTYM2_W3'] + $row_sumop['QTYM2_W4'] + $row_sumop['QTYM3_W1'] + $row_sumop['QTYM3_W2'] + $row_sumop['QTYM3_W3'] + $row_sumop['QTYM3_W4'] + $row_sumop['QTYM4_W1'] + $row_sumop['QTYM4_W2'] + $row_sumop['QTYM4_W3'] + $row_sumop['QTYM4_W4'] + $row_sumop['QTYM5_W1'] + $row_sumop['QTYM5_W2'] + $row_sumop['QTYM5_W3'] + $row_sumop['QTYM5_W4'] + $row_sumop['QTYM6_W1'] + $row_sumop['QTYM6_W2'] + $row_sumop['QTYM6_W3'] + $row_sumop['QTYM6_W4'] + $row_sumop['QTYM7_W1'] + $row_sumop['QTYM7_W2'] + $row_sumop['QTYM7_W3'] + $row_sumop['QTYM7_W4'] + $row_sumop['QTYM8_W1'] + $row_sumop['QTYM8_W2'] + $row_sumop['QTYM8_W3'] + $row_sumop['QTYM8_W4'] + $row_sumop['QTYM9_W1'] + $row_sumop['QTYM9_W2'] + $row_sumop['QTYM9_W3'] + $row_sumop['QTYM9_W4'] + $row_sumop['QTYM10_W1'] + $row_sumop['QTYM10_W2'] + $row_sumop['QTYM10_W3'] + $row_sumop['QTYM10_W4'] + $row_sumop['QTYM11_W1'] + $row_sumop['QTYM11_W2'] + $row_sumop['QTYM11_W3'] + $row_sumop['QTYM11_W4'] + $row_sumop['QTYM12_W1'] + $row_sumop['QTYM12_W2'] + $row_sumop['QTYM12_W3'] + $row_sumop['QTYM12_W4']) . "</td>";
-                                                                                // echo "<td>" . number_format($row_sumop['TOTAL'])."</td>";
-                                                                                echo "</tr>";
-                                                                                $current_operation = $row_sumop['OPERATION'];
-                                                                            }
-                                                                            echo "<tr>";
-                                                                            echo "<td></td>"; // Kolom nomor kosong
-                                                                            echo "<td></td>";
-                                                                            echo "<td></td>";
-                                                                            echo "<td>" . $row_sumhang['HANGER'] . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM1_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM1_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM1_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM1_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM2_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM2_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM2_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM2_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM3_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM3_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM3_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM3_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM4_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM4_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM4_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM4_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM5_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM5_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM5_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM5_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM6_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM6_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM6_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM6_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM7_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM7_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM7_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM7_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM8_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM8_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM8_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM8_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM9_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM9_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM9_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM9_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM10_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM10_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM10_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM10_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM11_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM11_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM11_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM11_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM12_W1']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM12_W2']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM12_W3']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM12_W4']) . "</td>";
-                                                                            echo "<td>" . number_format($row_sumhang['QTYM1_W1'] + $row_sumhang['QTYM1_W2'] + $row_sumhang['QTYM1_W3'] + $row_sumhang['QTYM1_W4'] + $row_sumhang['QTYM2_W1'] + $row_sumhang['QTYM2_W2'] + $row_sumhang['QTYM2_W3'] + $row_sumhang['QTYM2_W4'] + $row_sumhang['QTYM3_W1'] + $row_sumhang['QTYM3_W2'] + $row_sumhang['QTYM3_W3'] + $row_sumhang['QTYM3_W4'] + $row_sumhang['QTYM4_W1'] + $row_sumhang['QTYM4_W2'] + $row_sumhang['QTYM4_W3'] + $row_sumhang['QTYM4_W4'] + $row_sumhang['QTYM5_W1'] + $row_sumhang['QTYM5_W2'] + $row_sumhang['QTYM5_W3'] + $row_sumhang['QTYM5_W4'] + $row_sumhang['QTYM6_W1'] + $row_sumhang['QTYM6_W2'] + $row_sumhang['QTYM6_W3'] + $row_sumhang['QTYM6_W4'] + $row_sumhang['QTYM7_W1'] + $row_sumhang['QTYM7_W2'] + $row_sumhang['QTYM7_W3'] + $row_sumhang['QTYM7_W4'] + $row_sumhang['QTYM8_W1'] + $row_sumhang['QTYM8_W2'] + $row_sumhang['QTYM8_W3'] + $row_sumhang['QTYM8_W4'] + $row_sumhang['QTYM9_W1'] + $row_sumhang['QTYM9_W2'] + $row_sumhang['QTYM9_W3'] + $row_sumhang['QTYM9_W4'] + $row_sumhang['QTYM10_W1'] + $row_sumhang['QTYM10_W2'] + $row_sumhang['QTYM10_W3'] + $row_sumhang['QTYM10_W4'] + $row_sumhang['QTYM11_W1'] + $row_sumhang['QTYM11_W2'] + $row_sumhang['QTYM11_W3'] + $row_sumhang['QTYM11_W4'] + $row_sumhang['QTYM12_W1'] + $row_sumhang['QTYM12_W2'] + $row_sumhang['QTYM12_W3'] + $row_sumhang['QTYM12_W4']) . "</td>";
-                                                                            // echo "<td>" . number_format($row_sumhang['TOTAL'])."</td>";
-                                                                            echo "</tr>";
-                                                                        }
-                                                                    }
-                                                                }
-                                                                ?>
+                                                                <?php $no = 1;
+                                                                    while($row = db2_fetch_assoc($stmt)):?>
+                                                                    <tr>
+                                                                        <td><?= $no++;?></td>
+                                                                        <td><?= $row['TANGGAL_BON_ORDER'];?></td>
+                                                                        <td><?= $row['CODE'];?></td>
+                                                                        <td><?= $row['DEMAND']?></td>
+                                                                        <td><?= $row['DELIVERYDATE']?></td>
+                                                                        <td><?= $row['ACTUAL_DELIVERY']?></td>
+                                                                        <td><?= $row['GREIGE_AWAL']?></td>
+                                                                        <td><?= $row['GREIGE_AKHIR']?></td>
+                                                                        <td><?= $row['S1']?></td>
+                                                                        <td><?= $row['S2']?></td>
+                                                                        <td><?= $row['S3']?></td>
+                                                                        <td><?= $row['S4']?></td>
+                                                                        <td><?= $row['S5']?></td>
+                                                                        <td><?= $row['S6']?></td>
+                                                                        <td><?= $row['LANGGANAN']?></td>
+                                                                        <td><?= $row['WORKCENTERCODE']?></td>
+                                                                        <td><?= $row['OPERATIONCODE']?></td>
+                                                                        <td><?= $row['QTY']?></td>
+                                                                    </tr>
+                                                                <?php endwhile;?>
                                                             </tbody>
                                                         </table>
                                                     </div>
