@@ -246,7 +246,7 @@ $date2 = $_POST['date2'];
                                                                         <td><?= $no++;?></td>
                                                                         <td><?= $row['TANGGAL_BON_ORDER'];?></td>
                                                                         <td><?= $row['CODE'];?></td>
-                                                                        <td><?= $row['DEMAND']?></td>
+                                                                        <td>`<a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $row['DEMAND']?>"><?= $row['DEMAND']?></a></td>
                                                                         <td><?= $row['DELIVERYDATE']?></td>
                                                                         <td><?= $row['ACTUAL_DELIVERY']?></td>
                                                                         <td><?= $row['GREIGE_AWAL']?></td>
