@@ -121,6 +121,9 @@
                             'batch_report_orgatex.php', 
                             'stop_machine_efficency.php'];
         $style_active_otx = in_array($current_page, $active_pages_otx) ? 'style="background-color: #d4e9fa;"' : '';
+
+        $active_pages_info = ['monitor_koneksi.php', 'index.php'];
+        $style_active_info = in_array($current_page, $active_pages_info) ? 'style="background-color: #d4e9fa;"' : '';
     ?>
     <div id="pcoded" class="pcoded">
         <div class="pcoded-container">
@@ -550,12 +553,17 @@
                                 </ul>
                             </li>
                             <li class="pcoded-hasmenu">
-                                <a href="javascript:void(0)">
+                                <a href="javascript:void(0)" <?= $style_active_info; ?>>
                                     <span class="pcoded-micon"><i class="icofont icofont-info"></i></span>
                                     <span class="pcoded-mtext">Info</span>
                                 </a>
                                 <ul class="pcoded-submenu">
-                                    <li>
+                                    <li <?= ($current_page == 'monitor_koneksi.php') ? $style_active_info : ''; ?>>
+                                        <a href="monitor_koneksi.php" data-i18n="nav.animations.main">
+                                            Monitoring Koneksi
+                                        </a>
+                                    </li>
+                                    <li <?= ($current_page == 'index.php') ? $style_active_info : ''; ?>>
                                         <a href="index.php" target="_blank" data-i18n="nav.animations.main">
                                             Dashboard Log Loading
                                         </a>
