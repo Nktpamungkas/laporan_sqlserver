@@ -233,22 +233,21 @@ if (isset($_POST['production_number'])) {
         // SCHEDULE DYEING
         // $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE (no_resep = '$orderCode-$groupLine' OR no_resep = '$orderCode-$groupLine') OR (no_resep2 = '$orderCode-$groupLine' OR no_resep2 = '$orderCode-$groupLine')";
         // $sqlScheduleDye  = "SELECT * FROM tbl_schedule WHERE nokk = '$orderCode' ORDER BY id DESC LIMIT 1";
-        $sqlScheduleDye  = "SELECT
+        $sqlScheduleDye  = "SELECT TOP 1
                                 a.nokk,
                                 a.langganan,
                                 a.no_hanger,
                                 b.no_mesin_lama AS no_mesin,
                                 a.no_mesin AS no_mesin_new
                             FROM
-                                tbl_schedule a
-                            LEFT JOIN tbl_mesin b ON b.no_mesin = a.no_mesin
+                                db_dying.tbl_schedule a
+                            LEFT JOIN db_dying.tbl_mesin b ON b.no_mesin = a.no_mesin
                             WHERE
-                                a.nokk = '$orderCode' 
+                                a.nokk = ?
                             ORDER BY
-                                a.id DESC 
-                            LIMIT 1";
-        $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
-        $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
+                                a.id DESC";
+        $stmtScheduleDye = sqlsrv_query($con_db_dyeing, $sqlScheduleDye, [$orderCode], ["Scrollable" => SQLSRV_CURSOR_STATIC]);
+        $dataSchedule = $stmtScheduleDye ? sqlsrv_fetch_array($stmtScheduleDye, SQLSRV_FETCH_ASSOC) : null;
 
         while ($treatment = db2_fetch_assoc($resultTreatment)) {
             $sqlTreatmentDetail = "SELECT

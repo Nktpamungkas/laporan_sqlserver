@@ -102,7 +102,8 @@ $conn1 = safeDb2Connect($conn_string, "DB2 NOWPRD");
 
 // $con_nowprd         = safeMysqliConnect("10.0.0.10", "dit", "4dm1n", "nowprd", "nowprd");
 $con_invoice      = safeMysqliConnect("10.0.0.10", "dit", "4dm1n", "invoice", "invoice");
-$con_db_dyeing    = safeMysqliConnect("10.0.0.10", "dit", "4dm1n", "db_dying", "db_dying");
+// Dialihkan ke SQL Server (lihat bagian bawah).
+// $con_db_dyeing    = safeMysqliConnect("10.0.0.10", "dit", "4dm1n", "db_dying", "db_dying");
 $con_db_finishing = safeMysqliConnect("10.0.0.10", "dit", "4dm1n", "db_finishing", "db_finishing");
 $con_db_lab       = safeMysqliConnect("10.0.0.10", "dit", "4dm1n", "db_laborat", "db_laborat");
 $con_dbnow_mkt    = safeMysqliConnect("10.0.0.10", "dit", "4dm1n", "dbnow_mkt", "dbnow_mkt");
@@ -127,7 +128,7 @@ $db_ppc        = "test_ppc";
 $nowprdd = ["Database" => $nowprd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19];
 $nowppc  = ["Database" => $db_ppc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19];
 
-// $db_dying = array("Database" => $dying, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
+$db_dying = ["Database" => $dying, "UID" => $usernameSVR19, "PWD" => $passwordSVR19];
 // $dbLab = array("Database" => $lab, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 // $db_qc = array("Database" => $qc, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
 // $db_hrd = array("Database" => $hrd, "UID" => $usernameSVR19, "PWD" => $passwordSVR19);
@@ -137,7 +138,7 @@ $db_finishing = ["Database" => $finishing, "UID" => $usernameSVR19, "PWD" => $pa
 
 $con_nowprd = safeSqlsrvConnect($hostSVR19, $nowprdd, "con_nowprd");
 $con_db_ppc = safeSqlsrvConnect($hostSVR19, $nowppc, "con_db_ppc");
-// $con_db_dyeing = safeSqlsrvConnect($hostSVR19, $db_dying, "con_db_dyeing");
+$con_db_dyeing = safeSqlsrvConnect($hostSVR19, $db_dying, "con_db_dyeing");
 // $con_db_qc = safeSqlsrvConnect($hostSVR19, $db_qc, "con_db_qc");
 // $con_db_lab = safeSqlsrvConnect($hostSVR19, $dbLab, "con_db_lab");
 // $con_hrd = safeSqlsrvConnect($hostSVR19, $db_hrd, "con_hrd");
