@@ -115,11 +115,11 @@ require_once "koneksi.php";
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Ip Address</h6>
-                                                <input type="text" id="machine_number" class="form-control" readonly>
+                                                <input type="text" id="machine_number" class="form-control" required>
                                             </div>
                                             <div class="col-sm-12 col-xl-2 m-b-10">
                                                 <h6 style="font-weight: bold;">Machine Number New</h6>
-                                                <input type="text" id="machine_number_new" class="form-control" readonly>
+                                                <input type="text" id="machine_number_new" class="form-control" required>
                                             </div>
                                         </div>
                                         <div class="row">
