@@ -434,7 +434,7 @@
                 </td> <!-- NETTO KG-->
                 <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
                 <td><?= $kode_dept; ?></td> <!-- KODE DEPT -->
-                <td><?= $status_terakhir; ?> (<?= $jam_status_terakhir; ?>)</td> <!-- STATUS TERAKHIR -->
+                    <td><?= $status_terakhir; ?> (<?= $jam_status_terakhir; ?>)</td> <!-- STATUS TERAKHIR -->
                 <td><?= $delay_progress_status; ?></td> <!-- DELAY PROGRESS STATUS -->
                 <td><?= $status_operation; ?></td> <!-- PROGRESS STATUS -->
                 <td>

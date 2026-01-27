@@ -1075,10 +1075,14 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                         <?php
                                                                         // if($status_operation == 'Progress'){ // KALAU PROGRESS STATUSNYA PROGRESS
                                                                         if ($kode_dept == 'DYE') {
-                                                                            $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT * FROM `tbl_schedule` WHERE nokk = '$rowdb2[NO_KK]' AND NOT `status` = 'selesai'");
-                                                                            $data_schedule_dye  = mysqli_fetch_assoc($q_schedule_dye);
-                                                                            $nomesin            = $data_schedule_dye['no_mesin'];
-                                                                            $nourut             = $data_schedule_dye['no_urut'];
+                                                                            $sql_schedule_dye   = "SELECT TOP 1 *
+                                                                                                   FROM db_dying.tbl_schedule
+                                                                                                   WHERE nokk = ? AND status <> 'selesai'
+                                                                                                   ORDER BY id DESC";
+                                                                            $stmt_schedule_dye  = sqlsrv_query($con_db_dyeing, $sql_schedule_dye, [$rowdb2['NO_KK']], ["Scrollable" => SQLSRV_CURSOR_STATIC]);
+                                                                            $data_schedule_dye  = $stmt_schedule_dye ? sqlsrv_fetch_array($stmt_schedule_dye, SQLSRV_FETCH_ASSOC) : null;
+                                                                            $nomesin            = $data_schedule_dye['no_mesin'] ?? '';
+                                                                            $nourut             = $data_schedule_dye['no_urut'] ?? '';
                                                                         } elseif ($kode_dept == 'FIN') {
                                                                             $schedule_fin       = mysqli_query($con_db_finishing, "SELECT * FROM `tbl_schedule_new` WHERE nokk = '$rowdb2[NO_KK]' AND nodemand = '$rowdb2[DEMAND]' ORDER BY id DESC LIMIT 1");
                                                                             $data_schedule_fin  = mysqli_fetch_assoc($schedule_fin);
