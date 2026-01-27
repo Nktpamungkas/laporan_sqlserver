@@ -212,7 +212,7 @@ require_once 'header.php';
 
                                                                     <!-- Query Mysql untuk online dye -->
                                                                     <?php $resep = $row_integ['Dyelot'] . '-' . $row_integ['ReDye'];
-                                                                    $query_dye = "SELECT 
+                                                                    $query_dye = "SELECT TOP 1
                                                                                         m.rol,
                                                                                         m.nozzle,
                                                                                         m.rpm,
@@ -220,20 +220,19 @@ require_once 'header.php';
                                                                                         m.plaiter,
                                                                                         m.bruto,
                                                                                         m.pakai_air,
-                                                                                        s.kapasitas 
-                                                                                        from tbl_schedule s 
-                                                                                        left join tbl_montemp m on m.id_schedule = s.id 
-                                                                                        where no_resep ='$resep'";
-                                                                    $sql_exec = mysqli_query($con_db_dyeing, $query_dye);
-                                                                    $data_dye = mysqli_fetch_assoc($sql_exec);
+                                                                                        s.kapasitas
+                                                                                    FROM db_dying.tbl_schedule s 
+                                                                                    LEFT JOIN db_dying.tbl_montemp m ON m.id_schedule = s.id 
+                                                                                    WHERE s.no_resep = ?";
+                                                                    $stmt_dye = sqlsrv_query($con_db_dyeing, $query_dye, [$resep], ["Scrollable" => SQLSRV_CURSOR_STATIC]);
+                                                                    $data_dye = $stmt_dye ? sqlsrv_fetch_array($stmt_dye, SQLSRV_FETCH_ASSOC) : null;
                                                                     ?>
                                                                     <?php
-                                                                        $query_mesin = "SELECT 
-                                                                                       * 
-                                                                                        FROM tbl_mesin s
-                                                                                        where no_mesin_lama ='$row_data_orgatex[machine_no]'";
-                                                                        $sql_exec2 = mysqli_query($con_db_dyeing, $query_mesin);
-                                                                        $data_mesin_baru = mysqli_fetch_assoc($sql_exec2);
+                                                                        $query_mesin = "SELECT TOP 1 *
+                                                                                        FROM db_dying.tbl_mesin
+                                                                                        WHERE no_mesin_lama = ?";
+                                                                        $stmt_mesin = sqlsrv_query($con_db_dyeing, $query_mesin, [$row_data_orgatex['machine_no']], ["Scrollable" => SQLSRV_CURSOR_STATIC]);
+                                                                        $data_mesin_baru = $stmt_mesin ? sqlsrv_fetch_array($stmt_mesin, SQLSRV_FETCH_ASSOC) : null;
                                                                         ?>
                                                                     <!-- End query -->
 

@@ -224,9 +224,16 @@ require_once "koneksi.php";
                                                         ?>
 
                                                         <?php
-                                                            $sqlScheduleDye  = "SELECT * FROM tbl_mesin WHERE no_mesin_lama = '$dyelot[Machine]'";
-                                                            $resultScheduleDye = mysqli_query($con_db_dyeing, $sqlScheduleDye);
-                                                            $dataSchedule = mysqli_fetch_assoc($resultScheduleDye);
+                                                            $sqlScheduleDye  = "SELECT TOP 1 *
+                                                                                FROM db_dying.tbl_mesin
+                                                                                WHERE no_mesin_lama = ?";
+                                                            $stmtScheduleDye = sqlsrv_query(
+                                                                $con_db_dyeing,
+                                                                $sqlScheduleDye,
+                                                                [$dyelot['Machine']],
+                                                                ["Scrollable" => SQLSRV_CURSOR_STATIC]
+                                                            );
+                                                            $dataSchedule = $stmtScheduleDye ? sqlsrv_fetch_array($stmtScheduleDye, SQLSRV_FETCH_ASSOC) : null;
                                                         ?>
                                                         <tr>
                                                             <td class="text-center"><?= $dyelot['AutoKey']; ?></td>
@@ -234,7 +241,7 @@ require_once "koneksi.php";
                                                             <td class="text-center"><?= $dyelot['Dyelot']; ?></td>
                                                             <td class="text-center"><?= $dyelot['ReDye']; ?></td>
                                                             <td class="text-center"><?= $dyelot['Machine']; ?></td>
-                                                            <td class="text-center"><?= $dataSchedule['no_mesin']; ?></td>
+                                                            <td class="text-center"><?= $dataSchedule['no_mesin'] ?? ''; ?></td>
                                                             <td class="text-center"><?= $dyelot['Color']; ?></td>
                                                             <td class="text-center"><?= $dyelot['QueueTime']; ?></td>
                                                             <td class="text-center"><?= $dyelot['ImportState'] . ' ' . $badge ?></td>
