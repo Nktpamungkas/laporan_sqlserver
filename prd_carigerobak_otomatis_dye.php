@@ -366,40 +366,35 @@
                 </td>
                 <?php if($dept == 'DYE') : ?>
                     <?php
-                        $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
-                                                                                nokk,
-                                                                                id,
-                                                                                GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
-                                                                                if(COUNT(lot)>1,'Gabung Kartu','') as ket_kartu,
-                                                                                no_mesin,
-                                                                                nodemand,
-                                                                                no_urut,
-                                                                                buyer,
-                                                                                langganan,
-                                                                                GROUP_CONCAT(DISTINCT no_order SEPARATOR '-' ) AS no_order,
-                                                                                no_resep,
-                                                                                nokk,
-                                                                                jenis_kain,
-                                                                                warna,
-                                                                                no_warna,
-                                                                                sum(rol) as rol,
-                                                                                sum(bruto) as bruto,
-                                                                                proses,
-                                                                                ket_status,
-                                                                                tgl_delivery,
-                                                                                ket_kain,
-                                                                                mc_from,
-                                                                                GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
-                                                                            FROM
-                                                                                tbl_schedule 
-                                                                            WHERE
-                                                                                (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_iptip[PRODUCTIONORDERCODE]'
-                                                                            GROUP BY
-                                                                                no_mesin,
-                                                                                no_urut 
-                                                                            ORDER BY
-                                                                                id ASC");
-                        $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
+                        $sql_schedule_dye = "SELECT
+                                                nokk,
+                                                id,
+                                                STRING_AGG(lot, '/') AS lot,
+                                                CASE WHEN COUNT(lot) > 1 THEN 'Gabung Kartu' ELSE '' END AS ket_kartu,
+                                                no_mesin,
+                                                nodemand,
+                                                no_urut,
+                                                buyer,
+                                                langganan,
+                                                STRING_AGG(DISTINCT no_order, '-') AS no_order,
+                                                no_resep,
+                                                jenis_kain,
+                                                warna,
+                                                no_warna,
+                                                SUM(rol) AS rol,
+                                                SUM(bruto) AS bruto,
+                                                proses,
+                                                ket_status,
+                                                tgl_delivery,
+                                                ket_kain,
+                                                mc_from,
+                                                STRING_AGG(DISTINCT personil, ',') AS personil
+                                            FROM db_dying.tbl_schedule
+                                            WHERE (status = 'sedang jalan' OR status = 'antri mesin') AND nokk = ?
+                                            GROUP BY nokk, id, no_mesin, nodemand, no_urut, buyer, langganan, no_resep, jenis_kain, warna, no_warna, proses, ket_status, tgl_delivery, ket_kain, mc_from
+                                            ORDER BY id ASC";
+                        $stmt_schedule_dye = sqlsrv_query($con_db_dyeing, $sql_schedule_dye, [$row_iptip['PRODUCTIONORDERCODE']], ["Scrollable" => SQLSRV_CURSOR_STATIC]);
+                        $row_schedule_dye  = $stmt_schedule_dye ? sqlsrv_fetch_array($stmt_schedule_dye, SQLSRV_FETCH_ASSOC) : null;
                         $ket    = $row_schedule_dye['ket_status'].'- '.$row_schedule_dye['ket_kain'].' '.$row_schedule_dye['proses'].' MC '.$row_schedule_dye['mc_from'];
                     ?>
                     <td align="center"><?= $ket; ?></td>
@@ -478,40 +473,35 @@
                     </td>
                     <?php if($dept == 'DYE') : ?>
                         <?php
-                            $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
-                                                                                    nokk,
-                                                                                    id,
-                                                                                    GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
-                                                                                    if(COUNT(lot)>1,'Gabung Kartu','') as ket_kartu,
-                                                                                    no_mesin,
-                                                                                    nodemand,
-                                                                                    no_urut,
-                                                                                    buyer,
-                                                                                    langganan,
-                                                                                    GROUP_CONCAT(DISTINCT no_order SEPARATOR '-' ) AS no_order,
-                                                                                    no_resep,
-                                                                                    nokk,
-                                                                                    jenis_kain,
-                                                                                    warna,
-                                                                                    no_warna,
-                                                                                    sum(rol) as rol,
-                                                                                    sum(bruto) as bruto,
-                                                                                    proses,
-                                                                                    ket_status,
-                                                                                    tgl_delivery,
-                                                                                    ket_kain,
-                                                                                    mc_from,
-                                                                                    GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
-                                                                                FROM
-                                                                                    tbl_schedule 
-                                                                                WHERE
-                                                                                    (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_iptip[PRODUCTIONORDERCODE]'
-                                                                                GROUP BY
-                                                                                    no_mesin,
-                                                                                    no_urut 
-                                                                                ORDER BY
-                                                                                    id ASC");
-                            $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
+                            $sql_schedule_dye = "SELECT
+                                                    nokk,
+                                                    id,
+                                                    STRING_AGG(lot, '/') AS lot,
+                                                    CASE WHEN COUNT(lot) > 1 THEN 'Gabung Kartu' ELSE '' END AS ket_kartu,
+                                                    no_mesin,
+                                                    nodemand,
+                                                    no_urut,
+                                                    buyer,
+                                                    langganan,
+                                                    STRING_AGG(DISTINCT no_order, '-') AS no_order,
+                                                    no_resep,
+                                                    jenis_kain,
+                                                    warna,
+                                                    no_warna,
+                                                    SUM(rol) AS rol,
+                                                    SUM(bruto) AS bruto,
+                                                    proses,
+                                                    ket_status,
+                                                    tgl_delivery,
+                                                    ket_kain,
+                                                    mc_from,
+                                                    STRING_AGG(DISTINCT personil, ',') AS personil
+                                                FROM db_dying.tbl_schedule
+                                                WHERE (status = 'sedang jalan' OR status = 'antri mesin') AND nokk = ?
+                                                GROUP BY nokk, id, no_mesin, nodemand, no_urut, buyer, langganan, no_resep, jenis_kain, warna, no_warna, proses, ket_status, tgl_delivery, ket_kain, mc_from
+                                                ORDER BY id ASC";
+                            $stmt_schedule_dye = sqlsrv_query($con_db_dyeing, $sql_schedule_dye, [$row_iptip['PRODUCTIONORDERCODE']], ["Scrollable" => SQLSRV_CURSOR_STATIC]);
+                            $row_schedule_dye  = $stmt_schedule_dye ? sqlsrv_fetch_array($stmt_schedule_dye, SQLSRV_FETCH_ASSOC) : null;
                             $ket    = $row_schedule_dye['ket_status'].'- '.$row_schedule_dye['ket_kain'].' '.$row_schedule_dye['proses'].' MC '.$row_schedule_dye['mc_from'];
                         ?>
                         <td align="center"><?= $ket; ?></td>
@@ -714,40 +704,35 @@
                         </td>
                         <?php if($dept == 'DYE') : ?>
                             <?php
-                                $q_schedule_dye     = mysqli_query($con_db_dyeing, "SELECT DISTINCT
-                                                                                        nokk,
-                                                                                        id,
-                                                                                        GROUP_CONCAT( lot SEPARATOR '/' ) AS lot,
-                                                                                        if(COUNT(lot)>1,'Gabung Kartu','') as ket_kartu,
-                                                                                        no_mesin,
-                                                                                        nodemand,
-                                                                                        no_urut,
-                                                                                        buyer,
-                                                                                        langganan,
-                                                                                        GROUP_CONCAT(DISTINCT no_order SEPARATOR '-' ) AS no_order,
-                                                                                        no_resep,
-                                                                                        nokk,
-                                                                                        jenis_kain,
-                                                                                        warna,
-                                                                                        no_warna,
-                                                                                        sum(rol) as rol,
-                                                                                        sum(bruto) as bruto,
-                                                                                        proses,
-                                                                                        ket_status,
-                                                                                        tgl_delivery,
-                                                                                        ket_kain,
-                                                                                        mc_from,
-                                                                                        GROUP_CONCAT(DISTINCT personil SEPARATOR ',' ) AS personil
-                                                                                    FROM
-                                                                                        tbl_schedule 
-                                                                                    WHERE
-                                                                                        (`status` = 'sedang jalan' or `status` ='antri mesin') and nokk = '$row_posisikk_salinan[PRODUCTIONORDERCODE]'
-                                                                                    GROUP BY
-                                                                                        no_mesin,
-                                                                                        no_urut 
-                                                                                    ORDER BY
-                                                                                        id ASC");
-                                $row_schedule_dye   = mysqli_fetch_assoc($q_schedule_dye);
+                                $sql_schedule_dye = "SELECT
+                                                        nokk,
+                                                        id,
+                                                        STRING_AGG(lot, '/') AS lot,
+                                                        CASE WHEN COUNT(lot) > 1 THEN 'Gabung Kartu' ELSE '' END AS ket_kartu,
+                                                        no_mesin,
+                                                        nodemand,
+                                                        no_urut,
+                                                        buyer,
+                                                        langganan,
+                                                        STRING_AGG(DISTINCT no_order, '-') AS no_order,
+                                                        no_resep,
+                                                        jenis_kain,
+                                                        warna,
+                                                        no_warna,
+                                                        SUM(rol) AS rol,
+                                                        SUM(bruto) AS bruto,
+                                                        proses,
+                                                        ket_status,
+                                                        tgl_delivery,
+                                                        ket_kain,
+                                                        mc_from,
+                                                        STRING_AGG(DISTINCT personil, ',') AS personil
+                                                    FROM db_dying.tbl_schedule
+                                                    WHERE (status = 'sedang jalan' OR status = 'antri mesin') AND nokk = ?
+                                                    GROUP BY nokk, id, no_mesin, nodemand, no_urut, buyer, langganan, no_resep, jenis_kain, warna, no_warna, proses, ket_status, tgl_delivery, ket_kain, mc_from
+                                                    ORDER BY id ASC";
+                                $stmt_schedule_dye = sqlsrv_query($con_db_dyeing, $sql_schedule_dye, [$row_posisikk_salinan['PRODUCTIONORDERCODE']], ["Scrollable" => SQLSRV_CURSOR_STATIC]);
+                                $row_schedule_dye  = $stmt_schedule_dye ? sqlsrv_fetch_array($stmt_schedule_dye, SQLSRV_FETCH_ASSOC) : null;
                                 $ket    = $row_schedule_dye['ket_status'].'- '.$row_schedule_dye['ket_kain'].' '.$row_schedule_dye['proses'].' MC '.$row_schedule_dye['mc_from'];
                             ?>
                             <td align="center"><?= $ket; ?></td>

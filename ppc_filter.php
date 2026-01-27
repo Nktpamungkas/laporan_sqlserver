@@ -1,6 +1,11 @@
 <?php
 $start_time = microtime(true);
 // ini_set("error_reporting", 1);
+// Pastikan session path bisa ditulis (hindari warning permission)
+ini_set('session.save_path', __DIR__ . '/tmp');
+if (!is_dir(__DIR__ . '/tmp')) {
+    mkdir(__DIR__ . '/tmp', 0777, true);
+}
 session_start();
 require_once "koneksi.php";
 include_once "utils/helper.php";

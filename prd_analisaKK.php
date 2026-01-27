@@ -2,6 +2,38 @@
     ini_set("error_reporting", 1);
     session_start();
     require_once "koneksi.php";
+    // Helper untuk koneksi dyeing (SQL Server, fallback mysqli jika masih ada legacy)
+    if (!function_exists('dye_query')) {
+        function dye_query($sql, $params = [])
+        {
+            global $con_db_dyeing;
+            if ($con_db_dyeing instanceof mysqli) {
+                // naive param replace for legacy fallback
+                foreach ($params as $p) {
+                    $sql = preg_replace('/\\?/', "'" . mysqli_real_escape_string($con_db_dyeing, $p) . "'", $sql, 1);
+                }
+                return mysqli_query($con_db_dyeing, $sql);
+            }
+            return sqlsrv_query($con_db_dyeing, $sql, $params, ["Scrollable" => SQLSRV_CURSOR_STATIC]);
+        }
+        function dye_fetch_assoc($stmt)
+        {
+            if ($stmt instanceof mysqli_result) {
+                return mysqli_fetch_assoc($stmt);
+            }
+            return $stmt ? sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC) : null;
+        }
+    }
+    $sql_dye_montemp = "SELECT TOP 1
+                            a.id AS idm,
+                            b.id AS ids,
+                            b.no_resep
+                        FROM db_dying.tbl_montemp a
+                        LEFT JOIN db_dying.tbl_schedule b ON a.id_schedule = b.id
+                        LEFT JOIN db_dying.tbl_setting_mesin c ON b.nokk = c.nokk
+                        WHERE b.nokk = ? AND b.nodemand LIKE ?
+                        ORDER BY a.id DESC";
+
     sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_detail_qa_data WHERE CREATEDATETIME BETWEEN GETDATE()-3 AND GETDATE() - 1 AND STATUS = 'Analisa KK'");
     sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_detail_qa_data WHERE IPADDRESS = '$_SERVER[REMOTE_ADDR]' AND STATUS = 'Analisa KK'");
     sqlsrv_query($con_nowprd, "DELETE FROM nowprd.itxview_posisikk_tgl_in_prodorder_ins3 WHERE CREATEDATETIME BETWEEN GETDATE() - 3 AND GETDATE() - 1 AND STATUS = 'Analisa KK'");
@@ -970,19 +1002,8 @@
                                                                                 $prod_order     = TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']);
                                                                                 $prod_demand    = TRIM($demand);
 
-                                                                                $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
-                                                                                                                                        a.id AS idm,
-                                                                                                                                        b.id AS ids,
-                                                                                                                                        b.no_resep 
-                                                                                                                                    FROM
-                                                                                                                                        tbl_montemp a
-                                                                                                                                        LEFT JOIN tbl_schedule b ON a.id_schedule = b.id
-                                                                                                                                        LEFT JOIN tbl_setting_mesin c ON b.nokk = c.nokk 
-                                                                                                                                    WHERE
-                                                                                                                                        b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
-                                                                                                                                    ORDER BY
-                                                                                                                                        a.id DESC LIMIT 1 ");
-                                                                                $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
+                                                                                $stmt_dye_montemp = dye_query($sql_dye_montemp, [$prod_order, "%$prod_demand%"]);
+                                                                                $d_dye_montemp    = dye_fetch_assoc($stmt_dye_montemp);
 
                                                                                 ?>
                                                                                 <th style="text-align: center;">
@@ -1847,19 +1868,8 @@
                                                                                 $prod_order     = TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']);
                                                                                 $prod_demand    = TRIM($demand);
 
-                                                                                $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
-                                                                                                                                        a.id AS idm,
-                                                                                                                                        b.id AS ids,
-                                                                                                                                        b.no_resep 
-                                                                                                                                    FROM
-                                                                                                                                        tbl_montemp a
-                                                                                                                                        LEFT JOIN tbl_schedule b ON a.id_schedule = b.id
-                                                                                                                                        LEFT JOIN tbl_setting_mesin c ON b.nokk = c.nokk 
-                                                                                                                                    WHERE
-                                                                                                                                        b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
-                                                                                                                                    ORDER BY
-                                                                                                                                        a.id DESC LIMIT 1 ");
-                                                                                $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
+                                                                                $stmt_dye_montemp = dye_query($sql_dye_montemp, [$prod_order, "%$prod_demand%"]);
+                                                                                $d_dye_montemp    = dye_fetch_assoc($stmt_dye_montemp);
 
                                                                                 ?>
                                                                                 <th style="text-align: center;">
@@ -2702,19 +2712,8 @@
                                                                                         $prod_order     = TRIM($d_ITXVIEWKK['PRODUCTIONORDERCODE']);
                                                                                         $prod_demand    = TRIM($demand);
 
-                                                                                        $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
-                                                                                                                                                a.id AS idm,
-                                                                                                                                                b.id AS ids,
-                                                                                                                                                b.no_resep 
-                                                                                                                                            FROM
-                                                                                                                                                tbl_montemp a
-                                                                                                                                                LEFT JOIN tbl_schedule b ON a.id_schedule = b.id
-                                                                                                                                                LEFT JOIN tbl_setting_mesin c ON b.nokk = c.nokk 
-                                                                                                                                            WHERE
-                                                                                                                                                b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
-                                                                                                                                            ORDER BY
-                                                                                                                                                a.id DESC LIMIT 1 ");
-                                                                                        $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
+                                                                                        $stmt_dye_montemp = dye_query($sql_dye_montemp, [$prod_order, "%$prod_demand%"]);
+                                                                                        $d_dye_montemp    = dye_fetch_assoc($stmt_dye_montemp);
 
                                                                                         ?>
                                                                                         <th style="text-align: center;">
@@ -3550,19 +3549,8 @@
                                                                                     $prod_order     = TRIM($d_ITXVIEWKK_2['PRODUCTIONORDERCODE']);
                                                                                     $prod_demand    = TRIM($demand_2);
 
-                                                                                    $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
-                                                                                                                                        a.id AS idm,
-                                                                                                                                        b.id AS ids,
-                                                                                                                                        b.no_resep 
-                                                                                                                                    FROM
-                                                                                                                                        tbl_montemp a
-                                                                                                                                        LEFT JOIN tbl_schedule b ON a.id_schedule = b.id
-                                                                                                                                        LEFT JOIN tbl_setting_mesin c ON b.nokk = c.nokk 
-                                                                                                                                    WHERE
-                                                                                                                                        b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
-                                                                                                                                    ORDER BY
-                                                                                                                                        a.id DESC LIMIT 1 ");
-                                                                                    $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
+                                                                                    $stmt_dye_montemp = dye_query($sql_dye_montemp, [$prod_order, "%$prod_demand%"]);
+                                                                                    $d_dye_montemp    = dye_fetch_assoc($stmt_dye_montemp);
 
                                                                                     ?>
                                                                                     <th style="text-align: center;">
@@ -4394,19 +4382,8 @@
                                                                                         $prod_order     = TRIM($d_ITXVIEWKK_2['PRODUCTIONORDERCODE']);
                                                                                         $prod_demand    = TRIM($demand_2);
 
-                                                                                        $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
-                                                                                                                                            a.id AS idm,
-                                                                                                                                            b.id AS ids,
-                                                                                                                                            b.no_resep 
-                                                                                                                                        FROM
-                                                                                                                                            tbl_montemp a
-                                                                                                                                            LEFT JOIN tbl_schedule b ON a.id_schedule = b.id
-                                                                                                                                            LEFT JOIN tbl_setting_mesin c ON b.nokk = c.nokk 
-                                                                                                                                        WHERE
-                                                                                                                                            b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
-                                                                                                                                        ORDER BY
-                                                                                                                                            a.id DESC LIMIT 1 ");
-                                                                                        $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
+                                                                                        $stmt_dye_montemp = dye_query($sql_dye_montemp, [$prod_order, "%$prod_demand%"]);
+                                                                                        $d_dye_montemp    = dye_fetch_assoc($stmt_dye_montemp);
 
                                                                                         ?>
                                                                                         <th style="text-align: center;">
@@ -5235,19 +5212,8 @@
                                                                                             $prod_order     = TRIM($d_ITXVIEWKK_2['PRODUCTIONORDERCODE']);
                                                                                             $prod_demand    = TRIM($demand_2);
 
-                                                                                            $q_dye_montemp      = mysqli_query($con_db_dyeing, "SELECT
-                                                                                                                                                a.id AS idm,
-                                                                                                                                                b.id AS ids,
-                                                                                                                                                b.no_resep 
-                                                                                                                                            FROM
-                                                                                                                                                tbl_montemp a
-                                                                                                                                                LEFT JOIN tbl_schedule b ON a.id_schedule = b.id
-                                                                                                                                                LEFT JOIN tbl_setting_mesin c ON b.nokk = c.nokk 
-                                                                                                                                            WHERE
-                                                                                                                                                b.nokk = '$prod_order' AND b.nodemand LIKE '%$prod_demand%'
-                                                                                                                                            ORDER BY
-                                                                                                                                                a.id DESC LIMIT 1 ");
-                                                                                            $d_dye_montemp      = mysqli_fetch_assoc($q_dye_montemp);
+                                                                                            $stmt_dye_montemp = dye_query($sql_dye_montemp, [$prod_order, "%$prod_demand%"]);
+                                                                                            $d_dye_montemp    = dye_fetch_assoc($stmt_dye_montemp);
 
                                                                                             ?>
                                                                                             <th style="text-align: center;">
