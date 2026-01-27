@@ -907,19 +907,26 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                                         // $d_qtypacking = db2_fetch_assoc($q_qtypacking);
                                                                         // echo $d_qtypacking['QTY_PACKING'];
 
-                                                                        $q_qtypacking = mysqli_query($con_db_qc, "SELECT
-                                                                                                                nodemand,
-                                                                                                                sum( jml_mutasi ) AS roll,
-                                                                                                                sum( mutasi ) AS mutasi 
-                                                                                                            FROM
-                                                                                                                tbl_lap_inspeksi 
-                                                                                                            WHERE
-                                                                                                                trim( nodemand ) = '$rowdb2[DEMAND]' 
-                                                                                                                AND dept = 'PACKING' 
-                                                                                                            GROUP BY
-                                                                                                                trim(nodemand)");
-                                                                        $d_qtypacking = mysqli_fetch_assoc($q_qtypacking);
-                                                                        echo $d_qtypacking['mutasi'];
+                                                                        $sql_qtypacking = "SELECT
+                                                                                            nodemand,
+                                                                                            SUM(jml_mutasi) AS roll,
+                                                                                            SUM(mutasi) AS mutasi 
+                                                                                        FROM
+                                                                                            tbl_lap_inspeksi 
+                                                                                        WHERE
+                                                                                            TRIM(nodemand) = ? 
+                                                                                            AND dept = 'PACKING' 
+                                                                                        GROUP BY
+                                                                                            TRIM(nodemand)";
+                                                                        if ($con_db_qc instanceof mysqli) {
+                                                                            $mysql_qtypacking = str_replace('?', "'" . $rowdb2['DEMAND'] . "'", $sql_qtypacking);
+                                                                            $q_qtypacking = mysqli_query($con_db_qc, $mysql_qtypacking);
+                                                                            $d_qtypacking = $q_qtypacking ? mysqli_fetch_assoc($q_qtypacking) : [];
+                                                                        } else {
+                                                                            $stmt_qtypacking = sqlsrv_query($con_db_qc, $sql_qtypacking, [$rowdb2['DEMAND']], ["Scrollable" => SQLSRV_CURSOR_STATIC]);
+                                                                            $d_qtypacking = $stmt_qtypacking ? sqlsrv_fetch_array($stmt_qtypacking, SQLSRV_FETCH_ASSOC) : [];
+                                                                        }
+                                                                        echo $d_qtypacking['mutasi'] ?? 0;
                                                                         ?>
                                                                     </td> <!-- QTY PACKING -->
                                                                     <td><?= number_format($rowdb2['NETTO'] ?? 0, 0); ?></td> <!-- NETTO KG-->
