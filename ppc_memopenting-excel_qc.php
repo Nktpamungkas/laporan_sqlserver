@@ -1,514 +1,141 @@
 <?php
     header("content-type:application/vnd-ms-excel");
-    header("content-disposition:attachment;filename=Memo Penting QC).xls");
+    header("content-disposition:attachment;filename=Memo_Penting_QC_" . date('Ymd_His') . ".xls");
     header('Cache-Control: max-age=0');
-?>
-<style>
-    .str {
-        mso-number-format: \@;
+
+    include_once "utils/helper.php";
+
+    if (count($_GET) < 2) {
+        exit('Parameter filter harus di isi.');
     }
-</style>
-<table>
+
+    session_start();
+    require_once "koneksi.php";
+
+    $prod_order     = $_GET['prod_order'] ?? '';
+    $prod_demand    = $_GET['prod_demand'] ?? '';
+    $no_order       = $_GET['no_order'] ?? '';
+    $tgl1           = $_GET['tgl1'] ?? '';
+    $tgl2           = $_GET['tgl2'] ?? '';
+    $no_po          = $_GET['no_po'] ?? '';
+    $article_group  = $_GET['article_group'] ?? '';
+    $article_code   = $_GET['article_code'] ?? '';
+    $nama_warna     = $_GET['nama_warna'] ?? '';
+    $kkoke          = $_GET['kkoke'] ?? '';
+    $orderline      = $_GET['orderline'] ?? '';
+
+    // Prepare API request body
+    $api_body = [
+        'noOrder' => $no_order,
+        'prodDemand' => $prod_demand,
+        'prodOrder' => $prod_order,
+        'tgl1' => $tgl1,
+        'tgl2' => $tgl2,
+        'noPo' => $no_po,
+        'articleGroup' => $article_group,
+        'articleCode' => $article_code,
+        'namaWarna' => $nama_warna,
+        'kkoke' => $kkoke,
+        'orderline' => $orderline
+    ];
+
+    // Call API using cURL
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/api/ppc/memo-penting");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json'
+    ]);
+
+    $api_response = curl_exec($ch);
+    $curl_error = curl_error($ch);
+    curl_close($ch);
+
+    if ($curl_error) {
+        die("Error calling API: " . $curl_error);
+    }
+
+    $api_data = json_decode($api_response, true);
+    
+    if (!$api_data || !isset($api_data['success']) || !$api_data['success']) {
+        die("Error: API tidak mengembalikan data yang valid");
+    }
+
+    $data_list = $api_data['data'] ?? [];
+    
+    // Filter hanya untuk QC department
+    $qc_data = array_filter($data_list, function($row) {
+        return isset($row['KODE_DEPT']) && $row['KODE_DEPT'] == 'QC';
+    });
+?>
+<table border="1">
     <thead>
-        <tr>
+        <tr style="background-color: #f44336; color: white;">
             <th>TGL BUKA KARTU</th>
             <th>PELANGGAN</th>
-            <th>NO. ORDER</th>
-            <th>NO. PO</th>
+            <th>NO ORDER</th>
+            <th>NO PO</th>
             <th>KETERANGAN PRODUCT</th>
-            <th>LEBAR</th>
-            <th>GRAMASI</th>
             <th>WARNA</th>
             <th>NO WARNA</th>
             <th>DELIVERY</th>
-            <th>BAGI KAIN TGL</th>
-            <th>ROLL</th>
-            <th>BRUTO/BAGI KAIN</th>
-            <th title="Sumber data: &#013; 1. Production Order &#013; 2. Reservation &#013; 3. KFF/KGF User Primary Quantity">QTY SALINAN</th>
-            <th>QTY PACKING</th>
-            <th>NETTO(kg)</th>
-            <th>NETTO(yd)</th>
-            <th>DELAY</th>
-            <th>KODE DEPT</th>
+            <th>DELIVERY ACTUAL</th>
+            <th>NETTO KG</th>
+            <th>NETTO YD MTR</th>
+            <th>QTY KURANG KG</th>
+            <th>QTY KURANG YD MTR</th>
             <th>STATUS TERAKHIR</th>
-            <th>DELAY PROGRESS STATUS</th>
             <th>PROGRESS STATUS</th>
-            <th>TOTAL HARI BAGI KAIN</th>
-            <th>JAM (IN - OUT)</th>
-            <th>ALUR PROSES</th>
+            <th>TOTAL HARI</th>
             <th>LOT</th>
             <th>NO DEMAND</th>
             <th>NO KARTU KERJA</th>
-            <th>CATATAN PO GREIGE</th>
-            <th>TARGET SELESAI</th>
             <th>KETERANGAN</th>
-            <th>ORIGINAL PD CODE</th>
         </tr>
     </thead>
     <tbody>
         <?php
-            // ini_set("error_reporting", 1);
-            session_start();
-            require_once "koneksi.php";
-
-            $no_order_2 = $_GET['no_order'];
-            $tgl1_2     = $_GET['tgl1'];
-            $tgl2_2     = $_GET['tgl2'];
-
-            if ($no_order_2) {
-                $where_order2    = "AND NO_ORDER = '$no_order_2'";
-            } else {
-                $where_order2    = "";
-            }
-            if ($tgl1_2 & $tgl2_2) {
-                $where_date2     = "AND DELIVERY BETWEEN '$tgl1_2' AND '$tgl2_2'";
-            } else {
-                $where_date2     = "";
-            }
-            $sqlDB2 = "SELECT DISTINCT * FROM nowprd.itxview_memopentingppc WHERE ACCESS_TO = 'MEMO' AND IPADDRESS = '$_SERVER[REMOTE_ADDR]' $where_order2 $where_date2 ORDER BY DELIVERY ASC";
-            $stmt   = sqlsrv_query($con_nowprd, $sqlDB2);
-            while ($rowdb2 = sqlsrv_fetch_array($stmt)) {
-        ?>
-        <?php 
-            //Deteksi Production Demand Closed Atau Belum
-            if($rowdb2['PROGRESSSTATUS_DEMAND'] == 6){
-                $status = 'AAA';
-                $kode_dept          = '-';
-                $status_terakhir    = '-';
-                $status_operation   = 'KK Oke';
-            }else{
-                // 1. Deteksi Production Order Closed Atau belum
-                if($rowdb2['PROGRESSSTATUS'] == 6){
-                    $status = 'AA';
-                    $kode_dept          = '-';
-                    $status_terakhir    = '-';
-                    $status_operation   = 'KK Oke';
-                }else{
-                    // mendeteksi statusnya close
-                    $q_deteksi_status_close = db2_exec($conn1, "SELECT 
-                                                                    p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
-                                                                    p.GROUPSTEPNUMBER AS GROUPSTEPNUMBER,
-                                                                    p.PROGRESSSTATUS AS PROGRESSSTATUS
-                                                                FROM 
-                                                                    VIEWPRODUCTIONDEMANDSTEP p
-                                                                WHERE
-                                                                    p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND
-                                                                    (p.PROGRESSSTATUS = '3' OR p.PROGRESSSTATUS = '2') ORDER BY p.GROUPSTEPNUMBER DESC LIMIT 1");
-                    $row_status_close = db2_fetch_assoc($q_deteksi_status_close);
-
-                    // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
-                        if($row_status_close['PROGRESSSTATUS'] == '2'){ // KALAU PROGRESS STATUSNYA ENTERED
-                            $q_delay_progress_selesai   = db2_exec($conn1, "SELECT 
-                                                                                p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
-                                                                                p.GROUPSTEPNUMBER AS GROUPSTEPNUMBER,
-                                                                                iptip.MULAI,
-                                                                                DAYS(CURRENT DATE) - DAYS(iptip.MULAI) AS DELAY_PROGRESSSTATUS,
-                                                                                p.PROGRESSSTATUS AS PROGRESSSTATUS
-                                                                            FROM 
-                                                                                PRODUCTIONDEMANDSTEP p
-                                                                            LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
-                                                                            WHERE
-                                                                                p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND p.PROGRESSSTATUS = '2' ORDER BY p.GROUPSTEPNUMBER DESC LIMIT 1");
-                            $d_delay_progress_selesai   = db2_fetch_assoc($q_delay_progress_selesai);
-                            $jam_status_terakhir        = $d_delay_progress_selesai['MULAI'];
-                            $delay_progress_status      = $d_delay_progress_selesai['DELAY_PROGRESSSTATUS'].' Hari';
-                        }elseif($row_status_close['PROGRESSSTATUS'] == '3'){ // KALAU PROGRESS STATUSNYA PROGRESS
-                            $q_delay_progress_mulai   = db2_exec($conn1, "SELECT 
-                                                                                p.PRODUCTIONORDERCODE AS PRODUCTIONORDERCODE, 
-                                                                                p.GROUPSTEPNUMBER AS GROUPSTEPNUMBER,
-                                                                                iptop.SELESAI,
-                                                                                DAYS(CURRENT DATE) - DAYS(iptop.SELESAI) AS DELAY_PROGRESSSTATUS,
-                                                                                p.PROGRESSSTATUS AS PROGRESSSTATUS
-                                                                            FROM 
-                                                                                VIEWPRODUCTIONDEMANDSTEP p
-                                                                            LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.GROUPSTEPNUMBER
-                                                                            WHERE
-                                                                                p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND p.PROGRESSSTATUS = '3' ORDER BY p.GROUPSTEPNUMBER DESC LIMIT 1");
-                            $d_delay_progress_mulai   = db2_fetch_assoc($q_delay_progress_mulai);
-                            $jam_status_terakhir      = $d_delay_progress_mulai['SELESAI'];
-                            $delay_progress_status    = $d_delay_progress_mulai['DELAY_PROGRESSSTATUS'].' Hari';
-                        }else{
-                            $jam_status_terakhir      = '';
-                            $delay_progress_status    = '';
-
-                        }
-                    // UNTUK DELAY PROGRESS STATUS PERMINTAAN MS. AMY
-
-                    if(!empty($row_status_close['GROUPSTEPNUMBER'])){
-                        $groupstepnumber    = $row_status_close['GROUPSTEPNUMBER'];
-                    }else{
-                        $groupstepnumber    = '0';
-                    }
-
-                    $q_cnp1             = db2_exec($conn1, "SELECT 
-                                                                GROUPSTEPNUMBER,
-                                                                TRIM(OPERATIONCODE) AS OPERATIONCODE,
-                                                                o.LONGDESCRIPTION AS LONGDESCRIPTION,
-                                                                PROGRESSSTATUS,
-                                                                CASE
-                                                                    WHEN PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                    WHEN PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                    WHEN PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                    WHEN PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                END AS STATUS_OPERATION
-                                                            FROM 
-                                                                VIEWPRODUCTIONDEMANDSTEP v
-                                                            LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
-                                                            WHERE 
-                                                                PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND PROGRESSSTATUS = 3 
-                                                            ORDER BY 
-                                                                GROUPSTEPNUMBER DESC LIMIT 1");
-                    $d_cnp_close        = db2_fetch_assoc($q_cnp1);
-
-                    if($d_cnp_close['PROGRESSSTATUS'] == 3){ // 3 is Closed From Demands Steps 
-                        $status = 'A';
-                        if($d_cnp_close['OPERATIONCODE'] == 'PPC4'){
-                            if($rowdb2['PROGRESSSTATUS'] == 6){
-                                $status = 'B';
-                                $kode_dept          = '-';
-                                $status_terakhir    = '-';
-                                $status_operation   = 'KK Oke';
-                            }else{
-                                $status = 'C';
-                                $kode_dept          = '-';
-                                $status_terakhir    = '-';
-                                $status_operation   = 'KK Oke | Segera Closed Production Order!';
-                            }
-                            $groupstep_option   = "= 0";
-                        }else{
-                            $status = 'D';
-                            if($row_status_close['PROGRESSSTATUS'] == 2){
-                                $status = 'E';
-                                $groupstep_option       = "= '$groupstepnumber'";
-                            }else{ //kalau status terakhirnya bukan PPC dan status terakhirnya CLOSED
-                                $status = 'F';
-                                $q_deteksi_total_step    = db2_exec($conn1, "SELECT COUNT(*) AS TOTALSTEP FROM VIEWPRODUCTIONDEMANDSTEP 
-                                                                            WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
-                                $d_deteksi_total_step    = db2_fetch_assoc($q_deteksi_total_step);
-
-                                $q_deteksi_total_close  = db2_exec($conn1, "SELECT COUNT(*) AS TOTALCLOSE FROM VIEWPRODUCTIONDEMANDSTEP 
-                                                                            WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
-                                                                            AND PROGRESSSTATUS = 3");
-                                $d_deteksi_total_close  = db2_fetch_assoc($q_deteksi_total_close);
-
-                                if($d_deteksi_total_step['TOTALSTEP'] ==  $d_deteksi_total_close['TOTALCLOSE']){
-                                    $groupstep_option       = "= '$groupstepnumber'";
-                                }else{
-                                    $groupstep_option       = "> '$groupstepnumber'";
-                                }
-                            }
-                            // $status = 'G';
-                            $q_not_cnp1             = db2_exec($conn1, "SELECT 
-                                                                            GROUPSTEPNUMBER,
-                                                                            TRIM(OPERATIONCODE) AS OPERATIONCODE,
-                                                                            o.LONGDESCRIPTION AS LONGDESCRIPTION,
-                                                                            PROGRESSSTATUS,
-                                                                            CASE
-                                                                                WHEN PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                                WHEN PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                                WHEN PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                                WHEN PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                            END AS STATUS_OPERATION
-                                                                        FROM 
-                                                                            VIEWPRODUCTIONDEMANDSTEP v
-                                                                        LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
-                                                                        WHERE 
-                                                                            PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND 
-                                                                            GROUPSTEPNUMBER $groupstep_option
-                                                                        ORDER BY 
-                                                                            GROUPSTEPNUMBER ASC LIMIT 1");
-                            $d_not_cnp_close        = db2_fetch_assoc($q_not_cnp1);
-
-                            if($d_not_cnp_close){
-                                $kode_dept          = $d_not_cnp_close['OPERATIONCODE'];
-                                $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
-                                $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
-                            }else{
-                                $status = 'H';
-                                $groupstep_option       = "= '$groupstepnumber'";
-                                $q_not_cnp1             = db2_exec($conn1, "SELECT 
-                                                                            GROUPSTEPNUMBER,
-                                                                            TRIM(OPERATIONCODE) AS OPERATIONCODE,
-                                                                            o.LONGDESCRIPTION AS LONGDESCRIPTION,
-                                                                            PROGRESSSTATUS,
-                                                                            CASE
-                                                                                WHEN PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                                WHEN PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                                WHEN PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                                WHEN PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                            END AS STATUS_OPERATION
-                                                                        FROM 
-                                                                            VIEWPRODUCTIONDEMANDSTEP v
-                                                                        LEFT JOIN OPERATION o ON o.CODE = v.OPERATIONCODE
-                                                                        WHERE 
-                                                                            PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND 
-                                                                            GROUPSTEPNUMBER $groupstep_option
-                                                                        ORDER BY 
-                                                                            GROUPSTEPNUMBER ASC LIMIT 1");
-                                $d_not_cnp_close        = db2_fetch_assoc($q_not_cnp1);
-                                
-                                $kode_dept          = $d_not_cnp_close['OPERATIONCODE'];
-                                $status_terakhir    = $d_not_cnp_close['LONGDESCRIPTION'];
-                                $status_operation   = $d_not_cnp_close['STATUS_OPERATION'];
-                            }
-                        }
-                    }else{
-                        $status = 'H';
-                        if($row_status_close['PROGRESSSTATUS'] == 2){
-                            $status = 'I';
-                            $groupstep_option       = "= '$groupstepnumber'";
-                        }else{
-                            $status = 'J';
-                            $groupstep_option       = "> '$groupstepnumber'";
-                        }
-                        $status = 'K';
-                        $q_StatusTerakhir   = db2_exec($conn1, "SELECT 
-                                                                    p.PRODUCTIONORDERCODE, 
-                                                                    p.GROUPSTEPNUMBER, 
-                                                                    p.OPERATIONCODE, 
-                                                                    o.LONGDESCRIPTION AS LONGDESCRIPTION, 
-                                                                    CASE
-                                                                        WHEN p.PROGRESSSTATUS = 0 THEN 'Entered'
-                                                                        WHEN p.PROGRESSSTATUS = 1 THEN 'Planned'
-                                                                        WHEN p.PROGRESSSTATUS = 2 THEN 'Progress'
-                                                                        WHEN p.PROGRESSSTATUS = 3 THEN 'Closed'
-                                                                    END AS STATUS_OPERATION,
-                                                                    wc.LONGDESCRIPTION AS DEPT, 
-                                                                    p.WORKCENTERCODE
-                                                                FROM 
-                                                                    VIEWPRODUCTIONDEMANDSTEP p                                                                                                        -- p.PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]' AND
-                                                                LEFT JOIN WORKCENTER wc ON wc.CODE = p.WORKCENTERCODE
-                                                                LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE
-                                                                WHERE 
-                                                                    p.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND
-                                                                    (p.PROGRESSSTATUS = '0' OR p.PROGRESSSTATUS = '1' OR p.PROGRESSSTATUS ='2') 
-                                                                    AND p.GROUPSTEPNUMBER $groupstep_option
-                                                                ORDER BY p.GROUPSTEPNUMBER ASC LIMIT 1");
-                        $d_StatusTerakhir   = db2_fetch_assoc($q_StatusTerakhir);
-                        $kode_dept          = $d_StatusTerakhir['OPERATIONCODE'];
-                        $status_terakhir    = $d_StatusTerakhir['LONGDESCRIPTION'];
-                        $status_operation   = $d_StatusTerakhir['STATUS_OPERATION'];
-                    }
+        foreach ($qc_data as $rowdb2) {
+            // Skip jika kkoke = 'tidak' dan status adalah KK Oke atau Entered
+            if ($kkoke == 'tidak') {
+                $progress_status = $rowdb2['PROGRESS_STATUS'] ?? '';
+                if (stripos($progress_status, 'KK Oke') !== false || 
+                    stripos($progress_status, 'Entered') !== false) {
+                    continue;
                 }
             }
         ?>
-        <?php
-            // Cek stepnya udah close semua atau belum
-            // $q_deteksi_total_step   = db2_exec($conn1, "SELECT COUNT(*) AS TOTALSTEP FROM VIEWPRODUCTIONDEMANDSTEP 
-            //                                             WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
-            // $d_deteksi_total_step   = db2_fetch_assoc($q_deteksi_total_step);
-
-            // $q_deteksi_total_close  = db2_exec($conn1, "SELECT COUNT(*) AS TOTALCLOSE FROM VIEWPRODUCTIONDEMANDSTEP 
-            //                                             WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND PROGRESSSTATUS = 3");
-            // $d_deteksi_total_close  = db2_fetch_assoc($q_deteksi_total_close);
-
-            // if($d_deteksi_total_step['TOTALSTEP'] ==  $d_deteksi_total_close['TOTALCLOSE']){ // jika stepnya SUDAH close semua, lalu...
-            //     // cari PPC4 -> ada atau tidak
-            //     $q_cek_ppc4     = db2_exec($conn1, "SELECT COUNT(*) AS KKOKE FROM VIEWPRODUCTIONDEMANDSTEP 
-            //                                             WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]' AND OPERATIONCODE = 'PPC4'");
-            //     $d_cek_ppc4     = db2_fetch_assoc($q_cek_ppc4);
-            //     if($d_cek_ppc4['KKOKE'] == 0){ // jika TIDAK ADA PPC4
-            //         $show_hide   = 'hide';
-            //     }else{ // jika ADA PPC4
-            //         $show_hide   = 'show';
-            //     }
-            // }else{// Jika stepnya BELUM close semua, lalu
-            //     $show_hide   = 'show';
-            // }
-        ?>
-        <?php //if($show_hide == 'show') : ?>
-            <?php 
-                if($operation_2){
-                    if($rowdb2['OPERATIONCODE'] == $kode_dept) {
-                        $cek_operation  = "MUNCUL";
-                    }else{
-                        $cek_operation  = "TIDAK MUNCUL";
-                    }
-                }
-            ?>
-            <?php if($cek_operation == "MUNCUL" OR $cek_operation == NULL) : ?>
-            <tr>
-                <td><?= $rowdb2['ORDERDATE']->format('Y-m-d H:i:s'); ?></td> <!-- TGL TERIMA ORDER -->
-                <td><?= $rowdb2['PELANGGAN']; ?></td> <!-- PELANGGAN -->
-                <td><?= $rowdb2['NO_ORDER']; ?></td> <!-- NO. ORDER -->
-                <td><?= $rowdb2['NO_PO']; ?></td> <!-- NO. PO -->
-                <td><?= $rowdb2['KETERANGAN_PRODUCT']; ?></td> <!-- KETERANGAN PRODUCT -->
-                <td>
-                    <?php
-                        $q_lebar = db2_exec($conn1, "SELECT * FROM ITXVIEWLEBAR WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
-                        $d_lebar = db2_fetch_assoc($q_lebar);
-                    ?>
-                    <?= number_format($d_lebar['LEBAR'], 0); ?>
-                </td> <!-- LEBAR -->
-                <td>
-                    <?php
-                        $q_gramasi = db2_exec($conn1, "SELECT * FROM ITXVIEWGRAMASI WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]' AND ORDERLINE = '$rowdb2[ORDERLINE]'");
-                        $d_gramasi = db2_fetch_assoc($q_gramasi);
-                        ?>
-                        <?php
-                        if ($d_gramasi['GRAMASI_KFF']) {
-                            echo $d_gramasi['GRAMASI_KFF'];
-                        } else {
-                            echo $d_gramasi['GRAMASI_FKF'];
-                        }
-                    ?>
-                </td> <!-- GRAMASI -->
-                <td><?= $rowdb2['WARNA']; ?></td> <!-- WARNA -->
-                <td><?= $rowdb2['NO_WARNA']; ?></td> <!-- NO WARNA -->
-                <td><?= $rowdb2['DELIVERY']->format('Y-m-d H:i:s'); ?></td> <!-- DELIVERY -->
-                <td>
-                    <?php
-                        $q_tglbagikain = db2_exec($conn1, "SELECT * FROM ITXVIEW_TGLBAGIKAIN WHERE PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'");
-                        $d_tglbagikain = db2_fetch_assoc($q_tglbagikain);
-                    ?>
-                    <?= $d_tglbagikain['TRANSACTIONDATE']; ?>
-                </td> <!-- BAGI KAIN TGL -->
-                <td>
-                    <?php
-                        // KK GABUNG
-                        // $q_roll_gabung      = db2_exec($conn1, "SELECT 
-                        //                                     COUNT(*) AS ROLL
-                        //                                 FROM 
-                        //                                     PRODUCTIONDEMAND p 
-                        //                                 LEFT JOIN STOCKTRANSACTION s ON s.ORDERCODE = p.CODE
-                        //                                 WHERE 
-                        //                                     p.RESERVATIONORDERCODE = '$rowdb2[DEMAND]'");
-                        // $d_roll_gabung      = db2_fetch_assoc($q_roll_gabung);
-
-                        // KK TIDAK GABUNG
-                        $q_roll_tdk_gabung  = db2_exec($conn1, "SELECT count(*) AS ROLL, s2.PRODUCTIONORDERCODE
-                                                                    FROM STOCKTRANSACTION s2 
-                                                                    WHERE s2.ITEMTYPECODE ='KGF' AND s2.PRODUCTIONORDERCODE = '$rowdb2[NO_KK]'
-                                                                    GROUP BY s2.PRODUCTIONORDERCODE");
-                        $d_roll_tdk_gabung  = db2_fetch_assoc($q_roll_tdk_gabung);
-
-                        // if(!empty($d_roll_gabung['ROLL'])){
-                            // $roll   = $d_roll_gabung['ROLL'];
-                        // }else{
-                            $roll   = $d_roll_tdk_gabung['ROLL'];
-                        // }
-                    ?>
-                    <?= $roll; ?>
-                </td> <!-- ROLL -->
-                <td>
-                    <?php
-                        $q_orig_pd_code     = db2_exec($conn1, "SELECT 
-                                                                    *, a.VALUESTRING AS ORIGINALPDCODE
-                                                                FROM 
-                                                                    PRODUCTIONDEMAND p 
-                                                                LEFT JOIN ADSTORAGE a ON a.UNIQUEID = p.ABSUNIQUEID AND a.FIELDNAME = 'OriginalPDCode'
-                                                                WHERE p.CODE = '$rowdb2[DEMAND]'");
-                        $d_orig_pd_code     = db2_fetch_assoc($q_orig_pd_code);
-                    ?>
-                    <?php if($d_orig_pd_code['ORIGINALPDCODE']) : ?>
-                        0
-                    <?php else : ?>
-                        <?= number_format($rowdb2['QTY_BAGIKAIN'],2); ?>
-                    <?php endif; ?>
-                </td> <!-- BRUTO/BAGI KAIN -->
-                <td>
-                    <?php 
-                        $q_qtysalinan = db2_exec($conn1, "SELECT * FROM PRODUCTIONDEMAND WHERE CODE = '$rowdb2[DEMAND]'");
-                        $d_qtysalinan = db2_fetch_assoc($q_qtysalinan);
-                    ?>
-                    <?php if($d_orig_pd_code['ORIGINALPDCODE']) : ?>
-                        <?= number_format($d_qtysalinan['USERPRIMARYQUANTITY'],3) ?>
-                    <?php else : ?>
-                        0
-                    <?php endif; ?>
-                </td> <!-- QTY SALINAN -->
-                <td>
-                    <?php
-                        $q_qtypacking = db2_exec($conn1, "SELECT * FROM ITXVIEW_QTYPACKING WHERE DEMANDCODE = '$rowdb2[DEMAND]'");
-                        $d_qtypacking = db2_fetch_assoc($q_qtypacking);
-                        echo $d_qtypacking['QTY_PACKING'];
-                    ?>
-                </td> <!-- QTY PACKING -->
-                <td><?= number_format($rowdb2['NETTO'], 0); ?></td> <!-- NETTO -->
-                <td>
-                    <?php 
-                        $sql_netto_yd = db2_exec($conn1, "SELECT * FROM ITXVIEW_NETTO WHERE CODE = '$rowdb2[DEMAND]'");
-                        $d_netto_yd = db2_fetch_assoc($sql_netto_yd);
-                        echo number_format($d_netto_yd['BASESECONDARYQUANTITY'],0);
-                    ?>
-                </td> <!-- NETTO KG-->
-                <td><?= $rowdb2['DELAY']; ?></td> <!-- DELAY -->
-                <td><?= $kode_dept; ?></td> <!-- KODE DEPT -->
-                    <td><?= $status_terakhir; ?> (<?= $jam_status_terakhir; ?>)</td> <!-- STATUS TERAKHIR -->
-                <td><?= $delay_progress_status; ?></td> <!-- DELAY PROGRESS STATUS -->
-                <td><?= $status_operation; ?></td> <!-- PROGRESS STATUS -->
-                <td>
-                    <?php
-                        if($d_tglbagikain['TRANSACTIONDATE'] != NULL) {
-                            $tgl_bagikain   = date_create($d_tglbagikain['TRANSACTIONDATE']);
-                            $tglsekarang    = date_create(date('Y-m-d H:i:s'));
-                            
-                            $diff_totalharibagikain = date_diff($tgl_bagikain, $tglsekarang);
-
-                            echo $diff_totalharibagikain->m. ' Bulan, '.$diff_totalharibagikain->d. ' Hari';
-                        }
-                    ?>
-                </td> <!-- TOTAL HARI BAGI KAIN -->
-                <td>
-                    <?php
-                        session_start();
-                        require_once "koneksi.php";
-                        $q_jam  = db2_exec($conn1, "SELECT
-                                                        iptip.MULAI,
-                                                        iptop.SELESAI
-                                                    FROM 
-                                                        PRODUCTIONDEMANDSTEP p 
-                                                    LEFT JOIN OPERATION o ON o.CODE = p.OPERATIONCODE 
-                                                    LEFT JOIN ITXVIEW_POSISIKK_TGL_IN_PRODORDER iptip ON iptip.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptip.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
-                                                    LEFT JOIN ITXVIEW_POSISIKK_TGL_OUT_PRODORDER iptop ON iptop.PRODUCTIONORDERCODE = p.PRODUCTIONORDERCODE AND iptop.DEMANDSTEPSTEPNUMBER = p.STEPNUMBER
-                                                    WHERE
-                                                        p.PRODUCTIONORDERCODE  = '$rowdb2[NO_KK]' AND p.PRODUCTIONDEMANDCODE = '$rowdb2[DEMAND]' AND p.GROUPSTEPNUMBER $groupstep_option
-                                                    ORDER BY p.GROUPSTEPNUMBER ASC LIMIT 1");
-                        $d_jam  = db2_fetch_assoc($q_jam);
-                        if(!empty($d_jam['MULAI'])){
-                            echo $d_jam['MULAI'].' - '.$d_jam['SELESAI'];
-                        }else{
-                            echo '-';
-                        }
-                    ?>
-                </td><!-- JAM -->
-                <td></td><!-- ALUR PROSES -->
-                <td>`<?= $rowdb2['LOT']; ?></td> <!-- LOT -->
-                <td><a target="_BLANK" href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=<?= $rowdb2['DEMAND']; ?>&prod_order=<?= $rowdb2['NO_KK']; ?>">`<?= $rowdb2['DEMAND']; ?></a></td> <!-- DEMAND -->
-                <td>`<?= $rowdb2['NO_KK']; ?></td> <!-- NO KARTU KERJA -->
-                <td>
-                    <?php
-                        $sql_benang_booking_new		= db2_exec($conn1, "SELECT * FROM ITXVIEW_BOOKING_NEW WHERE SALESORDERCODE = '$rowdb2[NO_ORDER]'
-                                                                                                AND ORDERLINE = '$rowdb2[ORDERLINE]'");
-                        $r_benang_booking_new		= db2_fetch_assoc($sql_benang_booking_new);
-                        $d_benang_booking_new		= $r_benang_booking_new['SALESORDERCODE'];
-
-                    ?>
-                    <?php
-                        $sql_benang_rajut		= db2_exec($conn1, "SELECT
-                                                                        *
-                                                                    FROM
-                                                                        ITXVIEW_RAJUT
-                                                                    WHERE
-                                                                        (ITEMTYPEAFICODE ='KGF' OR ITEMTYPEAFICODE ='FKG')
-                                                                        AND TRIM(SUBCODE01) = '$d_qtysalinan[SUBCODE01]'
-                                                                        AND TRIM(SUBCODE02) = '$d_qtysalinan[SUBCODE02]'
-                                                                        AND TRIM(SUBCODE03) = '$d_qtysalinan[SUBCODE03]'
-                                                                        AND TRIM(SUBCODE04) = '$d_qtysalinan[SUBCODE04]'
-                                                                        AND TRIM(ORIGDLVSALORDLINESALORDERCODE) = '$rowdb2[NO_ORDER]'");
-                        $r_benang_rajut		= db2_fetch_assoc($sql_benang_rajut);
-                        $d_benang_rajut		= $r_benang_rajut['CODE'];
-                    ?>
-                    <!-- <a href="http://online.indotaichen.com/laporan/ppc_catatan_po_greige.php?" target="_blank">Detail</a> -->
-                    <?php if($d_benang_booking_new){ echo $d_benang_booking_new.'. Greige Ready'; } ?>
-                    <?php if($d_benang_rajut){ echo $d_benang_rajut.'. Rajut'; } ?>
-                </td> <!-- CATATAN PO GREIGE -->
-                <td></td> <!-- TARGET SELESAI -->
-                <td><?= $rowdb2['KETERANGAN']; ?></td> <!-- KETERANGAN -->
-                <td><?= $d_orig_pd_code['ORIGINALPDCODE']; ?></td> <!-- ORIGINAL PD CODE -->
-            </tr>
-            <?php endif; ?>
-        <?php //endif; ?>
+        <tr>
+            <td><?= $rowdb2['TGL_BUKA_KARTU'] ?? ''; ?></td>
+            <td><?= $rowdb2['PELANGGAN'] ?? ''; ?></td>
+            <td><?= $rowdb2['NO_ORDER'] ?? ''; ?></td>
+            <td><?= $rowdb2['NO_PO'] ?? ''; ?></td>
+            <td><?= $rowdb2['KETERANGAN_PRODUCT'] ?? ''; ?></td>
+            <td><?= $rowdb2['WARNA'] ?? ''; ?></td>
+            <td><?= $rowdb2['NO_WARNA'] ?? ''; ?></td>
+            <td><?= $rowdb2['DELIVERY'] ?? ''; ?></td>
+            <td><?= $rowdb2['DELIVERY_ACTUAL'] ?? ''; ?></td>
+            <td><?= $rowdb2['NETTO_KG'] ?? ''; ?></td>
+            <td><?= $rowdb2['NETTO_YD_MTR'] ?? ''; ?></td>
+            <td><?= $rowdb2['QTY_KURANG_KG'] ?? ''; ?></td>
+            <td><?= $rowdb2['QTY_KURANG_YD_MTR'] ?? ''; ?></td>
+            <td><?= $rowdb2['STATUS_TERAKHIR'] ?? ''; ?></td>
+            <td><?= $rowdb2['PROGRESS_STATUS'] ?? ''; ?></td>
+            <td><?= $rowdb2['TOTAL_HARI'] ?? ''; ?></td>
+            <td><?= $rowdb2['LOT'] ?? ''; ?></td>
+            <td><?= $rowdb2['NO_DEMAND'] ?? ''; ?></td>
+            <td><?= $rowdb2['NO_KARTU_KERJA'] ?? ''; ?></td>
+            <td><?= $rowdb2['KETERANGAN'] ?? ''; ?></td>
+        </tr>
         <?php } ?>
+        <?php if (empty($qc_data)): ?>
+        <tr>
+            <td colspan="20">Tidak ada data QC yang ditemukan</td>
+        </tr>
+        <?php endif; ?>
     </tbody>
 </table>
