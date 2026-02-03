@@ -1,3 +1,101 @@
+<?php
+require_once 'koneksi.php';
+
+if (isset($_GET['action']) && $_GET['action'] === 'search_barang') {
+    $term = isset($_GET['q']) ? trim($_GET['q']) : '';
+    header('Content-Type: application/json');
+
+    if ($term === '') {
+        echo json_encode(['results' => []]);
+        exit;
+    }
+
+    $searchPattern = '%' . strtoupper(str_replace(['%', '_'], '', $term)) . '%';
+    $kodeExpr = "CASE WHEN a.SUBCODE01 = ' ' THEN '-' ELSE TRIM(a.SUBCODE01) END || ' ' ||
+        CASE WHEN a.SUBCODE02 = ' ' THEN '-' ELSE TRIM(a.SUBCODE02) END || ' ' ||
+        CASE WHEN a.SUBCODE03 = ' ' THEN '-' ELSE TRIM(a.SUBCODE03) END || ' ' ||
+        CASE WHEN a.SUBCODE04 = ' ' THEN '-' ELSE TRIM(a.SUBCODE04) END || ' ' ||
+        CASE WHEN a.SUBCODE05 = ' ' THEN '-' ELSE TRIM(a.SUBCODE05) END || ' ' ||
+        CASE WHEN a.SUBCODE06 = ' ' THEN '-' ELSE TRIM(a.SUBCODE06) END || ' ' ||
+        CASE WHEN a.SUBCODE07 = ' ' THEN '-' ELSE TRIM(a.SUBCODE07) END || ' ' ||
+        CASE WHEN a.SUBCODE08 = ' ' THEN '-' ELSE TRIM(a.SUBCODE08) END || ' ' ||
+        CASE WHEN a.SUBCODE09 = ' ' THEN '-' ELSE TRIM(a.SUBCODE09) END || ' ' ||
+        CASE WHEN a.SUBCODE10 = ' ' THEN '-' ELSE TRIM(a.SUBCODE10) END";
+
+    $sql = "SELECT
+            a.LONGDESCRIPTION,
+            p.ITEMDESCRIPTION,
+            $kodeExpr AS KODE_BARANG,
+            p.PURCHASEORDERCODE,
+            a.SUBCODE01,
+            a.SUBCODE02,
+            a.SUBCODE03,
+            a.SUBCODE04,
+            a.SUBCODE05,
+            a.SUBCODE06,
+            a.SUBCODE07,
+            a.SUBCODE08,
+            a.SUBCODE09,
+            a.SUBCODE10
+        FROM
+            PRODUCT a
+        RIGHT JOIN PURCHASEORDERLINE p ON
+            CASE WHEN p.SUBCODE01 = ' ' THEN '-' ELSE TRIM(p.SUBCODE01) END = CASE WHEN a.SUBCODE01 = ' ' THEN '-' ELSE TRIM(a.SUBCODE01) END AND
+            CASE WHEN p.SUBCODE02 = ' ' THEN '-' ELSE TRIM(p.SUBCODE02) END = CASE WHEN a.SUBCODE02 = ' ' THEN '-' ELSE TRIM(a.SUBCODE02) END AND
+            CASE WHEN p.SUBCODE03 = ' ' THEN '-' ELSE TRIM(p.SUBCODE03) END = CASE WHEN a.SUBCODE03 = ' ' THEN '-' ELSE TRIM(a.SUBCODE03) END AND
+            CASE WHEN p.SUBCODE04 = ' ' THEN '-' ELSE TRIM(p.SUBCODE04) END = CASE WHEN a.SUBCODE04 = ' ' THEN '-' ELSE TRIM(a.SUBCODE04) END AND
+            CASE WHEN p.SUBCODE05 = ' ' THEN '-' ELSE TRIM(p.SUBCODE05) END = CASE WHEN a.SUBCODE05 = ' ' THEN '-' ELSE TRIM(a.SUBCODE05) END AND
+            CASE WHEN p.SUBCODE06 = ' ' THEN '-' ELSE TRIM(p.SUBCODE06) END = CASE WHEN a.SUBCODE06 = ' ' THEN '-' ELSE TRIM(a.SUBCODE06) END AND
+            CASE WHEN p.SUBCODE07 = ' ' THEN '-' ELSE TRIM(p.SUBCODE07) END = CASE WHEN a.SUBCODE07 = ' ' THEN '-' ELSE TRIM(a.SUBCODE07) END AND
+            CASE WHEN p.SUBCODE08 = ' ' THEN '-' ELSE TRIM(p.SUBCODE08) END = CASE WHEN a.SUBCODE08 = ' ' THEN '-' ELSE TRIM(a.SUBCODE08) END AND
+            CASE WHEN p.SUBCODE09 = ' ' THEN '-' ELSE TRIM(p.SUBCODE09) END = CASE WHEN a.SUBCODE09 = ' ' THEN '-' ELSE TRIM(a.SUBCODE09) END AND
+            CASE WHEN p.SUBCODE10 = ' ' THEN '-' ELSE TRIM(p.SUBCODE10) END = CASE WHEN a.SUBCODE10 = ' ' THEN '-' ELSE TRIM(a.SUBCODE10) END
+        WHERE
+            NOT a.LONGDESCRIPTION LIKE '%To Be Deleted%' AND
+            (
+                UPPER(COALESCE(a.LONGDESCRIPTION, '')) LIKE ? OR
+                UPPER(COALESCE(p.ITEMDESCRIPTION, '')) LIKE ? OR
+                UPPER($kodeExpr) LIKE ?
+            )
+        GROUP BY
+            a.LONGDESCRIPTION,
+            p.ITEMDESCRIPTION,
+            a.SUBCODE01,
+            a.SUBCODE02,
+            a.SUBCODE03,
+            a.SUBCODE04,
+            a.SUBCODE05,
+            a.SUBCODE06,
+            a.SUBCODE07,
+            a.SUBCODE08,
+            a.SUBCODE09,
+            a.SUBCODE10,
+            p.PURCHASEORDERCODE
+        ORDER BY
+            a.LONGDESCRIPTION ASC
+        FETCH FIRST 40 ROWS ONLY";
+
+    $stmt = db2_prepare($conn1, $sql);
+    if ($stmt) {
+        db2_execute($stmt, [$searchPattern, $searchPattern, $searchPattern]);
+    }
+
+    $results = [];
+    if ($stmt) {
+        while ($row = db2_fetch_assoc($stmt)) {
+            $results[] = [
+                'id' => $row['KODE_BARANG'],
+                'text' => trim($row['LONGDESCRIPTION']) . ' - ' . trim($row['ITEMDESCRIPTION']) . ' (' . trim($row['PURCHASEORDERCODE']) . ')'
+            ];
+        }
+    }
+
+    echo json_encode(['results' => $results], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,58 +145,7 @@
                                                 <div class="col-sm-12 col-xl-12 m-b-30">
                                                     <h4 class="sub-title">Pilih Barang:</h4>
                                                     <select name="kode_barang" class="js-example-basic-single col-sm-12" style="width: 100%;" required>
-                                                        <option value="" disabled selected>Pilih Barang</option>
-                                                        <?php 
-                                                            require_once "koneksi.php"; 
-                                                            $sqlDB="SELECT
-                                                                        a.LONGDESCRIPTION,
-                                                                        p.ITEMDESCRIPTION,
-                                                                        CASE WHEN a.SUBCODE01 = ' ' THEN '-' ELSE TRIM( a.SUBCODE01 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE02 = ' ' THEN '-' ELSE TRIM( a.SUBCODE02 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE03 = ' ' THEN '-' ELSE TRIM( a.SUBCODE03 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE04 = ' ' THEN '-' ELSE TRIM( a.SUBCODE04 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE05 = ' ' THEN '-' ELSE TRIM( a.SUBCODE05 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE06 = ' ' THEN '-' ELSE TRIM( a.SUBCODE06 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE07 = ' ' THEN '-' ELSE TRIM( a.SUBCODE07 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE08 = ' ' THEN '-' ELSE TRIM( a.SUBCODE08 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE09 = ' ' THEN '-' ELSE TRIM( a.SUBCODE09 ) END || ' ' || 
-                                                                        CASE WHEN a.SUBCODE10 = ' ' THEN '-' ELSE TRIM( a.SUBCODE10 ) END AS KODE_BARANG,
-                                                                        p.PURCHASEORDERCODE
-                                                                    FROM
-                                                                        PRODUCT a
-                                                                    RIGHT JOIN PURCHASEORDERLINE p ON CASE WHEN p.SUBCODE01 = ' ' THEN '-' ELSE TRIM( p.SUBCODE01 ) END = CASE WHEN a.SUBCODE01 = ' ' THEN '-' ELSE TRIM( a.SUBCODE01 ) END AND
-                                                                                                    CASE WHEN p.SUBCODE02 = ' ' THEN '-' ELSE TRIM( p.SUBCODE02 ) END = CASE WHEN a.SUBCODE02 = ' ' THEN '-' ELSE TRIM( a.SUBCODE02 ) END AND
-                                                                                                    CASE WHEN p.SUBCODE03 = ' ' THEN '-' ELSE TRIM( p.SUBCODE03 ) END = CASE WHEN a.SUBCODE03 = ' ' THEN '-' ELSE TRIM( a.SUBCODE03 ) END AND
-                                                                                                    CASE WHEN p.SUBCODE04 = ' ' THEN '-' ELSE TRIM( p.SUBCODE04 ) END = CASE WHEN a.SUBCODE04 = ' ' THEN '-' ELSE TRIM( a.SUBCODE04 ) END AND
-                                                                                                    CASE WHEN p.SUBCODE05 = ' ' THEN '-' ELSE TRIM( p.SUBCODE05 ) END = CASE WHEN a.SUBCODE05 = ' ' THEN '-' ELSE TRIM( a.SUBCODE05 ) END AND
-                                                                                                    CASE WHEN p.SUBCODE06 = ' ' THEN '-' ELSE TRIM( p.SUBCODE06 ) END = CASE WHEN a.SUBCODE06 = ' ' THEN '-' ELSE TRIM( a.SUBCODE06 ) END AND
-                                                                                                    CASE WHEN p.SUBCODE07 = ' ' THEN '-' ELSE TRIM( p.SUBCODE07 ) END = CASE WHEN a.SUBCODE07 = ' ' THEN '-' ELSE TRIM( a.SUBCODE07 ) END AND
-                                                                                                    CASE WHEN p.SUBCODE08 = ' ' THEN '-' ELSE TRIM( p.SUBCODE08 ) END = CASE WHEN a.SUBCODE08 = ' ' THEN '-' ELSE TRIM( a.SUBCODE08 ) END AND
-                                                                                                    CASE WHEN p.SUBCODE09 = ' ' THEN '-' ELSE TRIM( p.SUBCODE09 ) END = CASE WHEN a.SUBCODE09 = ' ' THEN '-' ELSE TRIM( a.SUBCODE09 ) END AND
-                                                                                                    CASE WHEN p.SUBCODE10 = ' ' THEN '-' ELSE TRIM( p.SUBCODE10 ) END = CASE WHEN a.SUBCODE10 = ' ' THEN '-' ELSE TRIM( a.SUBCODE10 ) END 
-                                                                    WHERE NOT 
-                                                                        a.LONGDESCRIPTION LIKE '%To Be Deleted%'
-                                                                    GROUP BY
-                                                                        a.LONGDESCRIPTION,
-                                                                        p.ITEMDESCRIPTION,
-                                                                        a.SUBCODE01,
-                                                                        a.SUBCODE02,
-                                                                        a.SUBCODE03,
-                                                                        a.SUBCODE04,
-                                                                        a.SUBCODE05,
-                                                                        a.SUBCODE06,
-                                                                        a.SUBCODE07,
-                                                                        a.SUBCODE08,
-                                                                        a.SUBCODE09,
-                                                                        a.SUBCODE10,
-                                                                        p.PURCHASEORDERCODE";
-                                                            $stmt=db2_exec($conn1, $sqlDB);
-                                                            while ($rowdb = db2_fetch_assoc($stmt)) {
-                                                        ?>
-                                                        <option value="<?= $rowdb['KODE_BARANG']; ?>">
-                                                            <?= $rowdb['LONGDESCRIPTION']; ?> - <?= $rowdb['ITEMDESCRIPTION']; ?>
-                                                        </option>
-                                                        <?php } ?> 
+                                                        <option value=""></option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-12 col-xl-4 m-b-30">
@@ -129,7 +176,6 @@
                                                         <?php 
                                                             ini_set("error_reporting", 1);
                                                             session_start();
-                                                            require_once "koneksi.php"; 
                                                         ?>
                                                         <?php
                                                             $kode_barang  = $_POST['kode_barang'];
@@ -263,6 +309,33 @@
     <script src="files\bower_components\datatables.net-bs4\js\dataTables.bootstrap4.min.js"></script>
     <script src="files\bower_components\datatables.net-responsive\js\dataTables.responsive.min.js"></script>
     <script src="files\bower_components\datatables.net-responsive-bs4\js\responsive.bootstrap4.min.js"></script>
+
+    <script>
+        $(function () {
+            $('.js-example-basic-single').select2({
+                placeholder: 'Pilih Barang',
+                minimumInputLength: 1,
+                allowClear: true,
+                ajax: {
+                    url: 'pcs_filter.php',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            action: 'search_barang',
+                            q: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.results
+                        };
+                    },
+                    cache: true
+                }
+            });
+        });
+    </script>
 
     <script>
         window.dataLayer = window.dataLayer || [];
