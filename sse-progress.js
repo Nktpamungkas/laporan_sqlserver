@@ -2,7 +2,7 @@
     'use strict';
     
     // Configuration
-    const API_BASE_URL = 'http://localhost:8080';
+    const API_BASE_URL = 'http://10.0.1.154:8080';
     const SSE_ENDPOINT = '/api/ppc/memo-penting-stream';
     
     // DOM Elements
@@ -17,6 +17,67 @@
     let dataTableInstance = null;
     let currentFilterParams = {};
     let progressInterval = null;
+    let downloadTimeout = null;
+    let downloadPollInterval = null;
+    let downloadPollTimeout = null;
+
+    function buildDownloadToken() {
+        return String(Date.now()) + '-' + Math.floor(Math.random() * 1000000);
+    }
+
+    function getCookieValue(name) {
+        const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[$()*+.?[\\\]^{|}]/g, '\\$&') + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function clearCookie(name) {
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    }
+
+    function waitForDownloadCookie(token, onDone) {
+        const cookieName = 'downloadToken_' + token;
+
+        if (downloadPollInterval) clearInterval(downloadPollInterval);
+        if (downloadPollTimeout) clearTimeout(downloadPollTimeout);
+
+        downloadPollInterval = setInterval(function() {
+            const val = getCookieValue(cookieName);
+            if (val) {
+                clearInterval(downloadPollInterval);
+                downloadPollInterval = null;
+                clearTimeout(downloadPollTimeout);
+                downloadPollTimeout = null;
+                clearCookie(cookieName);
+                onDone && onDone();
+            }
+        }, 300);
+
+        downloadPollTimeout = setTimeout(function() {
+            if (downloadPollInterval) {
+                clearInterval(downloadPollInterval);
+                downloadPollInterval = null;
+            }
+            onDone && onDone();
+        }, 300000);
+    }
+
+    function downloadViaIframe(href, token, onDone) {
+        let frame = document.getElementById('download-frame');
+        if (!frame) {
+            frame = document.createElement('iframe');
+            frame.id = 'download-frame';
+            frame.style.display = 'none';
+            document.body.appendChild(frame);
+        }
+
+        if (downloadTimeout) {
+            clearTimeout(downloadTimeout);
+            downloadTimeout = null;
+        }
+
+        waitForDownloadCookie(token, onDone);
+        frame.src = href;
+    }
     
     function showLoading(initialMessage) {
         startTime = Date.now();
@@ -160,6 +221,9 @@
                 e.preventDefault();
                 var href = this.getAttribute('href');
                 var text = this.textContent.trim();
+                var token = buildDownloadToken();
+                var sep = href.indexOf('?') === -1 ? '?' : '&';
+                href = href + sep + 'downloadToken=' + encodeURIComponent(token);
                 
                 showLoading('Menyiapkan ' + text + '...');
                 simulateProgress([
@@ -168,10 +232,10 @@
                     { percent: 90, text: 'Finalisasi...', subtext: 'Hampir selesai' }
                 ]);
                 
-                // LANGSUNG REDIRECT KE PHP!
                 setTimeout(function() {
-                    window.location.href = href;
-                    setTimeout(function() { hideLoading(0); }, 3000);
+                    downloadViaIframe(href, token, function() {
+                        hideLoading(0);
+                    });
                 }, 800);
             });
         });
@@ -392,6 +456,8 @@
         params.append('no_po', formData.get('no_po') || '');
         params.append('kkoke', formData.get('kkoke') || 'tidak');
         
+        var token = buildDownloadToken();
+        params.append('downloadToken', token);
         var href = 'ppc_memopenting-excel.php?' + params.toString();
         
         showLoading('Menyiapkan Download Data...');
@@ -401,10 +467,10 @@
             { percent: 90, text: 'Finalisasi...', subtext: 'Hampir selesai' }
         ]);
         
-        // Redirect ke PHP Excel
         setTimeout(function() {
-            window.location.href = href;
-            setTimeout(function() { hideLoading(0); }, 3000);
+            downloadViaIframe(href, token, function() {
+                hideLoading(0);
+            });
         }, 800);
     }
     
@@ -437,6 +503,9 @@
                 e.preventDefault();
                 var href = this.getAttribute('href');
                 var text = this.textContent.trim();
+                var token = buildDownloadToken();
+                var sep = href.indexOf('?') === -1 ? '?' : '&';
+                href = href + sep + 'downloadToken=' + encodeURIComponent(token);
                 
                 showLoading('Menyiapkan ' + text + '...');
                 simulateProgress([
@@ -444,8 +513,9 @@
                     { percent: 90, text: 'Hampir selesai...', subtext: 'Sebentar lagi' }
                 ]);
                 setTimeout(function() {
-                    window.location.href = href;
-                    setTimeout(function() { hideLoading(0); }, 3000);
+                    downloadViaIframe(href, token, function() {
+                        hideLoading(0);
+                    });
                 }, 500);
             });
         });

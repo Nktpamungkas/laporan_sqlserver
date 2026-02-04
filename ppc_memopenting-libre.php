@@ -40,7 +40,7 @@
     ];
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/api/ppc/memo-penting");
+    curl_setopt($ch, CURLOPT_URL, "http://10.0.1.154:8080/api/ppc/memo-penting");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -65,6 +65,11 @@
     }
 
     $data_list = $api_data['data'] ?? [];
+
+    $downloadToken = $_GET['downloadToken'] ?? '';
+    if ($downloadToken !== '') {
+        setcookie('downloadToken_' . $downloadToken, '1', 0, '/');
+    }
 ?>
 <table border="1">
     <thead>
