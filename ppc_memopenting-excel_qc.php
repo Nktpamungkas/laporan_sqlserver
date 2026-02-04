@@ -41,7 +41,7 @@
 
     // Call API using cURL
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/api/ppc/memo-penting");
+    curl_setopt($ch, CURLOPT_URL, "http://10.0.1.154:8080/api/ppc/memo-penting");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

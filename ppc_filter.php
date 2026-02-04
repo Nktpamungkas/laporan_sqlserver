@@ -368,7 +368,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                         
                                                         // Call API using cURL with timeout
                                                         $ch = curl_init();
-                                                        curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/api/ppc/memo-penting");
+                                                        curl_setopt($ch, CURLOPT_URL, "http://10.0.1.154:8080/api/ppc/memo-penting");
                                                         curl_setopt($ch, CURLOPT_POST, true);
                                                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
                                                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -492,7 +492,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                     ];
 
                                     $ch = curl_init();
-                                    curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/api/ppc/memo-penting");
+                                    curl_setopt($ch, CURLOPT_URL, "http://10.0.1.154:8080/api/ppc/memo-penting");
                                     curl_setopt($ch, CURLOPT_POST, true);
                                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
                                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
