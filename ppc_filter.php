@@ -368,12 +368,12 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                                         
                                                         // Call API using cURL with timeout
                                                         $ch = curl_init();
-                                                        curl_setopt($ch, CURLOPT_URL, "http://10.0.1.154:8080/api/ppc/memo-penting");
+                                                        curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/api/ppc/memo-penting");
                                                         curl_setopt($ch, CURLOPT_POST, true);
                                                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
                                                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                                                        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-                                                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+                                                        curl_setopt($ch, CURLOPT_TIMEOUT, 0);
+                                                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
                                                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
                                                             'Content-Type: application/json'
                                                         ]);
@@ -492,11 +492,11 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
                                     ];
 
                                     $ch = curl_init();
-                                    curl_setopt($ch, CURLOPT_URL, "http://10.0.1.154:8080/api/ppc/memo-penting");
+                                    curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/api/ppc/memo-penting");
                                     curl_setopt($ch, CURLOPT_POST, true);
                                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
                                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                                    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                                    curl_setopt($ch, CURLOPT_TIMEOUT, 0);
                                     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
                                     
                                     $api_response = curl_exec($ch);
@@ -693,6 +693,7 @@ $kkoke_1 = isset($_GET['kkoke']) ? $_GET['kkoke'] : (isset($_POST['kkoke']) ? $_
             });
         });
     </script>
+    <script src="sse-progress.js"></script>
 </body>
 <?php require_once 'footer.php'; ?>
 

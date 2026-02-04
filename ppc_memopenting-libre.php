@@ -45,8 +45,8 @@
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 0);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json'
     ]);
@@ -101,6 +101,7 @@
             <th>DELAY PROGRESS STATUS</th>
             <th>PROGRESS STATUS</th>
             <th>TOTAL HARI</th>
+            <th>JAM (IN - OUT)</th>
             <th>LOT</th>
             <th>NO DEMAND</th>
             <th>NO KARTU KERJA</th>
@@ -153,6 +154,7 @@
             <td><?= $rowdb2['DELAY_PROGRESS_STATUS'] ?? ''; ?></td>
             <td><?= $rowdb2['PROGRESS_STATUS'] ?? ''; ?></td>
             <td><?= $rowdb2['TOTAL_HARI'] ?? ''; ?></td>
+            <td><?= $rowdb2['JAM'] ?? ''; ?></td>
             <td><?= $rowdb2['LOT'] ?? ''; ?></td>
             <td><?= $rowdb2['NO_DEMAND'] ?? ''; ?></td>
             <td><?= $rowdb2['NO_KARTU_KERJA'] ?? ''; ?></td>
