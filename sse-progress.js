@@ -325,7 +325,7 @@
                 '<td>' + g('PROGRESS_STATUS') + '</td>' +
                 '<td>' + g('TOTAL_HARI') + '</td>' +
                 '<td>' + g('LOT') + '</td>' +
-                '<td>' + g('NO_DEMAND') + '</td>' +
+                '<td><a href="http://online.indotaichen.com/laporan/ppc_filter_steps.php?demand=' + encodeURIComponent(g('NO_DEMAND')) + '&prod_order=' + encodeURIComponent(g('NO_KARTU_KERJA')) + '" target="_BLANK">' + g('NO_DEMAND') + '</a></td>' +
                 '<td>' + g('NO_KARTU_KERJA') + '</td>' +
                 '<td>' + g('ORIGINAL_PD_CODE') + '</td>' +
                 '<td>' + g('CATATAN_PO_GREIGE') + '</td>' +
