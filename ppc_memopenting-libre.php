@@ -39,9 +39,8 @@
         'orderline' => $orderline
     ];
 
-    // Call API using cURL
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://10.0.1.154:8080/api/ppc/memo-penting");
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/api/ppc/memo-penting");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -111,17 +110,7 @@
         </tr>
     </thead>
     <tbody>
-        <?php
-        foreach ($data_list as $rowdb2) {
-            // Skip jika kkoke = 'tidak' dan status adalah KK Oke atau Entered
-            if ($kkoke == 'tidak') {
-                $progress_status = $rowdb2['PROGRESS_STATUS'] ?? '';
-                if (stripos($progress_status, 'KK Oke') !== false || 
-                    stripos($progress_status, 'Entered') !== false) {
-                    continue;
-                }
-            }
-        ?>
+        <?php foreach ($data_list as $rowdb2) { ?>
         <tr>
             <td><?= $rowdb2['TGL_BUKA_KARTU'] ?? ''; ?></td>
             <td><?= $rowdb2['PELANGGAN'] ?? ''; ?></td>

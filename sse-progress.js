@@ -1,7 +1,7 @@
 (function() {
     'use strict';
     
-    // Configuration 
+    // Configuration
     const API_BASE_URL = 'http://localhost:8080';
     const SSE_ENDPOINT = '/api/ppc/memo-penting-stream';
     
@@ -15,10 +15,9 @@
     let eventSource = null;
     let startTime = null;
     let dataTableInstance = null;
+    let currentFilterParams = {};
+    let progressInterval = null;
     
-    /**
-     * Show loading overlay
-     */
     function showLoading(initialMessage) {
         startTime = Date.now();
         loadingOverlay.classList.add('active');
@@ -31,49 +30,61 @@
         loadingDetails.textContent = 'Menghubungkan ke server...';
     }
     
-    /**
-     * Hide loading overlay
-     */
     function hideLoading(delay) {
+        if (progressInterval) {
+            clearInterval(progressInterval);
+            progressInterval = null;
+        }
         setTimeout(function() {
             loadingOverlay.classList.remove('active');
             loadingSubtext.classList.remove('pulse');
         }, delay || 500);
     }
     
-    /**
-     * Update progress bar from SSE data
-     */
+    function simulateProgress(messages) {
+        let stage = 0;
+        let currentProgress = 0;
+        
+        if (progressInterval) clearInterval(progressInterval);
+        
+        progressInterval = setInterval(function() {
+            if (stage < messages.length) {
+                const msg = messages[stage];
+                if (currentProgress < msg.percent) {
+                    currentProgress += 2;
+                    if (currentProgress > msg.percent) currentProgress = msg.percent;
+                    progressBar.style.width = currentProgress + '%';
+                    progressBar.textContent = currentProgress + '%';
+                }
+                if (currentProgress >= msg.percent) {
+                    loadingText.textContent = msg.text;
+                    loadingSubtext.textContent = msg.subtext;
+                    stage++;
+                }
+                const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+                loadingDetails.textContent = 'Waktu: ' + elapsed + 's';
+            }
+        }, 100);
+    }
+    
     function updateProgressFromSSE(data) {
         const percent = data.percent || 0;
-        
         progressBar.style.width = percent + '%';
         progressBar.textContent = percent + '%';
+        if (data.message) loadingText.textContent = data.message;
+        if (data.detail) loadingSubtext.textContent = data.detail;
         
-        if (data.message) {
-            loadingText.textContent = data.message;
-        }
-        if (data.detail) {
-            loadingSubtext.textContent = data.detail;
-        }
-        
-        // Update elapsed time
         const elapsed = data.elapsedMs ? (data.elapsedMs / 1000).toFixed(1) : ((Date.now() - startTime) / 1000).toFixed(1);
-        
         if (data.stage === 'process' && data.total > 0) {
-            loadingDetails.textContent = `Proses: ${data.current}/${data.total} | Waktu: ${elapsed}s`;
+            loadingDetails.textContent = 'Proses: ' + data.current + '/' + data.total + ' | Waktu: ' + elapsed + 's';
         } else {
-            loadingDetails.textContent = `Waktu: ${elapsed}s`;
+            loadingDetails.textContent = 'Waktu: ' + elapsed + 's';
         }
     }
     
-    /**
-     * Build query string from form data
-     */
     function buildQueryString(form) {
         const formData = new FormData(form);
         const params = new URLSearchParams();
-        
         const fieldMap = {
             'no_order': 'noOrder',
             'prod_demand': 'prodDemand',
@@ -88,508 +99,368 @@
             'orderline': 'orderline'
         };
         
+        currentFilterParams = {};
         for (let [key, value] of formData.entries()) {
-            if (value && value.trim() && fieldMap[key]) {
-                params.append(fieldMap[key], value.trim());
+            if (fieldMap[key]) {
+                params.append(fieldMap[key], value ? value.trim() : '');
+                currentFilterParams[key] = value ? value.trim() : '';
             }
         }
-        
         return params.toString();
     }
     
-    /**
-     * Helper function to get field value - check multiple possible field names
-     * Returns proper value with fallback to empty string or 0 for missing fields
-     */
-    function getField(row, ...fieldNames) {
-        for (let name of fieldNames) {
-            if (row.hasOwnProperty(name)) {
-                const val = row[name];
-                // Return actual value even if 0, null, or empty string from API
-                if (val !== undefined && val !== null) {
-                    return val === '' ? '' : val;
+    function getField(row) {
+        return function() {
+            for (let i = 0; i < arguments.length; i++) {
+                if (row.hasOwnProperty(arguments[i])) {
+                    const val = row[arguments[i]];
+                    if (val !== undefined && val !== null) return String(val);
                 }
             }
-        }
-        return '';
+            return '';
+        };
     }
     
-    /**
-     * Get or create data table container
-     */
-    function getOrCreateTableContainer() {
-        let container = document.getElementById('sse-data-container');
+    function createExcelButtons() {
+        let btnContainer = document.getElementById('sse-excel-buttons');
         
+        if (!btnContainer) {
+            const formButtonArea = document.querySelector('#filterForm .col-sm-12.col-xl-12.m-b-30');
+            if (formButtonArea) {
+                btnContainer = document.createElement('span');
+                btnContainer.id = 'sse-excel-buttons';
+                btnContainer.style.marginLeft = '10px';
+                formButtonArea.appendChild(btnContainer);
+            }
+        }
+        if (!btnContainer) return;
+        
+        // Build PHP query string (nama field PHP, bukan API)
+        const params = new URLSearchParams();
+        params.append('no_order', currentFilterParams['no_order'] || '');
+        params.append('tgl1', currentFilterParams['tgl1'] || '');
+        params.append('tgl2', currentFilterParams['tgl2'] || '');
+        params.append('prod_demand', currentFilterParams['prod_demand'] || '');
+        params.append('prod_order', currentFilterParams['prod_order'] || '');
+        params.append('article_group', currentFilterParams['article_group'] || '');
+        params.append('article_code', currentFilterParams['article_code'] || '');
+        params.append('nama_warna', currentFilterParams['nama_warna'] || '');
+        params.append('no_po', currentFilterParams['no_po'] || '');
+        params.append('kkoke', currentFilterParams['kkoke'] || 'tidak');
+        const qs = params.toString();
+        
+        btnContainer.innerHTML = 
+            '<a class="btn btn-mat btn-success cetak-excel-btn-js" href="ppc_memopenting-excel.php?' + qs + '">CETAK EXCEL</a> ' +
+            '<a class="btn btn-mat btn-warning cetak-excel-btn-js" href="ppc_memopenting-libre.php?' + qs + '">CETAK EXCEL (LIBRE)</a> ' +
+            '<a class="btn btn-mat btn-danger cetak-excel-btn-js" href="ppc_memopenting-excel_qc.php?' + qs + '">CETAK EXCEL (QC)</a>';
+        
+        // LANGSUNG REDIRECT - tidak pakai fetch!
+        btnContainer.querySelectorAll('.cetak-excel-btn-js').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var href = this.getAttribute('href');
+                var text = this.textContent.trim();
+                
+                showLoading('Menyiapkan ' + text + '...');
+                simulateProgress([
+                    { percent: 30, text: 'Mengambil data...', subtext: 'Memproses' },
+                    { percent: 60, text: 'Membuat Excel...', subtext: 'Menyusun data' },
+                    { percent: 90, text: 'Finalisasi...', subtext: 'Hampir selesai' }
+                ]);
+                
+                // LANGSUNG REDIRECT KE PHP!
+                setTimeout(function() {
+                    window.location.href = href;
+                    setTimeout(function() { hideLoading(0); }, 3000);
+                }, 800);
+            });
+        });
+    }
+    
+    function hideExcelButtons() {
+        var c = document.getElementById('sse-excel-buttons');
+        if (c) c.innerHTML = '';
+    }
+    
+    function getOrCreateTableContainer() {
+        var container = document.getElementById('sse-data-container');
         if (!container) {
-            // Cari posisi setelah form card
-            const formCard = document.querySelector('#filterForm').closest('.card');
-            
-            // Buat container baru
+            var formCard = document.querySelector('#filterForm').closest('.card');
             container = document.createElement('div');
             container.id = 'sse-data-container';
             container.className = 'card';
             container.style.display = 'none';
-            container.innerHTML = `
-                <div class="card-header">
-                    <h5>Data Memo Penting</h5>
-                    <span class="float-right" id="sse-data-info"></span>
-                </div>
-                <div class="card-block">
-                    <div class="dt-responsive table-responsive" style="overflow-x: auto; width: 100%;">
-                        <table id="sse-data-table" class="table table-striped table-bordered nowrap" style="width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>TGL BUKA KARTU</th>
-                                    <th>PELANGGAN</th>
-                                    <th>NO. ORDER</th>
-                                    <th>NO. PO</th>
-                                    <th>KETERANGAN PRODUCT</th>
-                                    <th>LEBAR</th>
-                                    <th>GRAMASI</th>
-                                    <th>WARNA</th>
-                                    <th>NO WARNA</th>
-                                    <th>DELIVERY</th>
-                                    <th>DELIVERY ACTUAL</th>
-                                    <th>GREIGE AWAL</th>
-                                    <th>GREIGE AKHIR</th>
-                                    <th>BAGI KAIN TGL</th>
-                                    <th>ROLL</th>
-                                    <th>BRUTO/BAGI KAIN</th>
-                                    <th>QTY SALINAN</th>
-                                    <th>QTY PACKING</th>
-                                    <th>NETTO(kg)</th>
-                                    <th>NETTO(yd/mtr)</th>
-                                    <th>QTY KURANG (KG)</th>
-                                    <th>QTY KURANG (YD/MTR)</th>
-                                    <th>DELAY</th>
-                                    <th>TARGET SELESAI</th>
-                                    <th>KODE DEPT</th>
-                                    <th>STATUS TERAKHIR</th>
-                                    <th>NOMOR MESIN SCHEDULE</th>
-                                    <th>NOMOR URUT SCHEDULE</th>
-                                    <th>DELAY PROGRESS STATUS</th>
-                                    <th>PROGRESS STATUS</th>
-                                    <th>TOTAL HARI</th>
-                                    <th>LOT</th>
-                                    <th>NO DEMAND</th>
-                                    <th>NO KARTU KERJA</th>
-                                    <th>ORIGINAL PD CODE</th>
-                                    <th>CATATAN PO GREIGE</th>
-                                    <th>KETERANGAN</th>
-                                    <th>RE PROSES ADDITIONAL</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sse-data-body">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-            
-            // Insert after form card
+            container.innerHTML = '<div class="card-header"><h5>Data Memo Penting</h5><span class="float-right" id="sse-data-info"></span></div>' +
+                '<div class="card-block"><div class="dt-responsive table-responsive" style="overflow-x:auto;width:100%">' +
+                '<table id="sse-data-table" class="table table-striped table-bordered nowrap" style="width:100%;min-width:3000px">' +
+                '<thead><tr>' +
+                '<th>TGL BUKA KARTU</th><th>PELANGGAN</th><th>NO. ORDER</th><th>NO. PO</th><th>KETERANGAN PRODUCT</th>' +
+                '<th>LEBAR</th><th>GRAMASI</th><th>WARNA</th><th>NO WARNA</th><th>DELIVERY</th><th>DELIVERY ACTUAL</th>' +
+                '<th>GREIGE AWAL</th><th>GREIGE AKHIR</th><th>BAGI KAIN TGL</th><th>ROLL</th><th>BRUTO/BAGI KAIN</th>' +
+                '<th>QTY SALINAN</th><th>QTY PACKING</th><th>NETTO(kg)</th><th>NETTO(yd/mtr)</th><th>QTY KURANG (KG)</th>' +
+                '<th>QTY KURANG (YD/MTR)</th><th>DELAY</th><th>TARGET SELESAI</th><th>KODE DEPT</th><th>STATUS TERAKHIR</th>' +
+                '<th>NOMOR MESIN SCHEDULE</th><th>NOMOR URUT SCHEDULE</th><th>DELAY PROGRESS STATUS</th><th>PROGRESS STATUS</th>' +
+                '<th>TOTAL HARI</th><th>LOT</th><th>NO DEMAND</th><th>NO KARTU KERJA</th><th>ORIGINAL PD CODE</th>' +
+                '<th>CATATAN PO GREIGE</th><th>KETERANGAN</th><th>RE PROSES ADDITIONAL</th>' +
+                '</tr></thead><tbody id="sse-data-body"></tbody></table></div></div>';
             formCard.parentNode.insertBefore(container, formCard.nextSibling);
         }
-        
         return container;
     }
     
-    /**
-     * Render data to table
-     * Mencoba beberapa kemungkinan nama field (UPPERCASE, camelCase, dll)
-     */
     function renderDataTable(data, elapsedMs) {
-        const container = getOrCreateTableContainer();
-        const tbody = document.getElementById('sse-data-body');
-        const infoSpan = document.getElementById('sse-data-info');
+        var container = getOrCreateTableContainer();
+        var tbody = document.getElementById('sse-data-body');
+        var infoSpan = document.getElementById('sse-data-info');
         
-        // Clear existing data
         tbody.innerHTML = '';
-        
-        // Destroy existing DataTable if any
-        if (dataTableInstance) {
-            dataTableInstance.destroy();
-            dataTableInstance = null;
-        }
+        if (dataTableInstance) { dataTableInstance.destroy(); dataTableInstance = null; }
         
         if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="38" class="text-center">Tidak ada data yang ditemukan</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="38" class="text-center">Tidak ada data</td></tr>';
             container.style.display = 'block';
             infoSpan.textContent = 'Total: 0 data';
+            hideExcelButtons();
             return;
         }
         
-        // Debug: Log first row to see actual field names
-        console.log('First row data:', data[0]);
-        console.log('Field names:', Object.keys(data[0]));
-        console.log('Total columns should be: 38');
-        
-        // Test getField pada beberapa kolom yang mungkin hilang
-        if (data[0]) {
-            console.log('QTY_SALINAN:', getField(data[0], 'QTY_SALINAN', 'qtySalinan'));
-            console.log('QTY_PACKING:', getField(data[0], 'QTY_PACKING', 'qtyPacking'));
-            console.log('NETTO_KG:', getField(data[0], 'NETTO_KG', 'nettoKg'));
-            console.log('RE_PROSES_ADDITIONAL:', getField(data[0], 'RE_PROSES_ADDITIONAL', 'reProsesAdditional'));
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            var row = data[i];
+            var g = getField(row);
+            html += '<tr>' +
+                '<td>' + g('TGL_BUKA_KARTU') + '</td>' +
+                '<td>' + g('PELANGGAN') + '</td>' +
+                '<td>' + g('NO_ORDER') + '</td>' +
+                '<td>' + g('NO_PO') + '</td>' +
+                '<td>' + g('KETERANGAN_PRODUCT') + '</td>' +
+                '<td>' + g('LEBAR') + '</td>' +
+                '<td>' + g('GRAMASI') + '</td>' +
+                '<td>' + g('WARNA') + '</td>' +
+                '<td>' + g('NO_WARNA') + '</td>' +
+                '<td>' + g('DELIVERY') + '</td>' +
+                '<td>' + g('DELIVERY_ACTUAL') + '</td>' +
+                '<td>' + g('GREIGE_AWAL') + '</td>' +
+                '<td>' + g('GREIGE_AKHIR') + '</td>' +
+                '<td>' + g('BAGI_KAIN_TGL') + '</td>' +
+                '<td>' + g('ROLL') + '</td>' +
+                '<td>' + g('BRUTO_BAGI_KAIN') + '</td>' +
+                '<td>' + g('QTY_SALINAN') + '</td>' +
+                '<td>' + g('QTY_PACKING') + '</td>' +
+                '<td>' + g('NETTO_KG') + '</td>' +
+                '<td>' + g('NETTO_YD_MTR') + '</td>' +
+                '<td>' + g('QTY_KURANG_KG') + '</td>' +
+                '<td>' + g('QTY_KURANG_YD_MTR') + '</td>' +
+                '<td>' + g('DELAY') + '</td>' +
+                '<td>' + g('TARGET_SELESAI') + '</td>' +
+                '<td>' + g('KODE_DEPT') + '</td>' +
+                '<td>' + g('STATUS_TERAKHIR') + '</td>' +
+                '<td>' + g('NOMOR_MESIN_SCHEDULE') + '</td>' +
+                '<td>' + g('NOMOR_URUT_SCHEDULE') + '</td>' +
+                '<td>' + g('DELAY_PROGRESS_STATUS') + '</td>' +
+                '<td>' + g('PROGRESS_STATUS') + '</td>' +
+                '<td>' + g('TOTAL_HARI') + '</td>' +
+                '<td>' + g('LOT') + '</td>' +
+                '<td>' + g('NO_DEMAND') + '</td>' +
+                '<td>' + g('NO_KARTU_KERJA') + '</td>' +
+                '<td>' + g('ORIGINAL_PD_CODE') + '</td>' +
+                '<td>' + g('CATATAN_PO_GREIGE') + '</td>' +
+                '<td>' + g('KETERANGAN') + '</td>' +
+                '<td>' + g('RE_PROSES_ADDITIONAL') + '</td>' +
+                '</tr>';
         }
         
-        // Build table rows - cek multiple kemungkinan nama field
-        let html = '';
-        data.forEach(function(row) {
-            html += '<tr>';
-            // TGL BUKA KARTU
-            html += '<td>' + getField(row, 'TGL_BUKA_KARTU', 'tglBukaKartu', 'ORDERDATE', 'orderDate') + '</td>';
-            // PELANGGAN
-            html += '<td>' + getField(row, 'PELANGGAN', 'pelanggan') + '</td>';
-            // NO ORDER
-            html += '<td>' + getField(row, 'NO_ORDER', 'noOrder', 'SALESORDERCODE') + '</td>';
-            // NO PO
-            html += '<td>' + getField(row, 'NO_PO', 'noPo') + '</td>';
-            // KETERANGAN PRODUCT
-            html += '<td>' + getField(row, 'KETERANGAN_PRODUCT', 'keteranganProduct') + '</td>';
-            // LEBAR
-            html += '<td>' + getField(row, 'LEBAR', 'lebar') + '</td>';
-            // GRAMASI
-            html += '<td>' + getField(row, 'GRAMASI', 'gramasi') + '</td>';
-            // WARNA
-            html += '<td>' + getField(row, 'WARNA', 'warna') + '</td>';
-            // NO WARNA
-            html += '<td>' + getField(row, 'NO_WARNA', 'noWarna') + '</td>';
-            // DELIVERY
-            html += '<td>' + getField(row, 'DELIVERY', 'delivery') + '</td>';
-            // DELIVERY ACTUAL
-            html += '<td>' + getField(row, 'DELIVERY_ACTUAL', 'deliveryActual') + '</td>';
-            // GREIGE AWAL
-            html += '<td>' + getField(row, 'GREIGE_AWAL', 'greigeAwal') + '</td>';
-            // GREIGE AKHIR
-            html += '<td>' + getField(row, 'GREIGE_AKHIR', 'greigeAkhir') + '</td>';
-            // BAGI KAIN TGL
-            html += '<td>' + getField(row, 'BAGI_KAIN_TGL', 'bagiKainTgl') + '</td>';
-            // ROLL
-            html += '<td>' + getField(row, 'ROLL', 'roll') + '</td>';
-            // BRUTO BAGI KAIN
-            html += '<td>' + getField(row, 'BRUTO_BAGI_KAIN', 'brutoBagiKain') + '</td>';
-            // QTY SALINAN
-            html += '<td>' + getField(row, 'QTY_SALINAN', 'qtySalinan') + '</td>';
-            // QTY PACKING
-            html += '<td>' + getField(row, 'QTY_PACKING', 'qtyPacking') + '</td>';
-            // NETTO KG
-            html += '<td>' + getField(row, 'NETTO_KG', 'nettoKg') + '</td>';
-            // NETTO YD MTR
-            html += '<td>' + getField(row, 'NETTO_YD_MTR', 'nettoYdMtr') + '</td>';
-            // QTY KURANG KG
-            html += '<td>' + getField(row, 'QTY_KURANG_KG', 'qtyKurangKg') + '</td>';
-            // QTY KURANG YD MTR
-            html += '<td>' + getField(row, 'QTY_KURANG_YD_MTR', 'qtyKurangYdMtr') + '</td>';
-            // DELAY
-            html += '<td>' + getField(row, 'DELAY', 'delay') + '</td>';
-            // TARGET SELESAI
-            html += '<td>' + getField(row, 'TARGET_SELESAI', 'targetSelesai') + '</td>';
-            // KODE DEPT
-            html += '<td>' + getField(row, 'KODE_DEPT', 'kodeDept') + '</td>';
-            // STATUS TERAKHIR
-            html += '<td>' + getField(row, 'STATUS_TERAKHIR', 'statusTerakhir') + '</td>';
-            // NOMOR MESIN SCHEDULE
-            html += '<td>' + getField(row, 'NOMOR_MESIN_SCHEDULE', 'nomorMesinSchedule') + '</td>';
-            // NOMOR URUT SCHEDULE
-            html += '<td>' + getField(row, 'NOMOR_URUT_SCHEDULE', 'nomorUrutSchedule') + '</td>';
-            // DELAY PROGRESS STATUS
-            html += '<td>' + getField(row, 'DELAY_PROGRESS_STATUS', 'delayProgressStatus') + '</td>';
-            // PROGRESS STATUS
-            html += '<td>' + getField(row, 'PROGRESS_STATUS', 'progressStatus') + '</td>';
-            // TOTAL HARI
-            html += '<td>' + getField(row, 'TOTAL_HARI', 'totalHari') + '</td>';
-            // LOT
-            html += '<td>' + getField(row, 'LOT', 'lot') + '</td>';
-            // NO DEMAND
-            html += '<td>' + getField(row, 'NO_DEMAND', 'noDemand') + '</td>';
-            // NO KARTU KERJA
-            html += '<td>' + getField(row, 'NO_KARTU_KERJA', 'noKartuKerja') + '</td>';
-            // ORIGINAL PD CODE
-            html += '<td>' + getField(row, 'ORIGINAL_PD_CODE', 'originalPdCode') + '</td>';
-            // CATATAN PO GREIGE
-            html += '<td>' + getField(row, 'CATATAN_PO_GREIGE', 'catatanPoGreige') + '</td>';
-            // KETERANGAN
-            html += '<td>' + getField(row, 'KETERANGAN', 'keterangan') + '</td>';
-            // RE PROSES ADDITIONAL
-            html += '<td>' + getField(row, 'RE_PROSES_ADDITIONAL', 'reProsesAdditional') + '</td>';
-            html += '</tr>';
-        });
-        
         tbody.innerHTML = html;
-        
-        // Show container
         container.style.display = 'block';
+        infoSpan.innerHTML = '<span class="badge badge-success">Total: ' + data.length + ' data</span> <span class="badge badge-info">Waktu: ' + (elapsedMs/1000).toFixed(2) + 's</span>';
         
-        // Update info
-        const seconds = (elapsedMs / 1000).toFixed(2);
-        infoSpan.innerHTML = '<span class="badge badge-success">Total: ' + data.length + ' data</span> <span class="badge badge-info">Waktu: ' + seconds + 's</span>';
+        createExcelButtons();
         
-        // Initialize DataTable
         if (typeof $ !== 'undefined' && $.fn.DataTable) {
             dataTableInstance = $('#sse-data-table').DataTable({
-                responsive: false,  // Disable responsive agar semua kolom muncul
-                scrollX: true,      // Enable horizontal scroll
-                scrollCollapse: true,
-                autoWidth: false,   // Prevent auto column width calculation
+                responsive: false,
+                scrollX: true,
                 pageLength: 25,
                 order: [[0, 'desc']],
-                columnDefs: [
-                    { width: "150px", targets: "_all" }  // Set minimal width untuk semua kolom
-                ],
                 language: {
                     search: "Cari:",
                     lengthMenu: "Tampilkan _MENU_ data",
                     info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-                    infoEmpty: "Tidak ada data",
-                    infoFiltered: "(filter dari _MAX_ total data)",
-                    paginate: {
-                        first: "Awal",
-                        last: "Akhir",
-                        next: "›",
-                        previous: "‹"
-                    }
+                    paginate: { next: "›", previous: "‹" }
                 }
             });
         }
-        
-        // Scroll to table
-        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        container.scrollIntoView({ behavior: 'smooth' });
     }
     
-    /**
-     * Connect to SSE and fetch data with progress
-     */
     function fetchDataWithSSE(queryString, onComplete, onError) {
-        const url = API_BASE_URL + SSE_ENDPOINT + '?' + queryString;
-        console.log('SSE Connecting:', url);
+        var url = API_BASE_URL + SSE_ENDPOINT + '?' + queryString;
+        console.log('SSE:', url);
         
-        // Close existing connection
-        if (eventSource) {
-            eventSource.close();
-        }
-        
+        if (eventSource) eventSource.close();
         eventSource = new EventSource(url);
         
         eventSource.addEventListener('progress', function(e) {
             try {
-                const data = JSON.parse(e.data);
-                console.log('SSE Progress:', data.stage, data.percent + '%');
-                
+                var data = JSON.parse(e.data);
                 updateProgressFromSSE(data);
                 
                 if (data.stage === 'complete') {
                     eventSource.close();
-                    if (onComplete) onComplete(data.data, data.elapsedMs);
+                    if (data.data && Array.isArray(data.data)) {
+                        onComplete(data.data, data.elapsedMs || 0);
+                    } else {
+                        onError('Data tidak valid');
+                    }
                 } else if (data.stage === 'error') {
                     eventSource.close();
-                    if (onError) onError(data.detail || 'Terjadi kesalahan');
+                    onError(data.detail || 'Error');
                 }
             } catch (err) {
-                console.error('SSE Parse Error:', err);
+                eventSource.close();
+                onError('Parse error');
             }
         });
         
-        eventSource.onerror = function(e) {
-            console.error('SSE Connection Error:', e);
+        eventSource.onerror = function() {
             eventSource.close();
-            if (onError) onError('Koneksi ke server terputus. Silakan coba lagi.');
+            onError('Koneksi terputus');
         };
     }
     
-    /**
-     * Build query string from URL (for Excel links)
-     */
-    function buildQueryStringFromURL(href) {
-        const urlParams = new URLSearchParams(href.split('?')[1] || '');
-        const params = new URLSearchParams();
-        
-        if (urlParams.get('no_order')) params.append('noOrder', urlParams.get('no_order'));
-        if (urlParams.get('tgl1')) params.append('tgl1', urlParams.get('tgl1'));
-        if (urlParams.get('tgl2')) params.append('tgl2', urlParams.get('tgl2'));
-        if (urlParams.get('prod_order')) params.append('prodOrder', urlParams.get('prod_order'));
-        if (urlParams.get('prod_demand')) params.append('prodDemand', urlParams.get('prod_demand'));
-        params.append('kkoke', urlParams.get('kkoke') || 'tidak');
-        
-        return params.toString();
-    }
-    
-    /**
-     * Handle Cari Data button click
-     */
     function handleCariData(form) {
-        // Validate form
-        const formData = new FormData(form);
-        let hasValue = false;
-        
-        for (let [key, value] of formData.entries()) {
-            if (key !== 'kkoke' && key !== 'submit' && key !== 'submit_excel' && value && value.trim()) {
+        var formData = new FormData(form);
+        var hasValue = false;
+        for (var pair of formData.entries()) {
+            if (pair[0] !== 'kkoke' && pair[0] !== 'submit' && pair[1] && pair[1].trim()) {
                 hasValue = true;
                 break;
             }
         }
-        
         if (!hasValue) {
             alert('Silakan isi minimal satu filter!');
             return;
         }
         
-        // Show loading
+        hideExcelButtons();
         showLoading('Mencari data...');
         
-        // Build query and fetch
-        const queryString = buildQueryString(form);
-        
-        fetchDataWithSSE(queryString,
-            // On Complete
-            function(data, elapsedMs) {
+        fetchDataWithSSE(buildQueryString(form),
+            function(data, elapsed) {
                 progressBar.style.width = '100%';
                 progressBar.textContent = '100%';
                 loadingText.textContent = 'Selesai!';
-                loadingSubtext.textContent = 'Menampilkan ' + (data ? data.length : 0) + ' data';
-                loadingSubtext.classList.remove('pulse');
-                
-                // Render table
+                loadingSubtext.textContent = data.length + ' data ditemukan';
                 setTimeout(function() {
-                    renderDataTable(data, elapsedMs);
+                    renderDataTable(data, elapsed);
                     hideLoading(500);
                 }, 300);
             },
-            // On Error
-            function(errorMsg) {
+            function(err) {
                 progressBar.style.background = 'linear-gradient(90deg, #dc3545 0%, #ff6b6b 100%)';
-                loadingText.textContent = 'Terjadi Kesalahan';
-                loadingSubtext.textContent = errorMsg;
-                loadingSubtext.classList.remove('pulse');
-                
-                setTimeout(function() {
-                    hideLoading(0);
-                }, 3000);
+                loadingText.textContent = 'Error';
+                loadingSubtext.textContent = err;
+                setTimeout(function() { hideLoading(0); }, 3000);
             }
         );
     }
     
-    /**
-     * Handle Excel download with SSE progress
-     */
-    function handleExcelDownload(href, buttonText) {
-        showLoading('Menyiapkan ' + buttonText + '...');
-        
-        const queryString = buildQueryStringFromURL(href);
-        
-        fetchDataWithSSE(queryString,
-            // On Complete - proceed to download
-            function(data, elapsedMs) {
-                progressBar.style.width = '100%';
-                progressBar.textContent = '100%';
-                loadingText.textContent = 'File siap!';
-                loadingSubtext.textContent = 'Mengunduh...';
-                loadingSubtext.classList.remove('pulse');
-                
-                // Navigate to download
-                setTimeout(function() {
-                    window.location.href = href;
-                    setTimeout(function() {
-                        hideLoading(0);
-                    }, 2000);
-                }, 500);
-            },
-            // On Error - still try download
-            function(errorMsg) {
-                console.warn('SSE Error, trying download anyway:', errorMsg);
-                window.location.href = href;
-                setTimeout(function() {
-                    hideLoading(0);
-                }, 3000);
+    function handleDownloadData(form) {
+        var formData = new FormData(form);
+        var hasValue = false;
+        for (var pair of formData.entries()) {
+            if (pair[0] !== 'kkoke' && pair[0] !== 'submit' && pair[1] && pair[1].trim()) {
+                hasValue = true;
+                break;
             }
-        );
+        }
+        if (!hasValue) {
+            alert('Silakan isi minimal satu filter!');
+            return;
+        }
+        
+        // Build query string untuk PHP Excel
+        var params = new URLSearchParams();
+        params.append('no_order', formData.get('no_order') || '');
+        params.append('tgl1', formData.get('tgl1') || '');
+        params.append('tgl2', formData.get('tgl2') || '');
+        params.append('prod_demand', formData.get('prod_demand') || '');
+        params.append('prod_order', formData.get('prod_order') || '');
+        params.append('article_group', formData.get('article_group') || '');
+        params.append('article_code', formData.get('article_code') || '');
+        params.append('nama_warna', formData.get('nama_warna') || '');
+        params.append('no_po', formData.get('no_po') || '');
+        params.append('kkoke', formData.get('kkoke') || 'tidak');
+        
+        var href = 'ppc_memopenting-excel.php?' + params.toString();
+        
+        showLoading('Menyiapkan Download Data...');
+        simulateProgress([
+            { percent: 30, text: 'Mengambil data...', subtext: 'Memproses filter' },
+            { percent: 60, text: 'Membuat Excel...', subtext: 'Menyusun data' },
+            { percent: 90, text: 'Finalisasi...', subtext: 'Hampir selesai' }
+        ]);
+        
+        // Redirect ke PHP Excel
+        setTimeout(function() {
+            window.location.href = href;
+            setTimeout(function() { hideLoading(0); }, 3000);
+        }, 800);
     }
     
-    /**
-     * Initialize
-     */
     function init() {
-        const form = document.getElementById('filterForm');
-        const btnCari = document.getElementById('btnCari');
-        const btnExcel = document.getElementById('btnExcel');
+        var form = document.getElementById('filterForm');
+        var btnCari = document.getElementById('btnCari');
+        var btnExcel = document.getElementById('btnExcel');
         
-        // Handle Cari Data - INTERCEPT, no form submit
         if (btnCari && form) {
-            btnCari.addEventListener('click', function(e) {
+            var newBtn = btnCari.cloneNode(true);
+            btnCari.parentNode.replaceChild(newBtn, btnCari);
+            newBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                e.stopPropagation();
                 handleCariData(form);
             });
         }
         
-        // Handle Download Data - INTERCEPT
         if (btnExcel && form) {
-            btnExcel.addEventListener('click', function(e) {
+            var newBtn2 = btnExcel.cloneNode(true);
+            btnExcel.parentNode.replaceChild(newBtn2, btnExcel);
+            newBtn2.addEventListener('click', function(e) {
                 e.preventDefault();
-                e.stopPropagation();
-                
-                // Validate
-                const formData = new FormData(form);
-                let hasValue = false;
-                for (let [key, value] of formData.entries()) {
-                    if (key !== 'kkoke' && key !== 'submit' && key !== 'submit_excel' && value && value.trim()) {
-                        hasValue = true;
-                        break;
-                    }
-                }
-                
-                if (!hasValue) {
-                    alert('Silakan isi minimal satu filter!');
-                    return;
-                }
-                
-                // For Download Data, we still need to submit form to PHP Excel generator
-                // But show SSE progress first
-                showLoading('Menyiapkan file Excel...');
-                
-                const queryString = buildQueryString(form);
-                fetchDataWithSSE(queryString,
-                    function(data, elapsedMs) {
-                        progressBar.style.width = '100%';
-                        progressBar.textContent = '100%';
-                        loadingText.textContent = 'Data siap!';
-                        loadingSubtext.textContent = 'Membuat file Excel...';
-                        
-                        // Now submit form for Excel
-                        setTimeout(function() {
-                            form.submit();
-                        }, 500);
-                    },
-                    function(errorMsg) {
-                        // Still submit on error
-                        form.submit();
-                    }
-                );
+                handleDownloadData(form);
             });
         }
         
-        // Handle CETAK EXCEL buttons
+        // Handle existing PHP Excel buttons
         document.querySelectorAll('.cetak-excel-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
-                e.stopPropagation();
-                handleExcelDownload(this.getAttribute('href'), this.textContent.trim());
+                var href = this.getAttribute('href');
+                var text = this.textContent.trim();
+                
+                showLoading('Menyiapkan ' + text + '...');
+                simulateProgress([
+                    { percent: 50, text: 'Memproses...', subtext: 'Mohon tunggu' },
+                    { percent: 90, text: 'Hampir selesai...', subtext: 'Sebentar lagi' }
+                ]);
+                setTimeout(function() {
+                    window.location.href = href;
+                    setTimeout(function() { hideLoading(0); }, 3000);
+                }, 500);
             });
         });
         
-        console.log('SSE Progress Handler (Full JS Rendering) initialized');
+        console.log('SSE Handler ready');
     }
     
-    // Initialize when DOM ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
     
-    // Cleanup
     window.addEventListener('beforeunload', function() {
-        if (eventSource) {
-            eventSource.close();
-        }
+        if (eventSource) eventSource.close();
+        if (progressInterval) clearInterval(progressInterval);
     });
-    
 })();

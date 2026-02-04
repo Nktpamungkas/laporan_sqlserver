@@ -39,9 +39,8 @@
         'orderline' => $orderline
     ];
 
-    // Call API using cURL
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://10.0.1.154/api/ppc/memo-penting");
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/api/ppc/memo-penting");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($api_body));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -60,19 +59,16 @@
         die("Error calling API: " . $curl_error);
     }
 
-    // Process API response
     $api_data = json_decode($api_response, true);
     
     if (!$api_data || !isset($api_data['success']) || !$api_data['success']) {
-        die("Error: API tidak mengembalikan data yang valid");
+        die("Error: API tidak mengembalikan data yang valid. Response: " . $api_response);
     }
 
     $data_list = $api_data['data'] ?? [];
 ?>
 <style>
-    .str {
-        mso-number-format: \@;
-    }
+    .str { mso-number-format: \@; }
 </style>
 <table border="1">
     <thead>
@@ -119,58 +115,48 @@
         </tr>
     </thead>
     <tbody>
-        <?php
-        foreach ($data_list as $rowdb2) {
-            // Skip jika kkoke = 'tidak' dan status adalah KK Oke atau Entered
-            if ($kkoke == 'tidak') {
-                $progress_status = $rowdb2['PROGRESS_STATUS'] ?? '';
-                if (stripos($progress_status, 'KK Oke') !== false || 
-                    stripos($progress_status, 'Entered') !== false) {
-                    continue;
-                }
-            }
-        ?>
-            <tr>
-                <td class="str"><?= $rowdb2['TGL_BUKA_KARTU'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['PELANGGAN'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['NO_ORDER'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['NO_PO'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['KETERANGAN_PRODUCT'] ?? ''; ?></td>
-                <td><?= $rowdb2['LEBAR'] ?? ''; ?></td>
-                <td><?= $rowdb2['GRAMASI'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['WARNA'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['NO_WARNA'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['DELIVERY'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['DELIVERY_ACTUAL'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['GREIGE_AWAL'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['GREIGE_AKHIR'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['BAGI_KAIN_TGL'] ?? ''; ?></td>
-                <td><?= $rowdb2['ROLL'] ?? ''; ?></td>
-                <td><?= $rowdb2['BRUTO_BAGI_KAIN'] ?? ''; ?></td>
-                <td><?= $rowdb2['QTY_SALINAN'] ?? ''; ?></td>
-                <td><?= $rowdb2['QTY_PACKING'] ?? ''; ?></td>
-                <td><?= $rowdb2['NETTO_KG'] ?? ''; ?></td>
-                <td><?= $rowdb2['NETTO_YD_MTR'] ?? ''; ?></td>
-                <td><?= $rowdb2['QTY_KURANG_KG'] ?? ''; ?></td>
-                <td><?= $rowdb2['QTY_KURANG_YD_MTR'] ?? ''; ?></td>
-                <td><?= $rowdb2['DELAY'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['TARGET_SELESAI'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['KODE_DEPT'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['STATUS_TERAKHIR'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['NOMOR_MESIN_SCHEDULE'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['NOMOR_URUT_SCHEDULE'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['DELAY_PROGRESS_STATUS'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['PROGRESS_STATUS'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['TOTAL_HARI'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['JAM'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['LOT'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['NO_DEMAND'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['NO_KARTU_KERJA'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['CATATAN_PO_GREIGE'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['KETERANGAN'] ?? ''; ?></td>
-                <td class="str"><?= $rowdb2['ORIGINAL_PD_CODE'] ?? ''; ?></td>
-                <td><?= $rowdb2['RE_PROSES_ADDITIONAL'] ?? '0'; ?></td>
-            </tr>
+        <?php foreach ($data_list as $rowdb2) { ?>
+        <tr>
+            <td class="str"><?= $rowdb2['TGL_BUKA_KARTU'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['PELANGGAN'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['NO_ORDER'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['NO_PO'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['KETERANGAN_PRODUCT'] ?? ''; ?></td>
+            <td><?= $rowdb2['LEBAR'] ?? ''; ?></td>
+            <td><?= $rowdb2['GRAMASI'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['WARNA'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['NO_WARNA'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['DELIVERY'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['DELIVERY_ACTUAL'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['GREIGE_AWAL'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['GREIGE_AKHIR'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['BAGI_KAIN_TGL'] ?? ''; ?></td>
+            <td><?= $rowdb2['ROLL'] ?? ''; ?></td>
+            <td><?= $rowdb2['BRUTO_BAGI_KAIN'] ?? ''; ?></td>
+            <td><?= $rowdb2['QTY_SALINAN'] ?? ''; ?></td>
+            <td><?= $rowdb2['QTY_PACKING'] ?? ''; ?></td>
+            <td><?= $rowdb2['NETTO_KG'] ?? ''; ?></td>
+            <td><?= $rowdb2['NETTO_YD_MTR'] ?? ''; ?></td>
+            <td><?= $rowdb2['QTY_KURANG_KG'] ?? ''; ?></td>
+            <td><?= $rowdb2['QTY_KURANG_YD_MTR'] ?? ''; ?></td>
+            <td><?= $rowdb2['DELAY'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['TARGET_SELESAI'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['KODE_DEPT'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['STATUS_TERAKHIR'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['NOMOR_MESIN_SCHEDULE'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['NOMOR_URUT_SCHEDULE'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['DELAY_PROGRESS_STATUS'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['PROGRESS_STATUS'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['TOTAL_HARI'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['JAM'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['LOT'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['NO_DEMAND'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['NO_KARTU_KERJA'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['CATATAN_PO_GREIGE'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['KETERANGAN'] ?? ''; ?></td>
+            <td class="str"><?= $rowdb2['ORIGINAL_PD_CODE'] ?? ''; ?></td>
+            <td><?= $rowdb2['RE_PROSES_ADDITIONAL'] ?? '0'; ?></td>
+        </tr>
         <?php } ?>
     </tbody>
 </table>
