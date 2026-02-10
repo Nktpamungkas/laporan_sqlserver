@@ -11,9 +11,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lr_new              = $_POST['lr_new'];
     $tgl                 = date('Y-m-d H:i:s');
 
-    $insertPrefix           = "INSERT INTO recipeprefix(recipe_code, suffix) VALUES ('$recipe_code_new', '$suffix_new')";
-    $insertPrefixResult     = mysqli_query($con_db_lab, $insertPrefix);
-    $IMPORTAUTOCOUNTER      = mysqli_insert_id($con_db_lab);
+    $insertPrefix = "INSERT INTO [db_laborat].recipeprefix (recipe_code, suffix) VALUES (?, ?)";
+    $insertPrefixResult = sqlsrv_query($con_db_lab, $insertPrefix, [$recipe_code_new, $suffix_new]);
+    $IMPORTAUTOCOUNTER = null;
+    if ($insertPrefixResult !== false) {
+        $idStmt = sqlsrv_query($con_db_lab, "SELECT SCOPE_IDENTITY() AS id");
+        if ($idStmt !== false) {
+            $idRow = sqlsrv_fetch_array($idStmt, SQLSRV_FETCH_ASSOC);
+            if ($idRow && $idRow['id'] !== null) {
+                $IMPORTAUTOCOUNTER = (int) $idRow['id'];
+            }
+        }
+    }
+    if (!$IMPORTAUTOCOUNTER) {
+        echo json_encode(['success' => false, 'message' => 'Gagal membuat recipe prefix (db_laborat).']);
+        exit;
+    }
     $ip = $_SERVER['REMOTE_ADDR'];
     $user = $_POST['user_login'];
     

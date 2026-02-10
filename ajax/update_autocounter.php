@@ -11,8 +11,8 @@ if ($new < 0) {
     exit;
 }
 
-$res = mysqli_query($con_db_lab, "UPDATE importautocounter SET nomor_urut = $new WHERE id = '2'");
-if ($res) {
+$res = sqlsrv_query($con_db_lab, "UPDATE [db_laborat].importautocounter SET nomor_urut = ? WHERE id = ?", [$new, 2]);
+if ($res !== false) {
     echo json_encode(['success' => true]);
 } else {
     echo json_encode(['success' => false, 'message' => 'Gagal update']);

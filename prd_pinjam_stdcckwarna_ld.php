@@ -272,8 +272,8 @@ if (isset($_POST['simpan'])) {
                                                         <select name="no_warna" id="no_warna" onchange="cari_std_cck_warna()" class="js-example-basic-single col-sm-2">
                                                             <option value="" disabled selected>Pilih</option>
                                                             <?php
-                                                                $q_usergeneric = mysqli_query($con_db_lab, "SELECT DISTINCT no_warna FROM `tbl_matching` WHERE not recipe_code = ''");
-                                                                while ($row_usergeneric = mysqli_fetch_array($q_usergeneric)) { 
+                                                                $q_usergeneric = sqlsrv_query($con_db_lab, "SELECT DISTINCT no_warna FROM [db_laborat].tbl_matching WHERE recipe_code <> ''");
+                                                                while ($row_usergeneric = sqlsrv_fetch_array($q_usergeneric, SQLSRV_FETCH_ASSOC)) { 
                                                             ?>
                                                                 <option value="<?= TRIM($row_usergeneric['no_warna']); ?>"><?= TRIM($row_usergeneric['no_warna']); ?></option>
                                                             <?php } ?>

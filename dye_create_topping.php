@@ -185,10 +185,10 @@
                                                             <select class="form-control form-control-sm form-control-danger" name="short_new" id="short_new" onchange="cekBonResep()">
                                                                 <option value="">-- Pilih Colorist --</option>
                                                                 <?php
-                                                                $queryColorist = "SELECT * FROM tbl_user WHERE jabatan = 'Colorist' AND status = 'Aktif' ORDER BY username ASC";
-                                                                $stmtColorist = mysqli_query($con_db_lab, $queryColorist);
-                                                                if(mysqli_num_rows($stmtColorist) > 0) {
-                                                                    while ($colorist = mysqli_fetch_assoc($stmtColorist)) {
+                                                                $queryColorist = "SELECT username FROM [db_laborat].tbl_user WHERE jabatan = 'Colorist' AND status = 'Aktif' ORDER BY username ASC";
+                                                                $stmtColorist = sqlsrv_query($con_db_lab, $queryColorist);
+                                                                if ($stmtColorist !== false) {
+                                                                    while ($colorist = sqlsrv_fetch_array($stmtColorist, SQLSRV_FETCH_ASSOC)) {
                                                                         $selected = (isset($_POST['short_new']) && $_POST['short_new'] == $colorist['username']) ? 'selected' : '';
                                                                         echo '<option value="'.htmlspecialchars($colorist['username']).'" '.$selected.'>'.htmlspecialchars($colorist['username']).'</option>';
                                                                     }

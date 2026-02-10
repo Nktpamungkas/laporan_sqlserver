@@ -377,12 +377,10 @@
                                                                         tbl_matching.no_resep,
                                                                         tbl_matching.jenis_matching,
                                                                         tbl_matching.buyer,
-                                                                        tbl_matching.warna,
-                                                                        SUBSTRING_INDEX(SUBSTRING_INDEX(tbl_matching.recipe_code, ' ', 1), ' ', -1) AS recipe_code_1,
-                                                                        SUBSTRING_INDEX(SUBSTRING_INDEX(tbl_matching.recipe_code, ' ', 2), ' ', -1) AS recipe_code_2
-                                                                        FROM tbl_matching
-                                                                        LEFT JOIN tbl_matching_detail ON tbl_matching_detail.id_matching = tbl_matching.id
-                                                                        LEFT JOIN tbl_status_matching ON tbl_status_matching.idm = tbl_matching.no_resep
+                                                                        tbl_matching.warna
+                                                                        FROM [db_laborat].tbl_matching
+                                                                        LEFT JOIN [db_laborat].tbl_matching_detail ON tbl_matching_detail.id_matching = tbl_matching.id
+                                                                        LEFT JOIN [db_laborat].tbl_status_matching ON tbl_status_matching.idm = tbl_matching.no_resep
                                                                         WHERE (
                                                                             tbl_matching.color_code LIKE '%$color_code%' OR
                                                                             tbl_matching.color_code LIKE '%$color_code_potong%'
@@ -390,13 +388,18 @@
                                                                         AND NOT tbl_matching.jenis_matching IN ('Perbaikan NOW', 'Perbaikan')
                                                                         AND tbl_matching.jenis_matching IN ('LD NOW', 'L/D')
                                                                         AND NOT tbl_matching.recipe_code IN ('', '-')
-                                                                        AND NOT tbl_status_matching.status = 'arsip'
-                                                                        ORDER BY tbl_matching.id DESC";
+                                                                        AND NOT tbl_status_matching.[status] = 'arsip'";
 
-                                                                    $result_labdip = mysqli_query($con_db_lab, $query_labdip);
+                                                                    $result_labdip = sqlsrv_query($con_db_lab, $query_labdip);
                                                                     $no_labdip = 1;
                                                                 ?>
-                                                                <?php while ($row_labdip = mysqli_fetch_array($result_labdip)) : ?>
+                                                                <?php if ($result_labdip === false) : ?>
+                                                                    <tr>
+                                                                        <td colspan="5">Gagal mengambil data Labdip.</td>
+                                                                    </tr>
+                                                                    <!-- <?php echo htmlspecialchars(print_r(sqlsrv_errors(), true)); ?> -->
+                                                                <?php else : ?>
+                                                                    <?php while ($row_labdip = sqlsrv_fetch_array($result_labdip, SQLSRV_FETCH_ASSOC)) : ?>
                                                                     <tr>
                                                                         <td><?= $no_labdip++; ?></td>
                                                                         <td><?= $row_labdip['buyer']; ?></td>
@@ -408,7 +411,8 @@
                                                                             </a>
                                                                         </td>
                                                                     </tr>
-                                                                <?php endwhile; ?>
+                                                                    <?php endwhile; ?>
+                                                                <?php endif; ?>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -445,23 +449,26 @@
                                                                         tbl_matching.no_resep,
                                                                         tbl_matching.jenis_matching,
                                                                         tbl_matching.buyer,
-                                                                        tbl_matching.warna,
-                                                                        SUBSTRING_INDEX(SUBSTRING_INDEX(tbl_matching.recipe_code, ' ', 1), ' ', -1) AS recipe_code_1,
-                                                                        SUBSTRING_INDEX(SUBSTRING_INDEX(tbl_matching.recipe_code, ' ', 2), ' ', -1) AS recipe_code_2
-                                                                        FROM tbl_matching
-                                                                        LEFT JOIN tbl_matching_detail ON tbl_matching_detail.id_matching = tbl_matching.id
-                                                                        LEFT JOIN tbl_status_matching ON tbl_status_matching.idm = tbl_matching.no_resep
+                                                                        tbl_matching.warna
+                                                                        FROM [db_laborat].tbl_matching
+                                                                        LEFT JOIN [db_laborat].tbl_matching_detail ON tbl_matching_detail.id_matching = tbl_matching.id
+                                                                        LEFT JOIN [db_laborat].tbl_status_matching ON tbl_status_matching.idm = tbl_matching.no_resep
                                                                         WHERE tbl_matching.color_code = '$color_code'
                                                                         AND NOT tbl_matching.jenis_matching IN ('Perbaikan NOW', 'Perbaikan')
                                                                         AND tbl_matching.jenis_matching IN ('Matching Ulang NOW', 'Matching Ulang', 'Matching Development')
                                                                         AND NOT tbl_matching.recipe_code IN ('', '-')
-                                                                        AND NOT tbl_status_matching.status = 'arsip'
-                                                                        ORDER BY tbl_matching.id DESC";
+                                                                        AND NOT tbl_status_matching.[status] = 'arsip'";
 
-                                                                    $result_mu = mysqli_query($con_db_lab, $query_mu);
+                                                                    $result_mu = sqlsrv_query($con_db_lab, $query_mu);
                                                                     $no_mu = 1;
                                                                 ?>
-                                                                <?php while ($row_mu = mysqli_fetch_array($result_mu)) : ?>
+                                                                <?php if ($result_mu === false) : ?>
+                                                                    <tr>
+                                                                        <td colspan="5">Gagal mengambil data Matching Ulang.</td>
+                                                                    </tr>
+                                                                    <!-- <?php echo htmlspecialchars(print_r(sqlsrv_errors(), true)); ?> -->
+                                                                <?php else : ?>
+                                                                    <?php while ($row_mu = sqlsrv_fetch_array($result_mu, SQLSRV_FETCH_ASSOC)) : ?>
                                                                     <tr>
                                                                         <td><?= $no_mu++; ?></td>
                                                                         <td><?= $row_mu['buyer']; ?></td>
@@ -473,7 +480,8 @@
                                                                             </a>
                                                                         </td>
                                                                     </tr>
-                                                                <?php endwhile; ?>
+                                                                    <?php endwhile; ?>
+                                                                <?php endif; ?>
                                                             </tbody>
                                                         </table>
                                                     </div>
