@@ -29,6 +29,7 @@
         #status-body.fade-in { animation: fadeIn 0.2s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0.6; } to { opacity: 1; } }
         #btn-refresh.disabled { pointer-events: none; opacity: 0.6; }
+        #recent-changes { max-height: 140px; overflow-y: auto; }
     </style>
 </head>
 <?php require_once 'header.php'; ?>
@@ -46,6 +47,7 @@
                                             <div>
                                                 <h5 class="mb-0">Monitoring Koneksi</h5>
                                                 <div class="small-text">Pantau status server, hidup/mati, dan kesehatan koneksi. Data otomatis refresh.</div>
+                                                <div class="small-text mt-1" id="summary-text">Memuat ringkasan...</div>
                                             </div>
                                             <div class="d-flex align-items-center gap-2">
                                                 <div id="last-updated" class="small-text mr-3">Memuat...</div>
@@ -55,6 +57,14 @@
                                             </div>
                                         </div>
                                         <div class="card-body">
+                                            <div class="d-flex flex-wrap align-items-center mb-3 gap-2">
+                                                <input id="filter-input" class="form-control form-control-sm" style="max-width: 220px;" placeholder="Cari koneksi...">
+                                                <div class="form-check form-check-inline mb-0">
+                                                    <input class="form-check-input" type="checkbox" id="filter-problem">
+                                                    <label class="form-check-label small-text" for="filter-problem">Hanya ISSUE/DOWN</label>
+                                                </div>
+                                                <div class="small-text ml-auto" id="refresh-info">Auto refresh: 5s</div>
+                                            </div>
                                             <div>
                                                 <table border="1" width="100%" >
                                                     <thead>
@@ -64,15 +74,20 @@
                                                             <th>Tipe</th>
                                                             <th>Status</th>
                                                             <th>Durasi (ms)</th>
+                                                            <th>Terakhir Ubah</th>
                                                             <th>Catatan</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="status-body">
                                                         <tr>
-                                                            <td colspan="6">Memuat data...</td>
+                                                            <td colspan="7">Memuat data...</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
+                                            </div>
+                                            <div class="mt-3">
+                                                <div class="small-text mb-1">Perubahan terbaru</div>
+                                                <ul id="recent-changes" class="small-text mb-0"></ul>
                                             </div>
                                         </div>
                                     </div>
@@ -86,24 +101,73 @@
                             const bodyEl = document.getElementById('status-body');
                             const lastUpdatedEl = document.getElementById('last-updated');
                             const refreshBtn = document.getElementById('btn-refresh');
+                            const summaryEl = document.getElementById('summary-text');
+                            const filterInput = document.getElementById('filter-input');
+                            const filterProblem = document.getElementById('filter-problem');
+                            const refreshInfoEl = document.getElementById('refresh-info');
+                            const recentChangesEl = document.getElementById('recent-changes');
                             let isFetching = false;
                             let lastHash = '';
+                            const lastStatusMap = new Map();
+                            const lastChangeMap = new Map();
+                            const recentChanges = [];
+                            let lastRows = [];
+                            let refreshIntervalMs = 5000;
+                            let refreshTimer = null;
+
+                            function normalizeText(text) {
+                                return (text || '').toString().toLowerCase();
+                            }
+
+                            function applyFilters(rows) {
+                                const needle = normalizeText(filterInput.value);
+                                const onlyProblem = filterProblem.checked;
+                                return rows.filter(row => {
+                                    const hay = normalizeText(row.label) + ' ' + normalizeText(row.target) + ' ' + normalizeText(row.type);
+                                    if (needle && !hay.includes(needle)) return false;
+                                    if (onlyProblem && row.status === 'UP') return false;
+                                    return true;
+                                });
+                            }
 
                             function renderRows(rows) {
                                 if (!Array.isArray(rows) || !rows.length) {
-                                    bodyEl.innerHTML = '<tr><td colspan="6">Tidak ada data.</td></tr>';
+                                    bodyEl.innerHTML = '<tr><td colspan="7">Tidak ada data.</td></tr>';
                                     return;
                                 }
-                                bodyEl.innerHTML = rows.map(row => `
+                                const filtered = applyFilters(rows);
+                                if (!filtered.length) {
+                                    bodyEl.innerHTML = '<tr><td colspan="7">Tidak ada data.</td></tr>';
+                                    return;
+                                }
+                                bodyEl.innerHTML = filtered.map(row => `
                                     <tr>
                                         <td>${row.label}</td>
                                         <td>${row.target}</td>
                                         <td>${row.type}</td>
                                         <td><span class="badge ${row.class} status-badge">${row.status}</span></td>
                                         <td>${row.ms !== null && row.ms !== undefined ? row.ms : ''}</td>
+                                        <td>${lastChangeMap.get(row.label) || '-'}</td>
                                         <td>${row.detail || ''}</td>
                                     </tr>
                                 `).join('');
+
+                                const tableRows = bodyEl.querySelectorAll('tr');
+                                filtered.forEach((row, idx) => {
+                                    const prev = lastStatusMap.get(row.label);
+                                    if (prev && prev !== row.status) {
+                                        tableRows[idx].style.backgroundColor = '#fff6d6';
+                                        setTimeout(() => { tableRows[idx].style.backgroundColor = ''; }, 3000);
+                                        const stamp = new Date().toLocaleTimeString();
+                                        lastChangeMap.set(row.label, stamp);
+                                        recentChanges.unshift(`${stamp} - ${row.label}: ${prev} → ${row.status}`);
+                                        if (recentChanges.length > 10) recentChanges.pop();
+                                    }
+                                    lastStatusMap.set(row.label, row.status);
+                                });
+                                recentChangesEl.innerHTML = recentChanges.length
+                                    ? recentChanges.map(item => `<li>${item}</li>`).join('')
+                                    : '<li>Tidak ada perubahan</li>';
                             }
 
                             function setLoading(isLoading) {
@@ -126,19 +190,36 @@
                                 try {
                                     const res = await fetch('monitor_koneksi_data.php', { cache: 'no-store' });
                                     const data = await res.json();
+                                    lastRows = data.statuses || [];
                                     const payload = JSON.stringify(data.statuses || []);
                                     if (payload !== lastHash) {
-                                        renderRows(data.statuses || []);
+                                        renderRows(lastRows);
                                         bodyEl.classList.remove('fade-in');
                                         void bodyEl.offsetWidth;
                                         bodyEl.classList.add('fade-in');
                                         lastHash = payload;
                                     }
+                                    if (Array.isArray(lastRows)) {
+                                        const total = lastRows.length;
+                                        const up = lastRows.filter(r => r.status === 'UP').length;
+                                        const issue = lastRows.filter(r => r.status === 'ISSUE').length;
+                                        const down = lastRows.filter(r => r.status === 'DOWN').length;
+                                        summaryEl.textContent = `Total: ${total} | UP: ${up} | ISSUE: ${issue} | DOWN: ${down}`;
+                                        const desiredInterval = (issue + down) > 0 ? 1000 : 5000;
+                                        if (desiredInterval !== refreshIntervalMs) {
+                                            refreshIntervalMs = desiredInterval;
+                                            refreshInfoEl.textContent = `Auto refresh: ${refreshIntervalMs / 1000}s`;
+                                            restartAutoRefresh();
+                                        }
+                                    } else {
+                                        summaryEl.textContent = 'Ringkasan tidak tersedia';
+                                    }
                                     lastUpdatedEl.textContent = 'Update: ' + (data.generated_at || new Date().toLocaleTimeString());
                                 } catch (e) {
                                     lastUpdatedEl.textContent = 'Gagal update';
+                                    summaryEl.textContent = 'Ringkasan tidak tersedia';
                                     if (!lastHash) {
-                                        bodyEl.innerHTML = '<tr><td colspan="6">Gagal memuat data: ' + e + '</td></tr>';
+                                        bodyEl.innerHTML = '<tr><td colspan="7">Gagal memuat data: ' + e + '</td></tr>';
                                     }
                                 } finally {
                                     setLoading(false);
@@ -146,14 +227,43 @@
                                 }
                             }
 
+                            function restartAutoRefresh() {
+                                if (refreshTimer) {
+                                    clearInterval(refreshTimer);
+                                    refreshTimer = null;
+                                }
+                                refreshTimer = setInterval(fetchStatus, refreshIntervalMs);
+                            }
+
                             refreshBtn.addEventListener('click', function (e) {
                                 e.preventDefault();
                                 fetchStatus();
                             });
 
-                            const refreshIntervalMs = 1000; // auto refresh tiap 1 detik
+                            filterInput.addEventListener('input', function () {
+                                renderRows(lastRows);
+                            });
+
+                            filterProblem.addEventListener('change', function () {
+                                renderRows(lastRows);
+                            });
+
                             fetchStatus();
-                            setInterval(fetchStatus, refreshIntervalMs);
+                            restartAutoRefresh();
+
+                            document.addEventListener('visibilitychange', function () {
+                                if (document.hidden) {
+                                    if (refreshTimer) {
+                                        clearInterval(refreshTimer);
+                                        refreshTimer = null;
+                                    }
+                                    refreshInfoEl.textContent = 'Auto refresh: paused';
+                                } else {
+                                    refreshInfoEl.textContent = `Auto refresh: ${refreshIntervalMs / 1000}s`;
+                                    restartAutoRefresh();
+                                    fetchStatus();
+                                }
+                            });
                         </script>
                     </div>
                 </div>
