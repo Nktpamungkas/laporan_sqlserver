@@ -25,6 +25,10 @@
         .status-card { border: 1px solid #e5e7eb; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
         .status-badge { font-size: 12px; padding: 6px 10px; }
         .small-text { color: #6b7280; font-size: 13px; }
+        #status-body.loading { opacity: 0.6; transition: opacity 0.2s ease-in-out; }
+        #status-body.fade-in { animation: fadeIn 0.2s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0.6; } to { opacity: 1; } }
+        #btn-refresh.disabled { pointer-events: none; opacity: 0.6; }
     </style>
 </head>
 <?php require_once 'header.php'; ?>
@@ -82,6 +86,8 @@
                             const bodyEl = document.getElementById('status-body');
                             const lastUpdatedEl = document.getElementById('last-updated');
                             const refreshBtn = document.getElementById('btn-refresh');
+                            let isFetching = false;
+                            let lastHash = '';
 
                             function renderRows(rows) {
                                 if (!Array.isArray(rows) || !rows.length) {
@@ -100,20 +106,43 @@
                                 `).join('');
                             }
 
-                            function setLoading() {
-                                bodyEl.innerHTML = '<tr><td colspan="6">Memuat data...</td></tr>';
+                            function setLoading(isLoading) {
+                                if (isLoading) {
+                                    bodyEl.classList.add('loading');
+                                    refreshBtn.classList.add('disabled');
+                                    refreshBtn.setAttribute('aria-disabled', 'true');
+                                    lastUpdatedEl.textContent = 'Memuat...';
+                                } else {
+                                    bodyEl.classList.remove('loading');
+                                    refreshBtn.classList.remove('disabled');
+                                    refreshBtn.removeAttribute('aria-disabled');
+                                }
                             }
 
                             async function fetchStatus() {
-                                setLoading();
+                                if (isFetching) return;
+                                isFetching = true;
+                                setLoading(true);
                                 try {
                                     const res = await fetch('monitor_koneksi_data.php', { cache: 'no-store' });
                                     const data = await res.json();
-                                    renderRows(data.statuses || []);
+                                    const payload = JSON.stringify(data.statuses || []);
+                                    if (payload !== lastHash) {
+                                        renderRows(data.statuses || []);
+                                        bodyEl.classList.remove('fade-in');
+                                        void bodyEl.offsetWidth;
+                                        bodyEl.classList.add('fade-in');
+                                        lastHash = payload;
+                                    }
                                     lastUpdatedEl.textContent = 'Update: ' + (data.generated_at || new Date().toLocaleTimeString());
                                 } catch (e) {
-                                    bodyEl.innerHTML = '<tr><td colspan="6">Gagal memuat data: ' + e + '</td></tr>';
                                     lastUpdatedEl.textContent = 'Gagal update';
+                                    if (!lastHash) {
+                                        bodyEl.innerHTML = '<tr><td colspan="6">Gagal memuat data: ' + e + '</td></tr>';
+                                    }
+                                } finally {
+                                    setLoading(false);
+                                    isFetching = false;
                                 }
                             }
 
@@ -122,8 +151,9 @@
                                 fetchStatus();
                             });
 
+                            const refreshIntervalMs = 1000; // auto refresh tiap 1 detik
                             fetchStatus();
-                            setInterval(fetchStatus, 15000); // auto refresh tiap 15 detik
+                            setInterval(fetchStatus, refreshIntervalMs);
                         </script>
                     </div>
                 </div>

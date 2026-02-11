@@ -100,7 +100,7 @@ function getConnectionStatuses()
         checkMysqli('Invoice', '10.0.0.10 / invoice', $con_invoice),
         checkSqlsrv('DB Dyeing (SQLSVR19)', '10.0.0.221 / db_dying', $con_db_dyeing),
         checkSqlsrv('DB Finishing (SQLSVR19)', '10.0.0.221 / db_finishing', $con_db_finishing),
-        checkMysqli('DB Laborat', '10.0.0.10 / db_laborat_test', $con_db_lab),
+        checkSqlsrv('DB Laborat (SQLSVR19)', '10.0.0.221 / db_laborat', $con_db_lab),
         checkMysqli('DB NOW MKT', '10.0.0.10 / dbnow_mkt', $con_dbnow_mkt),
         checkMysqli('Approval Document', '10.0.0.10 / approval_document', $con_rec),
         checkMysqli('DB QC', '10.0.0.10 / db_qc', $con_db_qc),
