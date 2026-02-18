@@ -551,13 +551,13 @@ include_once "utils/helper.php";
                             // echo $d_qtypacking['QTY_PACKING'];
 
                             $sql_qtypacking = "SELECT
-                                                    nodemand,
+                                                    TRIM(nodemand) as nodemand,
                                                     SUM(jml_mutasi) AS roll,
                                                     SUM(mutasi) AS mutasi 
                                                 FROM
-                                                    tbl_lap_inspeksi 
+                                                    db_qc.tbl_lap_inspeksi 
                                                 WHERE
-                                                    TRIM(nodemand) = ? 
+                                                    TRIM(nodemand) = ?
                                                     AND dept = 'PACKING' 
                                                 GROUP BY
                                                     TRIM(nodemand)";

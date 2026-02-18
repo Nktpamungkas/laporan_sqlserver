@@ -123,7 +123,7 @@
                                                     <hr>
                                                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light m-b-10" id='select-all'>select all</button>
                                                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light m-b-10" id='deselect-all'>deselect all</button>
-                                                    <select id='public-methods' multiple='multiple' name="operation[]">
+                                                    <select id='public-methods' multiple='multiple' name="operation[]" required>
                                                         <?php
                                                         $query_ITXVIEWKK     = db2_exec($conn1, "SELECT
                                                                                                     TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE,
@@ -164,7 +164,7 @@
                                                     <hr>
                                                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light m-b-10" id='select-all2'>select all</button>
                                                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light m-b-10" id='deselect-all2'>deselect all</button>
-                                                    <select id='public-methods2' multiple='multiple' name="operation2[]">
+                                                    <select id='public-methods2' multiple='multiple' name="operation2[]" <?= !empty($_GET['demand2'])? 'required':'';?>>
                                                         <?php
                                                         $query_ITXVIEWKK2     = db2_exec($conn1, "SELECT TRIM(PRODUCTIONORDERCODE) AS PRODUCTIONORDERCODE, TRIM(PRODUCTIONDEMANDCODE) AS PRODUCTIONDEMANDCODE FROM ITXVIEWKK WHERE PRODUCTIONDEMANDCODE = '$_GET[demand2]' ORDER BY CREATIONDATETIME DESC");
                                                         $data_ITXVIEWKK2      = db2_fetch_assoc($query_ITXVIEWKK2);
@@ -726,9 +726,9 @@
                                                             <th style="vertical-align: text-top;">:</th>
                                                             <th style="vertical-align: text-top;">
                                                                 <?php
-                                                                $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                 ?>
-                                                                <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
+                                                                <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                     <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                 <?php } ?>
                                                             </th>
@@ -1592,9 +1592,9 @@
                                                                 <th style="vertical-align: text-top;">:</th>
                                                                 <th style="vertical-align: text-top;">
                                                                     <?php
-                                                                    $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                    $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                     ?>
-                                                                    <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
+                                                                    <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                         <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                     <?php } ?>
                                                                 </th>
@@ -2436,9 +2436,9 @@
                                                                         <th style="vertical-align: text-top;">:</th>
                                                                         <th style="vertical-align: text-top;">
                                                                             <?php
-                                                                            $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                            $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                             ?>
-                                                                            <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
+                                                                            <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                                 <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                             <?php } ?>
                                                                         </th>
@@ -3273,9 +3273,9 @@
                                                                     <th style="vertical-align: text-top;">:</th>
                                                                     <th style="vertical-align: text-top;">
                                                                         <?php
-                                                                        $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                        $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                         ?>
-                                                                        <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
+                                                                        <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                             <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                         <?php } ?>
                                                                     </th>
@@ -4122,9 +4122,9 @@
                                                                         <th style="vertical-align: text-top;">:</th>
                                                                         <th style="vertical-align: text-top;">
                                                                             <?php
-                                                                            $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                            $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                             ?>
-                                                                            <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
+                                                                            <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                                 <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                             <?php } ?>
                                                                         </th>
@@ -4952,9 +4952,9 @@
                                                                             <th style="vertical-align: text-top;">:</th>
                                                                             <th style="vertical-align: text-top;">
                                                                                 <?php
-                                                                                $q_cari_tq  = mysqli_query($con_db_qc, "SELECT * FROM tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
+                                                                                $q_cari_tq  = sqlsrv_query($con_db_qc, "SELECT * FROM db_qc.tbl_tq_nokk WHERE nodemand = '$d_ITXVIEWKK_2[PRODUCTIONDEMANDCODE]' ORDER BY id DESC");
                                                                                 ?>
-                                                                                <?php while ($row_tq = mysqli_fetch_array($q_cari_tq)) { ?>
+                                                                                <?php while ($row_tq = sqlsrv_fetch_array($q_cari_tq)) { ?>
                                                                                     <a style="color: #E95D4E; font-size:15px; font-family: Microsoft Sans Serif;" href="https://online.indotaichen.com/qc-final-new/pages/cetak/cetak_result.php?idkk=<?= $row_tq['id']; ?>&noitem=<?= $row_tq['no_item']; ?>&nohanger=<?= $row_tq['no_hanger']; ?>" target="_blank">Detail test quality (<?= $row_tq['no_test']; ?>)<i class="icofont icofont-external-link"></i></a><br>
                                                                                 <?php } ?>
                                                                             </th>
