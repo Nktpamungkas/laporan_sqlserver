@@ -624,7 +624,12 @@
                         ?>
                     </td>
                     <td><center><?php echo $row_ncp['status']; ?></center></td>
-                    <td><?php echo $row_ncp['tgl_buat'] ?></td>
+                    <td><?php 
+                        echo $row_ncp['tgl_buat'] 
+                            ? $row_ncp['tgl_buat']->format('Y-m-d H:i:s') 
+                            : '';
+                        ?>
+                    </td>
                     <td>-</td>
                     <td><?php echo $row_ncp['peninjau_awal'] ?></td>
                     <td><?php echo $row_ncp['peninjau_akhir'] ?></td>
