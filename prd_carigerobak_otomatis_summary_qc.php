@@ -30,9 +30,9 @@
 
     $filename = "SummaryPencarianGerobak-QCF-" . date('Y-m-d_H-i-s') . ".xls";
 
-    header("Content-Type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment; filename=\"$filename\"");
-    header("Cache-Control: max-age=0");
+    // header("Content-Type: application/vnd.ms-excel");
+    // header("Content-Disposition: attachment; filename=\"$filename\"");
+    // header("Cache-Control: max-age=0");
 
     $bulan = [
         1 => 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI',
@@ -122,65 +122,110 @@
         $end = date('Y-m-d 07:00:00');
 
         $sql_keluar = " SELECT 
-                COUNT(DISTINCT a.personil) as inspektor, 
-                SUM( a.qty ) AS bruto, 
-                SUM( a.yard ) AS panjang, b.g_shift, 
-                SUM(IF(c.status_produk = '1' AND (b.proses='Inspect Finish' OR b.proses='Inspect Packing' OR b.proses='Inspect White' OR b.proses='Inspect Qty Kecil'),a.qty,0)) AS `sts_ok`, 
-                SUM(IF(c.status_produk = '2' AND (b.proses='Inspect Finish' OR b.proses='Inspect Packing' OR b.proses='Inspect White' OR b.proses='Inspect Qty Kecil'),a.qty,0)) AS `sts_x`, 
-                SUM(IF(c.status_produk = '3' AND (b.proses='Inspect Finish' OR b.proses='Inspect Packing' OR b.proses='Inspect White' OR b.proses='Inspect Qty Kecil'),a.qty,0)) AS `sts_pr`, 
-                SUM(if(b.proses='Inspect Finish',a.qty,0)) as sts_fin, 
-                SUM(if(b.proses='Inspect Oven',a.qty,0)) as sts_oven, 
-                SUM(if(b.proses='Pisah',a.qty,0)) as sts_pisah, 
-                SUM(if(b.proses='Perbaikan' OR b.proses='Perbaikan Grade' OR b.proses='Tandai Defect' OR b.proses='Inspect Ulang (Setelah Perbaikan)',a.qty,0)) as sts_perbaikan, 
-                SUM(if(b.proses='Kragh',a.qty,0)) as sts_kragh, 
-                SUM(a.qty) as sts_tot, 
-                SUM(a.yard) as sts_yard
+                COUNT(DISTINCT a.personil) AS inspektor, 
+                SUM(a.qty) AS bruto, 
+                SUM(a.yard) AS panjang, 
+                b.g_shift, 
+                SUM(CASE 
+                        WHEN c.status_produk = '1' 
+                        AND b.proses IN ('Inspect Finish','Inspect Packing','Inspect White','Inspect Qty Kecil')
+                        THEN a.qty ELSE 0 
+                    END) AS sts_ok,
+                SUM(CASE 
+                        WHEN c.status_produk = '2' 
+                        AND b.proses IN ('Inspect Finish','Inspect Packing','Inspect White','Inspect Qty Kecil')
+                        THEN a.qty ELSE 0 
+                    END) AS sts_x,
+                SUM(CASE 
+                        WHEN c.status_produk = '3' 
+                        AND b.proses IN ('Inspect Finish','Inspect Packing','Inspect White','Inspect Qty Kecil')
+                        THEN a.qty ELSE 0 
+                    END) AS sts_pr,
+                SUM(CASE 
+                        WHEN b.proses = 'Inspect Finish' 
+                        THEN a.qty ELSE 0 
+                    END) AS sts_fin,
+                SUM(CASE 
+                        WHEN b.proses = 'Inspect Oven' 
+                        THEN a.qty ELSE 0 
+                    END) AS sts_oven,
+                SUM(CASE 
+                        WHEN b.proses = 'Pisah' 
+                        THEN a.qty ELSE 0 
+                    END) AS sts_pisah,
+                SUM(CASE 
+                        WHEN b.proses IN ('Perbaikan','Perbaikan Grade','Tandai Defect','Inspect Ulang (Setelah Perbaikan)')
+                        THEN a.qty ELSE 0 
+                    END) AS sts_perbaikan,
+                SUM(CASE 
+                        WHEN b.proses = 'Kragh' 
+                        THEN a.qty ELSE 0 
+                    END) AS sts_kragh,
+                SUM(a.qty) AS sts_tot, 
+                SUM(a.yard) AS sts_yard
             FROM 
-                tbl_inspection a 
+                db_qc.tbl_inspection a 
             INNER JOIN 
-                tbl_schedule b ON a.id_schedule = b.id
+                db_qc.tbl_schedule b ON a.id_schedule = b.id
             INNER JOIN 
-                tbl_gerobak c ON c.id_schedule = b.id 
+                db_qc.tbl_gerobak c ON c.id_schedule = b.id  
             WHERE 
                 a.tgl_buat >= '$start' AND a.tgl_buat < '$end'
             GROUP BY 
                 b.g_shift"
         ;
 
-        $result_keluar = mysqli_query($con_db_qc, $sql_keluar);
+        $result_keluar = sqlsrv_query($con_db_qc, $sql_keluar);
         if (!$result_keluar) {
-            die("Query gagal: " . mysqli_error($con_db_qc));
+            die("Query gagal: ");
         }
 
         $INSPEK_KELUAR = 0;
 		$PERBAIKAN_KELUAR = 0;
 
-        while ($row1 = mysqli_fetch_array($result_keluar)) {
+        while ($row1 = sqlsrv_fetch_array($result_keluar)) {
             $INSPEK_KELUAR += $row1['sts_tot'];
             $PERBAIKAN_KELUAR += $row1['sts_perbaikan'];
         }
-        
+
+        $count_result_packing = 0;
+
         $sql_keluar_packing = " SELECT 
             tgl_update, jam_update, jml_roll, bruto, netto
             FROM 
-                tbl_lap_inspeksi 
+                db_qc.tbl_lap_inspeksi 
             where 
                 dept = 'PACKING' 
             AND 
-                STR_TO_DATE(CONCAT(tgl_update, ' ', jam_update), '%Y-%m-%d %H:%i:%s') >= '$start'
+                CONCAT(tgl_update, ' ', jam_update) >= '$start'
             AND
-                STR_TO_DATE(CONCAT(tgl_update, ' ', jam_update), '%Y-%m-%d %H:%i:%s') < '$end'
+                CONCAT(tgl_update, ' ', jam_update) < '$end'
         ";
-
-        $result_packing = mysqli_query($con_db_qc, $sql_keluar_packing);
+        $result_packing = sqlsrv_query($con_db_qc, $sql_keluar_packing);
         if (!$result_packing) {
-            die("Query PACKING gagal: " . mysqli_error($con_db_qc));
+            die("Query PACKING gagal ");
         }
 
+        $sql_keluar_packing_rows = " SELECT 
+            COUNT (*) AS TOT_ROWS
+            FROM 
+                db_qc.tbl_lap_inspeksi 
+            where 
+                dept = 'PACKING' 
+            AND 
+                CONCAT(tgl_update, ' ', jam_update) >= '$start'
+            AND
+                CONCAT(tgl_update, ' ', jam_update) < '$end'
+        ";
+
+        $result_packing_rows = sqlsrv_query($con_db_qc, $sql_keluar_packing_rows);
+        $total_rows_result_packing = sqlsrv_fetch_array($result_packing_rows);
+        $count_result_packing = $total_rows_result_packing['TOT_ROWS'];
+        
         $PACKING_KELUAR = 0;
 
-        if (mysqli_num_rows($result_packing) > 0) {
-            while ($row = mysqli_fetch_assoc($result_packing)) {
+        if ($count_result_packing > 0) {
+            while ($row = sqlsrv_fetch_array($result_packing)) {
                 $qty = $row['netto'];
                 $PACKING_KELUAR += $qty;
             }
