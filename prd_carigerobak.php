@@ -142,13 +142,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                            if($_POST['demand']){
-                                                                $where_demand    = "AND p.PRODUCTIONDEMANDCODE = '$_POST[demand]'";
-																$where_stepno	 = ""; // analisa usman
-                                                            }else{
-                                                                $where_demand    = "";
-																$where_stepno	 = "AND p.STEPNUMBER < '$row_iptip[STEPNUMBER]'"; // analisa usman
-                                                            }
+                                                            
                                                             if($_POST['dept'] == 'ALL'){
                                                                 $where_all  = "AND NOT TRIM(OPERATIONGROUPCODE) IS NULL";
                                                             }else{
@@ -255,7 +249,16 @@
                                                             $totalGerobak_RMP = 0;
                                                             $totalGerobak_TAS = 0;
                                                         ?>
-                                                    <?php while($row_iptip = db2_fetch_assoc($q_iptip)) : ?>
+                                                    <?php while($row_iptip = db2_fetch_assoc($q_iptip)) : 
+													
+															if($_POST['demand']){
+                                                                $where_demand    = "AND p.PRODUCTIONDEMANDCODE = '$_POST[demand]'";
+																$where_stepno	 = ""; // analisa usman
+                                                            }else{
+                                                                $where_demand    = "";
+																$where_stepno	 = "AND p.STEPNUMBER < '$row_iptip[STEPNUMBER]'"; // analisa usman
+                                                            }
+													?>
                                                     <?php
                                                                 if($dept == 'DYE'){
                                                                     $gerobak    = "CASE
