@@ -600,7 +600,17 @@
                                                         <td>
                                                             <center><?= $row_ncp['status']; ?></center>
                                                         </td>
-                                                        <td><?= $row_ncp['tgl_buat'] ?></td>
+                                                        <td>
+                                                            <?php
+                                                                $value = $row_ncp['tgl_buat'];
+
+                                                                if ($value instanceof DateTime) {
+                                                                    echo $value->format('Y-m-d H:i:s');
+                                                                } else {
+                                                                    echo $value;
+                                                                }
+                                                            ?>
+                                                        </td>
                                                         <td>-</td>
                                                         <td><?= $row_ncp['peninjau_awal'] ?></td>
                                                         <td><?= $row_ncp['peninjau_akhir'] ?></td>
