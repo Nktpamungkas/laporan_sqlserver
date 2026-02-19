@@ -103,7 +103,7 @@ function getConnectionStatuses()
         checkSqlsrv('DB Laborat (SQLSVR19)', '10.0.0.221 / db_laborat', $con_db_lab),
         checkMysqli('DB NOW MKT', '10.0.0.10 / dbnow_mkt', $con_dbnow_mkt),
         checkMysqli('Approval Document', '10.0.0.10 / approval_document', $con_rec),
-        checkMysqli('DB QC', '10.0.0.10 / db_qc', $con_db_qc),
+        checkSqlsrv('DB QC (SQLSVR19)', '10.0.0.221 / db_qc', $con_db_qc),
         checkMysqli('HRD', '10.0.0.10 / hrd', $con_hrd),
         checkMysqli('DB NOW Gerobak', '10.0.0.10 / dbnow_gerobak', $con_now_gerobak),
         checkSqlsrv('NOWPRD (SQLSVR19)', '10.0.0.221 / nowprd', $con_nowprd),
