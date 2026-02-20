@@ -1188,6 +1188,10 @@ if ($data_login['COUNT'] == '1') {
                     // kirim filter tanggal (bisa diganti dari datepicker)
                     d.start_date = defaultStart;
                     d.end_date = defaultEnd;
+                },
+                error: function(xhr, status, error) {
+                    console.error('DataTables AJAX error:', status, error);
+                    console.error('Response:', xhr.responseText);
                 }
             },
             columns: [{

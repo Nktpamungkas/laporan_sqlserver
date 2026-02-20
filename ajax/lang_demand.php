@@ -16,7 +16,13 @@ $draw   = (int)post('draw', 1);
 $start  = (int)post('start', 0);
 $length = (int)post('length', 10);
 
-$searchValue = post('search')['value'] ?? '';
+$searchParam = post('search');
+if (is_array($searchParam)) {
+    $searchValue = trim((string)($searchParam['value'] ?? ''));
+} else {
+    // Fallback jika request mengirim key flat: search[value]
+    $searchValue = trim((string)post('search[value]', ''));
+}
 $orderReq    = post('order')[0] ?? ['column' => 0, 'dir' => 'asc'];
 $orderDir    = strtolower($orderReq['dir']) === 'desc' ? 'DESC' : 'ASC';
 
@@ -62,12 +68,15 @@ $orderColIdx = (int)$orderReq['column'];
 $orderCol = $columns[$orderColIdx] ?? 's.CREATIONDATETIME';
 
 // filter tanggal
-$startDate = post('start_date') || post('start_date') != '' ?  post('start_date') : '2025-01-01';
-$endDate = post('end_date') || post('end_date') != '' ?  post('end_date') : date('Y-m-d');
+$rawStartDate = trim((string)post('start_date', ''));
+$rawEndDate   = trim((string)post('end_date', ''));
+$hasDateFilter = ($rawStartDate !== '' && $rawEndDate !== '');
 
+$startDate = $hasDateFilter ? $rawStartDate : '2025-01-01';
+$endDate   = $hasDateFilter ? $rawEndDate : date('Y-m-d');
 
 // base filter
-$whereDate = (post('start_date') && post('end_date')) 
+$whereDate = $hasDateFilter
     ? "CAST(s.REQUIREDDUEDATE  AS DATE) BETWEEN ? AND ?"
     : "CAST(s.CREATIONDATETIME AS DATE) BETWEEN ? AND ?";
     
@@ -84,14 +93,30 @@ $where = "AND p.ITEMTYPEAFICODE = 'KFF'
 $params = [$startDate, $endDate];
 $searchSql = '';
 if ($searchValue !== '') {
-    $searchSql = " AND ( s.CREATIONUSER LIKE ?
-                     OR s.CODE LIKE ?
-                     OR p.DESCRIPTION LIKE ?
-                     OR p.SUBCODE05 LIKE ?
-                     OR PRODUCTIONDEMANDSTEP.PRODUCTIONORDERCODE LIKE ?
-                     OR p.CODE LIKE ? )";
-    $sv = '%' . $searchValue . '%';
-    array_push($params, $sv, $sv, $sv, $sv, $sv, $sv);
+    $searchSql = " AND (
+                        UPPER(COALESCE(s.CREATIONUSER, '')) LIKE ?
+                        OR UPPER(COALESCE(s.CODE, '')) LIKE ?
+                        OR UPPER(COALESCE(p.DESCRIPTION, '')) LIKE ?
+                        OR UPPER(COALESCE(p.SUBCODE05, '')) LIKE ?
+                        OR UPPER(COALESCE(PRODUCTIONDEMANDSTEP.PRODUCTIONORDERCODE, '')) LIKE ?
+                        OR UPPER(COALESCE(p.CODE, '')) LIKE ?
+                        OR UPPER(
+                            COALESCE(TRIM(p.SUBCODE01), '') || '-' ||
+                            COALESCE(TRIM(p.SUBCODE02), '') || '-' ||
+                            COALESCE(TRIM(p.SUBCODE03), '') || '-' ||
+                            COALESCE(TRIM(p.SUBCODE04), '') || '-' ||
+                            COALESCE(TRIM(p.SUBCODE05), '') || '-' ||
+                            COALESCE(TRIM(p.SUBCODE06), '') || '-' ||
+                            COALESCE(TRIM(p.SUBCODE07), '') || '-' ||
+                            COALESCE(TRIM(p.SUBCODE08), '')
+                        ) LIKE ?
+                        OR UPPER(
+                            COALESCE(s2.ITEMDESCRIPTION, '') || ' ' ||
+                            COALESCE(s.INTERNALREFERENCE, COALESCE(s2.INTERNALREFERENCE, ''))
+                        ) LIKE ?
+                    )";
+    $sv = '%' . strtoupper($searchValue) . '%';
+    array_push($params, $sv, $sv, $sv, $sv, $sv, $sv, $sv, $sv);
 }
 
 // Query total tanpa search
@@ -142,8 +167,10 @@ if ($searchValue !== '') {
     db2_bind_param($stmtCF, $bindIndex++, "sv", DB2_PARAM_IN);
     db2_bind_param($stmtCF, $bindIndex++, "sv", DB2_PARAM_IN);
     db2_bind_param($stmtCF, $bindIndex++, "sv", DB2_PARAM_IN);
+    db2_bind_param($stmtCF, $bindIndex++, "sv", DB2_PARAM_IN);
+    db2_bind_param($stmtCF, $bindIndex++, "sv", DB2_PARAM_IN);
 }
-$sv = '%' . $searchValue . '%';
+$sv = '%' . strtoupper($searchValue) . '%';
 $ok = db2_execute($stmtCF);
 if (!$ok) {
     echo json_encode(['error' => db2_stmt_errormsg($stmtCF)]);
@@ -218,6 +245,7 @@ $sqlData = "SELECT DISTINCT
                 $whereDate
                 $where
                 $searchSql
+                
             ORDER BY 
                 $orderCol $orderDir
             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -236,6 +264,8 @@ db2_bind_param($stmt, $bind++, "endDate", DB2_PARAM_IN);
 
 // bind search
 if ($searchValue !== '') {
+    db2_bind_param($stmt, $bind++, "sv", DB2_PARAM_IN);
+    db2_bind_param($stmt, $bind++, "sv", DB2_PARAM_IN);
     db2_bind_param($stmt, $bind++, "sv", DB2_PARAM_IN);
     db2_bind_param($stmt, $bind++, "sv", DB2_PARAM_IN);
     db2_bind_param($stmt, $bind++, "sv", DB2_PARAM_IN);
@@ -583,7 +613,7 @@ function fmtNumber($val) {
                             AND PRODUCTIONDEMANDCODE = ?
                             AND NOT STATUS_OPERATION = 'Closed'
                         ORDER BY
-                            STEPNUMBER DESC
+                            STEPNUMBER ASC
                         LIMIT 1";
     $stmtStatusTerakhir = db2_prepare($conn1, $qStatusTerakhir);
     if (!$stmtStatusTerakhir) {
